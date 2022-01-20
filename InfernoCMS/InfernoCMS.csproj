@@ -26,4 +26,8 @@
     <PackageReference Include="Radzen.Blazor" Version="3.14.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
+  </ItemGroup>
+
 </Project>
