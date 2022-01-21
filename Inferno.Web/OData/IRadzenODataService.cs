@@ -1,11 +1,8 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Radzen;
+﻿using Radzen;
 
-namespace InfernoCMS.Services
+namespace Inferno.Web.OData
 {
-    public interface IGenericODataService<TEntity, TKey> : IDisposable
+    public interface IRadzenODataService<TEntity, TKey> : IDisposable
         where TEntity : class
     {
         Task<ODataServiceResult<TEntity>> FindAsync(

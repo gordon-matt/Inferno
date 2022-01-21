@@ -1,19 +1,16 @@
-﻿using System;
-using System.Data;
-using System.Linq;
+﻿using System.Data;
 using System.Linq.Dynamic.Core;
 using System.Text;
-using InfernoCMS.Extensions;
-using InfernoCMS.Helpers;
 using Extenso.Collections;
 using Extenso.Data.Entity;
+using Inferno.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace InfernoCMS.Controllers
+namespace Inferno.Web.Mvc
 {
-    public partial class ExportController<T> : Controller
+    public partial class ExportController<T> : InfernoController
          where T : class, IEntity
     {
         public IQueryable<T> ApplyQuery(IQueryable<T> items, IQueryCollection query = null)

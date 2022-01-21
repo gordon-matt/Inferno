@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace InfernoCMS.Helpers
+namespace Inferno.Web.Models
 {
     public class DownloadOptions
     {

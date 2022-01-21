@@ -23,7 +23,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1" />
-    <PackageReference Include="Radzen.Blazor" Version="3.14.2" />
   </ItemGroup>
 
   <ItemGroup>

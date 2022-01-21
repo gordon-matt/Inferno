@@ -3,7 +3,6 @@ using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using Extenso.AspNetCore.OData;
 using Inferno.Tenants.Entities;
-using Inferno.Web.Mvc.Razor;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Data;
@@ -11,7 +10,6 @@ using InfernoCMS.Data.Entities;
 using InfernoCMS.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OData;
@@ -66,6 +64,8 @@ namespace InfernoCMS
             });
 
             services.AddMultitenancy<Tenant, InfernoTenantResolver>();
+
+            services.AddInfernoLocalization();
 
             services.AddControllersWithViews();
             services.AddRazorPages()

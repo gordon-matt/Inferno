@@ -1,6 +1,7 @@
-﻿using InfernoCMS.Data;
+﻿using Inferno.Web.Models;
+using Inferno.Web.Mvc;
+using InfernoCMS.Data;
 using InfernoCMS.Data.Entities;
-using InfernoCMS.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InfernoCMS.Controllers

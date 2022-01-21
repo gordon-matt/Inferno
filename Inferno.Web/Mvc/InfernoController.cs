@@ -9,21 +9,29 @@ namespace Inferno.Web.Mvc
 {
     public class InfernoController : Controller
     {
-        public ILogger Logger { get; private set; }
+        private Lazy<IAuthorizationService> authorizationService;
 
         public IStringLocalizer T { get; private set; }
 
-        public IWorkContext WorkContext { get; private set; }
+        public Lazy<IWorkContext> WorkContext { get; private set; }
 
         public Lazy<SiteSettings> SiteSettings { get; private set; }
 
+        public Lazy<ILogger> Logger { get; private set; }
+
         protected InfernoController()
         {
-            WorkContext = EngineContext.Current.Resolve<IWorkContext>();
             T = EngineContext.Current.Resolve<IStringLocalizer>();
-            var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
-            Logger = loggerFactory.CreateLogger(GetType());
+            WorkContext = new Lazy<IWorkContext>(() => EngineContext.Current.Resolve<IWorkContext>());
             SiteSettings = new Lazy<SiteSettings>(() => EngineContext.Current.Resolve<SiteSettings>());
+
+            Logger = new Lazy<ILogger>(() =>
+            {
+                var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
+                return loggerFactory.CreateLogger(GetType());
+            });
+
+            authorizationService = new Lazy<IAuthorizationService>(() => EngineContext.Current.Resolve<IAuthorizationService>());
         }
 
         protected virtual bool CheckPermission(Permission permission)
@@ -33,8 +41,7 @@ namespace Inferno.Web.Mvc
                 return true;
             }
 
-            var authorizationService = EngineContext.Current.Resolve<IAuthorizationService>();
-            return authorizationService.TryCheckAccess(permission, WorkContext.CurrentUser);
+            return authorizationService.Value.TryCheckAccess(permission, WorkContext.Value.CurrentUser);
         }
 
         protected virtual IActionResult RedirectToHomePage()

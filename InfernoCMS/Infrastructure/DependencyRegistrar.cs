@@ -5,6 +5,7 @@ using Extenso.Data.Entity;
 using Inferno.Localization;
 using Inferno.Security.Membership;
 using Inferno.Web.Navigation;
+using Inferno.Web.OData;
 using InfernoCMS.Areas.Admin;
 using InfernoCMS.Data;
 using InfernoCMS.Data.Entities;
@@ -34,7 +35,7 @@ namespace InfernoCMS.Infrastructure
             builder.RegisterType<ContextMenuService>().AsSelf().InstancePerLifetimeScope();
 
             // Services
-            builder.RegisterType<PersonODataService>().As<IGenericODataService<Person, int>>().SingleInstance();
+            builder.RegisterType<PersonODataService>().As<IRadzenODataService<Person, int>>().SingleInstance();
             //builder.RegisterGeneric(typeof(GenericODataService<,>))
             //    .As(typeof(IGenericODataService<,>))
             //    .InstancePerLifetimeScope();

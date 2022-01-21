@@ -448,26 +448,26 @@ namespace Inferno.Identity
 
         public virtual async Task<ActionResult> ViewProfile(string userId)
         {
-            WorkContext.Breadcrumbs.Add(T[LocalizableStrings.Title].Value);
+            WorkContext.Value.Breadcrumbs.Add(T[LocalizableStrings.Title].Value);
 
-            if (userId == WorkContext.CurrentUser.Id)
+            if (userId == WorkContext.Value.CurrentUser.Id)
             {
                 ViewBag.Title = T[LocalizableStrings.MyProfile].Value;
-                WorkContext.Breadcrumbs.Add(T[LocalizableStrings.MyProfile].Value);
+                WorkContext.Value.Breadcrumbs.Add(T[LocalizableStrings.MyProfile].Value);
                 ViewBag.CanEdit = true;
             }
             else if (CheckPermission(StandardPermissions.FullAccess))
             {
                 var user = await membershipService.GetUserById(userId);
                 ViewBag.Title = string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName);
-                WorkContext.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName));
+                WorkContext.Value.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName));
                 ViewBag.CanEdit = true;
             }
             else
             {
                 var user = await membershipService.GetUserById(userId);
                 ViewBag.Title = string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName);
-                WorkContext.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName));
+                WorkContext.Value.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName));
                 ViewBag.CanEdit = false;
             }
 
@@ -476,25 +476,25 @@ namespace Inferno.Identity
 
         public virtual async Task<ActionResult> ViewMyProfile()
         {
-            return await ViewProfile(WorkContext.CurrentUser.Id);
+            return await ViewProfile(WorkContext.Value.CurrentUser.Id);
         }
 
         public virtual async Task<ActionResult> EditProfile(string userId)
         {
-            WorkContext.Breadcrumbs.Add(T[LocalizableStrings.Title].Value);
+            WorkContext.Value.Breadcrumbs.Add(T[LocalizableStrings.Title].Value);
 
-            if (userId == WorkContext.CurrentUser.Id)
+            if (userId == WorkContext.Value.CurrentUser.Id)
             {
                 ViewBag.Title = T[LocalizableStrings.EditMyProfile].Value;
-                WorkContext.Breadcrumbs.Add(T[LocalizableStrings.MyProfile].Value, Url.Action("ViewMyProfile"));
-                WorkContext.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
+                WorkContext.Value.Breadcrumbs.Add(T[LocalizableStrings.MyProfile].Value, Url.Action("ViewMyProfile"));
+                WorkContext.Value.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
             }
             else if (CheckPermission(StandardPermissions.FullAccess))
             {
                 ViewBag.Title = T[LocalizableStrings.EditProfile].Value;
                 var user = await membershipService.GetUserById(userId);
-                WorkContext.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName), Url.Action("ViewProfile", new { userId = userId }));
-                WorkContext.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
+                WorkContext.Value.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName), Url.Action("ViewProfile", new { userId = userId }));
+                WorkContext.Value.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
             }
             else
             {
@@ -506,7 +506,7 @@ namespace Inferno.Identity
 
         public virtual async Task<ActionResult> EditMyProfile()
         {
-            return await EditProfile(WorkContext.CurrentUser.Id);
+            return await EditProfile(WorkContext.Value.CurrentUser.Id);
         }
 
         [HttpPost]
@@ -535,7 +535,7 @@ namespace Inferno.Identity
 
             //eventBus.Notify<IMembershipEventHandler>(x => x.ProfileChanged(userId, newProfile));
 
-            if (userId == WorkContext.CurrentUser.Id)
+            if (userId == WorkContext.Value.CurrentUser.Id)
             {
                 return RedirectToAction("ViewMyProfile");
             }

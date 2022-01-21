@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using Radzen;
 using Radzen.Blazor;
 
-namespace InfernoCMS.Extensions
+namespace Inferno.Web
 {
-    public static class FilterDescriptorExtensions
+    public static class RadzenFilterDescriptorExtensions
     {
         internal static readonly IDictionary<FilterOperator, string> ODataFilterOperators = new Dictionary<FilterOperator, string>
         {

@@ -1,36 +1,47 @@
 ﻿using System.Text;
 using Extenso;
+using Microsoft.AspNetCore.Http;
 using Radzen;
 
-namespace InfernoCMS.Services
+namespace Inferno.Web.OData
 {
-    public abstract class GenericODataService<TEntity> : GenericODataService<TEntity, int>
+    public abstract class RadzenODataService<TEntity> : RadzenODataService<TEntity, int>
         where TEntity : class
     {
-        protected GenericODataService(string entitySetName)
-            : base(entitySetName)
+        protected RadzenODataService(string entitySetName, IHttpContextAccessor httpContextAccessor)
+            : base(entitySetName, httpContextAccessor)
         {
         }
     }
 
-    public abstract class GenericODataService<TEntity, TKey> : IGenericODataService<TEntity, TKey>, IDisposable
+    public abstract class RadzenODataService<TEntity, TKey> : IRadzenODataService<TEntity, TKey>, IDisposable
         where TEntity : class
     {
         protected readonly Uri baseUri;
         protected readonly string entitySetName;
         protected readonly HttpClient httpClient;
-        private readonly HttpClientHandler httpClientHandler; // TODO: This should not be used in production.. its just to bypass certificate validation for localhost..
+        private readonly HttpClientHandler httpClientHandler;
         private bool isDisposed;
 
-        public GenericODataService(string entitySetName)
+        public RadzenODataService(string entitySetName, IHttpContextAccessor httpContextAccessor)
         {
-            httpClientHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-            };
-            httpClient = new HttpClient(httpClientHandler);
+            var httpRequest = httpContextAccessor.HttpContext.Request;
+            baseUri = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}/odata/");
 
-            baseUri = new Uri(Program.ODataBaseUri);
+            // This should not be used in production.. it's just to bypass certificate validation for localhost..
+            if (baseUri.IsLoopback)
+            {
+                httpClientHandler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                httpClient = new HttpClient(httpClientHandler);
+            }
+            else
+            {
+                httpClient = new HttpClient();
+            }
+
             this.entitySetName = entitySetName;
         }
 

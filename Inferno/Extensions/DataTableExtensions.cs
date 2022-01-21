@@ -1,10 +1,8 @@
-﻿using System;
-using System.Data;
-using System.Linq;
+﻿using System.Data;
 using Extenso;
 using OfficeOpenXml;
 
-namespace InfernoCMS.Extensions
+namespace Inferno
 {
     public static class DataTableExtensions
     {

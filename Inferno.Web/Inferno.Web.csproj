@@ -15,15 +15,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazorise" Version="0.9.5.4" />
 		<PackageReference Include="Dependo.Autofac" Version="1.0.0" />
 		<PackageReference Include="Extenso.AspNetCore.OData" Version="6.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+		<PackageReference Include="Radzen.Blazor" Version="3.14.6" />
 		<PackageReference Include="SaasKit.Multitenancy" Version="1.1.4" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
-		<ProjectReference Include="..\Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj" />
+		<ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
+		<ProjectReference Include="..\Inferno.Localization\Inferno.Localization.csproj" />
 		<ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />
 		<ProjectReference Include="..\Inferno.Tasks.Abstractions\Inferno.Tasks.Abstractions.csproj" />
 		<ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />

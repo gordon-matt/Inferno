@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="5.8.5" />
+    <PackageReference Include="Extenso.Core" Version="6.0.0" />
+  </ItemGroup>
+
 </Project>

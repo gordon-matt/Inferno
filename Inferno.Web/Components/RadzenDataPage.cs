@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using InfernoCMS.Services;
-using Extenso;
+﻿using Extenso;
 using Extenso.Data.Entity;
+using Inferno.Web.OData;
 using Microsoft.AspNetCore.Components;
 using Radzen;
 using Radzen.Blazor;
 
-namespace InfernoCMS.Pages
+namespace Inferno.Web.Components
 {
-    public abstract class BaseDataPage<TEntity, TKey> : ComponentBase
+    public abstract class RadzenDataPage<TEntity, TKey> : ComponentBase
         where TEntity : class, IEntity, new()
     {
         protected TEntity Model { get; set; } = new();
@@ -34,7 +31,7 @@ namespace InfernoCMS.Pages
         protected NotificationService NotificationService { get; set; }
 
         [Inject]
-        protected IGenericODataService<TEntity, TKey> ODataService { get; set; }
+        protected IRadzenODataService<TEntity, TKey> ODataService { get; set; }
 
         #endregion Dependencies
 

@@ -18,28 +18,28 @@ namespace Inferno.Web.Infrastructure
         {
             ODataModelBuilder builder = new ODataConventionModelBuilder();
 
-            // Configuration
-            builder.EntitySet<Setting>("SettingsApi");
-            //builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
+            //// Configuration
+            //builder.EntitySet<Setting>("SettingsApi");
+            ////builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
 
-            // Localization
-            builder.EntitySet<Language>("LanguageApi");
-            builder.EntitySet<LocalizableString>("LocalizableStringApi");
+            //// Localization
+            //builder.EntitySet<Language>("LanguageApi");
+            //builder.EntitySet<LocalizableString>("LocalizableStringApi");
 
-            //// Log
-            //builder.EntitySet<LogEntry>("LogApi");
+            ////// Log
+            ////builder.EntitySet<LogEntry>("LogApi");
 
-            // Membership
-            builder.EntitySet<InfernoPermission>("PermissionApi");
-            builder.EntitySet<InfernoRole>("RoleApi");
-            builder.EntitySet<InfernoUser>("UserApi");
-            //builder.EntitySet<PublicUserInfo>("PublicUserApi");
+            //// Membership
+            //builder.EntitySet<InfernoPermission>("PermissionApi");
+            //builder.EntitySet<InfernoRole>("RoleApi");
+            //builder.EntitySet<InfernoUser>("UserApi");
+            ////builder.EntitySet<PublicUserInfo>("PublicUserApi");
 
-            //// Plugins
-            //builder.EntitySet<EdmPluginDescriptor>("PluginApi");
+            ////// Plugins
+            ////builder.EntitySet<EdmPluginDescriptor>("PluginApi");
 
-            // Scheduled Tasks
-            builder.EntitySet<ScheduledTask>("ScheduledTaskApi");
+            //// Scheduled Tasks
+            //builder.EntitySet<ScheduledTask>("ScheduledTaskApi");
 
             // Tenants
             builder.EntitySet<Tenant>("TenantApi");

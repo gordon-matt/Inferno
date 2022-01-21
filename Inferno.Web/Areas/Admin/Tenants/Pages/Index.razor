@@ -1,6 +1,101 @@
-﻿@using Microsoft.AspNetCore.Authorization
+﻿@page "/admin/pages/tenants"
+@inherits RadzenDataPage<Tenant, int>
+@*@attribute [Authorize]*@
 
-@page "/admin/tenants"
-@attribute [Authorize]
+<h1>Tenants</h1>
 
-<p>Tenants Page</p>
+<Row hidden="@(ShowEditMode == true)">
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Click="Create">
+            <Icon Name="IconName.PlusCircle"></Icon>
+            Create
+        </RadzenButton>
+        <RadzenButton Text="Excel" Click="@(args => Export("excel"))">
+            Export to Excel
+        </RadzenButton>
+        <RadzenButton Text="CSV" Click="@(args => Export("csv"))">
+            Export to CSV
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="Tenant"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="10"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="Tenant" Property="Name" Title="Name" />
+                <RadzenDataGridColumn TItem="Tenant" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">Details</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.General.Name]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenTextBox @bind-Value="Model.Name" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Url" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Tenants.Model.Url]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenTextBox @bind-Value="Model.Url" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Hosts" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Tenants.Model.Hosts]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenDatePicker @bind-Value=Model.Hosts DateFormat="yyyy-MM-dd" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <hr />
+                    <Row Class="float-right">
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    Cancel
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> Save
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

@@ -2,10 +2,13 @@
 using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
 using Inferno.Security.Membership.Permissions;
+using Inferno.Tenants.Entities;
+using Inferno.Web.Areas.Admin.Tenants.Services;
 using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Services;
 using Inferno.Web.Mvc.Themes;
 using Inferno.Web.Navigation;
+using Inferno.Web.OData;
 using Inferno.Web.Security.Membership;
 
 namespace Inferno.Web.Infrastructure
@@ -76,10 +79,12 @@ namespace Inferno.Web.Infrastructure
             //// Rendering
             //builder.RegisterType<RazorViewRenderService>().As<IRazorViewRenderService>().SingleInstance();
 
-            //builder.RegisterType<ODataRegistrar>().As<IODataRegistrar>().SingleInstance();
+            builder.RegisterType<ODataRegistrar>().As<IODataRegistrar>().SingleInstance();
 
             //// Embedded File Provider
             //builder.RegisterType<EmbeddedFileProviderRegistrar>().As<IEmbeddedFileProviderRegistrar>().InstancePerLifetimeScope();
+
+            builder.RegisterType<TenantODataService>().As<IRadzenODataService<Tenant, int>>().SingleInstance();
         }
 
         public int Order => 0;

@@ -1,10 +1,12 @@
-﻿using InfernoCMS.Data.Entities;
+﻿using Inferno.Web.OData;
+using InfernoCMS.Data.Entities;
 
 namespace InfernoCMS.Services
 {
-    public class PersonODataService : GenericODataService<Person>
+    public class PersonODataService : RadzenODataService<Person>
     {
-        public PersonODataService() : base("PersonApi")
+        public PersonODataService(IHttpContextAccessor httpContextAccessor)
+            : base("PersonApi", httpContextAccessor)
         {
         }
     }
