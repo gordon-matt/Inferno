@@ -27,7 +27,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Caching\Inferno.Caching.csproj" />
+    <ProjectReference Include="..\Inferno.Data.Abstractions\Inferno.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
+    <ProjectReference Include="..\Inferno.Identity\Inferno.Identity.csproj" />
+    <ProjectReference Include="..\Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Localization\Inferno.Localization.csproj" />
+    <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />
+    <ProjectReference Include="..\Inferno.Tasks.Abstractions\Inferno.Tasks.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Tasks\Inferno.Tasks.csproj" />
+    <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Tenants\Inferno.Tenants.csproj" />
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
+    <ProjectReference Include="..\Inferno\Inferno.csproj" />
   </ItemGroup>
 
 </Project>

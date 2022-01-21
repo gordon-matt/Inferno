@@ -1,12 +1,17 @@
-﻿using Autofac;
-using Blazorise;
+﻿using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using Extenso.AspNetCore.OData;
+using Inferno.Tenants.Entities;
+using Inferno.Web.Mvc.Razor;
+using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Data;
+using InfernoCMS.Data.Entities;
+using InfernoCMS.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OData;
@@ -30,14 +35,37 @@ namespace InfernoCMS
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            #region Account / Identity
+
+            //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/log-off";
+                options.AccessDeniedPath = "/account/access-denied";
+            });
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddUserStore<ApplicationUserStore>()
+            .AddRoleStore<ApplicationRoleStore>()
+            //.AddRoleValidator<ApplicationRoleValidator>()
+            .AddDefaultTokenProviders();
+
+            #endregion Account / Identity
 
             services.AddRouting((routeOptions) =>
             {
                 routeOptions.AppendTrailingSlash = true;
                 routeOptions.LowercaseUrls = true;
             });
+
+            services.AddMultitenancy<Tenant, InfernoTenantResolver>();
 
             services.AddControllersWithViews();
             services.AddRazorPages()
@@ -54,7 +82,14 @@ namespace InfernoCMS
                 });
 
             services.AddServerSideBlazor();
-            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
+            ////  TODO: Will this work for Blazor?? For themes..
+            //services.Configure<RazorViewEngineOptions>(options =>
+            //{
+            //    options.ViewLocationExpanders.Add(new TenantViewLocationExpander());
+            //});
+
+            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddBlazorise(options =>
@@ -101,6 +136,8 @@ namespace InfernoCMS
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseMultitenancy<Tenant>();
 
             app.UseEndpoints(endpoints =>
             {
