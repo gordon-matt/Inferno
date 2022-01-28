@@ -448,26 +448,26 @@ namespace Inferno.Identity
 
         public virtual async Task<ActionResult> ViewProfile(string userId)
         {
-            WorkContext.Value.Breadcrumbs.Add(T[LocalizableStrings.Title].Value);
+            WorkContext.Value.Breadcrumbs.Add(T[InfernoIdentityLocalizableStrings.Title].Value);
 
             if (userId == WorkContext.Value.CurrentUser.Id)
             {
-                ViewBag.Title = T[LocalizableStrings.MyProfile].Value;
-                WorkContext.Value.Breadcrumbs.Add(T[LocalizableStrings.MyProfile].Value);
+                ViewBag.Title = T[InfernoIdentityLocalizableStrings.MyProfile].Value;
+                WorkContext.Value.Breadcrumbs.Add(T[InfernoIdentityLocalizableStrings.MyProfile].Value);
                 ViewBag.CanEdit = true;
             }
             else if (CheckPermission(StandardPermissions.FullAccess))
             {
                 var user = await membershipService.GetUserById(userId);
-                ViewBag.Title = string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName);
-                WorkContext.Value.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName));
+                ViewBag.Title = string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName);
+                WorkContext.Value.Breadcrumbs.Add(string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName));
                 ViewBag.CanEdit = true;
             }
             else
             {
                 var user = await membershipService.GetUserById(userId);
-                ViewBag.Title = string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName);
-                WorkContext.Value.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName));
+                ViewBag.Title = string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName);
+                WorkContext.Value.Breadcrumbs.Add(string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName));
                 ViewBag.CanEdit = false;
             }
 
@@ -481,19 +481,19 @@ namespace Inferno.Identity
 
         public virtual async Task<ActionResult> EditProfile(string userId)
         {
-            WorkContext.Value.Breadcrumbs.Add(T[LocalizableStrings.Title].Value);
+            WorkContext.Value.Breadcrumbs.Add(T[InfernoIdentityLocalizableStrings.Title].Value);
 
             if (userId == WorkContext.Value.CurrentUser.Id)
             {
-                ViewBag.Title = T[LocalizableStrings.EditMyProfile].Value;
-                WorkContext.Value.Breadcrumbs.Add(T[LocalizableStrings.MyProfile].Value, Url.Action("ViewMyProfile"));
+                ViewBag.Title = T[InfernoIdentityLocalizableStrings.EditMyProfile].Value;
+                WorkContext.Value.Breadcrumbs.Add(T[InfernoIdentityLocalizableStrings.MyProfile].Value, Url.Action("ViewMyProfile"));
                 WorkContext.Value.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
             }
             else if (CheckPermission(StandardPermissions.FullAccess))
             {
-                ViewBag.Title = T[LocalizableStrings.EditProfile].Value;
+                ViewBag.Title = T[InfernoIdentityLocalizableStrings.EditProfile].Value;
                 var user = await membershipService.GetUserById(userId);
-                WorkContext.Value.Breadcrumbs.Add(string.Format(T[LocalizableStrings.ProfileForUser].Value, user.UserName), Url.Action("ViewProfile", new { userId = userId }));
+                WorkContext.Value.Breadcrumbs.Add(string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName), Url.Action("ViewProfile", new { userId = userId }));
                 WorkContext.Value.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
             }
             else

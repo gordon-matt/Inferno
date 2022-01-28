@@ -16,10 +16,7 @@ namespace InfernoCMS.Areas.Admin
 
         #region INavigationProvider Members
 
-        public string MenuName
-        {
-            get { return InfernoWebConstants.Areas.Admin; }
-        }
+        public string MenuName => InfernoWebConstants.Areas.Admin;
 
         public void GetNavigation(NavigationBuilder builder)
         {

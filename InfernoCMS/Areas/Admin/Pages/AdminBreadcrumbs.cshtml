@@ -1,0 +1,30 @@
+﻿@using Dependo
+@using Inferno.Web
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer T
+@inject Inferno.Web.IWorkContext WorkContext
+
+<ul class="breadcrumb">
+    <li>
+        <a href="/" title="@T[InfernoWebLocalizableStrings.General.Home]">
+            <i class="fa fa-home"></i> @T[InfernoWebLocalizableStrings.General.Home]
+        </a>
+        <span class="divider"></span>
+    </li>
+
+    @foreach (var item in WorkContext.Breadcrumbs)
+    {
+        if (!string.IsNullOrEmpty(item.Url))
+        {
+            <li><a href="@item.Url"><i class="@item.Icon"></i>@item.Text</a><span class="divider"></span></li>
+        }
+        else
+        {
+            <li><i class="@item.Icon"></i>@item.Text<span class="divider"></span></li>
+        }
+    }
+    @{
+        // Empty the list for next page
+        WorkContext.Breadcrumbs.Clear();
+    }
+</ul>

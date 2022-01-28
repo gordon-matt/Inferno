@@ -1,6 +1,6 @@
 ﻿namespace Inferno.Identity
 {
-    public static class LocalizableStrings
+    public static class InfernoIdentityLocalizableStrings
     {
         public const string ConfirmNewPassword = "Inferno.Identity/ConfirmNewPassword";
         public const string ConfirmPassword = "Inferno.Identity/ConfirmPassword";

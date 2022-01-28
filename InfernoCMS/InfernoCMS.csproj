@@ -12,6 +12,7 @@
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.5.4" />
     <PackageReference Include="Dependo.Autofac" Version="1.0.0" />
     <PackageReference Include="EPPlus" Version="5.8.5" />
+    <PackageReference Include="Extenso.AspNetCore.Mvc" Version="6.0.0" />
     <PackageReference Include="Extenso.AspNetCore.OData" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
@@ -40,6 +41,10 @@
     <ProjectReference Include="..\Inferno.Tenants\Inferno.Tenants.csproj" />
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Controllers\" />
   </ItemGroup>
 
 </Project>
