@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Inferno.Web.Navigation
+﻿namespace Inferno.Web.Navigation
 {
     public class MenuItemComparer : IEqualityComparer<MenuItem>
     {
@@ -23,30 +20,13 @@ namespace Inferno.Web.Navigation
                     return false;
                 }
             }
-            if (x.RouteValues != null && y.RouteValues != null)
-            {
-                if (x.RouteValues.Keys.Any(key => y.RouteValues.ContainsKey(key) == false))
-                {
-                    return false;
-                }
-                if (y.RouteValues.Keys.Any(key => x.RouteValues.ContainsKey(key) == false))
-                {
-                    return false;
-                }
-                foreach (string key in x.RouteValues.Keys)
-                {
-                    if (!Equals(x.RouteValues[key], y.RouteValues[key]))
-                    {
-                        return false;
-                    }
-                }
-            }
 
-            if (!string.IsNullOrWhiteSpace(x.Url) && y.RouteValues != null)
+            if (!string.IsNullOrWhiteSpace(x.Url))
             {
                 return false;
             }
-            if (!string.IsNullOrWhiteSpace(y.Url) && x.RouteValues != null)
+
+            if (!string.IsNullOrWhiteSpace(y.Url))
             {
                 return false;
             }
@@ -63,10 +43,6 @@ namespace Inferno.Web.Navigation
                 hash ^= obj.Text.GetHashCode();
             }
 
-            //if (obj.Text != null && obj.Text != null)
-            //{
-            //    hash ^= obj.Text.GetHashCode();
-            //}
             return hash;
         }
 

@@ -1,43 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Extenso.Collections;
-using Inferno.Security.Membership.Permissions;
+﻿using Extenso.Collections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.Navigation
 {
     public class NavigationManager : INavigationManager
     {
-        private readonly IAuthorizationService authorizationService;
         private readonly IEnumerable<INavigationProvider> providers;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ILogger logger;
-        private readonly IUrlHelper urlHelper;
         private readonly IWebHelper webHelper;
         private readonly IWorkContext workContext;
 
         public NavigationManager(
-            IActionContextAccessor actionContextAccessor,
             IEnumerable<INavigationProvider> providers,
             IHttpContextAccessor httpContextAccessor,
             ILoggerFactory loggerFactory,
-            IUrlHelperFactory urlHelperFactory,
             IWebHelper webHelper,
-            IWorkContext workContext,
-            IAuthorizationService authorizationService = null)
+            IWorkContext workContext)
         {
-            this.authorizationService = authorizationService;
             this.httpContextAccessor = httpContextAccessor;
             this.logger = loggerFactory.CreateLogger<NavigationManager>();
             this.providers = providers;
-            this.urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);
             this.webHelper = webHelper;
             this.workContext = workContext;
         }
@@ -80,7 +65,7 @@ namespace Inferno.Web.Navigation
         {
             foreach (var menuItem in menuItems)
             {
-                menuItem.Href = GetUrl(menuItem.Url, menuItem.RouteValues);
+                menuItem.Href = GetUrl(menuItem.Url);
 
                 if (currentUrl.Equals(menuItem.Href))
                 {
@@ -97,21 +82,16 @@ namespace Inferno.Web.Navigation
         {
             foreach (var item in items)
             {
-                if (authorizationService == null || (!item.Permissions.Any() || item.Permissions.Any(x => authorizationService.TryCheckAccess(x, workContext.CurrentUser))))
+                yield return new MenuItem
                 {
-                    yield return new MenuItem
-                    {
-                        Items = Reduce(item.Items, workContext),
-                        Permissions = item.Permissions,
-                        Position = item.Position,
-                        RouteValues = item.RouteValues,
-                        Text = item.Text,
-                        CssClass = item.CssClass,
-                        Icons = item.Icons,
-                        Url = item.Url,
-                        Href = item.Href
-                    };
-                }
+                    Items = Reduce(item.Items, workContext),
+                    Position = item.Position,
+                    Text = item.Text,
+                    CssClass = item.CssClass,
+                    Icons = item.Icons,
+                    Url = item.Url,
+                    Href = item.Href
+                };
             }
         }
 
@@ -147,10 +127,8 @@ namespace Inferno.Web.Navigation
                 Icons = items.Select(x => x.Icons).FirstOrDefault(x => !x.IsNullOrEmpty()),
                 Url = items.Select(x => x.Url).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)),
                 Href = items.Select(x => x.Href).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)),
-                RouteValues = items.Select(x => x.RouteValues).FirstOrDefault(x => x != null),
                 Items = Merge(items.Select(x => x.Items)).ToArray(),
-                Position = SelectBestPositionValue(items.Select(x => x.Position)),
-                Permissions = items.SelectMany(x => x.Permissions).Distinct(),
+                Position = SelectBestPositionValue(items.Select(x => x.Position))
             };
             return joined;
         }
@@ -166,14 +144,14 @@ namespace Inferno.Web.Navigation
                             : comparer.Compare(agg, pos) < 0 ? agg : pos);
         }
 
-        public string GetUrl(string menuItemUrl, RouteValueDictionary routeValueDictionary)
+        public string GetUrl(string menuItemUrl)
         {
-            if (string.IsNullOrEmpty(menuItemUrl) && routeValueDictionary == null)
+            if (string.IsNullOrEmpty(menuItemUrl))
             {
                 return null;
             }
 
-            var url = !string.IsNullOrEmpty(menuItemUrl) ? menuItemUrl : urlHelper.RouteUrl(routeValueDictionary);
+            string url = menuItemUrl;
 
             if (!string.IsNullOrEmpty(url) &&
                 !(url.StartsWith("http://") || url.StartsWith("https://") || url.StartsWith("javascript:") || url.StartsWith("#") || url.StartsWith("/")))
@@ -185,7 +163,7 @@ namespace Inferno.Web.Navigation
                 var appPath = webHelper.WebRootPath;
                 if (appPath == "/")
                 {
-                    appPath = "";
+                    appPath = string.Empty;
                 }
                 url = string.Format("{0}/{1}", appPath, url);
             }

@@ -1,16 +1,7 @@
-﻿using Inferno.Security.Membership.Permissions;
-using Microsoft.AspNetCore.Routing;
-
-namespace Inferno.Web.Navigation
+﻿namespace Inferno.Web.Navigation
 {
     public class MenuItem
     {
-        public MenuItem()
-        {
-            Permissions = Enumerable.Empty<Permission>();
-            Icons = Enumerable.Empty<string>();
-        }
-
         public string Text { get; set; }
 
         //public string Description { get; set; }
@@ -23,19 +14,12 @@ namespace Inferno.Web.Navigation
 
         public bool Selected { get; set; }
 
-        public RouteValueDictionary RouteValues { get; set; }
-
         public IEnumerable<MenuItem> Items { get; set; }
-
-        public IEnumerable<Permission> Permissions { get; set; }
 
         public string CssClass { get; set; }
 
-        public IEnumerable<string> Icons { get; set; }
+        public IEnumerable<string> Icons { get; set; } = Enumerable.Empty<string>();
 
-        public override string ToString()
-        {
-            return Text;
-        }
+        public override string ToString() => Text;
     }
 }

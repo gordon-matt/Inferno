@@ -23,7 +23,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="~/" />
+    <base href="~/admin" />
 
     @RenderSection("meta", required: false)
 
@@ -54,12 +54,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ImageLink(
+                <a class="navbar-brand" href="#">Inferno CMS</a>
+                @*@Html.ImageLink(
                     Url,
                     "/img/logo.png",
                     SiteSettings.SiteName,
                     "#",
-                    imgHtmlAttributes: new { style = "max-width:200px;margin-top:18px" })
+                    imgHtmlAttributes: new { style = "max-width:200px;margin-top:18px" })*@
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse-1">
                 @await Html.PartialAsync("AdminMenu")
