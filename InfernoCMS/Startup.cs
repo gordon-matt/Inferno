@@ -94,7 +94,7 @@ namespace InfernoCMS
 
             services.AddBlazorise(options =>
             {
-                options.ChangeTextOnKeyPress = true; // optional
+                options.Immediate = true; // optional
             })
             .AddBootstrapProviders()
             .AddFontAwesomeIcons();

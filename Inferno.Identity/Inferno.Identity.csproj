@@ -1,24 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="Dependo.Autofac" Version="1.0.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj" />
-		<ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
-		<ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dependo.Autofac" Version="1.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.355802">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
+  </ItemGroup>
 </Project>

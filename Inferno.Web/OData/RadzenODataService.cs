@@ -113,8 +113,8 @@ namespace Inferno.Web.OData
             {
                 if (disposing)
                 {
-                    httpClient.DisposeIfNotNull();
-                    httpClientHandler.DisposeIfNotNull();
+                    httpClient?.Dispose();
+                    httpClientHandler?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

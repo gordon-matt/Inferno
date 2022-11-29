@@ -1,31 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-InfernoCMS-BB86AE00-F56D-4EB2-A9B7-2A925E3A81CF</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.5.4" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.5.4" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="1.1.4.1" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.1.4.1" />
     <PackageReference Include="Dependo.Autofac" Version="1.0.0" />
-    <PackageReference Include="EPPlus" Version="5.8.5" />
-    <PackageReference Include="Extenso.AspNetCore.Mvc" Version="6.0.0" />
-    <PackageReference Include="Extenso.AspNetCore.OData" Version="6.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1">
+    <PackageReference Include="EPPlus" Version="6.1.1" />
+    <PackageReference Include="Extenso.AspNetCore.Mvc" Version="7.0.0" />
+    <PackageReference Include="Extenso.AspNetCore.OData" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.355802">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Caching\Inferno.Caching.csproj" />
@@ -42,11 +42,9 @@
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Areas\Admin\Controllers\" />
     <Folder Include="Areas\Admin\Shared\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
-
 </Project>
