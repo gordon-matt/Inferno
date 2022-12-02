@@ -5,8 +5,8 @@
     /// </summary>
     public interface IAuthorizationService //: IDependency
     {
-        void CheckAccess(Permission permission, InfernoUser user);
+        Task CheckAccessAsync(Permission permission, InfernoUser user);
 
-        bool TryCheckAccess(Permission permission, InfernoUser user);
+        Task<bool> TryCheckAccessAsync(Permission permission, InfernoUser user);
     }
 }

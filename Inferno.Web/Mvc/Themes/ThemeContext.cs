@@ -79,8 +79,8 @@ namespace Inferno.Web.Mvc.Themes
                 }
 
                 // Cache theme
-                this.cachedDesktopThemeName = theme;
-                this.isDesktopThemeCached = true;
+                cachedDesktopThemeName = theme;
+                isDesktopThemeCached = true;
                 return theme;
             }
             set
@@ -99,7 +99,7 @@ namespace Inferno.Web.Mvc.Themes
                 AsyncHelper.RunSync(() => membershipService.SaveProfileEntry(workContext.CurrentUser.Id, ThemeUserProfileProvider.Fields.PreferredTheme, value));
 
                 //clear cache
-                this.isDesktopThemeCached = false;
+                isDesktopThemeCached = false;
             }
         }
     }

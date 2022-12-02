@@ -16,15 +16,15 @@ namespace Inferno.Security.Membership.Permissions
             this.membershipService = membershipService;
         }
 
-        public void CheckAccess(Permission permission, InfernoUser user)
+        public async Task CheckAccessAsync(Permission permission, InfernoUser user)
         {
-            if (!TryCheckAccess(permission, user))
+            if (!await TryCheckAccessAsync(permission, user))
             {
                 throw new SecurityException();
             }
         }
 
-        public bool TryCheckAccess(Permission permission, InfernoUser user)
+        public async Task<bool> TryCheckAccessAsync(Permission permission, InfernoUser user)
         {
             if (user == null || permission == null)
             {
@@ -48,7 +48,7 @@ namespace Inferno.Security.Membership.Permissions
                     }
                     else
                     {
-                        rolesToExamine = (AsyncHelper.RunSync(() => membershipService.GetRolesForUser(context.User.Id))).Select(x => x.Name).ToList();
+                        rolesToExamine = (await membershipService.GetRolesForUser(context.User.Id)).Select(x => x.Name).ToList();
                         if (!rolesToExamine.Contains(anonymousRole[0]))
                         {
                             rolesToExamine = rolesToExamine.Concat(authenticatedRole);
@@ -57,8 +57,8 @@ namespace Inferno.Security.Membership.Permissions
 
                     foreach (var role in rolesToExamine)
                     {
-                        //var rolePermissions = AsyncHelper.RunSync(() => membershipService.GetPermissionsForRole(workContext.CurrentTenant.Id, role));
-                        var rolePermissions = AsyncHelper.RunSync(() => membershipService.GetPermissionsForRole(user.TenantId, role));
+                        //var rolePermissions = await membershipService.GetPermissionsForRole(workContext.CurrentTenant.Id, role);
+                        var rolePermissions = await membershipService.GetPermissionsForRole(user.TenantId, role);
                         foreach (var rolePermission in rolePermissions)
                         {
                             string possessedName = rolePermission.Name;

@@ -52,7 +52,7 @@ namespace Inferno.Web.OData
         // GET: odata/<Entity>
         public virtual async Task<IActionResult> Get(ODataQueryOptions<TEntity> options)
         {
-            if (!CheckPermission(ReadPermission))
+            if (!await CheckPermissionAsync(ReadPermission))
             {
                 return Unauthorized();
             }
@@ -68,7 +68,7 @@ namespace Inferno.Web.OData
             // NOTE: Change due to: https://github.com/OData/WebApi/issues/1235
             var connection = GetDisposableConnection();
             var query = connection.Query();
-            query = ApplyMandatoryFilter(query);
+            query = await ApplyMandatoryFilterAsync(query);
             var results = options.ApplyTo(query, IgnoreQueryOptions);
 
             // Recommended not to use ToHashSetAsync(). See: https://github.com/OData/WebApi/issues/1235#issuecomment-371322404
@@ -90,7 +90,7 @@ namespace Inferno.Web.OData
             }
 
             // TODO: CheckPermission(ReadPermission) is getting done twice.. once above, and once in CanViewEntity(). Unnecessary... see if this can be modified
-            if (!CanViewEntity(entity))
+            if (!await CanViewEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -106,7 +106,7 @@ namespace Inferno.Web.OData
                 return BadRequest();
             }
 
-            if (!CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -149,7 +149,7 @@ namespace Inferno.Web.OData
                 return BadRequest();
             }
 
-            if (!CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -184,7 +184,7 @@ namespace Inferno.Web.OData
                 return NotFound();
             }
 
-            if (!CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -220,7 +220,7 @@ namespace Inferno.Web.OData
                 return NotFound();
             }
 
-            if (!CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -252,20 +252,20 @@ namespace Inferno.Web.OData
         /// the user viewing data for a different site (tenant)
         /// </summary>
         /// <param name="entity"></param>
-        protected virtual IQueryable<TEntity> ApplyMandatoryFilter(IQueryable<TEntity> query)
+        protected virtual async Task<IQueryable<TEntity>> ApplyMandatoryFilterAsync(IQueryable<TEntity> query)
         {
             // Do nothing, by default
-            return query;
+            return await Task.FromResult(query);
         }
 
-        protected virtual bool CanViewEntity(TEntity entity)
+        protected virtual async Task<bool> CanViewEntityAsync(TEntity entity)
         {
-            return CheckPermission(ReadPermission);
+            return await CheckPermissionAsync(ReadPermission);
         }
 
-        protected virtual bool CanModifyEntity(TEntity entity)
+        protected virtual async Task<bool> CanModifyEntityAsync(TEntity entity)
         {
-            return CheckPermission(WritePermission);
+            return await CheckPermissionAsync(WritePermission);
         }
 
         protected virtual void OnBeforeSave(TEntity entity)
@@ -276,7 +276,7 @@ namespace Inferno.Web.OData
         {
         }
 
-        protected static bool CheckPermission(Permission permission)
+        protected static async Task<bool> CheckPermissionAsync(Permission permission)
         {
             if (permission == null)
             {
@@ -285,7 +285,7 @@ namespace Inferno.Web.OData
 
             var authorizationService = EngineContext.Current.Resolve<IAuthorizationService>();
             var workContext = EngineContext.Current.Resolve<IWorkContext>();
-            return authorizationService.TryCheckAccess(permission, workContext.CurrentUser);
+            return await authorizationService.TryCheckAccessAsync(permission, workContext.CurrentUser);
         }
 
         protected abstract Permission ReadPermission { get; }

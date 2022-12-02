@@ -29,10 +29,10 @@ namespace Inferno.Web.OData
 
         #region GenericODataController<TEntity, TKey> Members
 
-        protected override IQueryable<TEntity> ApplyMandatoryFilter(IQueryable<TEntity> query)
+        protected override async Task<IQueryable<TEntity>> ApplyMandatoryFilterAsync(IQueryable<TEntity> query)
         {
             int tenantId = GetTenantId();
-            if (CheckPermission(StandardPermissions.FullAccess))
+            if (await CheckPermissionAsync(StandardPermissions.FullAccess))
             {
                 // TODO: Not sure if this is the best solution. Maybe we should only show the items with NULL for Tenant ID?
                 return query.Where(x => x.TenantId == null || x.TenantId == tenantId);
@@ -47,21 +47,21 @@ namespace Inferno.Web.OData
             return workContext.CurrentTenant.Id;
         }
 
-        protected override bool CanViewEntity(TEntity entity)
+        protected override async Task<bool> CanViewEntityAsync(TEntity entity)
         {
             if (entity == null)
             {
                 return false;
             }
 
-            if (CheckPermission(StandardPermissions.FullAccess))
+            if (await CheckPermissionAsync(StandardPermissions.FullAccess))
             {
                 return true; // Only the super admin should have full access
             }
 
             // If not admin user, but possibly the tenant user...
 
-            if (CheckPermission(ReadPermission))
+            if (await CheckPermissionAsync(ReadPermission))
             {
                 int tenantId = GetTenantId();
                 return entity.TenantId == tenantId;
@@ -70,21 +70,21 @@ namespace Inferno.Web.OData
             return false;
         }
 
-        protected override bool CanModifyEntity(TEntity entity)
+        protected override async Task<bool> CanModifyEntityAsync(TEntity entity)
         {
             if (entity == null)
             {
                 return false;
             }
 
-            if (CheckPermission(StandardPermissions.FullAccess))
+            if (await CheckPermissionAsync(StandardPermissions.FullAccess))
             {
                 return true; // Only the super admin should have full access
             }
 
             // If not admin user, but possibly the tenant...
 
-            if (CheckPermission(WritePermission))
+            if (await CheckPermissionAsync(WritePermission))
             {
                 int tenantId = GetTenantId();
                 return entity.TenantId == tenantId;

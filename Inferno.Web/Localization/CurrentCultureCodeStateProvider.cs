@@ -1,5 +1,4 @@
-﻿using System;
-using Inferno.Caching;
+﻿using Inferno.Caching;
 using Microsoft.AspNetCore.Http;
 
 namespace Inferno.Web.Localization

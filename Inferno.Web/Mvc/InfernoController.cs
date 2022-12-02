@@ -9,7 +9,7 @@ namespace Inferno.Web.Mvc
 {
     public class InfernoController : Controller
     {
-        private Lazy<IAuthorizationService> authorizationService;
+        private readonly Lazy<IAuthorizationService> authorizationService;
 
         public IStringLocalizer T { get; private set; }
 
@@ -34,14 +34,14 @@ namespace Inferno.Web.Mvc
             authorizationService = new Lazy<IAuthorizationService>(() => EngineContext.Current.Resolve<IAuthorizationService>());
         }
 
-        protected virtual bool CheckPermission(Permission permission)
+        protected virtual async Task<bool> CheckPermissionAsync(Permission permission)
         {
             if (permission == null)
             {
                 return true;
             }
 
-            return authorizationService.Value.TryCheckAccess(permission, WorkContext.Value.CurrentUser);
+            return await authorizationService.Value.TryCheckAccessAsync(permission, WorkContext.Value.CurrentUser);
         }
 
         protected virtual IActionResult RedirectToHomePage()

@@ -12,6 +12,6 @@
 
         IEnumerable<string> GetFieldNames();
 
-        void PopulateFields(string userId);
+        Task PopulateFieldsAsync(string userId);
     }
 }

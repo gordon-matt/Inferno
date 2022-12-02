@@ -1,7 +1,6 @@
 ﻿using Dependo;
 using Inferno.Localization.ComponentModel;
 using Inferno.Security.Membership;
-using Inferno.Threading;
 
 namespace Inferno.Web.Security.Membership
 {
@@ -25,25 +24,13 @@ namespace Inferno.Web.Security.Membership
 
         #region IUserProfileProvider Members
 
-        public string Name
-        {
-            get { return "Account"; }
-        }
+        public string Name => "Account";
 
-        public string DisplayTemplatePath
-        {
-            get { return "Inferno.Web.Views.Shared.DisplayTemplates.AccountUserProfileProvider"; }
-        }
+        public string DisplayTemplatePath => "Inferno.Web.Views.Shared.DisplayTemplates.AccountUserProfileProvider";
 
-        public string EditorTemplatePath
-        {
-            get { return "Inferno.Web.Views.Shared.EditorTemplates.AccountUserProfileProvider"; }
-        }
+        public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.AccountUserProfileProvider";
 
-        public int Order
-        {
-            get { return 0; }
-        }
+        public int Order => 0;
 
         public IEnumerable<string> GetFieldNames()
         {
@@ -55,11 +42,11 @@ namespace Inferno.Web.Security.Membership
             };
         }
 
-        public void PopulateFields(string userId)
+        public async Task PopulateFieldsAsync(string userId)
         {
             var membershipService = EngineContext.Current.Resolve<IMembershipService>();
 
-            var profile = AsyncHelper.RunSync(() => membershipService.GetProfile(userId));
+            var profile = await membershipService.GetProfile(userId);
 
             if (profile.ContainsKey(Fields.FamilyName))
             {

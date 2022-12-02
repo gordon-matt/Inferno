@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-InfernoCMS-BB86AE00-F56D-4EB2-A9B7-2A925E3A81CF</UserSecretsId>
   </PropertyGroup>
