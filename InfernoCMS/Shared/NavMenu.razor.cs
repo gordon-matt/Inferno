@@ -9,7 +9,7 @@ namespace InfernoCMS.Shared
 
         private void NavigateToAdminArea()
         {
-            NavigationManager.NavigateTo("/admin/", forceLoad: true);
+            NavigationManager.NavigateTo("/admin/pages/index", forceLoad: true);
         }
     }
 }
