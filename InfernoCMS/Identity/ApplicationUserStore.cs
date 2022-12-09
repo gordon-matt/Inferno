@@ -1,7 +1,5 @@
 ﻿using Inferno.Identity;
 using Inferno.Identity.Entities;
-using InfernoCMS.Data;
-using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace InfernoCMS.Identity

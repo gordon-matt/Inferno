@@ -1,12 +1,10 @@
 ﻿using Blazorise;
-using Blazorise.Bootstrap;
+using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Extenso.AspNetCore.OData;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
-using InfernoCMS.Data;
-using InfernoCMS.Data.Entities;
 using InfernoCMS.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -96,7 +94,7 @@ namespace InfernoCMS
             {
                 options.Immediate = true; // optional
             })
-            .AddBootstrapProviders()
+            .AddBootstrap5Providers()
             .AddFontAwesomeIcons();
 
             services.AddHttpContextAccessor();

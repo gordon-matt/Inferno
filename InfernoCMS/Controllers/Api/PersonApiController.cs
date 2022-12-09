@@ -1,6 +1,4 @@
-﻿using InfernoCMS.Data.Entities;
-using Extenso.AspNetCore.OData;
-using Extenso.Data.Entity;
+﻿using Extenso.AspNetCore.OData;
 
 namespace InfernoCMS.Controllers.Api
 {

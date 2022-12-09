@@ -3,9 +3,10 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-InfernoCMS-BB86AE00-F56D-4EB2-A9B7-2A925E3A81CF</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap" Version="1.1.4.1" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.1.4.1" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.1.4.1" />
     <PackageReference Include="Dependo.Autofac" Version="1.0.0" />
     <PackageReference Include="EPPlus" Version="6.1.1" />
@@ -21,6 +22,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.355802">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -42,8 +44,6 @@
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-    <Folder Include="Areas\Admin\Shared\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 </Project>

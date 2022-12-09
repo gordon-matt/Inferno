@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using Extenso.Data.Entity;
 using Inferno.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

@@ -7,14 +7,21 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
 @using Blazorise
+@using Extenso
+@using Extenso.Collections
 @using Inferno
+@using Inferno.Tenants.Entities
 @using Inferno.Web
 @using Inferno.Web.Components
 @using Inferno.Web.OData
 @using InfernoCMS
 @using InfernoCMS.Data.Entities
-@using InfernoCMS.Shared
 @using InfernoCMS.Services
+@using InfernoCMS.Shared
 @using Radzen
 @using Radzen.Blazor
 @using ButtonType = Radzen.ButtonType
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer T
+@inject Inferno.Web.Configuration.SiteSettings SiteSettings
+@inject Inferno.Web.IWorkContext WorkContext

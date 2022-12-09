@@ -281,4 +281,4 @@ __pycache__/
 ### VisualStudio Patch ###
 build/
 
-Inferno/wwwroot/lib
+InfernoCMS/wwwroot/lib

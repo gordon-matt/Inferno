@@ -1,6 +1,4 @@
-﻿using System;
-using Extenso.Data.Entity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InfernoCMS.Data.Entities

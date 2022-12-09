@@ -1,10 +1,4 @@
-﻿using Inferno.Web.Models;
-using Inferno.Web.Mvc;
-using InfernoCMS.Data;
-using InfernoCMS.Data.Entities;
-using Microsoft.AspNetCore.Mvc;
-
-namespace InfernoCMS.Controllers
+﻿namespace InfernoCMS.Controllers
 {
     [Route("person")]
     public class PersonController : ExportController<Person>

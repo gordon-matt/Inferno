@@ -3,9 +3,7 @@
 #nullable disable
 
 using System.Text;
-using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 

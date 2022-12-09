@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Inferno.Identity.Entities;
+﻿using Inferno.Identity.Entities;
 
 namespace InfernoCMS.Data.Entities
 {

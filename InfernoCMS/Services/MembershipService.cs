@@ -1,6 +1,4 @@
-﻿using Extenso.Data.Entity;
-using InfernoCMS.Data.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace InfernoCMS.Services
 {

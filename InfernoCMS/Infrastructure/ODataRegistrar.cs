@@ -1,5 +1,4 @@
-﻿using InfernoCMS.Data.Entities;
-using Extenso.AspNetCore.OData;
+﻿using Extenso.AspNetCore.OData;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 

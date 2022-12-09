@@ -1,4 +1,4 @@
-﻿@page "/admin/pages/tenants"
+﻿@page "/tenants/index"
 @inherits RadzenDataPage<Tenant, int>
 @*@attribute [Authorize]*@
 
@@ -76,15 +76,15 @@
                             <Field Horizontal="true">
                                 <FieldLabel For="Hosts" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Tenants.Model.Hosts]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is9">
-                                    <RadzenDatePicker @bind-Value=Model.Hosts DateFormat="yyyy-MM-dd" Style="width:100%" />
+                                    <RadzenTextBox @bind-Value="Model.Hosts" Style="width:100%" />
                                 </FieldBody>
                             </Field>
                         </Column>
                     </Row>
                     <hr />
-                    <Row Class="float-right">
+                    <Row>
                         <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
+                            <Field Class="float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     Cancel
                                 </RadzenButton>

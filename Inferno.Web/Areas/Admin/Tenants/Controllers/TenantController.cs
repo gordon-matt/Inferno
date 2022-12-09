@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Inferno.Web.Areas.Admin.Tenants.Controllers
 {
     [Area(InfernoWebConstants.Areas.Tenants)]
-    [Route("admin/tenants")]
+    [Route("tenants")]
     public class TenantController : ExportController<Tenant>
     {
         private readonly IRepository<Tenant> repository;

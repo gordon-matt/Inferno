@@ -1,6 +1,4 @@
-﻿using Extenso.Data.Entity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace InfernoCMS.Data
 {

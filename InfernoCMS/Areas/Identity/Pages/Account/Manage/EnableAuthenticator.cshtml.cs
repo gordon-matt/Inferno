@@ -6,9 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
-using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage
@@ -86,7 +84,7 @@ namespace InfernoCMS.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
             await LoadSharedKeyAndQrCodeUriAsync(user);

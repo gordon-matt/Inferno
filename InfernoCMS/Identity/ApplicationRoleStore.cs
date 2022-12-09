@@ -1,6 +1,4 @@
 ﻿using Inferno.Identity;
-using InfernoCMS.Data;
-using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace InfernoCMS.Identity
