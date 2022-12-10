@@ -1,10 +1,10 @@
-﻿.container {
+﻿/*.container {
     width: 98% !important;
-}
+}*/
 
-body {
+/*body {
     padding-top: 90px;
-}
+}*/
 
 .fa-sub {
     position: relative;
@@ -30,9 +30,9 @@ div.tile > i {
         display: block;
     }
 
-.navbar-brand {
+/*.navbar-brand {
     margin-top: 15px;
-}
+}*/
 
 .k-detail-cell > .tabstrip {
     border-style: dashed;
