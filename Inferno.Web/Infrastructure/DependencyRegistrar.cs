@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
+using Inferno.Localization;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Tenants.Services;
@@ -60,7 +61,7 @@ namespace Inferno.Web.Infrastructure
             //builder.RegisterType<CurrentCultureCodeStateProvider>().As<IWorkContextStateProvider>();
 
             // Localization
-            //builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();
+            builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();
             //builder.RegisterType<WebCultureManager>().AsImplementedInterfaces().InstancePerLifetimeScope();
             //builder.RegisterType<SiteCultureSelector>().As<ICultureSelector>().SingleInstance();
             //builder.RegisterType<CookieCultureSelector>().As<ICultureSelector>().SingleInstance();
