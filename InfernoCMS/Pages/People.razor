@@ -1,6 +1,8 @@
 ﻿@page "/people"
 @inherits RadzenDataPage<Person, int>
 
+<PageTitle>People</PageTitle>
+
 <h1>People</h1>
 
 <Row hidden="@(ShowEditMode == true)">
@@ -48,7 +50,7 @@
             <Columns>
                 <RadzenDataGridColumn TItem="Person" Property="FamilyName" Title="Family Name" Width="150px" />
                 <RadzenDataGridColumn TItem="Person" Property="GivenNames" Title="Given Name/s" />
-                <RadzenDataGridColumn TItem="Person" Property="DateOfBirth" Title="Date of Birth" FormatString="{0:d}" />
+                <RadzenDataGridColumn TItem="Person" Property="DateOfBirth" Title="Date of Birth" FormatString="{0:yyyy-MM-dd}" />
                 <RadzenDataGridColumn TItem="Person" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
                     <Template Context="record">
                         <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
@@ -99,7 +101,7 @@
                     <hr />
                     <Row Class="float-right">
                         <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
+                            <Field Class="float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     Cancel
                                 </RadzenButton>

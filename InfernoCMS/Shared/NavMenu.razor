@@ -1,6 +1,7 @@
 ﻿<Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
+     ThemeContrast="ThemeContrast.Light"
+     Padding="Padding.Is4.OnX">
     <BarBrand>
         <img src="img/logo.png" alt="Inferno CMS" width="100" />
     </BarBrand>
@@ -8,7 +9,16 @@
     <BarMenu>
         <BarStart>
             <BarItem>
-                <BarLink To="/">Home</BarLink>
+                <BarLink To="/">
+                    <Icon Name="IconName.Home"></Icon>
+                    Home
+                </BarLink>
+            </BarItem>
+            <BarItem>
+                <BarLink To="/people">
+                    <Icon Name="IconName.Users"></Icon>
+                    People (Sample)
+                </BarLink>
             </BarItem>
         </BarStart>
         <BarEnd>

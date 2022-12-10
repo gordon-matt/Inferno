@@ -42,40 +42,30 @@
     @RenderSection("styles", required: false)
 </head>
 <body dir="@dir">
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
-                    <span class="sr-only">@T[LocalizableStrings.Dashboard.ToggleNavigation]</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Inferno CMS</a>
-                @*@Html.ImageLink(
-                    Url,
-                    "/img/logo.png",
-                    SiteSettings.SiteName,
-                    "#",
-                    imgHtmlAttributes: new { style = "max-width:200px;margin-top:18px" })*@
+    <nav class="navbar navbar-light b-bar-light navbar-expand-md b-bar-horizontal px-4 bg-light">
+        <div class="navbar-brand">
+            <img src="img/logo.png" alt="Inferno CMS" width="100">
+        </div>
+        <a role="button" class="navbar-toggler" aria-label="@T[LocalizableStrings.Dashboard.ToggleNavigation]">
+            <span class="navbar-toggler-icon" aria-hidden="true"></span>
+        </a>
+        <div class="collapse navbar-collapse show">
+            <div class="navbar-nav me-auto">
+                <div class="nav-item">
+                    <a href="/" class="active nav-link">
+                        <i class="fa fa-home"></i>
+                        @T[LocalizableStrings.Dashboard.Frontend]
+                    </a>
+                </div>
             </div>
-            <div class="collapse navbar-collapse" id="navbar-collapse-1">
-                @await Html.PartialAsync("AdminMenu")
-                <ul id="secondary-nav" class="nav navbar-nav navbar-right">
-                    @*@Html.ContentZone("AdminLanguageSwitch")*@
-                    <li>
-                        <a href="/">
-                            <i class="fa fa-home"></i>
-                            <span>@T[LocalizableStrings.Dashboard.Frontend]</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:document.getElementById('logoutForm').submit()">
-                            <i class="fa fa-power-off"></i>
-                            <span>@T[InfernoIdentityLocalizableStrings.LogOut]</span>
-                        </a>
-                    </li>
-                </ul>
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item"><a href="Identity/Account/Register" class="nav-link">Register</a></div>
+                <div class="nav-item">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" class="nav-link">
+                        <i class="fa fa-power-off"></i>
+                        <span>@T[InfernoIdentityLocalizableStrings.LogOut]</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
