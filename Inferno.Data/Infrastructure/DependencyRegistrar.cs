@@ -31,10 +31,7 @@ namespace Inferno.Data.Infrastructure
             }
         }
 
-        public int Order
-        {
-            get { return 0; }
-        }
+        public int Order => 0;
 
         #endregion IDependencyRegistrar Members
     }

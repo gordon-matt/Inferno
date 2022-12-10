@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
-using Inferno.Security.Membership.Permissions;
+using Inferno.Security;
 using Inferno.Tenants.Entities;
-using Inferno.Web.Areas.Admin.Tenants.Services;
+using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Services;
 using Inferno.Web.Mvc.Themes;
@@ -42,7 +42,7 @@ namespace Inferno.Web.Infrastructure
             ////builder.RegisterType<ResourcesManager>().As<IResourcesManager>().InstancePerLifetimeScope();
 
             // Security
-            builder.RegisterType<RolesBasedAuthorizationService>().As<IAuthorizationService>().SingleInstance();
+            //builder.RegisterType<RolesBasedAuthorizationService>().As<IAuthorizationService>().SingleInstance();
 
             // Configuration
             builder.RegisterModule<ConfigurationModule>();
@@ -53,10 +53,6 @@ namespace Inferno.Web.Infrastructure
             // Navigation
             builder.RegisterType<NavigationManager>().As<INavigationManager>().InstancePerDependency();
             //builder.RegisterType<NavigationProvider>().As<INavigationProvider>().SingleInstance();
-
-            // Permission Providers
-            builder.RegisterType<StandardPermissions>().As<IPermissionProvider>().SingleInstance();
-            //builder.RegisterType<InfernoWebPermissions>().As<IPermissionProvider>().SingleInstance();
 
             // Work Context State Providers
             builder.RegisterType<CurrentUserStateProvider>().As<IWorkContextStateProvider>();

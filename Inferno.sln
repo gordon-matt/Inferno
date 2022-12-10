@@ -9,29 +9,31 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno", "Inferno\Inferno.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Web", "Inferno.Web\Inferno.Web.csproj", "{6FDF4787-0BF5-4426-ABDE-2E12368CF785}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Tenants.Abstractions", "Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj", "{812458DA-D2D4-4FB6-A900-809E875DE5B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Tenants.Abstractions", "Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj", "{812458DA-D2D4-4FB6-A900-809E875DE5B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Data.Abstractions", "Inferno.Data.Abstractions\Inferno.Data.Abstractions.csproj", "{32C456BA-B9F3-4F79-B792-C9B034442619}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Data.Abstractions", "Inferno.Data.Abstractions\Inferno.Data.Abstractions.csproj", "{32C456BA-B9F3-4F79-B792-C9B034442619}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Data", "Inferno.Data\Inferno.Data.csproj", "{C2EC7E00-C5B2-425C-9EA9-F8F753CC4CCC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Data", "Inferno.Data\Inferno.Data.csproj", "{C2EC7E00-C5B2-425C-9EA9-F8F753CC4CCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Caching.Abstractions", "Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj", "{7C82FA3D-D149-4CF6-B6D6-C6CF45402083}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Caching.Abstractions", "Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj", "{7C82FA3D-D149-4CF6-B6D6-C6CF45402083}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Caching", "Inferno.Caching\Inferno.Caching.csproj", "{A5CA5DBA-D50F-498A-9BF2-893E57AC511A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Caching", "Inferno.Caching\Inferno.Caching.csproj", "{A5CA5DBA-D50F-498A-9BF2-893E57AC511A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Tasks.Abstractions", "Inferno.Tasks.Abstractions\Inferno.Tasks.Abstractions.csproj", "{278F79CC-00DB-4B73-B3F6-8FEA96EF6875}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Tasks.Abstractions", "Inferno.Tasks.Abstractions\Inferno.Tasks.Abstractions.csproj", "{278F79CC-00DB-4B73-B3F6-8FEA96EF6875}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Tasks", "Inferno.Tasks\Inferno.Tasks.csproj", "{EC3498FE-6471-4AA7-B92B-BE505E62BCF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Tasks", "Inferno.Tasks\Inferno.Tasks.csproj", "{EC3498FE-6471-4AA7-B92B-BE505E62BCF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Tenants", "Inferno.Tenants\Inferno.Tenants.csproj", "{F7B25055-2626-451D-99EF-EC9B291A3B93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Tenants", "Inferno.Tenants\Inferno.Tenants.csproj", "{F7B25055-2626-451D-99EF-EC9B291A3B93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Localization.Abstractions", "Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj", "{53ADE407-D582-4881-BDD4-6406F626269A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Localization.Abstractions", "Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj", "{53ADE407-D582-4881-BDD4-6406F626269A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Localization", "Inferno.Localization\Inferno.Localization.csproj", "{948A1AD9-5CCF-47D7-ABCF-8BD24DA707EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Localization", "Inferno.Localization\Inferno.Localization.csproj", "{948A1AD9-5CCF-47D7-ABCF-8BD24DA707EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Security", "Inferno.Security\Inferno.Security.csproj", "{F23B5646-3108-4B5D-8795-B0E3D51D9510}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Security", "Inferno.Security\Inferno.Security.csproj", "{F23B5646-3108-4B5D-8795-B0E3D51D9510}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Identity", "Inferno.Identity\Inferno.Identity.csproj", "{01F01888-ED77-462F-9729-4C52EB075C36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Identity", "Inferno.Identity\Inferno.Identity.csproj", "{01F01888-ED77-462F-9729-4C52EB075C36}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8BA8D4C8-60C3-46C2-899B-7BE5AA4212C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,23 +1,17 @@
 ﻿using Dependo;
+using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
-using Inferno.Data.Services;
-using Inferno.Security.Membership.Permissions;
+using Inferno.Security;
 using Inferno.Tenants.Entities;
 
 namespace Inferno.Web.OData
 {
-    public abstract class GenericTenantODataController<TEntity, TKey> : GenericODataController<TEntity, TKey>
-        where TEntity : class, ITenantEntity
+    public abstract class GenericTenantODataController<TEntity, TKey> : BaseODataController<TEntity, TKey>
+        where TEntity : BaseEntity<TKey>, ITenantEntity
     {
         private readonly IWorkContext workContext;
 
         #region Constructors
-
-        public GenericTenantODataController(IGenericDataService<TEntity> service)
-            : base(service)
-        {
-            workContext = EngineContext.Current.Resolve<IWorkContext>();
-        }
 
         public GenericTenantODataController(IRepository<TEntity> repository)
             : base(repository)
@@ -32,7 +26,7 @@ namespace Inferno.Web.OData
         protected override async Task<IQueryable<TEntity>> ApplyMandatoryFilterAsync(IQueryable<TEntity> query)
         {
             int tenantId = GetTenantId();
-            if (await CheckPermissionAsync(StandardPermissions.FullAccess))
+            if (await AuthorizeAsync(StandardPolicies.FullAccess))
             {
                 // TODO: Not sure if this is the best solution. Maybe we should only show the items with NULL for Tenant ID?
                 return query.Where(x => x.TenantId == null || x.TenantId == tenantId);
@@ -47,21 +41,21 @@ namespace Inferno.Web.OData
             return workContext.CurrentTenant.Id;
         }
 
-        protected override async Task<bool> CanViewEntityAsync(TEntity entity)
+        protected override async Task<bool> CanViewEntity(TEntity entity)
         {
             if (entity == null)
             {
                 return false;
             }
 
-            if (await CheckPermissionAsync(StandardPermissions.FullAccess))
+            if (await AuthorizeAsync(StandardPolicies.FullAccess))
             {
                 return true; // Only the super admin should have full access
             }
 
             // If not admin user, but possibly the tenant user...
 
-            if (await CheckPermissionAsync(ReadPermission))
+            if (await AuthorizeAsync(ReadPermission))
             {
                 int tenantId = GetTenantId();
                 return entity.TenantId == tenantId;
@@ -70,21 +64,21 @@ namespace Inferno.Web.OData
             return false;
         }
 
-        protected override async Task<bool> CanModifyEntityAsync(TEntity entity)
+        protected override async Task<bool> CanModifyEntity(TEntity entity)
         {
             if (entity == null)
             {
                 return false;
             }
 
-            if (await CheckPermissionAsync(StandardPermissions.FullAccess))
+            if (await AuthorizeAsync(StandardPolicies.FullAccess))
             {
                 return true; // Only the super admin should have full access
             }
 
             // If not admin user, but possibly the tenant...
 
-            if (await CheckPermissionAsync(WritePermission))
+            if (await AuthorizeAsync(WritePermission))
             {
                 int tenantId = GetTenantId();
                 return entity.TenantId == tenantId;

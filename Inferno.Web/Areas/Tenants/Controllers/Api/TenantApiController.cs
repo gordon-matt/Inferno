@@ -1,25 +1,25 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using Extenso.AspNetCore.OData;
+using Extenso.Data.Entity;
 using Inferno.Helpers;
+using Inferno.Security;
 using Inferno.Security.Membership;
-using Inferno.Security.Membership.Permissions;
 using Inferno.Tenants.Entities;
 using Inferno.Tenants.Services;
 using Inferno.Web.OData;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inferno.Web.Areas.Admin.Tenants.Controllers.Api
+namespace Inferno.Web.Areas.Tenants.Controllers.Api
 {
-    public class TenantApiController : GenericODataController<Tenant, int>
+    public class TenantApiController : BaseODataController<Tenant, int>
     {
         private readonly IMembershipService membershipService;
         private readonly IWebHelper webHelper;
 
         public TenantApiController(
-            ITenantService service,
+            IRepository<Tenant> repository,
             IMembershipService membershipService,
             IWebHelper webHelper)
-            : base(service)
+            : base(repository)
         {
             this.membershipService = membershipService;
             this.webHelper = webHelper;
@@ -66,8 +66,8 @@ namespace Inferno.Web.Areas.Admin.Tenants.Controllers.Api
         {
         }
 
-        protected override Permission ReadPermission => StandardPermissions.FullAccess;
+        protected override string ReadPermission => StandardPolicies.FullAccess;
 
-        protected override Permission WritePermission => StandardPermissions.FullAccess;
+        protected override string WritePermission => StandardPolicies.FullAccess;
     }
 }

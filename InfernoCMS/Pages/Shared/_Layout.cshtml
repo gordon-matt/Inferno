@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Extenso
+@using Extenso.AspNetCore.Mvc.Rendering
+@using Extenso.Collections
+@using Inferno.Identity
+@using Inferno.Web
+@using InfernoCMS
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer T
+@inject Inferno.Web.Configuration.SiteSettings SiteSettings
+@inject Inferno.Web.IWorkContext WorkContext
+
+@{
+    bool isRTL = System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft;
+    string dir = isRTL ? "rtl" : string.Empty;
+    string lang = WorkContext.CurrentCultureCode.LeftOf('-');
+}
+
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/admin" />
+
+    @RenderSection("meta", required: false)
+
+    @if (isRTL)
+    {
+        <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    }
+    else
+    {
+        <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    }
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/css/dashboard.css" />
+
+    @RenderSection("styles", required: false)
+</head>
+<body dir="@dir">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                    <span class="sr-only">@T[LocalizableStrings.Dashboard.ToggleNavigation]</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Inferno CMS</a>
+                @*@Html.ImageLink(
+                    Url,
+                    "/img/logo.png",
+                    SiteSettings.SiteName,
+                    "#",
+                    imgHtmlAttributes: new { style = "max-width:200px;margin-top:18px" })*@
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                @await Html.PartialAsync("AdminMenu")
+                <ul id="secondary-nav" class="nav navbar-nav navbar-right">
+                    @*@Html.ContentZone("AdminLanguageSwitch")*@
+                    <li>
+                        <a href="/">
+                            <i class="fa fa-home"></i>
+                            <span>@T[LocalizableStrings.Dashboard.Frontend]</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:document.getElementById('logoutForm').submit()">
+                            <i class="fa fa-power-off"></i>
+                            <span>@T[InfernoIdentityLocalizableStrings.LogOut]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        @if (WorkContext.Breadcrumbs.Any())
+        {
+            <div class="row">
+                @await Html.PartialAsync("AdminBreadcrumbs")
+            </div>
+        }
+
+        <div class="page-host">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

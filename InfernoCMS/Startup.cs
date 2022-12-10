@@ -2,6 +2,7 @@
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Extenso.AspNetCore.OData;
+using Inferno.Security;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
@@ -51,7 +52,13 @@ namespace InfernoCMS
             .AddUserStore<ApplicationUserStore>()
             .AddRoleStore<ApplicationRoleStore>()
             //.AddRoleValidator<ApplicationRoleValidator>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddDefaultUI();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(StandardPolicies.FullAccess, policy => policy.RequireClaim("Permission", "FullAccess"));
+            });
 
             #endregion Account / Identity
 

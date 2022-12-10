@@ -2,7 +2,7 @@
 using Inferno.Web.OData;
 using Microsoft.AspNetCore.Http;
 
-namespace Inferno.Web.Areas.Admin.Tenants.Services
+namespace Inferno.Web.Areas.Tenants.Services
 {
     public class TenantODataService : RadzenODataService<Tenant>
     {

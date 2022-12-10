@@ -1,6 +1,6 @@
 ﻿using Dependo;
-using Inferno.Security.Membership.Permissions;
 using Inferno.Web.Configuration;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -34,14 +34,20 @@ namespace Inferno.Web.Mvc
             authorizationService = new Lazy<IAuthorizationService>(() => EngineContext.Current.Resolve<IAuthorizationService>());
         }
 
-        protected virtual async Task<bool> CheckPermissionAsync(Permission permission)
+        protected virtual async Task<bool> AuthorizeAsync(string policyName)
         {
-            if (permission == null)
+            if (string.IsNullOrEmpty(policyName))
             {
                 return true;
             }
 
-            return await authorizationService.Value.TryCheckAccessAsync(permission, WorkContext.Value.CurrentUser);
+            if (authorizationService == null)
+            {
+                return false;
+            }
+
+            var result = await authorizationService.Value.AuthorizeAsync(User, policyName);
+            return result.Succeeded;
         }
 
         protected virtual IActionResult RedirectToHomePage()

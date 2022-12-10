@@ -4,7 +4,7 @@ using Inferno.Web.Models;
 using Inferno.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inferno.Web.Areas.Admin.Tenants.Controllers
+namespace Inferno.Web.Areas.Tenants.Controllers
 {
     [Area(InfernoWebConstants.Areas.Tenants)]
     [Route("tenants")]

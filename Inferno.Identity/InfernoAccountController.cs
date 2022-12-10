@@ -4,8 +4,8 @@ using System.Security.Claims;
 using Inferno.Identity.Entities;
 using Inferno.Identity.Models.AccountViewModels;
 using Inferno.Identity.Services;
+using Inferno.Security;
 using Inferno.Security.Membership;
-using Inferno.Security.Membership.Permissions;
 using Inferno.Web;
 using Inferno.Web.Mvc;
 using Inferno.Web.Mvc.Routing;
@@ -456,7 +456,7 @@ namespace Inferno.Identity
                 WorkContext.Value.Breadcrumbs.Add(T[InfernoIdentityLocalizableStrings.MyProfile].Value);
                 ViewBag.CanEdit = true;
             }
-            else if (await CheckPermissionAsync(StandardPermissions.FullAccess))
+            else if (await AuthorizeAsync(StandardPolicies.FullAccess))
             {
                 var user = await membershipService.GetUserById(userId);
                 ViewBag.Title = string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName);
@@ -489,7 +489,7 @@ namespace Inferno.Identity
                 WorkContext.Value.Breadcrumbs.Add(T[InfernoIdentityLocalizableStrings.MyProfile].Value, Url.Action("ViewMyProfile"));
                 WorkContext.Value.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
             }
-            else if (await CheckPermissionAsync(StandardPermissions.FullAccess))
+            else if (await AuthorizeAsync(StandardPolicies.FullAccess))
             {
                 ViewBag.Title = T[InfernoIdentityLocalizableStrings.EditProfile].Value;
                 var user = await membershipService.GetUserById(userId);
