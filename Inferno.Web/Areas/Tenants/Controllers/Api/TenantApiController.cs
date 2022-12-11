@@ -4,12 +4,12 @@ using Inferno.Helpers;
 using Inferno.Security;
 using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
-using Inferno.Tenants.Services;
-using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inferno.Web.Areas.Tenants.Controllers.Api
 {
+    //[Authorize]
     public class TenantApiController : BaseODataController<Tenant, int>
     {
         private readonly IMembershipService membershipService;

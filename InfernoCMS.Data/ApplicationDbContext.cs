@@ -1,4 +1,5 @@
 ﻿using Inferno.Identity;
+using InfernoCMS.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace InfernoCMS.Data

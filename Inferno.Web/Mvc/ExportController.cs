@@ -13,6 +13,7 @@ namespace Inferno.Web.Mvc
     public partial class ExportController<T> : InfernoController
          where T : class, IEntity
     {
+        [NonAction]
         public IQueryable<T> ApplyQuery(IQueryable<T> items, IQueryCollection query = null)
         {
             if (query != null)
@@ -50,6 +51,7 @@ namespace Inferno.Web.Mvc
             return items;
         }
 
+        [NonAction]
         public FileResult Download(IQueryable<T> query, DownloadOptions options)
         {
             switch (options.FileFormat)

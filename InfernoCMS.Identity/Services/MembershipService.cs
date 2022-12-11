@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Extenso.Data.Entity;
+using InfernoCMS.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 
-namespace InfernoCMS.Services
+namespace InfernoCMS.Identity.Services
 {
     public class MembershipService : IdentityMembershipService
     {

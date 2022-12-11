@@ -1,12 +1,15 @@
 ﻿using System.Linq.Expressions;
+using Extenso.Collections;
+using Extenso.Data.Entity;
 using Inferno.Exceptions;
 using Inferno.Security;
 using Inferno.Security.Membership;
 using Inferno.Web.Security.Membership;
+using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace InfernoCMS.Services
+namespace InfernoCMS.Identity.Services
 {
     public abstract class IdentityMembershipService : IMembershipService
     {

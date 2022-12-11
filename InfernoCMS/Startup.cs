@@ -1,12 +1,17 @@
 ﻿using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Duende.IdentityServer.Models;
 using Extenso.AspNetCore.OData;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Areas.Tenants.Services;
+using Inferno.Web.OData;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
+using InfernoCMS.Data;
 using InfernoCMS.Identity;
+using InfernoCMS.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
@@ -54,6 +59,24 @@ namespace InfernoCMS
             //.AddRoleValidator<ApplicationRoleValidator>()
             .AddDefaultTokenProviders()
             .AddDefaultUI();
+
+            //services.AddIdentityServer()
+            //    .AddAspNetIdentity<ApplicationUser>();
+
+            ////services.AddAuthentication("Identity.Application").AddCookie();
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultScheme = "cookies";
+            //    options.DefaultChallengeScheme = "oidc";
+            //})
+            //.AddCookie("cookies")
+            //.AddOpenIdConnect("oidc", options =>
+            //{
+            //    options.Authority = "https://localhost:7209";
+            //    options.ClientId = "client";
+            //    options.MapInboundClaims = false;
+            //    options.SaveTokens = true;
+            //});
 
             services.AddAuthorization(options =>
             {
@@ -105,6 +128,8 @@ namespace InfernoCMS
             .AddFontAwesomeIcons();
 
             services.AddHttpContextAccessor();
+
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -140,6 +165,7 @@ namespace InfernoCMS
             app.UseRouting();
 
             app.UseAuthentication();
+            //app.UseIdentityServer();
             app.UseAuthorization();
 
             app.UseMultitenancy<Tenant>();

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3e3fbb14-9aff-4d4c-aa21-644d2b9596ae</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Extenso.AspNetCore.OData" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="OData.Swagger" Version="1.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Inferno.Caching\Inferno.Caching.csproj" />
+    <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
+    <ProjectReference Include="..\Inferno.Tenants\Inferno.Tenants.csproj" />
+    <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
+    <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
+    <ProjectReference Include="..\InfernoCMS.Identity\InfernoCMS.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

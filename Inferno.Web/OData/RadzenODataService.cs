@@ -1,5 +1,7 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using Extenso;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Radzen;
 
@@ -28,19 +30,19 @@ namespace Inferno.Web.OData
             var httpRequest = httpContextAccessor.HttpContext.Request;
             baseUri = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}/odata/");
 
+            httpClientHandler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer()
+            };
+
             // This should not be used in production.. it's just to bypass certificate validation for localhost..
             if (baseUri.IsLoopback)
             {
-                httpClientHandler = new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-                };
-                httpClient = new HttpClient(httpClientHandler);
+                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
             }
-            else
-            {
-                httpClient = new HttpClient();
-            }
+
+            httpClient = new HttpClient(httpClientHandler);
 
             this.entitySetName = entitySetName;
         }

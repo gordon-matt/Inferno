@@ -3,8 +3,8 @@ using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
 using Inferno.Localization;
 using Inferno.Security.Membership;
-using Inferno.Web.Navigation;
 using Inferno.Web.OData;
+using InfernoCMS.Identity.Services;
 using InfernoCMS.Services;
 using Radzen;
 

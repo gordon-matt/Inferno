@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />
+    <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
+  </ItemGroup>
+
+</Project>
