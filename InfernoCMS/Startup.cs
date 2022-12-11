@@ -1,22 +1,14 @@
 ﻿using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
-using Duende.IdentityServer.Models;
-using Extenso.AspNetCore.OData;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
-using Inferno.Web.Areas.Tenants.Services;
-using Inferno.Web.OData;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
-using InfernoCMS.Data;
 using InfernoCMS.Identity;
-using InfernoCMS.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OData;
 
 namespace InfernoCMS
 {
@@ -96,18 +88,7 @@ namespace InfernoCMS
             services.AddInfernoLocalization();
 
             services.AddControllersWithViews();
-            services.AddRazorPages()
-                .AddNewtonsoftJson()
-                .AddOData((options, serviceProvider) =>
-                {
-                    options.Select().Expand().Filter().OrderBy().SetMaxTop(null).Count();
-
-                    var registrars = serviceProvider.GetRequiredService<IEnumerable<IODataRegistrar>>();
-                    foreach (var registrar in registrars)
-                    {
-                        registrar.Register(options);
-                    }
-                });
+            services.AddRazorPages().AddNewtonsoftJson();
 
             services.AddServerSideBlazor();
 
@@ -149,18 +130,6 @@ namespace InfernoCMS
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-            // Use odata route debug, /$odata
-            app.UseODataRouteDebug();
-
-            // If you want to use /$openapi, enable the middleware.
-            //app.UseODataOpenApi();
-
-            // Add OData /$query middleware
-            app.UseODataQueryRequest();
-
-            // Add the OData Batch middleware to support OData $Batch
-            //app.UseODataBatching();
 
             app.UseRouting();
 

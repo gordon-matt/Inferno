@@ -4,8 +4,7 @@ namespace InfernoCMS.Services
 {
     public class PersonODataService : RadzenODataService<Person>
     {
-        public PersonODataService(IHttpContextAccessor httpContextAccessor)
-            : base("PersonApi", httpContextAccessor)
+        public PersonODataService() : base("PersonApi")
         {
         }
     }

@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using System.Text;
+using Dependo;
 using Extenso;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Radzen;
 
 namespace Inferno.Web.OData
@@ -10,8 +12,8 @@ namespace Inferno.Web.OData
     public abstract class RadzenODataService<TEntity> : RadzenODataService<TEntity, int>
         where TEntity : class
     {
-        protected RadzenODataService(string entitySetName, IHttpContextAccessor httpContextAccessor)
-            : base(entitySetName, httpContextAccessor)
+        protected RadzenODataService(string entitySetName)
+            : base(entitySetName)
         {
         }
     }
@@ -25,10 +27,10 @@ namespace Inferno.Web.OData
         private readonly HttpClientHandler httpClientHandler;
         private bool isDisposed;
 
-        public RadzenODataService(string entitySetName, IHttpContextAccessor httpContextAccessor)
+        public RadzenODataService(string entitySetName)
         {
-            var httpRequest = httpContextAccessor.HttpContext.Request;
-            baseUri = new Uri($"{httpRequest.Scheme}://{httpRequest.Host}{httpRequest.PathBase}/odata/");
+            var configuration = EngineContext.Current.Resolve<IConfiguration>();
+            baseUri = new Uri(configuration.GetValue<string>("ApiBaseUri"));
 
             httpClientHandler = new HttpClientHandler
             {

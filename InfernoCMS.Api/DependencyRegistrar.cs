@@ -2,8 +2,6 @@
 using Dependo.Autofac;
 using Extenso.Data.Entity;
 using Inferno.Security.Membership;
-using Inferno.Web;
-using Inferno.Web.Configuration;
 using InfernoCMS.Data;
 using InfernoCMS.Identity.Services;
 
