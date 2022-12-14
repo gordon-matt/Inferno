@@ -1,11 +1,14 @@
 ﻿using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using IdentityModel.Client;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -52,23 +55,33 @@ namespace InfernoCMS
             .AddDefaultTokenProviders()
             .AddDefaultUI();
 
-            //services.AddIdentityServer()
-            //    .AddAspNetIdentity<ApplicationUser>();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            {
+                options.Authority = "https://localhost:7286";
+                options.ClientId = "client";
+                options.MapInboundClaims = false;
+                options.SaveTokens = true;
+            });
 
-            ////services.AddAuthentication("Identity.Application").AddCookie();
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultScheme = "cookies";
-            //    options.DefaultChallengeScheme = "oidc";
-            //})
-            //.AddCookie("cookies")
-            //.AddOpenIdConnect("oidc", options =>
-            //{
-            //    options.Authority = "https://localhost:7209";
-            //    options.ClientId = "client";
-            //    options.MapInboundClaims = false;
-            //    options.SaveTokens = true;
-            //});
+            services.AddAccessTokenManagement(options =>
+            {
+                options.Client.Clients.Add("client", new ClientCredentialsTokenRequest
+                {
+                    ClientId = "client",
+                    Scope = "api"
+                });
+            });
+
+            services.AddClientAccessTokenHttpClient("client", configureClient: client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7286");
+            });
 
             services.AddAuthorization(options =>
             {
@@ -134,7 +147,6 @@ namespace InfernoCMS
             app.UseRouting();
 
             app.UseAuthentication();
-            //app.UseIdentityServer();
             app.UseAuthorization();
 
             app.UseMultitenancy<Tenant>();

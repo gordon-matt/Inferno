@@ -4,12 +4,13 @@ using Inferno.Helpers;
 using Inferno.Security;
 using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inferno.Web.Areas.Tenants.Controllers.Api
 {
-    //[Authorize]
+    [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
     public class TenantApiController : BaseODataController<Tenant, int>
     {
         private readonly IMembershipService membershipService;

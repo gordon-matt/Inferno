@@ -1,6 +1,7 @@
 using System.Configuration;
 using Autofac.Core;
 using Dependo.Autofac;
+using Duende.IdentityServer.Models;
 using Extenso.AspNetCore.OData;
 using InfernoCMS.Data;
 using InfernoCMS.Data.Entities;
@@ -34,6 +35,29 @@ namespace InfernoCMS.Api
             .AddRoleStore<ApplicationRoleStore>()
             //.AddRoleValidator<ApplicationRoleValidator>()
             .AddDefaultTokenProviders();
+
+            string migrationsAssembly = typeof(ApplicationDbContext).Assembly.GetName().Name;
+
+            builder.Services.AddIdentityServer(options =>
+            {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.EmitStaticAudienceClaim = true;
+            })
+            //.AddConfigurationStore(storeOptions =>
+            //    storeOptions.ConfigureDbContext = b =>
+            //        b.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options => options.MigrationsAssembly(migrationsAssembly)))
+            //.AddOperationalStore(storeOptions =>
+            //    storeOptions.ConfigureDbContext = b =>
+            //        b.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), options => options.MigrationsAssembly(migrationsAssembly)))
+            .AddConfigurationStore<ApplicationDbContext>(options =>
+                options.ConfigureDbContext = b => b.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")))
+            .AddOperationalStore<ApplicationDbContext>(options =>
+                options.ConfigureDbContext = b => b.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")))
+            .AddServerSideSessions()
+            .AddAspNetIdentity<ApplicationUser>();
 
             builder.Services.AddInfernoLocalization();
 
@@ -80,9 +104,13 @@ namespace InfernoCMS.Api
             // Add the OData Batch middleware to support OData $Batch
             //app.UseODataBatching();
 
+            app.UseAuthentication();
+            app.UseIdentityServer();
             app.UseAuthorization();
 
             app.MapControllers();
+
+            IdentityServerSeedData.EnsureSeedData(app);
 
             app.Run();
         }

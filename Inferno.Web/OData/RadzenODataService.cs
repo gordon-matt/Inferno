@@ -24,7 +24,7 @@ namespace Inferno.Web.OData
         protected readonly Uri baseUri;
         protected readonly string entitySetName;
         protected readonly HttpClient httpClient;
-        private readonly HttpClientHandler httpClientHandler;
+        //private readonly HttpClientHandler httpClientHandler;
         private bool isDisposed;
 
         public RadzenODataService(string entitySetName)
@@ -32,19 +32,22 @@ namespace Inferno.Web.OData
             var configuration = EngineContext.Current.Resolve<IConfiguration>();
             baseUri = new Uri(configuration.GetValue<string>("ApiBaseUri"));
 
-            httpClientHandler = new HttpClientHandler
-            {
-                UseCookies = true,
-                CookieContainer = new CookieContainer()
-            };
+            var httpClientFactory = EngineContext.Current.Resolve<IHttpClientFactory>();
+            httpClient = httpClientFactory.CreateClient("client");
 
-            // This should not be used in production.. it's just to bypass certificate validation for localhost..
-            if (baseUri.IsLoopback)
-            {
-                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-            }
+            //httpClientHandler = new HttpClientHandler
+            //{
+            //    UseCookies = true,
+            //    CookieContainer = new CookieContainer()
+            //};
 
-            httpClient = new HttpClient(httpClientHandler);
+            //// This should not be used in production.. it's just to bypass certificate validation for localhost..
+            //if (baseUri.IsLoopback)
+            //{
+            //    httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+            //}
+
+            //httpClient = new HttpClient(httpClientHandler);
 
             this.entitySetName = entitySetName;
         }
@@ -118,7 +121,7 @@ namespace Inferno.Web.OData
                 if (disposing)
                 {
                     httpClient?.Dispose();
-                    httpClientHandler?.Dispose();
+                    //httpClientHandler?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
