@@ -3,6 +3,7 @@ using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity;
@@ -73,9 +74,16 @@ namespace InfernoCMS
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(StandardPolicies.FullAccess, policy => policy.RequireClaim("Permission", "FullAccess"));
+                options.AddInfernoWebPolicies();
             });
 
             #endregion Account / Identity
+
+            services.AddSingleton(Configuration);
+
+            services
+                .AddMemoryCache()
+                .AddDistributedMemoryCache();
 
             services.AddRouting((routeOptions) =>
             {

@@ -4,8 +4,10 @@ using Extenso.AspNetCore.OData;
 using Inferno.Localization;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Areas.Admin.Configuration.Services;
 using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
+using Inferno.Web.Configuration.Entities;
 using Inferno.Web.Configuration.Services;
 using Inferno.Web.Mvc.Themes;
 using Inferno.Web.Navigation;
@@ -81,6 +83,7 @@ namespace Inferno.Web.Infrastructure
             //// Embedded File Provider
             //builder.RegisterType<EmbeddedFileProviderRegistrar>().As<IEmbeddedFileProviderRegistrar>().InstancePerLifetimeScope();
 
+            builder.RegisterType<SettingODataService>().As<IRadzenODataService<Setting, Guid>>().SingleInstance();
             builder.RegisterType<TenantODataService>().As<IRadzenODataService<Tenant, int>>().SingleInstance();
         }
 

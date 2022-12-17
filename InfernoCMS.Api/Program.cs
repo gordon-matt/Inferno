@@ -57,6 +57,10 @@ namespace InfernoCMS.Api
 
             builder.Services.AddHttpContextAccessor();
 
+            builder.Services
+                .AddMemoryCache()
+                .AddDistributedMemoryCache();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

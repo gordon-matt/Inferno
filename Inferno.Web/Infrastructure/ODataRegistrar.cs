@@ -1,10 +1,6 @@
 ﻿using Extenso.AspNetCore.OData;
-using Inferno.Localization.Entities;
-using Inferno.Security.Membership;
-using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Configuration.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 
@@ -18,9 +14,9 @@ namespace Inferno.Web.Infrastructure
         {
             ODataModelBuilder builder = new ODataConventionModelBuilder();
 
-            //// Configuration
-            //builder.EntitySet<Setting>("SettingsApi");
-            ////builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
+            // Configuration
+            builder.EntitySet<Setting>("SettingsApi");
+            //builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
 
             //// Localization
             //builder.EntitySet<Language>("LanguageApi");
@@ -42,7 +38,7 @@ namespace Inferno.Web.Infrastructure
             //builder.EntitySet<ScheduledTask>("ScheduledTaskApi");
 
             // Tenants
-            builder.EntitySet<Tenant>("TenantApi");
+            builder.EntitySet<Tenant>(InfernoWebConstants.ODataRoutes.EntitySetNames.Tenant);
 
             //RegisterLanguageODataActions(builder);
             //RegisterLocalizableStringODataActions(builder);
@@ -52,7 +48,7 @@ namespace Inferno.Web.Infrastructure
             //RegisterScheduledTaskODataActions(builder);
             //RegisterThemeODataActions(builder);
 
-            options.AddRouteComponents("odata/inferno/web", builder.GetEdmModel());
+            options.AddRouteComponents($"odata/{InfernoWebConstants.ODataRoutes.Prefix}", builder.GetEdmModel());
         }
 
         #endregion IODataRegistrar Members
