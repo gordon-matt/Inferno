@@ -40,8 +40,7 @@ namespace Inferno.Web.Mvc.Razor
 
             string controllerAssemblyName = null;
 
-            var controllerActionDescriptor = context.ActionContext.ActionDescriptor as ControllerActionDescriptor;
-            if (controllerActionDescriptor != null)
+            if (context.ActionContext.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
             {
                 var controllerTypeInfo = controllerActionDescriptor.ControllerTypeInfo;
                 controllerAssemblyName = controllerTypeInfo.Assembly.FullName;
@@ -75,7 +74,7 @@ namespace Inferno.Web.Mvc.Razor
             return viewLocations;
         }
 
-        private List<string> GetViewLocationFormats(ILocationFormatProvider locationFormatProvider)
+        private static List<string> GetViewLocationFormats(ILocationFormatProvider locationFormatProvider)
         {
             var formats = locationFormatProvider.ViewLocationFormats.ToList();
             formats.AddRange(locationFormatProvider.PartialViewLocationFormats);
@@ -83,7 +82,7 @@ namespace Inferno.Web.Mvc.Razor
             return formats;
         }
 
-        private List<string> GetAreaViewLocationFormats(ILocationFormatProvider locationFormatProvider)
+        private static List<string> GetAreaViewLocationFormats(ILocationFormatProvider locationFormatProvider)
         {
             var formats = locationFormatProvider.AreaViewLocationFormats.ToList();
             formats.AddRange(locationFormatProvider.AreaPartialViewLocationFormats);
@@ -93,14 +92,12 @@ namespace Inferno.Web.Mvc.Razor
 
         private static DefaultControllerFactory CreateControllerFactory()
         {
-            var propertyActivators = new IControllerPropertyActivator[]
-            {
-                new DefaultControllerPropertyActivator(),
-            };
-
             return new DefaultControllerFactory(
                 new DefaultControllerActivator(new TypeActivatorCache()),
-                propertyActivators);
+                new IControllerPropertyActivator[]
+                {
+                    new DefaultControllerPropertyActivator(),
+                });
         }
     }
 }

@@ -112,7 +112,7 @@ namespace Inferno.Web.Navigation
                 .OrderBy(positionGroup => positionGroup.Key, orderer)
 
                 // ordered by item text in the postion group
-                .SelectMany(positionGroup => positionGroup.OrderBy(item => item.Text == null ? "" : item.Text));
+                .SelectMany(positionGroup => positionGroup.OrderBy(item => item.Text ?? string.Empty));
         }
 
         private static MenuItem Join(IEnumerable<MenuItem> items)
@@ -158,14 +158,14 @@ namespace Inferno.Web.Navigation
             {
                 if (url.StartsWith("~/"))
                 {
-                    url = url.Substring(2);
+                    url = url[2..];
                 }
                 var appPath = webHelper.WebRootPath;
                 if (appPath == "/")
                 {
                     appPath = string.Empty;
                 }
-                url = string.Format("{0}/{1}", appPath, url);
+                url = $"{appPath}/{url}";
             }
             return url;
         }

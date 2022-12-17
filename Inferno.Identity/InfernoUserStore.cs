@@ -24,63 +24,30 @@ namespace Inferno.Identity
 
         #region Private Properties
 
-        private DbSet<TUser> UsersSet
-        {
-            get { return Context.Set<TUser>(); }
-        }
+        private DbSet<TUser> UsersSet => Context.Set<TUser>();
 
-        private DbSet<TRole> Roles
-        {
-            get { return Context.Set<TRole>(); }
-        }
+        private DbSet<TRole> Roles => Context.Set<TRole>();
 
-        private DbSet<IdentityUserClaim<string>> UserClaims
-        {
-            get { return Context.Set<IdentityUserClaim<string>>(); }
-        }
+        private DbSet<IdentityUserClaim<string>> UserClaims => Context.Set<IdentityUserClaim<string>>();
 
-        private DbSet<IdentityUserRole<string>> UserRoles
-        {
-            get { return Context.Set<IdentityUserRole<string>>(); }
-        }
+        private DbSet<IdentityUserRole<string>> UserRoles => Context.Set<IdentityUserRole<string>>();
 
-        private DbSet<IdentityUserLogin<string>> UserLogins
-        {
-            get { return Context.Set<IdentityUserLogin<string>>(); }
-        }
+        private DbSet<IdentityUserLogin<string>> UserLogins => Context.Set<IdentityUserLogin<string>>();
 
-        private DbSet<IdentityUserToken<string>> UserTokens
-        {
-            get { return Context.Set<IdentityUserToken<string>>(); }
-        }
+        private DbSet<IdentityUserToken<string>> UserTokens => Context.Set<IdentityUserToken<string>>();
 
-        private IWorkContext WorkContext
-        {
-            get
-            {
-                if (workContext == null)
-                {
-                    workContext = EngineContext.Current.Resolve<IWorkContext>();
-                }
-                return workContext;
-            }
-        }
+        private IWorkContext WorkContext => workContext ??= EngineContext.Current.Resolve<IWorkContext>();
 
-        private int TenantId
-        {
-            get { return WorkContext.CurrentTenant.Id; }
-        }
+        private int TenantId => WorkContext.CurrentTenant.Id;
 
         #endregion Private Properties
 
-        protected override IdentityUserRole<string> CreateUserRole(TUser user, TRole role)
-        {
-            return new IdentityUserRole<string>()
+        protected override IdentityUserRole<string> CreateUserRole(TUser user, TRole role) =>
+            new()
             {
                 UserId = user.Id,
                 RoleId = role.Id
             };
-        }
 
         protected override IdentityUserClaim<string> CreateUserClaim(TUser user, Claim claim)
         {
@@ -89,29 +56,25 @@ namespace Inferno.Identity
             return userClaim;
         }
 
-        protected override IdentityUserLogin<string> CreateUserLogin(TUser user, UserLoginInfo login)
-        {
-            return new IdentityUserLogin<string>
+        protected override IdentityUserLogin<string> CreateUserLogin(TUser user, UserLoginInfo login) =>
+            new()
             {
                 UserId = user.Id,
                 ProviderKey = login.ProviderKey,
                 LoginProvider = login.LoginProvider,
                 ProviderDisplayName = login.ProviderDisplayName
             };
-        }
 
-        protected override IdentityUserToken<string> CreateUserToken(TUser user, string loginProvider, string name, string value)
-        {
-            return new IdentityUserToken<string>
+        protected override IdentityUserToken<string> CreateUserToken(TUser user, string loginProvider, string name, string value) =>
+            new()
             {
                 UserId = user.Id,
                 LoginProvider = loginProvider,
                 Name = name,
                 Value = value
             };
-        }
 
-        public override Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -122,7 +85,7 @@ namespace Inferno.Identity
                 cancellationToken);
         }
 
-        public override Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -133,7 +96,7 @@ namespace Inferno.Identity
                 cancellationToken);
         }
 
-        public override async Task AddToRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task AddToRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -157,7 +120,7 @@ namespace Inferno.Identity
             UserRoles.Add(CreateUserRole(user, roleEntity));
         }
 
-        public override async Task<bool> IsInRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<bool> IsInRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -181,7 +144,7 @@ namespace Inferno.Identity
             return false;
         }
 
-        public override async Task RemoveFromRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task RemoveFromRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -207,17 +170,13 @@ namespace Inferno.Identity
             }
         }
 
-        protected override Task<TRole> FindRoleAsync(string normalizedRoleName, CancellationToken cancellationToken)
-        {
-            return Roles.SingleOrDefaultAsync(r =>
+        protected override Task<TRole> FindRoleAsync(string normalizedRoleName, CancellationToken cancellationToken) =>
+            Roles.SingleOrDefaultAsync(r =>
                 r.NormalizedName == normalizedRoleName
                 && (r.TenantId == TenantId || (r.TenantId == null)),
                 cancellationToken);
-        }
 
-        protected override Task<IdentityUserRole<string>> FindUserRoleAsync(string userId, string roleId, CancellationToken cancellationToken)
-        {
-            return UserRoles.FindAsync(new object[] { userId, roleId }, cancellationToken).AsTask();
-        }
+        protected override Task<IdentityUserRole<string>> FindUserRoleAsync(string userId, string roleId, CancellationToken cancellationToken) =>
+            UserRoles.FindAsync(new object[] { userId, roleId }, cancellationToken).AsTask();
     }
 }

@@ -33,17 +33,13 @@ namespace Inferno.Web.Mvc.Controllers
             IControllerActivator controllerActivator,
             IEnumerable<IControllerPropertyActivator> propertyActivators)
         {
-            if (controllerActivator == null)
-            {
-                throw new ArgumentNullException(nameof(controllerActivator));
-            }
+            _controllerActivator = controllerActivator ?? throw new ArgumentNullException(nameof(controllerActivator));
 
             if (propertyActivators == null)
             {
                 throw new ArgumentNullException(nameof(propertyActivators));
             }
 
-            _controllerActivator = controllerActivator;
             _propertyActivators = propertyActivators.ToArray();
         }
 

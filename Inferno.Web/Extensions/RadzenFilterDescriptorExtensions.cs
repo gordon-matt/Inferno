@@ -122,10 +122,7 @@ namespace Inferno.Web
                     if (!string.IsNullOrEmpty(value))
                     {
                         string linqOperator = ODataFilterOperators[column.FilterOperator];
-                        if (linqOperator == null)
-                        {
-                            linqOperator = "==";
-                        }
+                        linqOperator ??= "==";
 
                         string booleanOperator = column.LogicalFilterOperator == LogicalFilterOperator.And ? "and" : "or";
 

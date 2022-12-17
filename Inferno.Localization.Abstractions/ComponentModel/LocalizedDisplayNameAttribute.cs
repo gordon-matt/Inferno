@@ -9,17 +9,7 @@ namespace Inferno.Localization.ComponentModel
     {
         private static IStringLocalizer localizer;
 
-        private static IStringLocalizer T
-        {
-            get
-            {
-                if (localizer == null)
-                {
-                    localizer = EngineContext.Current.Resolve<IStringLocalizer>();
-                }
-                return localizer;
-            }
-        }
+        private static IStringLocalizer T => localizer ??= EngineContext.Current.Resolve<IStringLocalizer>();
 
         public LocalizedDisplayNameAttribute(string resourceKey)
             : base(resourceKey)
@@ -29,9 +19,6 @@ namespace Inferno.Localization.ComponentModel
 
         public string ResourceKey { get; set; }
 
-        public override string DisplayName
-        {
-            get { return T[ResourceKey]; }
-        }
+        public override string DisplayName => T[ResourceKey];
     }
 }

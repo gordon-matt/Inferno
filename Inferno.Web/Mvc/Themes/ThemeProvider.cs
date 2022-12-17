@@ -7,7 +7,7 @@ namespace Inferno.Web.Mvc.Themes
         #region Fields
 
         private readonly IList<ThemeConfiguration> themeConfigurations = new List<ThemeConfiguration>();
-        private string basePath = string.Empty;
+        private readonly string basePath = string.Empty;
 
         #endregion Fields
 
@@ -60,7 +60,7 @@ namespace Inferno.Web.Mvc.Themes
             }
         }
 
-        private ThemeConfiguration CreateThemeConfiguration(string themePath)
+        private static ThemeConfiguration CreateThemeConfiguration(string themePath)
         {
             var themeDirectory = new DirectoryInfo(themePath);
             var themeConfigFile = new FileInfo(Path.Combine(themeDirectory.FullName, "theme.config"));

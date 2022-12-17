@@ -21,23 +21,13 @@ namespace Inferno.Identity
 
         #region Private Properties
 
-        private IWorkContext WorkContext
-        {
-            get
-            {
-                if (workContext == null)
-                {
-                    workContext = EngineContext.Current.Resolve<IWorkContext>();
-                }
-                return workContext;
-            }
-        }
+        private IWorkContext WorkContext => workContext ??= EngineContext.Current.Resolve<IWorkContext>();
 
         private int TenantId => WorkContext.CurrentTenant.Id;
 
         #endregion Private Properties
 
-        public override async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken = default)
         {
             return await base.CreateAsync(role, cancellationToken);
         }
@@ -60,7 +50,7 @@ namespace Inferno.Identity
         //        cancellationToken);
         //}
 
-        public override Task<TRole> FindByNameAsync(string normalizedName, CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<TRole> FindByNameAsync(string normalizedName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();

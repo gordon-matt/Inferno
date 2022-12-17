@@ -21,21 +21,19 @@ namespace Inferno.Web.Navigation
 
             var xParts = x.Split(new[] { '.', ':' });
             var yParts = y.Split(new[] { '.', ':' });
-            for (var i = 0; i < xParts.Count(); i++)
+            for (var i = 0; i < xParts.Length; i++)
             {
                 if (yParts.Length < i + 1) // x is further defined meaning it comes after y (e.g. x == 1.2.3 and y == 1.2)
                     return 1;
 
-                int xPos;
-                int yPos;
                 var xPart = string.IsNullOrWhiteSpace(xParts[i]) ? "before" : xParts[i];
                 var yPart = string.IsNullOrWhiteSpace(yParts[i]) ? "before" : yParts[i];
 
                 xPart = NormalizeKnownPartitions(xPart);
                 yPart = NormalizeKnownPartitions(yPart);
 
-                var xIsInt = int.TryParse(xPart, out xPos);
-                var yIsInt = int.TryParse(yPart, out yPos);
+                var xIsInt = int.TryParse(xPart, out int xPos);
+                var yIsInt = int.TryParse(yPart, out int yPos);
 
                 if (!xIsInt && !yIsInt)
                     return string.Compare(string.Join(".", xParts), string.Join(".", yParts), StringComparison.OrdinalIgnoreCase);

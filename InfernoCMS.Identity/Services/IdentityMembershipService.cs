@@ -18,13 +18,11 @@ namespace InfernoCMS.Identity.Services
         private readonly RoleManager<ApplicationRole> roleManager;
         private readonly IRepository<UserProfileEntry> userProfileRepository;
 
-        private static Dictionary<string, List<InfernoRole>> cachedUserRoles;
-        private static Dictionary<string, List<InfernoPermission>> cachedRolePermissions;
+        private static readonly Dictionary<string, List<InfernoRole>> cachedUserRoles;
 
         static IdentityMembershipService()
         {
             cachedUserRoles = new Dictionary<string, List<InfernoRole>>();
-            cachedRolePermissions = new Dictionary<string, List<InfernoPermission>>();
         }
 
         public IdentityMembershipService(
@@ -40,8 +38,6 @@ namespace InfernoCMS.Identity.Services
         }
 
         #region IMembershipService Members
-
-        public bool SupportsRolePermissions => true;
 
         public async Task<string> GenerateEmailConfirmationToken(object userId)
         {
@@ -59,8 +55,7 @@ namespace InfernoCMS.Identity.Services
 
         #region Users
 
-        // Ignore this.. it was used for OData in MVC5 and will be again in future...
-        private IQueryable<InfernoUser> GetAllUsersAsQueryable(DbContext context, int? tenantId)
+        private static IQueryable<InfernoUser> GetAllUsersAsQueryable(DbContext context, int? tenantId)
         {
             IQueryable<ApplicationUser> query = context.Set<ApplicationUser>();
 
@@ -86,115 +81,102 @@ namespace InfernoCMS.Identity.Services
 
         public async Task<IEnumerable<InfernoUser>> GetAllUsers(int? tenantId)
         {
-            using (var context = contextFactory.GetContext())
-            {
-                return await GetAllUsersAsQueryable(context, tenantId).ToHashSetAsync();
-            }
+            using var context = contextFactory.GetContext();
+            return await GetAllUsersAsQueryable(context, tenantId).ToHashSetAsync();
         }
 
         public async Task<IEnumerable<InfernoUser>> GetUsers(int? tenantId, Expression<Func<InfernoUser, bool>> predicate)
         {
-            using (var context = contextFactory.GetContext())
-            {
-                return await GetAllUsersAsQueryable(context, tenantId)
-                    .Where(predicate)
-                    .ToHashSetAsync();
-            }
+            using var context = contextFactory.GetContext();
+            return await GetAllUsersAsQueryable(context, tenantId)
+                .Where(predicate)
+                .ToHashSetAsync();
         }
 
         public async Task<InfernoUser> GetUserById(object userId)
         {
-            string id = userId.ToString();
-            //var user = userManager.FindById(id);
+            using var context = contextFactory.GetContext();
+            var user = context.Set<ApplicationUser>().Find(userId);
 
-            using (var context = contextFactory.GetContext())
+            if (user == null)
             {
-                var user = context.Set<ApplicationUser>().Find(userId);
-
-                if (user == null)
-                {
-                    return null;
-                }
-
-                return await Task.FromResult(new InfernoUser
-                {
-                    Id = user.Id,
-                    TenantId = user.TenantId,
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    IsLockedOut = user.LockoutEnabled
-                });
+                return null;
             }
+
+            return await Task.FromResult(new InfernoUser
+            {
+                Id = user.Id,
+                TenantId = user.TenantId,
+                UserName = user.UserName,
+                Email = user.Email,
+                IsLockedOut = user.LockoutEnabled
+            });
         }
 
         public async Task<InfernoUser> GetUserByEmail(int? tenantId, string email)
         {
             ApplicationUser user;
 
-            using (var context = contextFactory.GetContext())
+            using var context = contextFactory.GetContext();
+            if (tenantId.HasValue)
             {
-                if (tenantId.HasValue)
-                {
-                    user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(x => x.TenantId == tenantId && x.Email == email);
-                }
-                else
-                {
-                    user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(x => x.TenantId == null && x.Email == email);
-                }
-
-                if (user == null)
-                {
-                    return null;
-                }
-
-                return new InfernoUser
-                {
-                    Id = user.Id,
-                    TenantId = user.TenantId,
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    IsLockedOut = user.LockoutEnabled
-                };
+                user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(x => x.TenantId == tenantId && x.Email == email);
             }
+            else
+            {
+                user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(x => x.TenantId == null && x.Email == email);
+            }
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new InfernoUser
+            {
+                Id = user.Id,
+                TenantId = user.TenantId,
+                UserName = user.UserName,
+                Email = user.Email,
+                IsLockedOut = user.LockoutEnabled
+            };
         }
 
         public async Task<InfernoUser> GetUserByName(int? tenantId, string userName)
         {
             ApplicationUser user;
 
-            using (var context = contextFactory.GetContext())
+            using var context = contextFactory.GetContext();
+            if (tenantId.HasValue)
             {
-                if (tenantId.HasValue)
-                {
-                    user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserName == userName);
-                }
-                else
-                {
-                    user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(x => x.TenantId == null && x.UserName == userName);
-                }
-
-                if (user == null)
-                {
-                    return null;
-                }
-
-                return new InfernoUser
-                {
-                    Id = user.Id,
-                    TenantId = user.TenantId,
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    IsLockedOut = user.LockoutEnabled
-                };
+                user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserName == userName);
             }
+            else
+            {
+                user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(x => x.TenantId == null && x.UserName == userName);
+            }
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new InfernoUser
+            {
+                Id = user.Id,
+                TenantId = user.TenantId,
+                UserName = user.UserName,
+                Email = user.Email,
+                IsLockedOut = user.LockoutEnabled
+            };
         }
 
         public async Task<IEnumerable<InfernoRole>> GetRolesForUser(object userId)
         {
             string id = userId.ToString();
-            if (cachedUserRoles.ContainsKey(id))
+            if (cachedUserRoles.TryGetValue(id, out List<InfernoRole> value))
             {
-                return cachedUserRoles[id];
+                return value;
             }
 
             var user = await userManager.FindByIdAsync(id);
@@ -248,7 +230,7 @@ namespace InfernoCMS.Identity.Services
         {
             // Check for spaces in UserName above, because of this:
             // http://stackoverflow.com/questions/30078332/bug-in-asp-net-identitys-usermanager
-            string userName = (user.UserName.Contains(" ") ? user.UserName.Replace(" ", "_") : user.UserName);
+            string userName = (user.UserName.Contains(' ') ? user.UserName.Replace(' ', '_') : user.UserName);
 
             var appUser = new ApplicationUser
             {
@@ -422,17 +404,17 @@ namespace InfernoCMS.Identity.Services
                 string familyName = profile[AccountUserProfileProvider.Fields.FamilyName];
                 string givenNames = profile[AccountUserProfileProvider.Fields.GivenNames];
 
-                if (profile.ContainsKey(AccountUserProfileProvider.Fields.ShowFamilyNameFirst))
+                if (profile.TryGetValue(AccountUserProfileProvider.Fields.ShowFamilyNameFirst, out string value))
                 {
-                    bool showFamilyNameFirst = bool.Parse(profile[AccountUserProfileProvider.Fields.ShowFamilyNameFirst]);
+                    bool showFamilyNameFirst = bool.Parse(value);
 
                     if (showFamilyNameFirst)
                     {
-                        return familyName + " " + givenNames;
+                        return $"{familyName} {givenNames}";
                     }
-                    return givenNames + " " + familyName;
+                    return $"{givenNames} {familyName}";
                 }
-                return givenNames + " " + familyName;
+                return $"{givenNames} {familyName}";
             }
             else if (hasFamilyName)
             {
@@ -629,266 +611,23 @@ namespace InfernoCMS.Identity.Services
 
         #endregion Set<ApplicationRole>()
 
-        #region Permissions
-
-        public async Task<IEnumerable<InfernoPermission>> GetAllPermissions(int? tenantId)
-        {
-            using (var context = contextFactory.GetContext())
-            {
-                IQueryable<Permission> query = context.Set<Permission>();
-
-                if (tenantId.HasValue)
-                {
-                    query = query.Where(x => x.TenantId == tenantId);
-                }
-                else
-                {
-                    query = query.Where(x => x.TenantId == null);
-                }
-
-                return (await query.ToListAsync()).Select(x => new InfernoPermission
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.Name,
-                    Category = x.Category,
-                    Description = x.Description
-                }).ToList();
-            }
-        }
-
-        public async Task<InfernoPermission> GetPermissionById(object permissionId)
-        {
-            int id = Convert.ToInt32(permissionId);
-
-            using (var context = contextFactory.GetContext())
-            {
-                var entity = await context.Set<Permission>().FirstOrDefaultAsync(x => x.Id == id);
-
-                if (entity == null)
-                {
-                    return null;
-                }
-
-                return new InfernoPermission
-                {
-                    Id = entity.Id.ToString(),
-                    Name = entity.Name,
-                    Category = entity.Category,
-                    Description = entity.Description
-                };
-            }
-        }
-
-        public async Task<InfernoPermission> GetPermissionByName(int? tenantId, string permissionName)
-        {
-            Permission entity = null;
-
-            using (var context = contextFactory.GetContext())
-            {
-                if (tenantId.HasValue)
-                {
-                    entity = await context.Set<Permission>().FirstOrDefaultAsync(x => x.TenantId == tenantId && x.Name == permissionName);
-                }
-                else
-                {
-                    entity = await context.Set<Permission>().FirstOrDefaultAsync(x => x.TenantId == null && x.Name == permissionName);
-                }
-
-                if (entity == null)
-                {
-                    return null;
-                }
-
-                return new InfernoPermission
-                {
-                    Id = entity.Id.ToString(),
-                    Name = entity.Name,
-                    Category = entity.Category,
-                    Description = entity.Description
-                };
-            }
-        }
-
-        public async Task<IEnumerable<InfernoPermission>> GetPermissionsForRole(int? tenantId, string roleName)
-        {
-            if (cachedRolePermissions.ContainsKey(roleName))
-            {
-                return cachedRolePermissions[roleName];
-            }
-
-            using (var context = contextFactory.GetContext())
-            {
-                var query = context.Set<Permission>().Include(x => x.RolesPermissions);
-
-                List<Permission> permissions = null;
-                if (tenantId.HasValue)
-                {
-                    permissions = await (from p in query
-                                         from rp in p.RolesPermissions
-                                         where p.TenantId == tenantId && rp.Role.Name == roleName
-                                         select p).ToListAsync();
-                }
-                else
-                {
-                    permissions = await (from p in query
-                                         from rp in p.RolesPermissions
-                                         where p.TenantId == null && rp.Role.Name == roleName
-                                         select p).ToListAsync();
-                }
-
-                var rolePermissions = permissions.Select(x => new InfernoPermission
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.Name,
-                    Category = x.Category,
-                    Description = x.Description
-                }).ToList();
-
-                cachedRolePermissions.Add(roleName, rolePermissions);
-                return rolePermissions;
-            }
-        }
-
-        public async Task AssignPermissionsToRole(object roleId, IEnumerable<object> permissionIds)
-        {
-            string rId = roleId.ToString();
-
-            if (roleId is Array)
-            {
-                rId = ((Array)roleId).GetValue(0).ToString();
-            }
-
-            var pIds = permissionIds.ToListOf<int>();
-            using (var context = contextFactory.GetContext())
-            {
-                var set = context.Set<RolePermission>();
-                var toDelete = set.Where(x => x.RoleId == rId).ToList();
-                set.RemoveRange(toDelete);
-                await context.SaveChangesAsync();
-
-                var toInsert = pIds.Select(x => new RolePermission
-                {
-                    PermissionId = x,
-                    RoleId = rId
-                });
-
-                set.AddRange(toInsert);
-                await context.SaveChangesAsync();
-
-                string roleName = (await GetRoleById(rId)).Name;
-                cachedRolePermissions.Remove(roleName);
-
-                await context.SaveChangesAsync();
-            }
-        }
-
-        public async Task<bool> DeletePermission(object permissionId)
-        {
-            var id = Convert.ToInt32(permissionId);
-
-            using (var context = contextFactory.GetContext())
-            {
-                var existing = await context.Set<Permission>().FirstOrDefaultAsync(x => x.Id == id);
-
-                if (existing != null)
-                {
-                    context.Set<Permission>().Remove(existing);
-                    int rowsAffected = await context.SaveChangesAsync();
-                    return rowsAffected > 0;
-                }
-            }
-
-            return false;
-        }
-
-        public async Task<bool> DeletePermissions(IEnumerable<object> permissionIds)
-        {
-            var ids = permissionIds.Select(x => x.ToString()).ToListOf<int>();
-
-            using (var context = contextFactory.GetContext())
-            {
-                var toDelete = await context.Set<Permission>().Where(x => ids.Contains(x.Id)).ToListAsync();
-
-                if (toDelete.Any())
-                {
-                    context.Set<Permission>().RemoveRange(toDelete);
-                    int rowsAffected = await context.SaveChangesAsync();
-                    return rowsAffected > 0;
-                }
-            }
-
-            return false;
-        }
-
-        public async Task InsertPermission(InfernoPermission permission)
-        {
-            using (var context = contextFactory.GetContext())
-            {
-                context.Set<Permission>().Add(new Permission
-                {
-                    TenantId = permission.TenantId,
-                    Name = permission.Name,
-                    Category = permission.Category,
-                    Description = permission.Description
-                });
-                await context.SaveChangesAsync();
-            }
-        }
-
-        public async Task InsertPermissions(IEnumerable<InfernoPermission> permissions)
-        {
-            var toInsert = permissions.Select(x => new Permission
-            {
-                TenantId = x.TenantId,
-                Name = x.Name,
-                Category = x.Category,
-                Description = x.Description
-            });
-
-            using (var context = contextFactory.GetContext())
-            {
-                context.Set<Permission>().AddRange(toInsert);
-                await context.SaveChangesAsync();
-            }
-        }
-
-        public async Task UpdatePermission(InfernoPermission permission)
-        {
-            var id = Convert.ToInt32(permission.Id);
-
-            using (var context = contextFactory.GetContext())
-            {
-                var existing = await context.Set<Permission>().FirstOrDefaultAsync(x => x.Id == id);
-                existing.Name = permission.Name;
-                existing.Category = permission.Category;
-                existing.Description = permission.Description;
-                await context.SaveChangesAsync();
-            }
-        }
-
-        #endregion Permissions
-
         #region Profile
 
         public async Task<IDictionary<string, string>> GetProfile(string userId)
         {
-            using (var connection = userProfileRepository.OpenConnection())
-            {
-                return await connection.Query(x => x.UserId == userId).ToDictionaryAsync(k => k.Key, v => v.Value);
-            }
+            using var connection = userProfileRepository.OpenConnection();
+            return await connection.Query(x => x.UserId == userId).ToDictionaryAsync(k => k.Key, v => v.Value);
         }
 
         public async Task<IEnumerable<UserProfile>> GetProfiles(IEnumerable<string> userIds)
         {
-            using (var connection = userProfileRepository.OpenConnection())
+            using var connection = userProfileRepository.OpenConnection();
+            var entries = await connection.Query(x => userIds.Contains(x.UserId)).ToListAsync();
+            return entries.GroupBy(x => x.UserId).Select(x => new UserProfile
             {
-                var entries = await connection.Query(x => userIds.Contains(x.UserId)).ToListAsync();
-                return entries.GroupBy(x => x.UserId).Select(x => new UserProfile
-                {
-                    UserId = x.Key,
-                    Profile = x.ToDictionary(k => k.Key, v => v.Value)
-                });
-            }
+                UserId = x.Key,
+                Profile = x.ToDictionary(k => k.Key, v => v.Value)
+            });
         }
 
         public async Task UpdateProfile(string userId, IDictionary<string, string> profile, bool deleteExisting = false)
@@ -999,103 +738,90 @@ namespace InfernoCMS.Identity.Services
 
         public async Task<IEnumerable<InfernoUserProfileEntry>> GetProfileEntriesByKey(int? tenantId, string key)
         {
-            using (var connection = userProfileRepository.OpenConnection())
+            using var connection = userProfileRepository.OpenConnection();
+            var query = connection.Query();
+
+            if (tenantId.HasValue)
             {
-                var query = connection.Query();
-
-                if (tenantId.HasValue)
-                {
-                    query = query.Where(x => x.TenantId == tenantId && x.Key == key);
-                }
-                else
-                {
-                    query = query.Where(x => x.TenantId == null && x.Key == key);
-                }
-
-                return (await query.ToHashSetAsync())
-                    .Select(x => new InfernoUserProfileEntry
-                    {
-                        Id = x.Id.ToString(),
-                        UserId = x.UserId,
-                        Key = x.Key,
-                        Value = x.Value
-                    });
+                query = query.Where(x => x.TenantId == tenantId && x.Key == key);
             }
+            else
+            {
+                query = query.Where(x => x.TenantId == null && x.Key == key);
+            }
+
+            return (await query.ToHashSetAsync())
+                .Select(x => new InfernoUserProfileEntry
+                {
+                    Id = x.Id.ToString(),
+                    UserId = x.UserId,
+                    Key = x.Key,
+                    Value = x.Value
+                });
         }
 
         public async Task<IEnumerable<InfernoUserProfileEntry>> GetProfileEntriesByKeyAndValue(int? tenantId, string key, string value)
         {
-            using (var connection = userProfileRepository.OpenConnection())
+            using var connection = userProfileRepository.OpenConnection();
+            var query = connection.Query();
+
+            if (tenantId.HasValue)
             {
-                var query = connection.Query();
-
-                if (tenantId.HasValue)
-                {
-                    query = query.Where(x => x.TenantId == tenantId && x.Key == key && x.Value == value);
-                }
-                else
-                {
-                    query = query.Where(x => x.TenantId == null && x.Key == key && x.Value == value);
-                }
-
-                return (await query.ToHashSetAsync())
-                    .Select(x => new InfernoUserProfileEntry
-                    {
-                        Id = x.Id.ToString(),
-                        UserId = x.UserId,
-                        Key = x.Key,
-                        Value = x.Value
-                    });
+                query = query.Where(x => x.TenantId == tenantId && x.Key == key && x.Value == value);
             }
+            else
+            {
+                query = query.Where(x => x.TenantId == null && x.Key == key && x.Value == value);
+            }
+
+            return (await query.ToHashSetAsync())
+                .Select(x => new InfernoUserProfileEntry
+                {
+                    Id = x.Id.ToString(),
+                    UserId = x.UserId,
+                    Key = x.Key,
+                    Value = x.Value
+                });
         }
 
         public async Task<bool> ProfileEntryExists(int? tenantId, string key, string value, string userId = null)
         {
-            using (var connection = userProfileRepository.OpenConnection())
+            using var connection = userProfileRepository.OpenConnection();
+            IQueryable<UserProfileEntry> query = null;
+
+            if (tenantId.HasValue)
             {
-                IQueryable<UserProfileEntry> query = null;
-
-                if (tenantId.HasValue)
-                {
-                    query = connection.Query(x => x.TenantId == tenantId && x.Key == key && x.Value == value);
-                }
-                else
-                {
-                    query = connection.Query(x => x.TenantId == null && x.Key == key && x.Value == value);
-                }
-
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    query = query.Where(x => x.UserId == userId);
-                }
-                return await query.AnyAsync();
+                query = connection.Query(x => x.TenantId == tenantId && x.Key == key && x.Value == value);
             }
+            else
+            {
+                query = connection.Query(x => x.TenantId == null && x.Key == key && x.Value == value);
+            }
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                query = query.Where(x => x.UserId == userId);
+            }
+            return await query.AnyAsync();
         }
 
         #endregion Profile
 
         public async Task EnsureAdminRoleForTenant(int? tenantId)
         {
-            if (SupportsRolePermissions)
+            var administratorsRole = await GetRoleByName(tenantId, InfernoSecurityConstants.Roles.Administrators);
+            if (administratorsRole == null)
             {
-                var administratorsRole = await GetRoleByName(tenantId, InfernoSecurityConstants.Roles.Administrators);
-                if (administratorsRole == null)
+                await InsertRole(new InfernoRole { TenantId = tenantId, Name = InfernoSecurityConstants.Roles.Administrators });
+                administratorsRole = await GetRoleByName(tenantId, InfernoSecurityConstants.Roles.Administrators);
+
+                if (administratorsRole != null)
                 {
-                    await InsertRole(new InfernoRole { TenantId = tenantId, Name = InfernoSecurityConstants.Roles.Administrators });
-                    administratorsRole = await GetRoleByName(tenantId, InfernoSecurityConstants.Roles.Administrators);
-
-                    if (administratorsRole != null)
+                    // Assign all super admin users (NULL TenantId) to this new admin role
+                    var superAdminUsers = await GetUsersByRoleName(null, InfernoSecurityConstants.Roles.Administrators);
+                    foreach (var user in superAdminUsers)
                     {
-                        var permissions = await GetAllPermissions(tenantId);
-                        var permissionIds = permissions.Select(x => x.Id);
-                        await AssignPermissionsToRole(administratorsRole.Id, permissionIds);
-
-                        // Assign all super admin users (NULL TenantId) to this new admin role
-                        var superAdminUsers = await GetUsersByRoleName(null, InfernoSecurityConstants.Roles.Administrators);
-                        foreach (var user in superAdminUsers)
-                        {
-                            await AssignUserToRoles(tenantId, user.Id, new[] { administratorsRole.Id });
-                        }
+                        await AssignUserToRoles(tenantId, user.Id, new[] { administratorsRole.Id });
                     }
                 }
             }

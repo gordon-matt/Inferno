@@ -15,7 +15,7 @@ namespace Inferno.Web
         private Tenant cachedTenant;
 
         private readonly IWebHelper webHelper;
-        private readonly ConcurrentDictionary<string, Func<object>> stateResolvers = new ConcurrentDictionary<string, Func<object>>();
+        private readonly ConcurrentDictionary<string, Func<object>> stateResolvers = new();
         private readonly IEnumerable<IWorkContextStateProvider> workContextStateProviders;
 
         public WorkContext()
@@ -64,7 +64,7 @@ namespace Inferno.Web
                     // Try to determine the current tenant by HTTP_HOST
                     string host = webHelper.GetUrlHost();
 
-                    if (host.Contains(":"))
+                    if (host.Contains(':'))
                     {
                         host = host.LeftOf(':');
                     }
@@ -73,17 +73,9 @@ namespace Inferno.Web
                     var allTenants = tenantService.Find();
                     var tenant = allTenants.FirstOrDefault(s => s.ContainsHostValue(host));
 
-                    if (tenant == null)
-                    {
-                        // Load the first found tenant
-                        tenant = allTenants.FirstOrDefault();
-                    }
-                    if (tenant == null)
-                    {
-                        throw new InfernoException("No tenant could be loaded");
-                    }
-
-                    cachedTenant = tenant;
+                    // Load the first found tenant
+                    tenant ??= allTenants.FirstOrDefault();
+                    cachedTenant = tenant ?? throw new InfernoException("No tenant could be loaded");
                     return cachedTenant;
                 }
                 catch

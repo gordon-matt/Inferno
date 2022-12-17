@@ -35,7 +35,6 @@ namespace InfernoCMS.Infrastructure
 
             // Services
             builder.RegisterType<MembershipService>().As<IMembershipService>().InstancePerDependency();
-            builder.RegisterType<PersonODataService>().As<IRadzenODataService<Person, int>>().SingleInstance();
 
             // Localization
             builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();

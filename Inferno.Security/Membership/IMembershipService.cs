@@ -2,25 +2,13 @@
 
 namespace Inferno.Security.Membership
 {
-    //public enum UserStatus
-    //{
-    //    NotRegistered = 0,
-    //    Unconfirmed = 1,
-    //    Locked = 2,
-    //    Active = 3
-    //}
-
     public interface IMembershipService
     {
-        bool SupportsRolePermissions { get; }
-
         Task<string> GenerateEmailConfirmationToken(object userId);
 
         Task ConfirmEmail(object userId, string token);
 
         #region Users
-
-        //IQueryable<InfernoUser> GetAllUsersAsQueryable(DbContext context, int? tenantId);
 
         Task<IEnumerable<InfernoUser>> GetAllUsers(int? tenantId);
 
@@ -69,30 +57,6 @@ namespace Inferno.Security.Membership
         Task<IEnumerable<InfernoUser>> GetUsersByRoleName(int? tenantId, string roleName);
 
         #endregion Roles
-
-        #region Permissions
-
-        Task<IEnumerable<InfernoPermission>> GetAllPermissions(int? tenantId);
-
-        Task<InfernoPermission> GetPermissionById(object permissionId);
-
-        Task<InfernoPermission> GetPermissionByName(int? tenantId, string permissionName);
-
-        Task<IEnumerable<InfernoPermission>> GetPermissionsForRole(int? tenantId, string roleName);
-
-        Task AssignPermissionsToRole(object roleId, IEnumerable<object> permissionIds);
-
-        Task<bool> DeletePermission(object permissionId);
-
-        Task<bool> DeletePermissions(IEnumerable<object> permissionIds);
-
-        Task InsertPermission(InfernoPermission permission);
-
-        Task InsertPermissions(IEnumerable<InfernoPermission> permissions);
-
-        Task UpdatePermission(InfernoPermission permission);
-
-        #endregion Permissions
 
         #region Profile
 

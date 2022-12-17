@@ -62,13 +62,11 @@ namespace Inferno.Tasks.Services
                 return null;
             }
 
-            using (var connection = taskRepository.OpenConnection())
-            {
-                return connection
-                    .Query(st => st.Type == type)
-                    .OrderByDescending(t => t.Id)
-                    .FirstOrDefault();
-            }
+            using var connection = taskRepository.OpenConnection();
+            return connection
+                .Query(st => st.Type == type)
+                .OrderByDescending(t => t.Id)
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -78,18 +76,16 @@ namespace Inferno.Tasks.Services
         /// <returns>Tasks</returns>
         public virtual IList<ScheduledTask> GetAllTasks(bool showHidden = false)
         {
-            using (var connection = taskRepository.OpenConnection())
+            using var connection = taskRepository.OpenConnection();
+            var query = connection.Query();
+
+            if (!showHidden)
             {
-                var query = connection.Query();
-
-                if (!showHidden)
-                {
-                    query = query.Where(t => t.Enabled);
-                }
-                query = query.OrderByDescending(t => t.Seconds);
-
-                return query.ToList();
+                query = query.Where(t => t.Enabled);
             }
+            query = query.OrderByDescending(t => t.Seconds);
+
+            return query.ToList();
         }
 
         /// <summary>

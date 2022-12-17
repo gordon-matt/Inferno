@@ -11,13 +11,9 @@ namespace InfernoCMS.Data
         {
         }
 
-        public DbSet<Permission> Permissions { get; set; }
-
-        public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<Person> People { get; set; } // Sample Data (TODO: Remove)
 
         public DbSet<UserProfileEntry> UserProfiles { get; set; }
-
-        public DbSet<Person> People { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

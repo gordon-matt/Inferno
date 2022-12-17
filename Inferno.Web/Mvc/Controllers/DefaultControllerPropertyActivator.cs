@@ -13,7 +13,7 @@ namespace Inferno.Web.Mvc.Controllers
         private static readonly Func<Type, PropertyActivator<ControllerContext>[]> _getPropertiesToActivate =
             GetPropertiesToActivate;
 
-        private object _initializeLock = new object();
+        private object _initializeLock = new();
         private bool _initialized;
         private ConcurrentDictionary<Type, PropertyActivator<ControllerContext>[]> _activateActions;
 

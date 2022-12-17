@@ -31,11 +31,9 @@ namespace Inferno.Web.Mvc.Controllers
             typeof(PropertyHelper).GetTypeInfo().GetDeclaredMethod(nameof(CallPropertySetter));
 
         // Using an array rather than IEnumerable, as target will be called on the hot path numerous times.
-        private static readonly ConcurrentDictionary<Type, PropertyHelper[]> PropertiesCache =
-            new ConcurrentDictionary<Type, PropertyHelper[]>();
+        private static readonly ConcurrentDictionary<Type, PropertyHelper[]> PropertiesCache = new();
 
-        private static readonly ConcurrentDictionary<Type, PropertyHelper[]> VisiblePropertiesCache =
-            new ConcurrentDictionary<Type, PropertyHelper[]>();
+        private static readonly ConcurrentDictionary<Type, PropertyHelper[]> VisiblePropertiesCache = new();
 
         // We need to be able to check if a type is a 'ref struct' - but we need to be able to compile
         // for platforms where the attribute is not defined, like net46. So we can fetch the attribute
@@ -69,34 +67,12 @@ namespace Inferno.Web.Mvc.Controllers
         /// <summary>
         /// Gets the property value getter.
         /// </summary>
-        public Func<object, object> ValueGetter
-        {
-            get
-            {
-                if (_valueGetter == null)
-                {
-                    _valueGetter = MakeFastPropertyGetter(Property);
-                }
-
-                return _valueGetter;
-            }
-        }
+        public Func<object, object> ValueGetter => _valueGetter ??= MakeFastPropertyGetter(Property);
 
         /// <summary>
         /// Gets the property value setter.
         /// </summary>
-        public Action<object, object> ValueSetter
-        {
-            get
-            {
-                if (_valueSetter == null)
-                {
-                    _valueSetter = MakeFastPropertySetter(Property);
-                }
-
-                return _valueSetter;
-            }
-        }
+        public Action<object, object> ValueSetter => _valueSetter ??= MakeFastPropertySetter(Property);
 
         /// <summary>
         /// Returns the property value for the specified <paramref name="instance"/>.
@@ -332,8 +308,7 @@ namespace Inferno.Web.Mvc.Controllers
         /// </remarks>
         public static IDictionary<string, object> ObjectToDictionary(object value)
         {
-            var dictionary = value as IDictionary<string, object>;
-            if (dictionary != null)
+            if (value is IDictionary<string, object> dictionary)
             {
                 return new Dictionary<string, object>(dictionary, StringComparer.OrdinalIgnoreCase);
             }

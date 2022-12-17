@@ -16,8 +16,8 @@ namespace Inferno.Tasks
 
         internal TaskThread()
         {
-            this._tasks = new Dictionary<string, Task>();
-            this.Seconds = 10 * 60;
+            _tasks = new Dictionary<string, Task>();
+            Seconds = 10 * 60;
         }
 
         private void Run()
@@ -25,26 +25,26 @@ namespace Inferno.Tasks
             if (Seconds <= 0)
                 return;
 
-            this.StartedUtc = DateTime.UtcNow;
-            this.IsRunning = true;
-            foreach (Task task in this._tasks.Values)
+            StartedUtc = DateTime.UtcNow;
+            IsRunning = true;
+            foreach (Task task in _tasks.Values)
             {
                 task.Execute();
             }
-            this.IsRunning = false;
+            IsRunning = false;
         }
 
         private void TimerHandler(object state)
         {
-            this._timer.Change(-1, -1);
-            this.Run();
-            if (this.RunOnlyOnce)
+            _timer.Change(-1, -1);
+            Run();
+            if (RunOnlyOnce)
             {
-                this.Dispose();
+                Dispose();
             }
             else
             {
-                this._timer.Change(this.Interval, this.Interval);
+                _timer.Change(Interval, Interval);
             }
         }
 
@@ -53,13 +53,13 @@ namespace Inferno.Tasks
         /// </summary>
         public void Dispose()
         {
-            if ((this._timer != null) && !this._disposed)
+            if ((_timer != null) && !_disposed)
             {
                 lock (this)
                 {
-                    this._timer.Dispose();
-                    this._timer = null;
-                    this._disposed = true;
+                    _timer.Dispose();
+                    _timer = null;
+                    _disposed = true;
                 }
             }
         }
@@ -69,10 +69,7 @@ namespace Inferno.Tasks
         /// </summary>
         public void InitTimer()
         {
-            if (this._timer == null)
-            {
-                this._timer = new Timer(new TimerCallback(this.TimerHandler), null, this.Interval, this.Interval);
-            }
+            _timer ??= new Timer(new TimerCallback(TimerHandler), null, Interval, Interval);
         }
 
         /// <summary>
@@ -81,9 +78,9 @@ namespace Inferno.Tasks
         /// <param name="task">The task to be added</param>
         public void AddTask(Task task)
         {
-            if (!this._tasks.ContainsKey(task.Name))
+            if (!_tasks.ContainsKey(task.Name))
             {
-                this._tasks.Add(task.Name, task);
+                _tasks.Add(task.Name, task);
             }
         }
 
@@ -110,7 +107,7 @@ namespace Inferno.Tasks
             get
             {
                 var list = new List<Task>();
-                foreach (var task in this._tasks.Values)
+                foreach (var task in _tasks.Values)
                 {
                     list.Add(task);
                 }
@@ -121,13 +118,7 @@ namespace Inferno.Tasks
         /// <summary>
         /// Gets the interval at which to run the tasks
         /// </summary>
-        public int Interval
-        {
-            get
-            {
-                return this.Seconds * 1000;
-            }
-        }
+        public int Interval => Seconds * 1000;
 
         /// <summary>
         /// Gets or sets a value indicating whether the thread whould be run only once (per appliction start)

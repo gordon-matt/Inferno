@@ -493,7 +493,7 @@ namespace Inferno.Identity
             {
                 ViewBag.Title = T[InfernoIdentityLocalizableStrings.EditProfile].Value;
                 var user = await membershipService.GetUserById(userId);
-                WorkContext.Value.Breadcrumbs.Add(string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName), Url.Action("ViewProfile", new { userId = userId }));
+                WorkContext.Value.Breadcrumbs.Add(string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName), Url.Action("ViewProfile", new { userId }));
                 WorkContext.Value.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
             }
             else

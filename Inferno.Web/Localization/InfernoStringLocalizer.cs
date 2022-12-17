@@ -15,12 +15,12 @@ namespace Inferno.Web.Localization
         private readonly ICacheManager cacheManager;
         private readonly ILocalizableStringService localizableStringService;
         private readonly IWorkContext workContext;
-        private readonly object objSync = new object();
+        private readonly object objSync = new();
 
         public CultureInfo Culture
         {
-            get { return culture ?? (culture = CultureInfo.CurrentCulture); }
-            private set { culture = value; }
+            get => culture ??= CultureInfo.CurrentCulture;
+            private set => culture = value;
         }
 
         public InfernoStringLocalizer(
@@ -33,15 +33,9 @@ namespace Inferno.Web.Localization
             this.localizableStringService = localizableStringService;
         }
 
-        public LocalizedString this[string name]
-        {
-            get { return GetLocalizedString(name); }
-        }
+        public LocalizedString this[string name]=> GetLocalizedString(name);
 
-        public LocalizedString this[string name, params object[] arguments]
-        {
-            get { return GetLocalizedString(name); }
-        }
+        public LocalizedString this[string name, params object[] arguments]=> GetLocalizedString(name);
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
@@ -55,12 +49,11 @@ namespace Inferno.Web.Localization
                 : resourceCache.Select(x => new LocalizedString(x.Key, x.Value));
         }
 
-        public IStringLocalizer WithCulture(CultureInfo culture)
-        {
-            var stringLocalizer = new InfernoStringLocalizer(cacheManager, workContext, localizableStringService);
-            stringLocalizer.Culture = culture;
-            return stringLocalizer;
-        }
+        public IStringLocalizer WithCulture(CultureInfo culture) =>
+            new InfernoStringLocalizer(cacheManager, workContext, localizableStringService)
+            {
+                Culture = culture
+            };
 
         public virtual LocalizedString GetLocalizedString(string key)
         {
@@ -70,21 +63,18 @@ namespace Inferno.Web.Localization
             lock (objSync)
             {
                 var resourceCache = LoadCulture(tenantId, cultureCode);
-
-                if (resourceCache.ContainsKey(key))
+                if (resourceCache.TryGetValue(key, out string resourceCacheValue))
                 {
-                    return new LocalizedString(key, resourceCache[key]);
+                    return new LocalizedString(key, resourceCacheValue);
                 }
 
                 var invariantResourceCache = LoadCulture(tenantId, null);
-
-                if (invariantResourceCache.ContainsKey(key))
+                if (invariantResourceCache.TryGetValue(key, out string invariantResourceCacheValue))
                 {
-                    return new LocalizedString(key, invariantResourceCache[key]);
+                    return new LocalizedString(key, invariantResourceCacheValue);
                 }
 
                 string value = AddTranslation(tenantId, null, key);
-
                 invariantResourceCache.Add(key, value);
             }
 

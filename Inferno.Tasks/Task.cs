@@ -48,12 +48,9 @@ namespace Inferno.Tasks
                     {
                         //try resolve
                     }
-                    if (instance == null)
-                    {
-                        //not resolved
-                        instance = EngineContext.Current.ResolveUnregistered(type2);
-                    }
 
+                    //not resolved
+                    instance ??= EngineContext.Current.ResolveUnregistered(type2);
                     task = instance as ITask;
                 }
             }
@@ -106,7 +103,7 @@ namespace Inferno.Tasks
                 //log error
                 var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
                 var logger = loggerFactory.CreateLogger<Task>();
-                logger.LogError(new EventId(), x, string.Format("Error while running the '{0}' scheduled task. {1}", Name, x.Message));
+                logger.LogError(new EventId(), x, "Error while running the '{TaskName}' scheduled task. {Message}", Name, x.Message);
                 if (throwException)
                 {
                     throw;
@@ -121,7 +118,7 @@ namespace Inferno.Tasks
                 scheduledTaskService.UpdateTask(scheduledTask);
             }
 
-            this.IsRunning = false;
+            IsRunning = false;
         }
 
         /// <summary>

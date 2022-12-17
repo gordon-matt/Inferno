@@ -6,8 +6,8 @@
 
         public bool Equals(MenuItem x, MenuItem y)
         {
-            string xTextHint = x.Text == null ? null : x.Text;
-            string yTextHint = y.Text == null ? null : y.Text;
+            string xTextHint = x.Text ?? null;
+            string yTextHint = y.Text ?? null;
             if (!string.Equals(xTextHint, yTextHint))
             {
                 return false;
