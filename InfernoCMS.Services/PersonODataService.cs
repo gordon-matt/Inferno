@@ -1,4 +1,5 @@
 ﻿using Inferno.Web.OData;
+using InfernoCMS.Data.Entities;
 
 namespace InfernoCMS.Services
 {

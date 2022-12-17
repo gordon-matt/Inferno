@@ -22,8 +22,6 @@ namespace InfernoCMS.Infrastructure
                 .As(typeof(IRepository<>))
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<ODataRegistrar>().As<IODataRegistrar>().SingleInstance();
-
             // Radzen
             builder.RegisterType<DialogService>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<NotificationService>().AsSelf().InstancePerLifetimeScope();
@@ -31,13 +29,13 @@ namespace InfernoCMS.Infrastructure
             builder.RegisterType<ContextMenuService>().AsSelf().InstancePerLifetimeScope();
 
             // Services
-            builder.RegisterType<PersonODataService>().As<IRadzenODataService<Person, int>>().SingleInstance();
             //builder.RegisterGeneric(typeof(GenericODataService<,>))
             //    .As(typeof(IGenericODataService<,>))
             //    .InstancePerLifetimeScope();
 
             // Services
             builder.RegisterType<MembershipService>().As<IMembershipService>().InstancePerDependency();
+            builder.RegisterType<PersonODataService>().As<IRadzenODataService<Person, int>>().SingleInstance();
 
             // Localization
             builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();

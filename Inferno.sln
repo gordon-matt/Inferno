@@ -35,11 +35,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inferno.Identity", "Inferno
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8BA8D4C8-60C3-46C2-899B-7BE5AA4212C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfernoCMS.Api", "InfernoCMS.Api\InfernoCMS.Api.csproj", "{91E5AC4F-703E-4049-9720-612D28EBF183}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfernoCMS.Api", "InfernoCMS.Api\InfernoCMS.Api.csproj", "{91E5AC4F-703E-4049-9720-612D28EBF183}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfernoCMS.Data", "InfernoCMS.Data\InfernoCMS.Data.csproj", "{F51316BB-9053-48CF-9907-63E12DFE1C42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfernoCMS.Data", "InfernoCMS.Data\InfernoCMS.Data.csproj", "{F51316BB-9053-48CF-9907-63E12DFE1C42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfernoCMS.Identity", "InfernoCMS.Identity\InfernoCMS.Identity.csproj", "{9DF8486D-B626-4307-8BE3-550E0A900903}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfernoCMS.Identity", "InfernoCMS.Identity\InfernoCMS.Identity.csproj", "{9DF8486D-B626-4307-8BE3-550E0A900903}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfernoCMS.Services", "InfernoCMS.Services\InfernoCMS.Services.csproj", "{4EDE755B-5565-47D4-A6C6-D3797C7A1F6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,6 +121,10 @@ Global
 		{9DF8486D-B626-4307-8BE3-550E0A900903}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DF8486D-B626-4307-8BE3-550E0A900903}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DF8486D-B626-4307-8BE3-550E0A900903}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EDE755B-5565-47D4-A6C6-D3797C7A1F6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EDE755B-5565-47D4-A6C6-D3797C7A1F6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EDE755B-5565-47D4-A6C6-D3797C7A1F6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EDE755B-5565-47D4-A6C6-D3797C7A1F6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

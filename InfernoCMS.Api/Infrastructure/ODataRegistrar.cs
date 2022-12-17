@@ -1,8 +1,9 @@
 ﻿using Extenso.AspNetCore.OData;
+using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 
-namespace InfernoCMS.Infrastructure
+namespace InfernoCMS.Api.Infrastructure
 {
     public class ODataRegistrar : IODataRegistrar
     {

@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
     <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
     <ProjectReference Include="..\InfernoCMS.Identity\InfernoCMS.Identity.csproj" />
+    <ProjectReference Include="..\InfernoCMS.Services\InfernoCMS.Services.csproj" />
   </ItemGroup>
 
 </Project>
