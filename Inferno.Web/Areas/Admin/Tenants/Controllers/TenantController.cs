@@ -1,16 +1,14 @@
 ﻿using Extenso.Data.Entity;
-using Inferno.Security;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Models;
 using Inferno.Web.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inferno.Web.Areas.Tenants.Controllers
 {
     [Area(InfernoWebConstants.Areas.Tenants)]
     //[Authorize(Policy = StandardPolicies.FullAccess)]
-    [Route("tenants")]
+    [Route("admin/tenants")]
     public class TenantController : ExportController<Tenant>
     {
         private readonly IRepository<Tenant> repository;

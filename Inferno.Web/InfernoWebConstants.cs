@@ -43,16 +43,16 @@ namespace Inferno.Web
         public static class Areas
         {
             public const string Admin = "Admin";
-            public const string Configuration = "Configuration";
+            public const string Configuration = "Admin/Configuration";
 
-            //public const string Indexing = "Indexing";
-            public const string Localization = "Localization";
+            //public const string Indexing = "Admin/Indexing";
+            public const string Localization = "Admin/Localization";
 
-            public const string Log = "Log";
-            public const string Membership = "Membership";
-            public const string Plugins = "Plugins";
-            public const string ScheduledTasks = "ScheduledTasks";
-            public const string Tenants = "Tenants";
+            public const string Log = "Admin/Log";
+            public const string Membership = "Admin/Membership";
+            public const string Plugins = "Admin/Plugins";
+            public const string ScheduledTasks = "Admin/ScheduledTasks";
+            public const string Tenants = "Admin/Tenants";
         }
 
         public static class CacheKeys
