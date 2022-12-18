@@ -1,4 +1,5 @@
 ﻿using Inferno.Tasks.Configuration;
+using Inferno.Web.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,12 +7,8 @@ namespace Inferno.Web.Infrastructure
 {
     public static class ServiceCollectionExtensions
     {
-        public static void ConfigureInfernoOptions(this IServiceCollection services, IConfigurationRoot configuration)
+        public static void ConfigureInferno(this IServiceCollection services, IConfiguration configuration)
         {
-            //var infrastructureOptions = new InfernoInfrastructureOptions();
-            //configuration.Bind(infrastructureOptions);
-            //services.AddSingleton(infrastructureOptions);
-
             //var pluginOptions = new InfernoPluginOptions();
             //configuration.Bind(pluginOptions);
             //services.AddSingleton(pluginOptions);
@@ -20,9 +17,9 @@ namespace Inferno.Web.Infrastructure
             configuration.Bind(tasksOptions);
             services.AddSingleton(tasksOptions);
 
-            //var webOptions = new InfernoWebOptions();
-            //configuration.Bind(webOptions);
-            //services.AddSingleton(webOptions);
+            var webOptions = new InfernoWebOptions();
+            configuration.Bind(webOptions);
+            services.AddSingleton(webOptions);
         }
     }
 }

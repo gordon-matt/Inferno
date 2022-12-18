@@ -39,14 +39,14 @@ namespace InfernoCMS.Identity.Services
 
         #region IMembershipService Members
 
-        public async Task<string> GenerateEmailConfirmationToken(object userId)
+        public async Task<string> GenerateEmailConfirmationTokenAsync(object userId)
         {
             string id = userId.ToString();
             var user = await userManager.FindByIdAsync(id);
             return await userManager.GenerateEmailConfirmationTokenAsync(user);
         }
 
-        public async Task ConfirmEmail(object userId, string token)
+        public async Task ConfirmEmailAsync(object userId, string token)
         {
             string id = userId.ToString();
             var user = await userManager.FindByIdAsync(id);
@@ -79,13 +79,13 @@ namespace InfernoCMS.Identity.Services
                 });
         }
 
-        public async Task<IEnumerable<InfernoUser>> GetAllUsers(int? tenantId)
+        public async Task<IEnumerable<InfernoUser>> GetAllUsersAsync(int? tenantId)
         {
             using var context = contextFactory.GetContext();
             return await GetAllUsersAsQueryable(context, tenantId).ToHashSetAsync();
         }
 
-        public async Task<IEnumerable<InfernoUser>> GetUsers(int? tenantId, Expression<Func<InfernoUser, bool>> predicate)
+        public async Task<IEnumerable<InfernoUser>> GetUsersAsync(int? tenantId, Expression<Func<InfernoUser, bool>> predicate)
         {
             using var context = contextFactory.GetContext();
             return await GetAllUsersAsQueryable(context, tenantId)
@@ -93,7 +93,7 @@ namespace InfernoCMS.Identity.Services
                 .ToHashSetAsync();
         }
 
-        public async Task<InfernoUser> GetUserById(object userId)
+        public async Task<InfernoUser> GetUserByIdAsync(object userId)
         {
             using var context = contextFactory.GetContext();
             var user = context.Set<ApplicationUser>().Find(userId);
@@ -113,7 +113,7 @@ namespace InfernoCMS.Identity.Services
             });
         }
 
-        public async Task<InfernoUser> GetUserByEmail(int? tenantId, string email)
+        public async Task<InfernoUser> GetUserByEmailAsync(int? tenantId, string email)
         {
             ApplicationUser user;
 
@@ -142,7 +142,7 @@ namespace InfernoCMS.Identity.Services
             };
         }
 
-        public async Task<InfernoUser> GetUserByName(int? tenantId, string userName)
+        public async Task<InfernoUser> GetUserByNameAsync(int? tenantId, string userName)
         {
             ApplicationUser user;
 
@@ -171,7 +171,7 @@ namespace InfernoCMS.Identity.Services
             };
         }
 
-        public async Task<IEnumerable<InfernoRole>> GetRolesForUser(object userId)
+        public async Task<IEnumerable<InfernoRole>> GetRolesForUserAsync(object userId)
         {
             string id = userId.ToString();
             if (cachedUserRoles.TryGetValue(id, out List<InfernoRole> value))
@@ -185,7 +185,7 @@ namespace InfernoCMS.Identity.Services
             var roles = new List<InfernoRole>();
             foreach (string roleName in roleNames)
             {
-                var superRole = await GetRoleByName(null, roleName);
+                var superRole = await GetRoleByNameAsync(null, roleName);
                 if (superRole != null)
                 {
                     roles.Add(new InfernoRole
@@ -196,7 +196,7 @@ namespace InfernoCMS.Identity.Services
                     });
                 }
 
-                var tenantRole = await GetRoleByName(user.TenantId, roleName);
+                var tenantRole = await GetRoleByNameAsync(user.TenantId, roleName);
                 if (tenantRole != null)
                 {
                     roles.Add(new InfernoRole
@@ -212,7 +212,7 @@ namespace InfernoCMS.Identity.Services
             return roles;
         }
 
-        public async Task<bool> DeleteUser(object userId)
+        public async Task<bool> DeleteUserAsync(object userId)
         {
             string id = userId.ToString();
             var user = await userManager.Users.FirstOrDefaultAsync(x => x.Id == id);
@@ -226,7 +226,7 @@ namespace InfernoCMS.Identity.Services
             return false;
         }
 
-        public async Task InsertUser(InfernoUser user, string password)
+        public async Task InsertUserAsync(InfernoUser user, string password)
         {
             // Check for spaces in UserName above, because of this:
             // http://stackoverflow.com/questions/30078332/bug-in-asp-net-identitys-usermanager
@@ -249,7 +249,7 @@ namespace InfernoCMS.Identity.Services
             }
         }
 
-        public async Task UpdateUser(InfernoUser user)
+        public async Task UpdateUserAsync(InfernoUser user)
         {
             string userId = user.Id.ToString();
             var existingUser = await userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
@@ -312,7 +312,7 @@ namespace InfernoCMS.Identity.Services
         //    }
         //}
 
-        public async Task AssignUserToRoles(int? tenantId, object userId, IEnumerable<object> roleIds)
+        public async Task AssignUserToRolesAsync(int? tenantId, object userId, IEnumerable<object> roleIds)
         {
             string uId = userId.ToString();
 
@@ -366,7 +366,7 @@ namespace InfernoCMS.Identity.Services
             cachedUserRoles.Remove(uId);
         }
 
-        public async Task ChangePassword(object userId, string newPassword)
+        public async Task ChangePasswordAsync(object userId, string newPassword)
         {
             //TODO: This doesn't seem to be working very well; no errors, but can't login with the given password
             string id = userId.ToString();
@@ -392,9 +392,9 @@ namespace InfernoCMS.Identity.Services
             //userManager.UpdateSecurityStamp(id);
         }
 
-        public async Task<string> GetUserDisplayName(InfernoUser user)
+        public async Task<string> GetUserDisplayNameAsync(InfernoUser user)
         {
-            var profile = await GetProfile(user.Id);
+            var profile = await GetProfileAsync(user.Id);
 
             bool hasFamilyName = profile.ContainsKey(AccountUserProfileProvider.Fields.FamilyName);
             bool hasGivenNames = profile.ContainsKey(AccountUserProfileProvider.Fields.GivenNames);
@@ -434,7 +434,7 @@ namespace InfernoCMS.Identity.Services
 
         #region Set<ApplicationRole>()
 
-        public async Task<IEnumerable<InfernoRole>> GetAllRoles(int? tenantId)
+        public async Task<IEnumerable<InfernoRole>> GetAllRolesAsync(int? tenantId)
         {
             IQueryable<ApplicationRole> query = roleManager.Roles;
 
@@ -456,7 +456,7 @@ namespace InfernoCMS.Identity.Services
                 .ToListAsync();
         }
 
-        public async Task<InfernoRole> GetRoleById(object roleId)
+        public async Task<InfernoRole> GetRoleByIdAsync(object roleId)
         {
             string id = roleId.ToString();
             var role = await roleManager.FindByIdAsync(id);
@@ -468,7 +468,7 @@ namespace InfernoCMS.Identity.Services
             };
         }
 
-        public async Task<IEnumerable<InfernoRole>> GetRolesByIds(IEnumerable<object> roleIds)
+        public async Task<IEnumerable<InfernoRole>> GetRolesByIdsAsync(IEnumerable<object> roleIds)
         {
             var ids = roleIds.ToListOf<string>();
             var roles = new List<ApplicationRole>();
@@ -486,7 +486,7 @@ namespace InfernoCMS.Identity.Services
             });
         }
 
-        public async Task<InfernoRole> GetRoleByName(int? tenantId, string roleName)
+        public async Task<InfernoRole> GetRoleByNameAsync(int? tenantId, string roleName)
         {
             ApplicationRole role;
 
@@ -511,7 +511,7 @@ namespace InfernoCMS.Identity.Services
             };
         }
 
-        public async Task<bool> DeleteRole(object roleId)
+        public async Task<bool> DeleteRoleAsync(object roleId)
         {
             string id = roleId.ToString();
             var role = await roleManager.FindByIdAsync(id);
@@ -525,7 +525,7 @@ namespace InfernoCMS.Identity.Services
             return false;
         }
 
-        public async Task InsertRole(InfernoRole role)
+        public async Task InsertRoleAsync(InfernoRole role)
         {
             var result = await roleManager.CreateAsync(new ApplicationRole
             {
@@ -540,7 +540,7 @@ namespace InfernoCMS.Identity.Services
             }
         }
 
-        public async Task UpdateRole(InfernoRole role)
+        public async Task UpdateRoleAsync(InfernoRole role)
         {
             string id = role.Id.ToString();
             var existingRole = await roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
@@ -558,7 +558,7 @@ namespace InfernoCMS.Identity.Services
             }
         }
 
-        public async Task<IEnumerable<InfernoUser>> GetUsersByRoleId(object roleId)
+        public async Task<IEnumerable<InfernoUser>> GetUsersByRoleIdAsync(object roleId)
         {
             string rId = roleId.ToString();
 
@@ -579,7 +579,7 @@ namespace InfernoCMS.Identity.Services
             });
         }
 
-        public async Task<IEnumerable<InfernoUser>> GetUsersByRoleName(int? tenantId, string roleName)
+        public async Task<IEnumerable<InfernoUser>> GetUsersByRoleNameAsync(int? tenantId, string roleName)
         {
             ApplicationRole role;
 
@@ -613,13 +613,13 @@ namespace InfernoCMS.Identity.Services
 
         #region Profile
 
-        public async Task<IDictionary<string, string>> GetProfile(string userId)
+        public async Task<IDictionary<string, string>> GetProfileAsync(string userId)
         {
             using var connection = userProfileRepository.OpenConnection();
             return await connection.Query(x => x.UserId == userId).ToDictionaryAsync(k => k.Key, v => v.Value);
         }
 
-        public async Task<IEnumerable<UserProfile>> GetProfiles(IEnumerable<string> userIds)
+        public async Task<IEnumerable<UserProfile>> GetProfilesAsync(IEnumerable<string> userIds)
         {
             using var connection = userProfileRepository.OpenConnection();
             var entries = await connection.Query(x => userIds.Contains(x.UserId)).ToListAsync();
@@ -630,7 +630,7 @@ namespace InfernoCMS.Identity.Services
             });
         }
 
-        public async Task UpdateProfile(string userId, IDictionary<string, string> profile, bool deleteExisting = false)
+        public async Task UpdateProfileAsync(string userId, IDictionary<string, string> profile, bool deleteExisting = false)
         {
             List<UserProfileEntry> entries = null;
             using (var connection = userProfileRepository.OpenConnection())
@@ -688,7 +688,7 @@ namespace InfernoCMS.Identity.Services
             }
         }
 
-        public async Task<string> GetProfileEntry(string userId, string key)
+        public async Task<string> GetProfileEntryAsync(string userId, string key)
         {
             var entry = await userProfileRepository.FindOneAsync(x =>
                 x.UserId == userId &&
@@ -702,7 +702,7 @@ namespace InfernoCMS.Identity.Services
             return null;
         }
 
-        public async Task SaveProfileEntry(string userId, string key, string value)
+        public async Task SaveProfileEntryAsync(string userId, string key, string value)
         {
             var entry = await userProfileRepository.FindOneAsync(x =>
                 x.UserId == userId &&
@@ -724,7 +724,7 @@ namespace InfernoCMS.Identity.Services
             }
         }
 
-        public async Task DeleteProfileEntry(string userId, string key)
+        public async Task DeleteProfileEntryAsync(string userId, string key)
         {
             var entry = await userProfileRepository.FindOneAsync(x =>
                 x.UserId == userId &&
@@ -736,7 +736,7 @@ namespace InfernoCMS.Identity.Services
             }
         }
 
-        public async Task<IEnumerable<InfernoUserProfileEntry>> GetProfileEntriesByKey(int? tenantId, string key)
+        public async Task<IEnumerable<InfernoUserProfileEntry>> GetProfileEntriesByKeyAsync(int? tenantId, string key)
         {
             using var connection = userProfileRepository.OpenConnection();
             var query = connection.Query();
@@ -760,7 +760,7 @@ namespace InfernoCMS.Identity.Services
                 });
         }
 
-        public async Task<IEnumerable<InfernoUserProfileEntry>> GetProfileEntriesByKeyAndValue(int? tenantId, string key, string value)
+        public async Task<IEnumerable<InfernoUserProfileEntry>> GetProfileEntriesByKeyAndValueAsync(int? tenantId, string key, string value)
         {
             using var connection = userProfileRepository.OpenConnection();
             var query = connection.Query();
@@ -784,7 +784,7 @@ namespace InfernoCMS.Identity.Services
                 });
         }
 
-        public async Task<bool> ProfileEntryExists(int? tenantId, string key, string value, string userId = null)
+        public async Task<bool> ProfileEntryExistsAsync(int? tenantId, string key, string value, string userId = null)
         {
             using var connection = userProfileRepository.OpenConnection();
             IQueryable<UserProfileEntry> query = null;
@@ -807,21 +807,21 @@ namespace InfernoCMS.Identity.Services
 
         #endregion Profile
 
-        public async Task EnsureAdminRoleForTenant(int? tenantId)
+        public async Task EnsureAdminRoleForTenantAsync(int? tenantId)
         {
-            var administratorsRole = await GetRoleByName(tenantId, InfernoSecurityConstants.Roles.Administrators);
+            var administratorsRole = await GetRoleByNameAsync(tenantId, InfernoSecurityConstants.Roles.Administrators);
             if (administratorsRole == null)
             {
-                await InsertRole(new InfernoRole { TenantId = tenantId, Name = InfernoSecurityConstants.Roles.Administrators });
-                administratorsRole = await GetRoleByName(tenantId, InfernoSecurityConstants.Roles.Administrators);
+                await InsertRoleAsync(new InfernoRole { TenantId = tenantId, Name = InfernoSecurityConstants.Roles.Administrators });
+                administratorsRole = await GetRoleByNameAsync(tenantId, InfernoSecurityConstants.Roles.Administrators);
 
                 if (administratorsRole != null)
                 {
                     // Assign all super admin users (NULL TenantId) to this new admin role
-                    var superAdminUsers = await GetUsersByRoleName(null, InfernoSecurityConstants.Roles.Administrators);
+                    var superAdminUsers = await GetUsersByRoleNameAsync(null, InfernoSecurityConstants.Roles.Administrators);
                     foreach (var user in superAdminUsers)
                     {
-                        await AssignUserToRoles(tenantId, user.Id, new[] { administratorsRole.Id });
+                        await AssignUserToRolesAsync(tenantId, user.Id, new[] { administratorsRole.Id });
                     }
                 }
             }

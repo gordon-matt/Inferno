@@ -29,7 +29,7 @@ namespace Inferno.Web.Areas.Tenants.Controllers.Api
         {
             var result = await base.Post(entity);
             int tenantId = entity.Id; // EF should have populated the ID in base.Post()
-            await membershipService.EnsureAdminRoleForTenant(tenantId);
+            await membershipService.EnsureAdminRoleForTenantAsync(tenantId);
 
             //TOOD: Create tenant media folder:
             var mediaFolder = new DirectoryInfo(CommonHelper.MapPath("~/Media/Uploads/Tenant_" + tenantId));

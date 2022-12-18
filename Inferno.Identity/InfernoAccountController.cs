@@ -458,14 +458,14 @@ namespace Inferno.Identity
             }
             else if (await AuthorizeAsync(StandardPolicies.FullAccess))
             {
-                var user = await membershipService.GetUserById(userId);
+                var user = await membershipService.GetUserByIdAsync(userId);
                 ViewBag.Title = string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName);
                 WorkContext.Value.Breadcrumbs.Add(string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName));
                 ViewBag.CanEdit = true;
             }
             else
             {
-                var user = await membershipService.GetUserById(userId);
+                var user = await membershipService.GetUserByIdAsync(userId);
                 ViewBag.Title = string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName);
                 WorkContext.Value.Breadcrumbs.Add(string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName));
                 ViewBag.CanEdit = false;
@@ -492,7 +492,7 @@ namespace Inferno.Identity
             else if (await AuthorizeAsync(StandardPolicies.FullAccess))
             {
                 ViewBag.Title = T[InfernoIdentityLocalizableStrings.EditProfile].Value;
-                var user = await membershipService.GetUserById(userId);
+                var user = await membershipService.GetUserByIdAsync(userId);
                 WorkContext.Value.Breadcrumbs.Add(string.Format(T[InfernoIdentityLocalizableStrings.ProfileForUser].Value, user.UserName), Url.Action("ViewProfile", new { userId }));
                 WorkContext.Value.Breadcrumbs.Add(T[InfernoWebLocalizableStrings.General.Edit].Value);
             }
@@ -531,7 +531,7 @@ namespace Inferno.Identity
                 }
             }
 
-            await membershipService.UpdateProfile(userId, newProfile);
+            await membershipService.UpdateProfileAsync(userId, newProfile);
 
             //eventBus.Notify<IMembershipEventHandler>(x => x.ProfileChanged(userId, newProfile));
 

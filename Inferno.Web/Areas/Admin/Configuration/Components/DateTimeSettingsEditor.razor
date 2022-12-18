@@ -1,0 +1,24 @@
+﻿@using Inferno.Web.Configuration
+@inherits SettingsEditor<DateTimeSettings>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.DateTime.DefaultTimeZoneId]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenTextBox @bind-Value="Model.DefaultTimeZoneId" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Name" ColumnSize="ColumnSize.Is3"></FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <Check TValue="bool" @bind-Checked="@Model.AllowUsersToSetTimeZone">@T[InfernoWebLocalizableStrings.Settings.DateTime.AllowUsersToSetTimeZone]</Check>
+                @*<RadzenCheckBox @bind-Value="Model.AllowUsersToSetTimeZone" Style="width:100%" /> @T[InfernoWebLocalizableStrings.Settings.DateTime.AllowUsersToSetTimeZone]*@
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>

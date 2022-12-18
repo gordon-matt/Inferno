@@ -36,7 +36,7 @@ namespace Inferno.Web.Mvc.Themes
         public async Task PopulateFieldsAsync(string userId)
         {
             var membershipService = EngineContext.Current.Resolve<IMembershipService>();
-            PreferredTheme = await membershipService.GetProfileEntry(userId, Fields.PreferredTheme);
+            PreferredTheme = await membershipService.GetProfileEntryAsync(userId, Fields.PreferredTheme);
         }
 
         #endregion IUserProfileProvider Members

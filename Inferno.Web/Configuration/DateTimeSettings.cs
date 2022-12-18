@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Inferno.Localization.ComponentModel;
+using Inferno.Web.Areas.Admin.Configuration.Components;
 
 namespace Inferno.Web.Configuration
 {
@@ -18,7 +19,7 @@ namespace Inferno.Web.Configuration
 
         public bool IsTenantRestricted => false;
 
-        public Type EditorType => throw new NotImplementedException();
+        public Type EditorType => typeof(DateTimeSettingsEditor);
 
         //public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.DateTimeSettings.cshtml";
 

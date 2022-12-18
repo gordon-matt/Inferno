@@ -1,0 +1,34 @@
+﻿@using Inferno.Web.Security.Membership
+@inherits SettingsEditor<MembershipSettings>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.Membership.GeneratedPasswordLength]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.GeneratedPasswordLength" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.Membership.GeneratedPasswordNumberOfNonAlphanumericChars]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.GeneratedPasswordNumberOfNonAlphanumericChars" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Name" ColumnSize="ColumnSize.Is3"></FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <Check TValue="bool" @bind-Checked="@Model.DisallowUnconfirmedUserLogin">@T[InfernoWebLocalizableStrings.Settings.Membership.DisallowUnconfirmedUserLogin]</Check>
+                @*<RadzenCheckBox @bind-Value="Model.DisallowUnconfirmedUserLogin" Style="width:100%" /> @T[InfernoWebLocalizableStrings.Settings.Membership.DisallowUnconfirmedUserLogin]*@
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>

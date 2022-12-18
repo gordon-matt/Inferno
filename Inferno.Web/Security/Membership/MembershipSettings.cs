@@ -1,4 +1,5 @@
 ﻿using Inferno.Localization.ComponentModel;
+using Inferno.Web.Areas.Admin.Configuration.Components;
 using Inferno.Web.Configuration;
 
 namespace Inferno.Web.Security.Membership
@@ -26,7 +27,7 @@ namespace Inferno.Web.Security.Membership
 
         public bool IsTenantRestricted => false;
 
-        public Type EditorType => throw new NotImplementedException();
+        public Type EditorType => typeof(MembershipSettingsEditor);
 
         //public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.MembershipSettings.cshtml";
 

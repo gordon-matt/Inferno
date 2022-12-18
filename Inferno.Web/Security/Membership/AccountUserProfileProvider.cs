@@ -46,7 +46,7 @@ namespace Inferno.Web.Security.Membership
         {
             var membershipService = EngineContext.Current.Resolve<IMembershipService>();
 
-            var profile = await membershipService.GetProfile(userId);
+            var profile = await membershipService.GetProfileAsync(userId);
 
             if (profile.ContainsKey(Fields.FamilyName))
             {

@@ -3,6 +3,7 @@ using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Infrastructure;
 using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
@@ -119,6 +120,8 @@ namespace InfernoCMS
             services.AddHttpContextAccessor();
 
             services.AddHttpClient();
+
+            services.ConfigureInferno(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -146,6 +149,8 @@ namespace InfernoCMS
             app.UseAuthorization();
 
             app.UseMultitenancy<Tenant>();
+
+            app.UseInferno();
 
             app.UseEndpoints(endpoints =>
             {
