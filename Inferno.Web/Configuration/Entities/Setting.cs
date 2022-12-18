@@ -7,22 +7,13 @@ namespace Inferno.Web.Configuration.Entities
 {
     public class Setting : TenantEntity<Guid>
     {
-        /// <summary>
-        /// Gets or sets the name
-        /// </summary>
         public string Name { get; set; }
 
         public string Type { get; set; }
 
-        /// <summary>
-        /// Gets or sets the value
-        /// </summary>
         public string Value { get; set; }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
     }
 
     public class SettingMap : IEntityTypeConfiguration<Setting>, IInfernoEntityTypeConfiguration
@@ -38,10 +29,7 @@ namespace Inferno.Web.Configuration.Entities
 
         #region IEntityTypeConfiguration Members
 
-        public bool IsEnabled
-        {
-            get { return true; }
-        }
+        public bool IsEnabled => true;
 
         #endregion IEntityTypeConfiguration Members
     }

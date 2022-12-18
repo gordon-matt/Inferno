@@ -36,7 +36,12 @@
             <CardHeader Class="text-white bg-primary">Details</CardHeader>
             <CardBody>
                 <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <div id="settings-details"></div>
+                    @if (EditorType is not null)
+                    {
+                        <div id="settings-details">
+                            <DynamicComponent Type="EditorType" Parameters="@(new Dictionary<string, object> { { "Data", Model } })" />
+                        </div>
+                    }
                     <hr />
                     <Row>
                         <Column ColumnSize="ColumnSize.Is12">

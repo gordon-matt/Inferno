@@ -1,106 +1,106 @@
-﻿using Dependo;
-using Inferno.Security.Membership;
-using Inferno.Threading;
-using Inferno.Web.Configuration;
+﻿//using Dependo;
+//using Inferno.Security.Membership;
+//using Inferno.Threading;
+//using Inferno.Web.Configuration;
 
-namespace Inferno.Web.Mvc.Themes
-{
-    /// <summary>
-    /// Theme context
-    /// </summary>
-    public partial class ThemeContext : IThemeContext
-    {
-        private readonly IWorkContext workContext;
-        private readonly IThemeProvider themeProvider;
-        private readonly SiteSettings siteSettings;
+//namespace Inferno.Web.Mvc.Themes
+//{
+//    /// <summary>
+//    /// Theme context
+//    /// </summary>
+//    public partial class ThemeContext : IThemeContext
+//    {
+//        private readonly IWorkContext workContext;
+//        private readonly IThemeProvider themeProvider;
+//        private readonly SiteSettings siteSettings;
 
-        private bool isDesktopThemeCached;
-        private string cachedDesktopThemeName;
+//        private bool isDesktopThemeCached;
+//        private string cachedDesktopThemeName;
 
-        //private bool isMobileThemeCached;
-        //private string cachedMobileThemeName;
+//        //private bool isMobileThemeCached;
+//        //private string cachedMobileThemeName;
 
-        public ThemeContext(
-            IWorkContext workContext,
-            IThemeProvider themeProvider,
-            SiteSettings siteSettings)
-        {
-            this.workContext = workContext;
-            this.themeProvider = themeProvider;
-            this.siteSettings = siteSettings;
-        }
+//        public ThemeContext(
+//            IWorkContext workContext,
+//            IThemeProvider themeProvider,
+//            SiteSettings siteSettings)
+//        {
+//            this.workContext = workContext;
+//            this.themeProvider = themeProvider;
+//            this.siteSettings = siteSettings;
+//        }
 
-        /// <summary>
-        /// Get or set current theme for desktops
-        /// </summary>
-        public string WorkingTheme
-        {
-            get
-            {
-                if (isDesktopThemeCached)
-                {
-                    return cachedDesktopThemeName;
-                }
+//        /// <summary>
+//        /// Get or set current theme for desktops
+//        /// </summary>
+//        public string WorkingTheme
+//        {
+//            get
+//            {
+//                if (isDesktopThemeCached)
+//                {
+//                    return cachedDesktopThemeName;
+//                }
 
-                string theme = string.Empty;
+//                string theme = string.Empty;
 
-                if (siteSettings.AllowUserToSelectTheme)
-                {
-                    if (workContext.CurrentUser != null)
-                    {
-                        var membershipService = EngineContext.Current.Resolve<IMembershipService>();
-                        string userTheme = AsyncHelper.RunSync(() => membershipService.GetProfileEntry(workContext.CurrentUser.Id, ThemeUserProfileProvider.Fields.PreferredTheme));
+//                if (siteSettings.AllowUserToSelectTheme)
+//                {
+//                    if (workContext.CurrentUser != null)
+//                    {
+//                        var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+//                        string userTheme = AsyncHelper.RunSync(() => membershipService.GetProfileEntry(workContext.CurrentUser.Id, ThemeUserProfileProvider.Fields.PreferredTheme));
 
-                        if (!string.IsNullOrEmpty(userTheme))
-                        {
-                            theme = userTheme;
-                        }
-                    }
-                }
+//                        if (!string.IsNullOrEmpty(userTheme))
+//                        {
+//                            theme = userTheme;
+//                        }
+//                    }
+//                }
 
-                // Default tenant theme
-                if (string.IsNullOrEmpty(theme))
-                {
-                    theme = siteSettings.DefaultTheme ?? "Default";
-                }
+//                // Default tenant theme
+//                if (string.IsNullOrEmpty(theme))
+//                {
+//                    theme = siteSettings.DefaultTheme ?? "Default";
+//                }
 
-                // Ensure that theme exists
-                if (!themeProvider.ThemeConfigurationExists(theme))
-                {
-                    var themeInstance = themeProvider.GetThemeConfigurations()
-                        .FirstOrDefault();
+//                // Ensure that theme exists
+//                if (!themeProvider.ThemeConfigurationExists(theme))
+//                {
+//                    var themeInstance = themeProvider.GetThemeConfigurations()
+//                        .FirstOrDefault();
 
-                    if (themeInstance == null)
-                    {
-                        throw new Exception("No theme could be loaded");
-                    }
+//                    if (themeInstance == null)
+//                    {
+//                        throw new Exception("No theme could be loaded");
+//                    }
 
-                    theme = themeInstance.ThemeName;
-                }
+//                    theme = themeInstance.ThemeName;
+//                }
 
-                // Cache theme
-                cachedDesktopThemeName = theme;
-                isDesktopThemeCached = true;
-                return theme;
-            }
-            set
-            {
-                if (!siteSettings.AllowUserToSelectTheme)
-                {
-                    return;
-                }
+//                // Cache theme
+//                cachedDesktopThemeName = theme;
+//                isDesktopThemeCached = true;
+//                return theme;
+//            }
+//            set
+//            {
+//                if (!siteSettings.AllowUserToSelectTheme)
+//                {
+//                    return;
+//                }
 
-                if (workContext.CurrentUser == null)
-                {
-                    return;
-                }
+//                if (workContext.CurrentUser == null)
+//                {
+//                    return;
+//                }
 
-                var membershipService = EngineContext.Current.Resolve<IMembershipService>();
-                AsyncHelper.RunSync(() => membershipService.SaveProfileEntry(workContext.CurrentUser.Id, ThemeUserProfileProvider.Fields.PreferredTheme, value));
+//                var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+//                AsyncHelper.RunSync(() => membershipService.SaveProfileEntry(workContext.CurrentUser.Id, ThemeUserProfileProvider.Fields.PreferredTheme, value));
 
-                //clear cache
-                isDesktopThemeCached = false;
-            }
-        }
-    }
-}
+//                //clear cache
+//                isDesktopThemeCached = false;
+//            }
+//        }
+//    }
+//}

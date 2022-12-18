@@ -26,7 +26,9 @@ namespace Inferno.Web.Security.Membership
 
         public bool IsTenantRestricted => false;
 
-        public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.MembershipSettings.cshtml";
+        public Type EditorType => throw new NotImplementedException();
+
+        //public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.MembershipSettings.cshtml";
 
         #endregion ISettings Members
     }

@@ -1,4 +1,5 @@
 ﻿using Inferno.Localization.ComponentModel;
+using Inferno.Web.Areas.Admin.Configuration.Components;
 
 namespace Inferno.Web.Configuration
 {
@@ -7,10 +8,10 @@ namespace Inferno.Web.Configuration
         public SiteSettings()
         {
             SiteName = "My Site";
-            DefaultTheme = "Default";
+            //DefaultTheme = "Default";
             DefaultGridPageSize = 10;
-            DefaultFrontendLayoutPath = "~/Views/Shared/_Layout.cshtml";
-            AdminLayoutPath = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+            //DefaultFrontendLayoutPath = "~/Views/Shared/_Layout.cshtml";
+            //AdminLayoutPath = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
             HomePageTitle = "Home Page";
         }
 
@@ -20,7 +21,7 @@ namespace Inferno.Web.Configuration
 
         public bool IsTenantRestricted => false;
 
-        public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.SiteSettings.cshtml";
+        public Type EditorType => typeof(SiteSettingsEditor);
 
         #endregion ISettings Members
 
@@ -29,26 +30,26 @@ namespace Inferno.Web.Configuration
         [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.SiteName)]
         public string SiteName { get; set; }
 
-        [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultFrontendLayoutPath)]
-        public string DefaultFrontendLayoutPath { get; set; }
+        //[LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultFrontendLayoutPath)]
+        //public string DefaultFrontendLayoutPath { get; set; }
 
-        [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.AdminLayoutPath)]
-        public string AdminLayoutPath { get; set; }
+        //[LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.AdminLayoutPath)]
+        //public string AdminLayoutPath { get; set; }
 
         [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultGridPageSize)]
         public int DefaultGridPageSize { get; set; }
 
         #endregion General
 
-        #region Themes
+        //#region Themes
 
-        [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultTheme)]
-        public string DefaultTheme { get; set; }
+        //[LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultTheme)]
+        //public string DefaultTheme { get; set; }
 
-        [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.AllowUserToSelectTheme)]
-        public bool AllowUserToSelectTheme { get; set; }
+        //[LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.AllowUserToSelectTheme)]
+        //public bool AllowUserToSelectTheme { get; set; }
 
-        #endregion Themes
+        //#endregion Themes
 
         #region Localization
 

@@ -14,7 +14,7 @@ namespace Inferno.Web.Mvc.Razor
             base.PopulateValues(context);
             //context.Values[THEME_KEY] = context.ActionContext.HttpContext.GetTenant<Tenant>()?.Theme;
             var siteSettings = EngineContext.Current.Resolve<SiteSettings>();
-            context.Values[THEME_KEY] = siteSettings.DefaultTheme;
+            //context.Values[THEME_KEY] = siteSettings.DefaultTheme;
         }
 
         public override IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)

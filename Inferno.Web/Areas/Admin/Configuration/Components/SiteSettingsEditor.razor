@@ -1,0 +1,79 @@
+﻿@using Inferno.Web.Configuration
+@inherits SettingsEditor<SiteSettings>
+
+<Tabs SelectedTab="@selectedTab" SelectedTabChanged="@OnSelectedTabChanged">
+    <Items>
+        <Tab Name="General">General</Tab>
+        <Tab Name="Localization">Localization</Tab>
+        <Tab Name="SEO">SEO</Tab>
+    </Items>
+    <Content>
+        <TabPanel Name="General">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Field Horizontal="true">
+                        <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.Site.SiteName]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <RadzenTextBox @bind-Value="Model.SiteName" Style="width:100%" />
+                        </FieldBody>
+                    </Field>
+                </Column>
+            </Row>
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Field Horizontal="true">
+                        <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultGridPageSize]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <RadzenNumeric @bind-Value="Model.DefaultGridPageSize" Style="width:100%" />
+                        </FieldBody>
+                    </Field>
+                </Column>
+            </Row>
+        </TabPanel>
+        <TabPanel Name="Localization">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Field Horizontal="true">
+                        <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <!-- TODO: DefaultLanguage: Make it a dropdown -->
+                            <RadzenTextBox @bind-Value="Model.DefaultLanguage" Style="width:100%" />
+                        </FieldBody>
+                    </Field>
+                </Column>
+            </Row>
+        </TabPanel>
+        <TabPanel Name="SEO">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Field Horizontal="true">
+                        <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultMetaKeywords]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <RadzenTextBox @bind-Value="Model.DefaultMetaKeywords" Style="width:100%" />
+                        </FieldBody>
+                    </Field>
+                </Column>
+            </Row>
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Field Horizontal="true">
+                        <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultMetaDescription]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <RadzenTextBox @bind-Value="Model.DefaultMetaDescription" Style="width:100%" />
+                        </FieldBody>
+                    </Field>
+                </Column>
+            </Row>
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Field Horizontal="true">
+                        <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.Site.HomePageTitle]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <RadzenTextBox @bind-Value="Model.HomePageTitle" Style="width:100%" />
+                        </FieldBody>
+                    </Field>
+                </Column>
+            </Row>
+        </TabPanel>
+    </Content>
+</Tabs>

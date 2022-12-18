@@ -10,6 +10,6 @@
         /// </summary>
         bool IsTenantRestricted { get; }
 
-        string EditorTemplatePath { get; }
+        Type EditorType { get; }
     }
 }

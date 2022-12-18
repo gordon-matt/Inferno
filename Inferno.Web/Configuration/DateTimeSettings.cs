@@ -18,7 +18,9 @@ namespace Inferno.Web.Configuration
 
         public bool IsTenantRestricted => false;
 
-        public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.DateTimeSettings.cshtml";
+        public Type EditorType => throw new NotImplementedException();
+
+        //public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.DateTimeSettings.cshtml";
 
         #endregion ISettings Members
     }
