@@ -1,0 +1,155 @@
+﻿@page "/admin/configuration/localization/index"
+@inherits RadzenDataPage<Language, Guid>
+
+<h1>Localization</h1>
+
+<Row hidden="@(ShowEditMode == true)">
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Click="Create">
+            <Icon Name="IconName.PlusCircle"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Create]
+        </RadzenButton>
+        <RadzenButton Text="Clear" Click="@(args => ClearAsync())">
+            @T[InfernoWebLocalizableStrings.General.Clear]
+        </RadzenButton>
+        <RadzenButton Text="Clear" Click="@(args => ImportLanguagePack())">
+            @T[InfernoWebLocalizableStrings.General.Import]
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="Language"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="10"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="Language" Property="Name" Title="@T[InfernoWebLocalizableStrings.General.Name]" />
+                <RadzenDataGridColumn TItem="Language" Property="CultureCode" Title="@T[InfernoWebLocalizableStrings.Localization.LanguageModel.CultureCode]" />
+                <RadzenDataGridColumn TItem="Language" Property="IsEnabled" Title="@T[InfernoWebLocalizableStrings.General.Enabled]" />
+                <RadzenDataGridColumn TItem="Language" Property="SortOrder" Title="@T[InfernoWebLocalizableStrings.Localization.LanguageModel.SortOrder]" />
+                <RadzenDataGridColumn TItem="Language" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">Details</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="CultureCode" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Localization.LanguageModel.CultureCode]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenTextBox @bind-Value="Model.CultureCode" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.General.Name]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenTextBox @bind-Value="Model.Name" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="SortOrder" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Localization.LanguageModel.SortOrder]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenNumeric @bind-Value="Model.SortOrder" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Name" ColumnSize="ColumnSize.Is3"></FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <Check TValue="bool" @bind-Checked="@Model.IsRTL">@T[InfernoWebLocalizableStrings.Localization.LanguageModel.IsRTL]</Check>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Name" ColumnSize="ColumnSize.Is3"></FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <Check TValue="bool" @bind-Checked="@Model.IsEnabled">@T[InfernoWebLocalizableStrings.General.Enabled]</Check>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <hr />
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
+<Row id="upload-section" hidden="@(ShowUploadSection == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">Details</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="CultureCode" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.General.Upload]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <FileEdit Changed="@FileOnChangedAsync" Progressed="FileOnProgressed" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <hr />
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

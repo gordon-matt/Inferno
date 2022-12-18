@@ -38,6 +38,8 @@
 
             public static class EntitySetNames
             {
+                public const string Language = "LanguageApi";
+                public const string LocalizableString = "LocalizableStringApi";
                 public const string Settings = "SettingsApi";
                 public const string Tenant = "TenantApi";
             }

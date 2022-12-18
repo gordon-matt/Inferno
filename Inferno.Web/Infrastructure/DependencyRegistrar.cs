@@ -5,6 +5,7 @@ using Inferno.Localization;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin.Configuration.Services;
+using Inferno.Web.Areas.Admin.Localization.Services;
 using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Entities;
@@ -83,6 +84,8 @@ namespace Inferno.Web.Infrastructure
             //// Embedded File Provider
             //builder.RegisterType<EmbeddedFileProviderRegistrar>().As<IEmbeddedFileProviderRegistrar>().InstancePerLifetimeScope();
 
+            builder.RegisterType<LanguageODataService>().As<IRadzenODataService<Setting, Guid>>().SingleInstance();
+            builder.RegisterType<SettingODataService>().As<IRadzenODataService<Setting, Guid>>().SingleInstance();
             builder.RegisterType<SettingODataService>().As<IRadzenODataService<Setting, Guid>>().SingleInstance();
             builder.RegisterType<TenantODataService>().As<IRadzenODataService<Tenant, int>>().SingleInstance();
         }

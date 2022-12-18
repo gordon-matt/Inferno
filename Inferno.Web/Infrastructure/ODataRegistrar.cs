@@ -1,4 +1,5 @@
 ﻿using Extenso.AspNetCore.OData;
+using Inferno.Localization.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Configuration.Entities;
 using Microsoft.AspNetCore.OData;
@@ -18,9 +19,9 @@ namespace Inferno.Web.Infrastructure
             builder.EntitySet<Setting>("SettingsApi");
             //builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
 
-            //// Localization
-            //builder.EntitySet<Language>("LanguageApi");
-            //builder.EntitySet<LocalizableString>("LocalizableStringApi");
+            // Localization
+            builder.EntitySet<Language>(InfernoWebConstants.ODataRoutes.EntitySetNames.Language);
+            builder.EntitySet<LocalizableString>(InfernoWebConstants.ODataRoutes.EntitySetNames.LocalizableString);
 
             ////// Log
             ////builder.EntitySet<LogEntry>("LogApi");
