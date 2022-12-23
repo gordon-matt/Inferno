@@ -7,10 +7,11 @@ namespace Inferno.Caching
     /// <summary>
     /// Represents a MemoryCache
     /// </summary>
-    public class MemoryCacheManager : ICacheManager
+    public class MemoryCacheManager : ICacheManager, IDisposable
     {
         private readonly IMemoryCache cache;
         private readonly HashSet<string> keys;
+        private bool isDisposed;
 
         public MemoryCacheManager(IServiceProvider serviceProvider)
         {
@@ -124,5 +125,38 @@ namespace Inferno.Caching
                 Remove(key);
             }
         }
+
+        #region IDisposable Implementation
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {
+                    cache?.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                isDisposed = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~MemoryCacheManager()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion IDisposable Implementation
     }
 }

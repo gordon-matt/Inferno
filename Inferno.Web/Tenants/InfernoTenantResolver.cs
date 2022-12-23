@@ -35,6 +35,7 @@ namespace Inferno.Web.Tenants
             return context.Tenant.Hosts.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Wrong Usage", "DF0010:Marks undisposed local variables.", Justification = "TenantContext is handled by SaasKit")]
         protected override Task<TenantContext<Tenant>> ResolveAsync(HttpContext context)
         {
             TenantContext<Tenant> tenantContext = null;

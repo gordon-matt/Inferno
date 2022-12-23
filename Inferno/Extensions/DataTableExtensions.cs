@@ -19,7 +19,7 @@ namespace Inferno
                 ? "Report"
                 : table.TableName;
 
-            var worksheet = excel.Workbook.Worksheets.Add(sheetName);
+            using var worksheet = excel.Workbook.Worksheets.Add(sheetName);
             worksheet.Cells["A1"].LoadFromDataTable(table, outputColumnNames);
 
             int columnNumber = 1;

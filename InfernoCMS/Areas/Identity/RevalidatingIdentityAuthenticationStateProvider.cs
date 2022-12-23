@@ -31,7 +31,7 @@ namespace InfernoCMS.Areas.Identity
             var scope = _scopeFactory.CreateScope();
             try
             {
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<TUser>>();
+                using var userManager = scope.ServiceProvider.GetRequiredService<UserManager<TUser>>();
                 return await ValidateSecurityStampAsync(userManager, authenticationState.User);
             }
             finally

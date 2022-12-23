@@ -93,7 +93,7 @@ namespace Inferno.Web.Components
             {
                 if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
                 {
-                    await ODataService.DeleteAsync(id);
+                    using var response = await ODataService.DeleteAsync(id);
                     await DataGrid.Reload();
                     NotificationService.Notify(NotificationSeverity.Info, "Info", "Record deleted!");
                 }

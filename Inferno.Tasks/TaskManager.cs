@@ -34,10 +34,7 @@ namespace Inferno.Tasks
             foreach (var scheduledTaskGrouped in scheduledTasks.GroupBy(x => x.Seconds))
             {
                 //create a thread
-                var taskThread = new TaskThread()
-                {
-                    Seconds = scheduledTaskGrouped.Key
-                };
+                using var taskThread = new TaskThread { Seconds = scheduledTaskGrouped.Key };
                 foreach (var scheduledTask in scheduledTaskGrouped)
                 {
                     var task = new Task(scheduledTask);
@@ -56,7 +53,7 @@ namespace Inferno.Tasks
             //create a thread for the tasks which weren't run for a long time
             if (notRunTasks.Count > 0)
             {
-                var taskThread = new TaskThread()
+                using var taskThread = new TaskThread
                 {
                     RunOnlyOnce = true,
                     Seconds = 60 * 5 //let's run such tasks in 5 minutes after application start

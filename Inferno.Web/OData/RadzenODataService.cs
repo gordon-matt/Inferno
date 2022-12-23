@@ -57,45 +57,45 @@ namespace Inferno.Web.OData
         {
             var uri = new Uri(baseUri, entitySetName);
             uri = uri.GetODataUri(filter: filter, top: top, skip: skip, orderby: orderby, expand: expand, select: select, count: count);
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            var response = await httpClient.SendAsync(httpRequestMessage);
+            using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+            using var response = await httpClient.SendAsync(httpRequestMessage);
             return await response.ReadAsync<ODataServiceResult<TEntity>>();
         }
 
         public virtual async Task<TEntity> FindOneAsync(TKey key)
         {
             var uri = new Uri(baseUri, $"{entitySetName}({key})");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            var response = await httpClient.SendAsync(httpRequestMessage);
+            using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+            using var response = await httpClient.SendAsync(httpRequestMessage);
             return await response.ReadAsync<TEntity>();
         }
 
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
             var uri = new Uri(baseUri, entitySetName);
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
+            using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
             {
                 Content = new StringContent(ODataJsonSerializer.Serialize(entity), Encoding.UTF8, "application/json")
             };
-            var response = await httpClient.SendAsync(httpRequestMessage);
+            using var response = await httpClient.SendAsync(httpRequestMessage);
             return await response.ReadAsync<TEntity>();
         }
 
         public virtual async Task<TEntity> UpdateAsync(TKey key, TEntity entity)
         {
             var uri = new Uri(baseUri, $"{entitySetName}({key})");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Patch, uri)
+            using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Patch, uri)
             {
                 Content = new StringContent(ODataJsonSerializer.Serialize(entity), Encoding.UTF8, "application/json")
             };
-            var response = await httpClient.SendAsync(httpRequestMessage);
+            using var response = await httpClient.SendAsync(httpRequestMessage);
             return await response.ReadAsync<TEntity>();
         }
 
         public virtual async Task<HttpResponseMessage> DeleteAsync(TKey key)
         {
             var uri = new Uri(baseUri, $"{entitySetName}({key})");
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, uri);
+            using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, uri);
             return await httpClient.SendAsync(httpRequestMessage);
         }
 
