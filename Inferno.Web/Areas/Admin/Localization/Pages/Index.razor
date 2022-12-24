@@ -1,4 +1,4 @@
-﻿@page "/admin/configuration/localization/index"
+﻿@page "/admin/localization/index"
 @inherits RadzenDataPage<Language, Guid>
 
 <h1>Localization</h1>
@@ -34,7 +34,18 @@
             <Columns>
                 <RadzenDataGridColumn TItem="Language" Property="Name" Title="@T[InfernoWebLocalizableStrings.General.Name]" />
                 <RadzenDataGridColumn TItem="Language" Property="CultureCode" Title="@T[InfernoWebLocalizableStrings.Localization.LanguageModel.CultureCode]" />
-                <RadzenDataGridColumn TItem="Language" Property="IsEnabled" Title="@T[InfernoWebLocalizableStrings.General.Enabled]" />
+                <RadzenDataGridColumn TItem="Language" Property="IsEnabled" Title="@T[InfernoWebLocalizableStrings.General.Enabled]">
+                    <Template Context="record">
+                        @if (record.IsEnabled)
+                        {
+                            <Icon Name="IconName.Check" TextColor="TextColor.Success"></Icon>
+                        }
+                        else
+                        {
+                            <Icon Name="IconName.Times" TextColor="TextColor.Danger"></Icon>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Language" Property="SortOrder" Title="@T[InfernoWebLocalizableStrings.Localization.LanguageModel.SortOrder]" />
                 <RadzenDataGridColumn TItem="Language" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
                     <Template Context="record">
@@ -127,7 +138,7 @@
         <Card>
             <CardHeader Class="text-white bg-primary">Details</CardHeader>
             <CardBody>
-                <EditForm class="form-horizontal">
+                <form class="form-horizontal">
                     <Row>
                         <Column ColumnSize="ColumnSize.Is12">
                             <Field Horizontal="true">
@@ -148,7 +159,7 @@
                             </Field>
                         </Column>
                     </Row>
-                </EditForm>
+                </form>
             </CardBody>
         </Card>
     </Column>

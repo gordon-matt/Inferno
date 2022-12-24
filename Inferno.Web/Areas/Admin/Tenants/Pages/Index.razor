@@ -7,7 +7,7 @@
     <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
         <RadzenButton Click="Create">
             <Icon Name="IconName.PlusCircle"></Icon>
-            Create
+            @T[InfernoWebLocalizableStrings.General.Create]
         </RadzenButton>
         <RadzenButton Text="Excel" Click="@(args => Export("excel"))">
             Export to Excel
