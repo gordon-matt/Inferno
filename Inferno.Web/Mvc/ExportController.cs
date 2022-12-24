@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq.Dynamic.Core;
 using System.Text;
+using Extenso;
 using Extenso.Collections;
 using Extenso.Data.Entity;
 using Inferno.Web.Models;
@@ -104,6 +105,18 @@ namespace Inferno.Web.Mvc
                     }
                 default: throw new ArgumentOutOfRangeException();
             }
+        }
+
+        [NonAction]
+        public FileResult DownloadJson<TData>(TData data, string fileName)
+        {
+            if (!fileName.EndsWith(".json"))
+            {
+                fileName += ".json";
+            }
+
+            string json = data.JsonSerialize();
+            return File(new UTF8Encoding().GetBytes(json), "application/json", fileName);
         }
     }
 }

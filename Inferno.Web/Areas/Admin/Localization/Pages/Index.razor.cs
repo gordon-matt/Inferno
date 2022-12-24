@@ -22,6 +22,9 @@ namespace Inferno.Web.Areas.Admin.Localization.Pages
         public ILocalizableStringService LocalizableStringService { get; set; }
 
         [Inject]
+        private NavigationManager NavigationManager { get; set; }
+
+        [Inject]
         public IWorkContext WorkContext { get; set; }
 
         public async Task ClearAsync()
@@ -125,6 +128,11 @@ namespace Inferno.Web.Areas.Admin.Localization.Pages
         private void FileOnProgressed(FileProgressedEventArgs e)
         {
             Console.WriteLine($"File: {e.File.Name} Progress: {e.Percentage}");
+        }
+
+        public void Localize(string cultureCode)
+        {
+            NavigationManager.NavigateTo($"/admin/localization/localizable-strings/{cultureCode}", forceLoad: true);
         }
     }
 }

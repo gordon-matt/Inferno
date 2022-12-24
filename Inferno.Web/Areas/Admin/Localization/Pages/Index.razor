@@ -51,6 +51,7 @@
                     <Template Context="record">
                         <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="language" Size="ButtonSize.Medium" Click="@(args => Localize(record.CultureCode))" @onclick:stopPropagation="true"></RadzenButton>
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>

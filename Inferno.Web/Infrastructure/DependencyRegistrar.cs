@@ -86,7 +86,7 @@ namespace Inferno.Web.Infrastructure
             //builder.RegisterType<EmbeddedFileProviderRegistrar>().As<IEmbeddedFileProviderRegistrar>().InstancePerLifetimeScope();
 
             builder.RegisterType<LanguageODataService>().As<IRadzenODataService<Language, Guid>>().SingleInstance();
-            builder.RegisterType<LocalizableStringODataService>().As<IRadzenODataService<LocalizableString, Guid>>().SingleInstance();
+            builder.RegisterType<LocalizableStringODataService>().As<IRadzenODataService<LocalizableString, Guid>>().AsSelf().SingleInstance();
             builder.RegisterType<SettingODataService>().As<IRadzenODataService<Setting, Guid>>().SingleInstance();
             builder.RegisterType<TenantODataService>().As<IRadzenODataService<Tenant, int>>().SingleInstance();
         }

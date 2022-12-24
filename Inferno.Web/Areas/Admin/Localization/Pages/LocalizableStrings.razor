@@ -1,0 +1,45 @@
+﻿@page "/admin/localization/localizable-strings/{cultureCode}"
+@*@inherits RadzenDataPage<LocalizableString, Guid>*@
+
+<h1>Localization</h1>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Text="Clear" Click="@(args => ExportLanguagePack())">
+            @T[InfernoWebLocalizableStrings.General.Export]
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="ComparitiveLocalizableString"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="10"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="ComparitiveLocalizableString" Property="Key" Title="@T[InfernoWebLocalizableStrings.Localization.LocalizableStringModel.Key]" />
+                <RadzenDataGridColumn TItem="ComparitiveLocalizableString" Property="InvariantValue" Title="@T[InfernoWebLocalizableStrings.Localization.LocalizableStringModel.InvariantValue]" />
+                <RadzenDataGridColumn TItem="ComparitiveLocalizableString" Property="LocalizedValue" Title="@T[InfernoWebLocalizableStrings.Localization.LocalizableStringModel.LocalizedValue]" />
+                <RadzenDataGridColumn TItem="ComparitiveLocalizableString" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record))" @onclick:stopPropagation="true" />
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record))" @onclick:stopPropagation="true" />
+                    </Template>
+                    <EditTemplate>
+                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="check" Size="ButtonSize.Medium" Click="@(args => SaveAsync(record))" />
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="close" Size="ButtonSize.Medium" Click="@(args => CancelAsync(record))" />
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record))" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
