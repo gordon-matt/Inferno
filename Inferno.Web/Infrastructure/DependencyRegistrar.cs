@@ -27,6 +27,8 @@ namespace Inferno.Web.Infrastructure
             //var settings = DataSettingsManager.LoadSettings();
             //builder.Register(x => settings).As<DataSettings>();
 
+            builder.RegisterType<RouterAssemblyMarker>().As<IRouterAssemblyMarker>().SingleInstance();
+
             // Helpers
             builder.RegisterType<WebHelper>().As<IWebHelper>().InstancePerLifetimeScope();
             //builder.RegisterType<DateTimeHelper>().As<IDateTimeHelper>().InstancePerLifetimeScope();

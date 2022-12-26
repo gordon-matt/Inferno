@@ -1,7 +1,9 @@
-﻿@using Inferno.Web
+﻿@using System.Reflection
+@using Dependo;
+@using Inferno.Web.Infrastructure
 
 <CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[]{ typeof(IApiAssemblyMarker).Assembly }">
+    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="assemblies" OnNavigateAsync="OnNavigateAsync">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -14,3 +16,16 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    private List<Assembly> assemblies = new();
+
+    private async Task OnNavigateAsync(NavigationContext navigationContext)
+    {
+        assemblies = EngineContext.Current.ResolveAll<IRouterAssemblyMarker>()
+            .Select(x => x.GetType().Assembly)
+            .ToList();
+
+        await Task.Yield();
+    }
+}
