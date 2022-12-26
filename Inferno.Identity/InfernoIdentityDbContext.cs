@@ -43,16 +43,21 @@ namespace Inferno.Identity
 
         public DbSet<Tenant> Tenants { get; set; }
 
+        public void BaseOnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            var configurations = EngineContext.Current.ResolveAll<IInfernoEntityTypeConfiguration>();
+            //var configurations = EngineContext.Current.ResolveAll<IInfernoEntityTypeConfiguration>();
 
-            foreach (dynamic configuration in configurations)
-            {
-                modelBuilder.ApplyConfiguration(configuration);
-            }
+            //foreach (dynamic configuration in configurations)
+            //{
+            //    modelBuilder.ApplyConfiguration(configuration);
+            //}
         }
 
         #region ISupportSeed Members

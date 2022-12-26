@@ -20,7 +20,7 @@ namespace Inferno.Web.Configuration.Entities
     {
         public void Configure(EntityTypeBuilder<Setting> builder)
         {
-            builder.ToTable("Inferno_Settings");
+            builder.ToTable("Settings", "inferno");
             builder.HasKey(s => s.Id);
             builder.Property(s => s.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
             builder.Property(s => s.Type).IsRequired().HasMaxLength(255).IsUnicode(false);

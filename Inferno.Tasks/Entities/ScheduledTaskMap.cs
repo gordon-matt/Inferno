@@ -8,7 +8,7 @@ namespace Inferno.Tasks.Entities
     {
         public void Configure(EntityTypeBuilder<ScheduledTask> builder)
         {
-            builder.ToTable("Inferno_ScheduledTasks");
+            builder.ToTable("ScheduledTasks", "inferno");
             builder.HasKey(s => s.Id);
             builder.Property(s => s.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
             builder.Property(s => s.Type).IsRequired().HasMaxLength(255).IsUnicode(false);

@@ -8,7 +8,7 @@ namespace Inferno.Tenants.Entities
     {
         public void Configure(EntityTypeBuilder<Tenant> builder)
         {
-            builder.ToTable("Inferno_Tenants");
+            builder.ToTable("Tenants", "inferno");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
             builder.Property(x => x.Url).IsRequired().HasMaxLength(255).IsUnicode(true);

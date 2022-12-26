@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfernoCMS.Services", "Infe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{BAE997C2-0ABB-4D2D-B8BC-A877C5126B84}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inferno.Web.ContentManagement", "Inferno.Web.ContentManagement\Inferno.Web.ContentManagement.csproj", "{1AA368EC-DDDC-43EC-A73E-E80F5714364B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,10 @@ Global
 		{4EDE755B-5565-47D4-A6C6-D3797C7A1F6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EDE755B-5565-47D4-A6C6-D3797C7A1F6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EDE755B-5565-47D4-A6C6-D3797C7A1F6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AA368EC-DDDC-43EC-A73E-E80F5714364B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA368EC-DDDC-43EC-A73E-E80F5714364B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA368EC-DDDC-43EC-A73E-E80F5714364B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA368EC-DDDC-43EC-A73E-E80F5714364B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -146,6 +152,7 @@ Global
 		{948A1AD9-5CCF-47D7-ABCF-8BD24DA707EE} = {BAE997C2-0ABB-4D2D-B8BC-A877C5126B84}
 		{F23B5646-3108-4B5D-8795-B0E3D51D9510} = {BAE997C2-0ABB-4D2D-B8BC-A877C5126B84}
 		{01F01888-ED77-462F-9729-4C52EB075C36} = {BAE997C2-0ABB-4D2D-B8BC-A877C5126B84}
+		{1AA368EC-DDDC-43EC-A73E-E80F5714364B} = {BAE997C2-0ABB-4D2D-B8BC-A877C5126B84}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4488787B-AFF4-4442-992C-001CAFAFA5CE}

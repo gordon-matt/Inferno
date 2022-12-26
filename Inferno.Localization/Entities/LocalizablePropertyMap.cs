@@ -8,7 +8,7 @@ namespace Inferno.Localization.Entities
     {
         public void Configure(EntityTypeBuilder<LocalizableProperty> builder)
         {
-            builder.ToTable("Inferno_LocalizableProperties");
+            builder.ToTable("LocalizableProperties", "inferno");
             builder.HasKey(m => m.Id);
             builder.Property(m => m.CultureCode).HasMaxLength(10).IsUnicode(false);
             builder.Property(x => x.EntityType).IsRequired().HasMaxLength(512).IsUnicode(false);

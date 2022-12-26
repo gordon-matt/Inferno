@@ -11,6 +11,7 @@ using InfernoCMS.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace InfernoCMS
 {
@@ -86,6 +87,18 @@ namespace InfernoCMS
                 .AddMemoryCache()
                 .AddDistributedMemoryCache();
 
+            // Peachpie needs this
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+            });
+
+            services.AddCors(options => options.AddPolicy("AllowAll", p => p
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()));
+
             services.AddRouting((routeOptions) =>
             {
                 routeOptions.AppendTrailingSlash = true;
@@ -117,6 +130,11 @@ namespace InfernoCMS
             .AddBootstrap5Providers()
             .AddFontAwesomeIcons();
 
+            services.AddResponsiveFileManager(options =>
+            {
+                options.MaxSizeUpload = 32;
+            });
+
             services.AddHttpContextAccessor();
 
             services.AddHttpClient();
@@ -140,7 +158,19 @@ namespace InfernoCMS
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAll");
+
+            var requestLocalizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(requestLocalizationOptions.Value);
+
+            app.UseSession();
+
             app.UseStaticFiles();
+            app.UseDefaultFiles(); // For PeachPie
+
+            // PeachPie / Responsive File Manager
+            app.UseResponsiveFileManager();
 
             app.UseRouting();
 

@@ -27,6 +27,7 @@
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.355802">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="ResponsiveFileManager.AspNetCore" Version="1.4.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
@@ -41,6 +42,7 @@
     <ProjectReference Include="..\Inferno.Tasks\Inferno.Tasks.csproj" />
     <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Tenants\Inferno.Tenants.csproj" />
+    <ProjectReference Include="..\Inferno.Web.ContentManagement\Inferno.Web.ContentManagement.csproj" />
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
     <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
     <ProjectReference Include="..\InfernoCMS.Identity\InfernoCMS.Identity.csproj" />

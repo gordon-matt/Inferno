@@ -8,7 +8,7 @@ namespace Inferno.Localization.Entities
     {
         public void Configure(EntityTypeBuilder<Language> builder)
         {
-            builder.ToTable("Inferno_Languages");
+            builder.ToTable("Languages", "inferno");
             builder.HasKey(m => m.Id);
             builder.Property(m => m.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
             builder.Property(m => m.CultureCode).IsRequired().HasMaxLength(10).IsUnicode(false);
