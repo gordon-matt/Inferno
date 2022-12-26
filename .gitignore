@@ -282,4 +282,5 @@ __pycache__/
 build/
 
 InfernoCMS/wwwroot/lib
+InfernoCMS/wwwroot/Media
 InfernoCMS/keys

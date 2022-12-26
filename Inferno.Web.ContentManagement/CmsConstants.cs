@@ -1,0 +1,60 @@
+﻿using System.Text.RegularExpressions;
+
+namespace Inferno.Web.ContentManagement
+{
+    public static partial class CmsConstants
+    {
+        public static partial class RegexPatterns
+        {
+            public static readonly Regex Email = EmailRegex();
+
+            [GeneratedRegex("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+            private static partial Regex EmailRegex();
+        }
+
+        public static class Areas
+        {
+            public const string Blocks = "Admin/Blocks";
+            public const string Blog = "Admin/Blog";
+            public const string Localization = "Admin/Localization";
+            public const string Media = "Admin/Media";
+            public const string Messaging = "Admin/Messaging";
+            public const string Menus = "Admin/Menus";
+            public const string Newsletters = "Admin/Newsletters";
+            public const string Pages = "Admin/Pages";
+            public const string Sitemap = "Admin/Sitemap";
+        }
+
+        internal static class Tables
+        {
+            internal const string BlogPosts = "BlogPosts";
+            internal const string BlogPostTags = "BlogPostTags";
+            internal const string BlogCategories = "BlogCategories";
+            internal const string BlogTags = "BlogTags";
+            internal const string ContentBlocks = "ContentBlocks";
+            internal const string EntityTypeContentBlocks = "EntityTypeContentBlocks";
+            internal const string HistoricPages = "HistoricPages";
+            internal const string MenuItems = "MenuItems";
+            internal const string Menus = "Menus";
+            internal const string MessageTemplates = "MessageTemplates";
+            internal const string Pages = "Pages";
+            internal const string PageVersions = "PageVersions";
+            internal const string PageTypes = "PageTypes";
+            internal const string SitemapConfig = "SitemapConfig";
+            internal const string QueuedEmails = "QueuedEmails";
+            internal const string QueuedSMS = "QueuedSMS";
+            internal const string Zones = "Zones";
+        }
+
+        public static class Policies
+        {
+            public const string PageHistoryRead = "Page History: Read";
+            public const string PageHistoryRestore = "Page History: Restore";
+            public const string PageHistoryWrite = "Page History: Write";
+            public const string PagesRead = "Pages: Read";
+            public const string PagesWrite = "Pages: Write";
+            public const string PageTypesRead = "Page Types: Read";
+            public const string PageTypesWrite = "Page Types: Write";
+        }
+    }
+}
