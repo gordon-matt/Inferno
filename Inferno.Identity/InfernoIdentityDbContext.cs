@@ -52,12 +52,12 @@ namespace Inferno.Identity
         {
             base.OnModelCreating(modelBuilder);
 
-            //var configurations = EngineContext.Current.ResolveAll<IInfernoEntityTypeConfiguration>();
+            var configurations = EngineContext.Current.ResolveAll<IInfernoEntityTypeConfiguration>();
 
-            //foreach (dynamic configuration in configurations)
-            //{
-            //    modelBuilder.ApplyConfiguration(configuration);
-            //}
+            foreach (dynamic configuration in configurations)
+            {
+                modelBuilder.ApplyConfiguration(configuration);
+            }
         }
 
         #region ISupportSeed Members

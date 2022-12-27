@@ -1,4 +1,5 @@
 ﻿using Extenso.Data.Entity;
+using Inferno.Data.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,7 +14,7 @@ namespace InfernoCMS.Data.Entities
         public DateTime DateOfBirth { get; set; }
     }
 
-    public class PersonMap : IEntityTypeConfiguration<Person>
+    public class PersonMap : IEntityTypeConfiguration<Person>, IInfernoEntityTypeConfiguration
     {
         public void Configure(EntityTypeBuilder<Person> builder)
         {
@@ -23,5 +24,7 @@ namespace InfernoCMS.Data.Entities
             builder.Property(m => m.GivenNames).IsRequired().HasMaxLength(128).IsUnicode(true);
             builder.Property(m => m.DateOfBirth).IsRequired();
         }
+
+        public bool IsEnabled => true;
     }
 }

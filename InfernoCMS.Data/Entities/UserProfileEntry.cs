@@ -18,7 +18,7 @@ namespace InfernoCMS.Data.Entities
     {
         public void Configure(EntityTypeBuilder<UserProfileEntry> builder)
         {
-            builder.ToTable(Constants.Tables.UserProfiles);
+            builder.ToTable("UserProfiles");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.UserId).IsRequired().HasMaxLength(128).IsUnicode(false);
             builder.Property(x => x.Key).IsRequired().HasMaxLength(255).IsUnicode(true);
