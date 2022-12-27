@@ -16,6 +16,8 @@
 
         public IEnumerable<MenuItem> Items { get; set; }
 
+        public IEnumerable<string> Policies { get; set; }
+
         public string CssClass { get; set; }
 
         public IEnumerable<string> Icons { get; set; } = Enumerable.Empty<string>();

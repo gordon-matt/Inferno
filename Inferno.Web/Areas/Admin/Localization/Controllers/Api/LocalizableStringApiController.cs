@@ -26,6 +26,7 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
 
         //[EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Wrong Usage", "DF0010:Marks undisposed local variables.", Justification = "Disposable of the repository connection is handled by the `GenericODataController`.")]
+        [HttpGet]
         public virtual async Task<IActionResult> GetComparitiveTable(
             [FromODataUri] string cultureCode,
             ODataQueryOptions<ComparitiveLocalizableString> options)

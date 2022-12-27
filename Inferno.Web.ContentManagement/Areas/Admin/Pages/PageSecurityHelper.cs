@@ -58,8 +58,8 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages
                     var roleIds = selectedRoles.Split(',');
                     var roles = await membershipService.GetRolesByIdsAsync(roleIds);
 
-                    var mantleUser = await membershipService.GetUserByNameAsync(page.TenantId, user.Identity.Name);
-                    var userRoles = await membershipService.GetRolesForUserAsync(mantleUser.Id);
+                    var infernoUser = await membershipService.GetUserByNameAsync(page.TenantId, user.Identity.Name);
+                    var userRoles = await membershipService.GetRolesForUserAsync(infernoUser.Id);
                     var userRoleIds = userRoles.Select(x => x.Id);
 
                     return userRoleIds.ContainsAny(selectedRoles.Split(','));

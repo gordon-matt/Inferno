@@ -16,12 +16,12 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Services
 
     public class PageTypeService : GenericDataService<PageType>, IPageTypeService
     {
-        private static Lazy<IEnumerable<InfernoPageType>> mantlePageTypes;
+        private static Lazy<IEnumerable<InfernoPageType>> infernoPageTypes;
 
         public PageTypeService(ICacheManager cacheManager, IRepository<PageType> repository)
             : base(cacheManager, repository)
         {
-            mantlePageTypes = new Lazy<IEnumerable<InfernoPageType>>(() =>
+            infernoPageTypes = new Lazy<IEnumerable<InfernoPageType>>(() =>
             {
                 var typeFinder = EngineContext.Current.Resolve<ITypeFinder>();
 
@@ -34,9 +34,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Services
 
         #region IPageTypeService Members
 
-        public InfernoPageType GetInfernoPageType(string name) => mantlePageTypes.Value.FirstOrDefault(x => x.Name == name);
+        public InfernoPageType GetInfernoPageType(string name) => infernoPageTypes.Value.FirstOrDefault(x => x.Name == name);
 
-        public IEnumerable<InfernoPageType> GetInfernoPageTypes() => mantlePageTypes.Value;
+        public IEnumerable<InfernoPageType> GetInfernoPageTypes() => infernoPageTypes.Value;
 
         #endregion IPageTypeService Members
     }

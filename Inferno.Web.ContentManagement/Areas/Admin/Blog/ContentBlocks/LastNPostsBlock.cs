@@ -1,4 +1,5 @@
 ﻿using Inferno.Localization.ComponentModel;
+using Inferno.Web.ContentManagement.Areas.Admin.Blog.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
@@ -12,9 +13,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
 
         public override string Name => "Blog: Last (N) Posts";
 
-        public override string DisplayTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.Blog.Views.Shared.DisplayTemplates.LastNPostsBlock.cshtml";
+        public override Type EditorType => typeof(LastNPostsBlockEditor);
 
-        public override string EditorTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.Blog.Views.Shared.EditorTemplates.LastNPostsBlock.cshtml";
+        public override Type DisplayType => typeof(LastNPostsBlockDisplay);
 
         #endregion ContentBlockBase Overrides
     }

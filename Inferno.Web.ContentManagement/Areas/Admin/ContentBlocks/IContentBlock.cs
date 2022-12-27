@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
+﻿namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 {
     public interface IContentBlock
     {
@@ -16,14 +14,14 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 
         Guid ZoneId { get; set; }
 
-        string CustomTemplatePath { get; set; }
-
         Guid? PageId { get; set; }
 
         bool Localized { get; set; }
 
-        string DisplayTemplatePath { get; }
+        Type EditorType { get; }
 
-        string EditorTemplatePath { get; }
+        Type DisplayType { get; }
+
+        string CustomDisplayType { get; set; }
     }
 }

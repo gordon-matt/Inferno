@@ -56,6 +56,9 @@ namespace Inferno.Web.ContentManagement
             public const string ContentZonesRead = "Content Zones: Read";
             public const string ContentZonesWrite = "Content Zones: Write";
 
+            public const string MediaRead = "Media: Read";
+            public const string MediaWrite = "Media: Write";
+
             public const string MenusRead = "Menus: Read";
             public const string MenusWrite = "Menus: Write";
 

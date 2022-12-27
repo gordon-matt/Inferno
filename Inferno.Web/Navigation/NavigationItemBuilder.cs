@@ -1,4 +1,6 @@
-﻿namespace Inferno.Web.Navigation
+﻿using Microsoft.OData.ModelBuilder.Core.V1;
+
+namespace Inferno.Web.Navigation
 {
     public class NavigationItemBuilder : NavigationBuilder
     {
@@ -43,6 +45,12 @@
         {
             item.Items = base.Build();
             return new[] { item };
+        }
+
+        public NavigationItemBuilder Permission(params string[] policies)
+        {
+            item.Policies = item.Policies.Concat(policies);
+            return this;
         }
     }
 }

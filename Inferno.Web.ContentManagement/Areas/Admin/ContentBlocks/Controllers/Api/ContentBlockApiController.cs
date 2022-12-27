@@ -50,6 +50,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
             return Ok(response);
         }
 
+        [HttpGet]
         public virtual async Task<IEnumerable<ContentBlock>> GetByPageId(
             [FromODataUri] Guid pageId,
             ODataQueryOptions<ContentBlock> options)

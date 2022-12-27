@@ -1,4 +1,5 @@
 ﻿using Inferno.Localization.ComponentModel;
+using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 {
@@ -30,9 +31,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 
         public override string Name => "Form Content Block";
 
-        public override string DisplayTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Views.Shared.DisplayTemplates.FormBlock.cshtml";
+        public override Type EditorType => typeof(FormBlockEditor);
 
-        public override string EditorTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Views.Shared.EditorTemplates.FormBlock.cshtml";
+        public override Type DisplayType => typeof(FormBlockDisplay);
 
         #endregion ContentBlockBase Overrides
     }

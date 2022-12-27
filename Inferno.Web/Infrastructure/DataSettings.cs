@@ -24,7 +24,7 @@ namespace Inferno.Web.Infrastructure
 
     public static class DataSettingsManager
     {
-        private const string virtualPath = "~/App_Data/MantleSettings.xml";
+        private const string virtualPath = "~/App_Data/InfernoSettings.xml";
 
         /// <summary>
         /// Load settings

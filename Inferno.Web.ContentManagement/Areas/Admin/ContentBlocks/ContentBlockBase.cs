@@ -18,9 +18,6 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
         [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId)]
         public Guid ZoneId { get; set; }
 
-        [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.Model.CustomTemplatePath)]
-        public string CustomTemplatePath { get; set; }
-
         public Guid? PageId { get; set; }
 
         public bool Localized { get; set; }
@@ -29,9 +26,12 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 
         public Guid? RefId { get; set; }
 
-        public abstract string DisplayTemplatePath { get; }
+        public abstract Type EditorType { get; }
 
-        public abstract string EditorTemplatePath { get; }
+        public abstract Type DisplayType { get; }
+
+        [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.Model.CustomTemplatePath)]
+        public string CustomDisplayType { get; set; }
 
         #endregion IContentBlock Members
     }

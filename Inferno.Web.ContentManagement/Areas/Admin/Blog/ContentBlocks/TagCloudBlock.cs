@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Extenso;
 using Inferno.Localization.ComponentModel;
+using Inferno.Web.ContentManagement.Areas.Admin.Blog.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
@@ -121,9 +122,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
 
         public override string Name => "Blog: Tag Cloud";
 
-        public override string DisplayTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.Blog.Views.Shared.DisplayTemplates.TagCloudBlock.cshtml";
+        public override Type EditorType => typeof(TagCloudBlockEditor);
 
-        public override string EditorTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.Blog.Views.Shared.EditorTemplates.TagCloudBlock.cshtml";
+        public override Type DisplayType => typeof(TagCloudBlockDisplay);
 
         #endregion ContentBlockBase Overrides
 

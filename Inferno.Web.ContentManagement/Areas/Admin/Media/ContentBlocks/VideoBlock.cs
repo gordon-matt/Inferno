@@ -1,5 +1,6 @@
 ﻿using Inferno.Localization.ComponentModel;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
+using Inferno.Web.ContentManagement.Areas.Admin.Media.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks
 {
@@ -34,9 +35,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks
 
         public override string Name => "Video Block";
 
-        public override string DisplayTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.Media.Views.Shared.DisplayTemplates.VideoBlock.cshtml";
+        public override Type EditorType => typeof(VideoBlockEditor);
 
-        public override string EditorTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.Media.Views.Shared.EditorTemplates.VideoBlock.cshtml";
+        public override Type DisplayType => typeof(VideoBlockDisplay);
 
         #endregion IContentBlock Members
     }

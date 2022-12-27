@@ -1,4 +1,5 @@
 ﻿using Inferno.Localization.ComponentModel;
+using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 {
@@ -8,9 +9,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 
         public override string Name => "Html Content Block";
 
-        public override string DisplayTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Views.Shared.DisplayTemplates.HtmlBlock.cshtml";
+        public override Type EditorType => typeof(HtmlBlockEditor);
 
-        public override string EditorTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Views.Shared.EditorTemplates.HtmlBlock.cshtml";
+        public override Type DisplayType => typeof(HtmlBlockDisplay);
 
         #endregion IContentBlock Members
 

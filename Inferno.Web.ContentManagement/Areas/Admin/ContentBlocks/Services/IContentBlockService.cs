@@ -197,7 +197,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services
                 contentBlock.PageId = record.PageId;
                 contentBlock.Order = record.Order;
                 contentBlock.Enabled = record.IsEnabled;
-                contentBlock.CustomTemplatePath = record.CustomTemplatePath;
+                contentBlock.CustomDisplayType = record.CustomTemplatePath;
                 result.Add(contentBlock);
             }
             return result;

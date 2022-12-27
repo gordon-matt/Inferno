@@ -1,4 +1,5 @@
 ﻿using Inferno.Localization.ComponentModel;
+using Inferno.Web.ContentManagement.Areas.Admin.Blog.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
@@ -18,9 +19,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
 
         public override string Name => "Blog: Filtered Posts";
 
-        public override string DisplayTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.Blog.Views.Shared.DisplayTemplates.FilteredPostsBlock.cshtml";
+        public override Type EditorType => typeof(FilteredPostsBlockEditor);
 
-        public override string EditorTemplatePath => "Inferno.Web.ContentManagement.Areas.Admin.Blog.Views.Shared.EditorTemplates.FilteredPostsBlock.cshtml";
+        public override Type DisplayType => typeof(FilteredPostsBlockDisplay);
 
         #endregion ContentBlockBase Overrides
     }
