@@ -14,6 +14,10 @@
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Newsletters\" />
+  </ItemGroup>
+
 
 
 </Project>

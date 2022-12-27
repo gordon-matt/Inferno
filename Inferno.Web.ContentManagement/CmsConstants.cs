@@ -48,6 +48,17 @@ namespace Inferno.Web.ContentManagement
 
         public static class Policies
         {
+            public const string BlogRead = "Blog: Read";
+            public const string BlogWrite = "Blog: Write";
+
+            public const string ContentBlocksRead = "Content Blocks: Read";
+            public const string ContentBlocksWrite = "Content Blocks: Write";
+            public const string ContentZonesRead = "Content Zones: Read";
+            public const string ContentZonesWrite = "Content Zones: Write";
+
+            public const string MenusRead = "Menus: Read";
+            public const string MenusWrite = "Menus: Write";
+
             public const string PageHistoryRead = "Page History: Read";
             public const string PageHistoryRestore = "Page History: Restore";
             public const string PageHistoryWrite = "Page History: Write";
@@ -55,6 +66,9 @@ namespace Inferno.Web.ContentManagement
             public const string PagesWrite = "Pages: Write";
             public const string PageTypesRead = "Page Types: Read";
             public const string PageTypesWrite = "Page Types: Write";
+
+            public const string SitemapRead = "Sitemap: Read";
+            public const string SitemapWrite = "Sitemap: Write";
         }
     }
 }

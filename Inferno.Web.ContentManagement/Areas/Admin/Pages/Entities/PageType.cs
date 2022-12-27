@@ -12,16 +12,14 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
         public string LayoutPath { get; set; }
     }
 
-    public class PageTypeMap : IEntityTypeConfiguration<PageType>, IInfernoEntityTypeConfiguration
+    public class PageTypeMap : InfernoEntityTypeConfiguration<PageType>
     {
-        public void Configure(EntityTypeBuilder<PageType> builder)
+        public override void Configure(EntityTypeBuilder<PageType> builder)
         {
-            builder.ToTable(CmsConstants.Tables.PageTypes, "inferno");
+            builder.ToTable(CmsConstants.Tables.PageTypes, InfernoSchema);
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
             builder.Property(x => x.LayoutPath).HasMaxLength(255).IsUnicode(true);
         }
-
-        public bool IsEnabled => true;
     }
 }

@@ -30,11 +30,11 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
         }
     }
 
-    public class PageMap : IEntityTypeConfiguration<Page>, IInfernoEntityTypeConfiguration
+    public class PageMap : InfernoEntityTypeConfiguration<Page>
     {
-        public void Configure(EntityTypeBuilder<Page> builder)
+        public override void Configure(EntityTypeBuilder<Page> builder)
         {
-            builder.ToTable(CmsConstants.Tables.Pages, "inferno");
+            builder.ToTable(CmsConstants.Tables.Pages, InfernoSchema);
             builder.HasKey(x => x.Id);
             builder.Property(x => x.PageTypeId).IsRequired();
             builder.Property(x => x.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
@@ -43,7 +43,5 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
             builder.Property(x => x.ShowOnMenus).IsRequired();
             builder.Property(x => x.AccessRestrictions).HasMaxLength(1024).IsUnicode(false);
         }
-
-        public bool IsEnabled => true;
     }
 }

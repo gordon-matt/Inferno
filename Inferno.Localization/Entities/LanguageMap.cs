@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Inferno.Localization.Entities
 {
-    public class LanguageMap : IEntityTypeConfiguration<Language>, IInfernoEntityTypeConfiguration
+    public class LanguageMap : InfernoEntityTypeConfiguration<Language>
     {
-        public void Configure(EntityTypeBuilder<Language> builder)
+        public override void Configure(EntityTypeBuilder<Language> builder)
         {
-            builder.ToTable("Languages", "inferno");
+            builder.ToTable("Languages", InfernoSchema);
             builder.HasKey(m => m.Id);
             builder.Property(m => m.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
             builder.Property(m => m.CultureCode).IsRequired().HasMaxLength(10).IsUnicode(false);
@@ -16,14 +16,5 @@ namespace Inferno.Localization.Entities
             builder.Property(m => m.IsEnabled).IsRequired();
             builder.Property(m => m.SortOrder).IsRequired();
         }
-
-        #region IEntityTypeConfiguration Members
-
-        public bool IsEnabled
-        {
-            get { return true; }
-        }
-
-        #endregion IEntityTypeConfiguration Members
     }
 }

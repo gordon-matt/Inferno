@@ -16,21 +16,15 @@ namespace Inferno.Web.Configuration.Entities
         public override string ToString() => Name;
     }
 
-    public class SettingMap : IEntityTypeConfiguration<Setting>, IInfernoEntityTypeConfiguration
+    public class SettingMap : InfernoEntityTypeConfiguration<Setting>
     {
-        public void Configure(EntityTypeBuilder<Setting> builder)
+        public override void Configure(EntityTypeBuilder<Setting> builder)
         {
-            builder.ToTable("Settings", "inferno");
+            builder.ToTable("Settings", InfernoSchema);
             builder.HasKey(s => s.Id);
             builder.Property(s => s.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
             builder.Property(s => s.Type).IsRequired().HasMaxLength(255).IsUnicode(false);
             builder.Property(s => s.Value).IsUnicode(true);
         }
-
-        #region IEntityTypeConfiguration Members
-
-        public bool IsEnabled => true;
-
-        #endregion IEntityTypeConfiguration Members
     }
 }

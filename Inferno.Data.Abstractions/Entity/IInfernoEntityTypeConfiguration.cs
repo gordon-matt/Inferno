@@ -11,8 +11,10 @@ namespace Inferno.Data.Entity
     public abstract class InfernoEntityTypeConfiguration<TEntity> : IEntityTypeConfiguration<TEntity>, IInfernoEntityTypeConfiguration
         where TEntity : class
     {
-        public abstract void Configure(EntityTypeBuilder<TEntity> builder);
+        public const string InfernoSchema = "inferno";
 
         public virtual bool IsEnabled => true;
+
+        public abstract void Configure(EntityTypeBuilder<TEntity> builder);
     }
 }
