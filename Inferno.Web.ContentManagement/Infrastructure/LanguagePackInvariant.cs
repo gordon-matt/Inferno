@@ -180,7 +180,7 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             { InfernoCmsLocalizableStrings.Pages.Title, "Pages" },
             { InfernoCmsLocalizableStrings.Pages.Translations, "Translations" },
             { InfernoCmsLocalizableStrings.Pages.Versions, "Versions" },
-            { InfernoCmsLocalizableStrings.Settings.Blog.AccessRestrictions, "Access Restrictions" },
+            { InfernoCmsLocalizableStrings.Settings.Blog.RoleIds, "Roles" },
             { InfernoCmsLocalizableStrings.Settings.Blog.DateFormat, "Date Format" },
             { InfernoCmsLocalizableStrings.Settings.Blog.ItemsPerPage, "# Items Per Page" },
             { InfernoCmsLocalizableStrings.Settings.Blog.MenuPosition, "Menu Position" },

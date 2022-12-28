@@ -319,7 +319,7 @@
         {
             public static class Blog
             {
-                public const string AccessRestrictions = "Inferno.Web.ContentManagement/Settings.Blog.AccessRestrictions";
+                public const string RoleIds = "Inferno.Web.ContentManagement/Settings.Blog.RoleIds";
                 public const string DateFormat = "Inferno.Web.ContentManagement/Settings.Blog.DateFormat";
                 public const string ItemsPerPage = "Inferno.Web.ContentManagement/Settings.Blog.ItemsPerPage";
                 public const string MenuPosition = "Inferno.Web.ContentManagement/Settings.Blog.MenuPosition";

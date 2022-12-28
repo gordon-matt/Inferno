@@ -1,3 +1,92 @@
-﻿@using Inferno.Web.Components
+﻿@using Dependo
+@using Inferno.Security.Membership
+@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using Microsoft.AspNetCore.Mvc.Rendering
 @inherits SettingsEditor<BlogSettings>
+
+@inject IMembershipService MembershipService
+@inject IWorkContext WorkContext
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="PageTitle" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.PageTitle]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenTextBox @bind-Value="Model.PageTitle" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="DateFormat" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.DateFormat]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenTextBox @bind-Value="Model.DateFormat" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="ItemsPerPage" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.ItemsPerPage]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.ItemsPerPage" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="ShowOnMenus" ColumnSize="ColumnSize.Is3"></FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <Check TValue="bool" @bind-Checked="@Model.ShowOnMenus">@T[InfernoCmsLocalizableStrings.Settings.Blog.ShowOnMenus]</Check>
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="MenuPosition" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.MenuPosition]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.MenuPosition" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="RoleIds" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.RoleIds]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenCheckBoxList @bind-Value=@Model.RoleIds TValue="string" Data="@availableRoles" TextProperty="Name" ValueProperty="Id" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="LayoutPathOverride" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.LayoutPathOverride]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenTextBox @bind-Value="Model.LayoutPathOverride" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+
+@code {
+    private IEnumerable<InfernoRole> availableRoles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        availableRoles = await MembershipService.GetAllRolesAsync(WorkContext.CurrentTenant.Id);
+        await base.OnInitializedAsync();
+    }
+}

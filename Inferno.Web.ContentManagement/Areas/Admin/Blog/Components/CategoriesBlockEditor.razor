@@ -1,2 +1,16 @@
 ﻿@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
+@inherits ContentBlockEditor<CategoriesBlock>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="NumberOfCategories" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.CategoriesBlock.NumberOfCategories]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.NumberOfCategories" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>

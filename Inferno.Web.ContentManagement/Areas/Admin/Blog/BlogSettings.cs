@@ -30,8 +30,8 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog
         [LocalizedDisplayName(InfernoCmsLocalizableStrings.Settings.Blog.MenuPosition)]
         public byte MenuPosition { get; set; }
 
-        [LocalizedDisplayName(InfernoCmsLocalizableStrings.Settings.Blog.AccessRestrictions)]
-        public string AccessRestrictions { get; set; }
+        [LocalizedDisplayName(InfernoCmsLocalizableStrings.Settings.Blog.RoleIds)]
+        public IEnumerable<string> RoleIds { get; set; }
 
         [LocalizedDisplayName(InfernoCmsLocalizableStrings.Settings.Blog.LayoutPathOverride)]
         public string LayoutPathOverride { get; set; }

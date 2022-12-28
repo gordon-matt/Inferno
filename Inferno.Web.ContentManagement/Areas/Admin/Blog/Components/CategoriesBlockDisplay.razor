@@ -1,2 +1,52 @@
 ﻿@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@inherits ContentBlockDisplay<CategoriesBlock>
+
+@inject IBlogCategoryService Service
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <Card>
+            <CardBody>
+                <UnorderedList>
+                    @foreach (var entry in entries)
+                    {
+                        <UnorderedListItem>
+                            <a href="/blog/@entry.UrlSlug">@entry.Name</a>
+                        </UnorderedListItem>
+                    }
+                </UnorderedList>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
+@code {
+    private List<BlogCategory> entries = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (var connection = Service.OpenConnection())
+        {
+            if (Model.NumberOfCategories > 0)
+            {
+                entries = connection.Query()
+                    .OrderBy(x => x.Name)
+                    .Take(Model.NumberOfCategories)
+                    .ToList();
+            }
+            else
+            {
+                entries = connection.Query()
+                    .OrderBy(x => x.Name)
+                    .ToList();
+            }
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

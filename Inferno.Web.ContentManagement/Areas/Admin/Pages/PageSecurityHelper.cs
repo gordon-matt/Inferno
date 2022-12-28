@@ -14,26 +14,20 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages
         {
             var blogSettings = EngineContext.Current.Resolve<BlogSettings>();
 
-            if (!string.IsNullOrEmpty(blogSettings.AccessRestrictions))
+            if (!blogSettings.RoleIds.IsNullOrEmpty())
             {
-                dynamic accessRestrictions = JObject.Parse(blogSettings.AccessRestrictions);
-                string roleIds = accessRestrictions.Roles;
+                var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+                var roles = await membershipService.GetRolesByIdsAsync(blogSettings.RoleIds);
 
-                if (!string.IsNullOrEmpty(roleIds))
+                var roleNames = roles
+                    .Select(x => x.Name)
+                    .Where(x => x != null)
+                    .ToList();
+
+                bool authorized = roleNames.Any(user.IsInRole);
+                if (!authorized)
                 {
-                    var membershipService = EngineContext.Current.Resolve<IMembershipService>();
-                    var roles = await membershipService.GetRolesByIdsAsync(roleIds.Split(','));
-
-                    var roleNames = roles
-                        .Select(x => x.Name)
-                        .Where(x => x != null)
-                        .ToList();
-
-                    bool authorized = roleNames.Any(x => user.IsInRole(x));
-                    if (!authorized)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
             return true;

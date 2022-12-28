@@ -1,2 +1,58 @@
-﻿@using Inferno.Web.Components
+﻿@using Inferno.Models;
+@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services;
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
+@inherits ContentBlockEditor<FilteredPostsBlock>
+
+@inject IBlogCategoryService CategoryService
+@inject IBlogTagService TagService
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="FilterType" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.FilterType]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenDropDown Data=@availableFilterTypes TValue="IdNamePair<byte>" TextProperty="Name" ValueProperty="Id" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="CategoryId" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.CategoryId]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenDropDown Data=@availableCategories TValue="BlogCategory" TextProperty="Name" ValueProperty="Id" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="TagId" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.TagId]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenDropDown Data=@availableTags TValue="BlogTag" TextProperty="Name" ValueProperty="Id" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+
+@code {
+    private IEnumerable<IdNamePair<byte>> availableFilterTypes;
+    private IEnumerable<BlogCategory> availableCategories;
+    private IEnumerable<BlogTag> availableTags;
+
+    protected override async Task OnInitializedAsync()
+    {
+        availableFilterTypes = Extenso.EnumExtensions.GetValues<FilterType>().Select(x => new IdNamePair<byte> { Id = (byte)x, Name = x.ToString() });
+        availableCategories = await CategoryService.FindAsync();
+        availableTags = await TagService.FindAsync();
+        await base.OnInitializedAsync();
+    }
+}
