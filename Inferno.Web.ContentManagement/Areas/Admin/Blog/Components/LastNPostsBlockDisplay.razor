@@ -1,2 +1,50 @@
 ﻿@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@inherits ContentBlockDisplay<LastNPostsBlock>
+
+@inject IBlogPostService Service
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <Card>
+            <CardBody>
+                <UnorderedList>
+                    @foreach (var entry in entries)
+                    {
+                        <UnorderedListItem>
+                            @if (entry.UseExternalLink)
+                            {
+                                <a href="@entry.ExternalLink" target="_blank">@entry.Headline</a>
+                            }
+                            else
+                            {
+                                <a href="/blog/@entry.Slug">@entry.Headline</a>
+                            }
+                        </UnorderedListItem>
+                    }
+                </UnorderedList>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
+@code {
+    private List<BlogPost> entries = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (var connection = Service.OpenConnection())
+        {
+            entries = connection.Query()
+                .OrderByDescending(x => x.DateCreatedUtc)
+                .Take(Model.NumberOfEntries)
+                .ToList();
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

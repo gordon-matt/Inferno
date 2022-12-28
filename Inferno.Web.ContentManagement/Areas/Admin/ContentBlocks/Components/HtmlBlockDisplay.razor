@@ -1,2 +1,10 @@
 ﻿@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@inherits ContentBlockDisplay<HtmlBlock>
+
+@((MarkupString)Model.BodyContent)
+
+@*<script type="text/javascript">
+    @((MarkupString)Model.Script)
+</script>*@

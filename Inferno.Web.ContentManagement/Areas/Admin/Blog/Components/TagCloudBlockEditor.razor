@@ -1,5 +1,137 @@
-﻿@using Inferno.Web.Components
+﻿@using Inferno.Models;
+@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
 @inherits ContentBlockEditor<TagCloudBlock>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="AutoResize" ColumnSize="ColumnSize.Is3"></FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <Check TValue="bool" @bind-Checked="@Model.AutoResize">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.AutoResize]</Check>
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="RemoveOverflowing" ColumnSize="ColumnSize.Is3"></FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <Check TValue="bool" @bind-Checked="@Model.RemoveOverflowing">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.RemoveOverflowing]</Check>
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="EncodeURI" ColumnSize="ColumnSize.Is3"></FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <Check TValue="bool" @bind-Checked="@Model.EncodeURI">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.EncodeURI]</Check>
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Steps" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.Steps]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.Steps" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="ClassPattern" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.ClassPattern]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenTextBox @bind-Value="Model.ClassPattern" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="AfterCloudRender" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.AfterCloudRender]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenTextBox @bind-Value="Model.AfterCloudRender" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Delay" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.Delay]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.Delay" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Shape" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.Shape]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenDropDown Data=@availableShapes TValue="IdNamePair<byte>" TextProperty="Name" ValueProperty="Id" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Colors" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.Colors]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenTextBox @bind-Value="Model.Colors" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="Delay" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.Delay]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.Delay" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="FontSizeFrom" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.FontSizeFrom]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.FontSizeFrom" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="FontSizeTo" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.FontSizeTo]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.FontSizeTo" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
+
+@code {
+    private IEnumerable<IdNamePair<byte>> availableShapes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        availableShapes = Extenso.EnumExtensions.GetValues<CloudShape>().Select(x => new IdNamePair<byte> { Id = (byte)x, Name = x.ToString() });
+        await base.OnInitializedAsync();
+    }
+}

@@ -3,3 +3,14 @@
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
 @inherits ContentBlockEditor<LastNPostsBlock>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="NumberOfEntries" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.LastNPostsBlock.NumberOfEntries]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenNumeric @bind-Value="Model.NumberOfEntries" Style="width:100%" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
