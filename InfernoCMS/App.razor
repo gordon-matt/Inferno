@@ -18,13 +18,16 @@
 </CascadingAuthenticationState>
 
 @code {
-    private List<Assembly> assemblies = new();
+    private static List<Assembly> assemblies = new();
 
     private async Task OnNavigateAsync(NavigationContext navigationContext)
     {
-        assemblies = EngineContext.Current.ResolveAll<IRouterAssemblyMarker>()
-            .Select(x => x.GetType().Assembly)
-            .ToList();
+        if (assemblies.IsNullOrEmpty())
+        {
+            assemblies = EngineContext.Current.ResolveAll<IRouterAssemblyMarker>()
+                .Select(x => x.GetType().Assembly)
+                .ToList();
+        }
 
         await Task.Yield();
     }

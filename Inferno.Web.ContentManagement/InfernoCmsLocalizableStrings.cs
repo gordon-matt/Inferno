@@ -151,13 +151,27 @@
 
             public static class VideoBlock
             {
-                public const string ControlId = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ControlId";
-                public const string Type = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Type";
-                public const string Source = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Source";
-                public const string ShowControls = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ShowControls";
+                public const string AutomaticallyHideControls = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.AutomaticallyHideControls";
+                public const string AutoPause = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.AutoPause";
                 public const string AutoPlay = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.AutoPlay";
-                public const string Loop = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Loop";
-                public const string VideoTagNotSupported = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.VideoTagNotSupported";
+                public const string ClickToPlay = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ClickToPlay";
+                public const string ControlId = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ControlId";
+                public const string Controls = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Controls";
+                public const string ControlsList = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ControlsList";
+                public const string DisableContextMenu = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.DisableContextMenu";
+                public const string InvertTime = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.InvertTime";
+                public const string Muted = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Muted";
+                public const string Poster = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Poster";
+                public const string ProtectionData = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ProtectionData";
+                public const string ProtectionHttpRequestHeaders = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ProtectionHttpRequestHeaders";
+                public const string ProtectionServerUrl = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ProtectionServerUrl";
+                public const string ProtectionType = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ProtectionType";
+                public const string Ratio = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Ratio";
+                public const string ResetOnEnd = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ResetOnEnd";
+                public const string SeekTime = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.SeekTime";
+                public const string Source = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Source";
+                public const string StreamingLibrary = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.StreamingLibrary";
+                public const string Volume = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Volume";
             }
 
             public static class ZoneModel

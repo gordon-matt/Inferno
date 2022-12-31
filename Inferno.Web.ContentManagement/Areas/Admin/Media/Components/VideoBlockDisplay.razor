@@ -1,5 +1,28 @@
-﻿@using Inferno.Web.Components
+﻿@using Blazorise.Video
+@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Media
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks;
 @inherits ContentBlockDisplay<VideoBlock>
+
+<Video id="@Model.ControlId"
+    Source="@Model.Source"
+    AutomaticallyHideControls="@Model.AutomaticallyHideControls"
+    AutoPause="@Model.AutoPause"
+    AutoPlay="@Model.AutoPlay"
+    ClickToPlay="@Model.ClickToPlay"
+    Controls="@Model.Controls"
+    ControlsList="@Model.ControlsList.ToArray()"
+    DisableContextMenu="@Model.DisableContextMenu"
+    InvertTime="@Model.InvertTime"
+    Muted="@Model.Muted"
+    Poster="@Model.Poster"
+    ProtectionData="@Model.ProtectionData"
+    ProtectionHttpRequestHeaders="@Model.ProtectionHttpRequestHeaders"
+    ProtectionServerUrl="@Model.ProtectionServerUrl"
+    ProtectionType="@Model.ProtectionType"
+    Ratio="@Model.Ratio"
+    ResetOnEnd="@Model.ResetOnEnd"
+    SeekTime="@Model.SeekTime"
+    StreamingLibrary="@Model.StreamingLibrary"
+    Volume="@Model.Volume" />

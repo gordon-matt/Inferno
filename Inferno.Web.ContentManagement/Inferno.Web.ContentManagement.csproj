@@ -18,6 +18,10 @@
     <Folder Include="Areas\Admin\Newsletters\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Blazorise.Video" Version="1.1.5" />
+  </ItemGroup>
+
 
 
 </Project>
