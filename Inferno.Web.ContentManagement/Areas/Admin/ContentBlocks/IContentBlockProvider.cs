@@ -23,10 +23,10 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
             Guid? pageId = workContext.GetState<Guid?>("CurrentPageId");
 
             var contentBlocks = contentBlockService.GetContentBlocks(zoneName, workContext.CurrentCultureCode, pageId: pageId);
-            return contentBlocks.Where(x => IsVisible(x)).ToList();
+            return contentBlocks.Where(IsVisible).ToList();
         }
 
-        protected bool IsVisible(IContentBlock contentBlock)
+        protected static bool IsVisible(IContentBlock contentBlock)
         {
             if (contentBlock == null || !contentBlock.Enabled)
             {

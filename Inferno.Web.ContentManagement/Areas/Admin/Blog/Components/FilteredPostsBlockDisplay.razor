@@ -1,10 +1,26 @@
 ﻿@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockDisplay<FilteredPostsBlock>
 
-<!-- TODO -->
+@inject IBlogCategoryService categoryService
+@inject IBlogTagService tagService
+
+@if (Model.FilterType == FilterType.Category && Model.CategoryId.HasValue)
+{
+    int id = Model.CategoryId.Value;
+    var category = categoryService.FindOne(id);
+}
+else if (Model.FilterType == FilterType.Tag && Model.TagId.HasValue)
+{
+    int id = Model.TagId.Value;
+    var tag = tagService.FindOne(id);
+}
+else
+{
+}
 
 @code {
     protected override async Task OnInitializedAsync()

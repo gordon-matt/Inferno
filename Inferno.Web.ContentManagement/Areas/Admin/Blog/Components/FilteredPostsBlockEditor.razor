@@ -21,7 +21,7 @@
     </Column>
 </Row>
 
-<Row>
+<Row hidden="@(Model.FilterType != FilterType.Category)">
     <Column ColumnSize="ColumnSize.Is12">
         <Field Horizontal="true">
             <FieldLabel For="CategoryId" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.CategoryId]</FieldLabel>
@@ -32,7 +32,7 @@
     </Column>
 </Row>
 
-<Row>
+<Row hidden="@(Model.FilterType != FilterType.Tag)">
     <Column ColumnSize="ColumnSize.Is12">
         <Field Horizontal="true">
             <FieldLabel For="TagId" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.TagId]</FieldLabel>

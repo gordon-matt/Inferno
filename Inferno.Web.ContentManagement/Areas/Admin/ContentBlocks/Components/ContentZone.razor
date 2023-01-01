@@ -1,0 +1,41 @@
+﻿@using Inferno.Web.Components
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+
+@inject IEnumerable<IContentBlockProvider> Providers
+
+@foreach (var contentBlock in contentBlocks)
+{
+    if (!string.IsNullOrEmpty(contentBlock.CustomDisplayType))
+    {
+        var customDisplayType = Type.GetType(contentBlock.CustomDisplayType, throwOnError: false);
+        if (customDisplayType != null)
+        {
+            <DynamicComponent Type="customDisplayType" Parameters="@(new Dictionary<string, object> { { "Model", contentBlock } })" />
+        }
+        else
+        {
+            // TODO: Log error
+        }
+    }
+    else
+    {
+        <DynamicComponent Type="contentBlock.EditorType" Parameters="@(new Dictionary<string, object> { { "Model", contentBlock } })" />
+    }
+}
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+
+    private IEnumerable<IContentBlock> contentBlocks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        contentBlocks = Providers
+            .SelectMany(x => x.GetContentBlocks(Name))
+            .ToList();
+
+        await base.OnInitializedAsync();
+    }
+}
