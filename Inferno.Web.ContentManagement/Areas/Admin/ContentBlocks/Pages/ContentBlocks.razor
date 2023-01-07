@@ -1,9 +1,9 @@
 ﻿@page "/admin/blocks/content-blocks"
 @inherits RadzenDataPage<ContentBlock, Guid>
 
-<h1>Tenants</h1>
+<h1>Content Blocks</h1>
 
-<Row hidden="@(ShowEditMode == true)">
+<Row hidden="@(ShowEditMode == true || ShowCreateMode == true)">
     <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
         <RadzenButton Click="Create">
             <Icon Name="IconName.PlusCircle"></Icon>
@@ -52,7 +52,7 @@
                             <Field Horizontal="true">
                                 <FieldLabel For="Title" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is9">
-                                    <RadzenTextBox @bind-Value="Model.Title" Style="width:100%" />
+                                    <RadzenTextBox @bind-Value="Model.Title" Style="width:100%" Name="Create_Title" />
                                 </FieldBody>
                             </Field>
                         </Column>
@@ -62,7 +62,7 @@
                             <Field Horizontal="true">
                                 <FieldLabel For="BlockType" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.BlockType]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is9">
-                                    <RadzenDropDown @bind-Value="Model.BlockType" Data="BlockTypesSelectList" TextProperty="Name" ValueProperty="Id" />
+                                    <RadzenDropDown @bind-Value="Model.BlockType" Data="BlockTypesSelectList" TextProperty="Name" ValueProperty="Id" Name="Create_BlockType" />
                                 </FieldBody>
                             </Field>
                         </Column>
@@ -72,7 +72,7 @@
                             <Field Horizontal="true">
                                 <FieldLabel For="Order" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is9">
-                                    <RadzenNumeric @bind-Value="Model.Order" Style="width:100%" />
+                                    <RadzenNumeric @bind-Value="Model.Order" Style="width:100%" Name="Create_Order" />
                                 </FieldBody>
                             </Field>
                         </Column>
@@ -82,7 +82,7 @@
                             <Field Horizontal="true">
                                 <FieldLabel For="ZoneId" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is9">
-                                    <RadzenDropDown @bind-Value="Model.ZoneId" Data="ZonesSelectList" TextProperty="Name" ValueProperty="Id" />
+                                    <RadzenDropDown @bind-Value="Model.ZoneId" Data="ZonesSelectList" TextProperty="Name" ValueProperty="Id" Name="Create_ZoneId" />
                                 </FieldBody>
                             </Field>
                         </Column>

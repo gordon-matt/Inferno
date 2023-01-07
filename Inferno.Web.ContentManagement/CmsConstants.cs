@@ -73,5 +73,29 @@ namespace Inferno.Web.ContentManagement
             public const string SitemapRead = "Sitemap: Read";
             public const string SitemapWrite = "Sitemap: Write";
         }
+
+        public static class ODataRoutes
+        {
+            public const string Prefix = "inferno/cms";
+
+            public static class EntitySetNames
+            {
+                public const string BlogCategory = "BlogCategoryApi";
+                public const string BlogPost = "BlogPostApi";
+                public const string BlogPostTag = "BlogPostTagApi";
+                public const string BlogTag = "BlogTagApi";
+                public const string ContentBlock = "ContentBlockApi";
+                public const string EntityTypeContentBlock = "EntityTypeContentBlockApi";
+                public const string Menu = "MenuApi";
+                public const string MenuItem = "MenuItemApi";
+                public const string Page = "PageApi";
+                public const string PageTree = "PageTreeApi";
+                public const string PageType = "PageTypeApi";
+                public const string PageVersion = "PageVersionApi";
+                public const string Subscriber = "SubscriberApi";
+                public const string XmlSitemap = "XmlSitemapApi";
+                public const string Zone = "ZoneApi";
+            }
+        }
     }
 }

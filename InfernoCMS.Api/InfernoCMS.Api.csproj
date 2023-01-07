@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Inferno.Caching\Inferno.Caching.csproj" />
     <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
     <ProjectReference Include="..\Inferno.Tenants\Inferno.Tenants.csproj" />
+    <ProjectReference Include="..\Inferno.Web.ContentManagement\Inferno.Web.ContentManagement.csproj" />
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
     <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
     <ProjectReference Include="..\InfernoCMS.Identity\InfernoCMS.Identity.csproj" />

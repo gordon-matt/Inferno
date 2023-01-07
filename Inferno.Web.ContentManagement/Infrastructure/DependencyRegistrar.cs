@@ -7,6 +7,7 @@ using Inferno.Web.ContentManagement.Areas.Admin.Blog;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
+using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Localization;
 using Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks;
@@ -15,6 +16,7 @@ using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Navigation;
+using Inferno.Web.OData;
 
 namespace Inferno.Web.ContentManagement.Infrastructure
 {
@@ -50,6 +52,7 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             builder.RegisterType<EntityTypeContentBlockService>().As<IEntityTypeContentBlockService>().InstancePerDependency();
             builder.RegisterType<ContentBlockService>().As<IContentBlockService>().InstancePerDependency();
             builder.RegisterType<ZoneService>().As<IZoneService>().InstancePerDependency();
+            builder.RegisterType<ContentBlockODataService>().As<IRadzenODataService<ContentBlock, Guid>>().SingleInstance();
 
             //builder.RegisterType<NewsletterService>().As<INewsletterService>().InstancePerDependency();
 

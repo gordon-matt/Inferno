@@ -1,5 +1,6 @@
 ﻿using Inferno.Models;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
+using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 using Microsoft.AspNetCore.Components;
 
@@ -21,8 +22,16 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Pages
 
         private bool ShowCreateMode { get; set; }
 
+        protected override void Create()
+        {
+            Model = new ContentBlock();
+            ShowEditMode = false;
+            ShowCreateMode = true;
+        }
+
         protected override async Task EditAsync(Guid id)
         {
+            ShowCreateMode = false;
             await base.EditAsync(id);
             EditorType = BlockTypes.FirstOrDefault(x => x.GetType().FullName == Model.BlockType)?.EditorType;
         }
@@ -35,7 +44,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Pages
                 .Select(x => new
                 {
                     x.Name,
-                    Type = x.GetTypeFullName()
+                    Type = x.GetType().FullName
                 })
                 .OrderBy(x => x.Name)
                 .Select(x => new IdNamePair<string>
@@ -47,6 +56,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Pages
             using var connection = ZoneService.OpenConnection();
             ZonesSelectList = connection.Query()
                 .OrderBy(x => x.Name)
+                .ToList()
                 .Select(x => new IdNamePair<Guid>
                 {
                     Id = x.Id,
@@ -56,13 +66,25 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Pages
 
         protected override async Task OnValidSumbitAsync()
         {
-            if (EditorType is not IContentBlockEditor)
+            if (!ShowCreateMode)
             {
-                return;
+                if (!typeof(IContentBlockEditor).IsAssignableFrom(EditorType))
+                {
+                    return;
+                }
+
+                var editor = (IContentBlockEditor)Activator.CreateInstance(EditorType);
+                Model.BlockValues = editor?.Save();
             }
 
-            Model.BlockValues = (EditorType as IContentBlockEditor)?.Save();
             await base.OnValidSumbitAsync();
+            ShowCreateMode = false;
+        }
+
+        protected override void Cancel()
+        {
+            base.Cancel();
+            ShowCreateMode = false;
         }
     }
 }

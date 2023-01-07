@@ -21,29 +21,29 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             ODataModelBuilder builder = new ODataConventionModelBuilder();
 
             // Blog
-            builder.EntitySet<BlogCategory>("BlogCategoryApi");
-            builder.EntitySet<BlogPost>("BlogPostApi");
-            builder.EntitySet<BlogPostTag>("BlogPostTagApi").EntityType.HasKey(x => new { x.PostId, x.TagId });
-            builder.EntitySet<BlogTag>("BlogTagApi");
+            builder.EntitySet<BlogCategory>(CmsConstants.ODataRoutes.EntitySetNames.BlogCategory);
+            builder.EntitySet<BlogPost>(CmsConstants.ODataRoutes.EntitySetNames.BlogPost);
+            builder.EntitySet<BlogPostTag>(CmsConstants.ODataRoutes.EntitySetNames.BlogPostTag).EntityType.HasKey(x => new { x.PostId, x.TagId });
+            builder.EntitySet<BlogTag>(CmsConstants.ODataRoutes.EntitySetNames.BlogTag);
 
             // Content Blocks
-            builder.EntitySet<ContentBlock>("ContentBlockApi");
-            builder.EntitySet<EntityTypeContentBlock>("EntityTypeContentBlockApi");
-            builder.EntitySet<Zone>("ZoneApi");
+            builder.EntitySet<ContentBlock>(CmsConstants.ODataRoutes.EntitySetNames.ContentBlock);
+            builder.EntitySet<EntityTypeContentBlock>(CmsConstants.ODataRoutes.EntitySetNames.EntityTypeContentBlock);
+            builder.EntitySet<Zone>(CmsConstants.ODataRoutes.EntitySetNames.Zone);
 
             // Menus
-            builder.EntitySet<Menu>("MenuApi");
-            builder.EntitySet<MenuItem>("MenuItemApi");
+            builder.EntitySet<Menu>(CmsConstants.ODataRoutes.EntitySetNames.Menu);
+            builder.EntitySet<MenuItem>(CmsConstants.ODataRoutes.EntitySetNames.MenuItem);
 
             // Pages
-            builder.EntitySet<Page>("PageApi");
-            builder.EntitySet<PageType>("PageTypeApi");
-            builder.EntitySet<PageVersion>("PageVersionApi");
-            builder.EntitySet<PageTreeItem>("PageTreeApi");
+            builder.EntitySet<Page>(CmsConstants.ODataRoutes.EntitySetNames.Page);
+            builder.EntitySet<PageType>(CmsConstants.ODataRoutes.EntitySetNames.PageType);
+            builder.EntitySet<PageVersion>(CmsConstants.ODataRoutes.EntitySetNames.PageVersion);
+            builder.EntitySet<PageTreeItem>(CmsConstants.ODataRoutes.EntitySetNames.PageTree);
 
             // Other
-            builder.EntitySet<SitemapConfig>("XmlSitemapApi");
-            //builder.EntitySet<Subscriber>("SubscriberApi");
+            builder.EntitySet<SitemapConfig>(CmsConstants.ODataRoutes.EntitySetNames.XmlSitemap);
+            //builder.EntitySet<Subscriber>(CmsConstants.ODataRoutes.EntitySetNames.Subscriber);
 
             // Action Configurations
             RegisterContentBlockODataActions(builder);
@@ -52,7 +52,7 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             RegisterPageVersionODataActions(builder);
             RegisterXmlSitemapODataActions(builder);
 
-            options.AddRouteComponents("odata/inferno/cms", builder.GetEdmModel());
+            options.AddRouteComponents($"odata/{CmsConstants.ODataRoutes.Prefix}", builder.GetEdmModel());
         }
 
         #endregion IODataRegistrar Members
@@ -61,12 +61,12 @@ namespace Inferno.Web.ContentManagement.Infrastructure
         {
             var getByPageIdFunction = builder.EntityType<ContentBlock>().Collection.Function("GetByPageId");
             getByPageIdFunction.Parameter<Guid>("pageId");
-            getByPageIdFunction.ReturnsCollectionFromEntitySet<ContentBlock>("ContentBlockApi");
+            getByPageIdFunction.ReturnsCollectionFromEntitySet<ContentBlock>(CmsConstants.ODataRoutes.EntitySetNames.ContentBlock);
 
             var getLocalizedActionFunction = builder.EntityType<ContentBlock>().Collection.Function("GetLocalized");
             getLocalizedActionFunction.Parameter<Guid>("id");
             getLocalizedActionFunction.Parameter<string>("cultureCode");
-            getLocalizedActionFunction.ReturnsFromEntitySet<ContentBlock>("ContentBlockApi");
+            getLocalizedActionFunction.ReturnsFromEntitySet<ContentBlock>(CmsConstants.ODataRoutes.EntitySetNames.ContentBlock);
 
             var saveLocalizedAction = builder.EntityType<ContentBlock>().Collection.Action("SaveLocalized");
             saveLocalizedAction.Parameter<string>("cultureCode");
@@ -79,7 +79,7 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             var getLocalizedActionFunction = builder.EntityType<EntityTypeContentBlock>().Collection.Function("GetLocalized");
             getLocalizedActionFunction.Parameter<Guid>("id");
             getLocalizedActionFunction.Parameter<string>("cultureCode");
-            getLocalizedActionFunction.ReturnsFromEntitySet<EntityTypeContentBlock>("EntityTypeContentBlockApi");
+            getLocalizedActionFunction.ReturnsFromEntitySet<EntityTypeContentBlock>(CmsConstants.ODataRoutes.EntitySetNames.EntityTypeContentBlock);
 
             var saveLocalizedAction = builder.EntityType<EntityTypeContentBlock>().Collection.Action("SaveLocalized");
             saveLocalizedAction.Parameter<string>("cultureCode");
@@ -90,7 +90,7 @@ namespace Inferno.Web.ContentManagement.Infrastructure
         private static void RegisterPageODataActions(ODataModelBuilder builder)
         {
             var getTopLevelPagesFunction = builder.EntityType<Page>().Collection.Function("GetTopLevelPages");
-            getTopLevelPagesFunction.ReturnsFromEntitySet<Page>("PageApi");
+            getTopLevelPagesFunction.ReturnsFromEntitySet<Page>(CmsConstants.ODataRoutes.EntitySetNames.Page);
         }
 
         private static void RegisterPageVersionODataActions(ODataModelBuilder builder)
