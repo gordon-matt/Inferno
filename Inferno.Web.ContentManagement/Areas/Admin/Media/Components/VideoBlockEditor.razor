@@ -1,8 +1,10 @@
-﻿@using Blazorise.Video;
+﻿@using Blazorise.Video
+@using Inferno.Models
 @using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Media
 @using Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@using Orientation = Radzen.Orientation
 @inherits ContentBlockEditor<VideoBlock>
 
 <Row>
@@ -30,7 +32,7 @@
         <Field Horizontal="true">
             <FieldLabel For="AutomaticallyHideControls" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.AutomaticallyHideControls">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutomaticallyHideControls]</Check>
+                <Check TValue="bool" @bind-Checked="Model.AutomaticallyHideControls">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutomaticallyHideControls]</Check>
             </FieldBody>
         </Field>
     </Column>
@@ -40,7 +42,7 @@
         <Field Horizontal="true">
             <FieldLabel For="AutoPause" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.AutoPause">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPause]</Check>
+                <Check TValue="bool" @bind-Checked="Model.AutoPause">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPause]</Check>
             </FieldBody>
         </Field>
     </Column>
@@ -50,7 +52,7 @@
         <Field Horizontal="true">
             <FieldLabel For="AutoPlay" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.AutoPlay">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPlay]</Check>
+                <Check TValue="bool" @bind-Checked="Model.AutoPlay">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPlay]</Check>
             </FieldBody>
         </Field>
     </Column>
@@ -60,7 +62,7 @@
         <Field Horizontal="true">
             <FieldLabel For="ClickToPlay" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.ClickToPlay">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ClickToPlay]</Check>
+                <Check TValue="bool" @bind-Checked="Model.ClickToPlay">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ClickToPlay]</Check>
             </FieldBody>
         </Field>
     </Column>
@@ -70,20 +72,29 @@
         <Field Horizontal="true">
             <FieldLabel For="Controls" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.Controls">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Controls]</Check>
+                <Check TValue="bool" @bind-Checked="Model.Controls">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Controls]</Check>
             </FieldBody>
         </Field>
     </Column>
 </Row>
 
-<!-- TODO: ControlsList -->
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Field Horizontal="true">
+            <FieldLabel For="ControlsList" ColumnSize="ColumnSize.Is3"></FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <RadzenCheckBoxList @bind-Value="Model.ControlsList" TValue="string" Orientation="Orientation.Vertical" Data="@availableControls" TextProperty="Name" ValueProperty="Id" />
+            </FieldBody>
+        </Field>
+    </Column>
+</Row>
 
 <Row>
     <Column ColumnSize="ColumnSize.Is12">
         <Field Horizontal="true">
             <FieldLabel For="DisableContextMenu" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.DisableContextMenu">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.DisableContextMenu]</Check>
+                <Check TValue="bool" @bind-Checked="Model.DisableContextMenu">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.DisableContextMenu]</Check>
             </FieldBody>
         </Field>
     </Column>
@@ -93,7 +104,7 @@
         <Field Horizontal="true">
             <FieldLabel For="InvertTime" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.InvertTime">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.InvertTime]</Check>
+                <Check TValue="bool" @bind-Checked="Model.InvertTime">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.InvertTime]</Check>
             </FieldBody>
         </Field>
     </Column>
@@ -103,7 +114,7 @@
         <Field Horizontal="true">
             <FieldLabel For="Muted" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.Muted">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Muted]</Check>
+                <Check TValue="bool" @bind-Checked="Model.Muted">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Muted]</Check>
             </FieldBody>
         </Field>
     </Column>
@@ -173,7 +184,7 @@
         <Field Horizontal="true">
             <FieldLabel For="ResetOnEnd" ColumnSize="ColumnSize.Is3"></FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.ResetOnEnd">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ResetOnEnd]</Check>
+                <Check TValue="bool" @bind-Checked="Model.ResetOnEnd">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ResetOnEnd]</Check>
             </FieldBody>
         </Field>
     </Column>
@@ -210,6 +221,26 @@
 </Row>
 
 @code {
+    private IEnumerable<IdNamePair<string>> availableControls = new List<IdNamePair<string>>
+    {
+        new IdNamePair<string>{ Id = VideoControlsType.PlayLarge, Name = "Play (Large)" },
+        new IdNamePair<string>{ Id = VideoControlsType.Restart, Name = "Restart" },
+        new IdNamePair<string>{ Id = VideoControlsType.Rewind, Name = "Rewind" },
+        new IdNamePair<string>{ Id = VideoControlsType.Play, Name = "Play" },
+        new IdNamePair<string>{ Id = VideoControlsType.FastForward, Name = "Fast Forward" },
+        new IdNamePair<string>{ Id = VideoControlsType.Progress, Name = "Progress" },
+        new IdNamePair<string>{ Id = VideoControlsType.CurrentTime, Name = "Current Time" },
+        new IdNamePair<string>{ Id = VideoControlsType.Duration, Name = "Duration" },
+        new IdNamePair<string>{ Id = VideoControlsType.Mute, Name = "Mute" },
+        new IdNamePair<string>{ Id = VideoControlsType.Volume, Name = "Volume" },
+        new IdNamePair<string>{ Id = VideoControlsType.Captions, Name = "Captions" },
+        new IdNamePair<string>{ Id = VideoControlsType.Settings, Name = "Settings" },
+        new IdNamePair<string>{ Id = VideoControlsType.Pip, Name = "Picture-in-Picture" },
+        new IdNamePair<string>{ Id = VideoControlsType.Airplay, Name = "Airplay (Safari only)" },
+        new IdNamePair<string>{ Id = VideoControlsType.Download, Name = "Download" },
+        new IdNamePair<string>{ Id = VideoControlsType.Fullscreen, Name = "Fullscreen" },
+    };
+
     private IEnumerable<VideoProtectionType> videoProtectionTypeValues = Extenso.EnumExtensions.GetValues<VideoProtectionType>();
     private IEnumerable<StreamingLibrary> streamingLibraryValues = Extenso.EnumExtensions.GetValues<StreamingLibrary>();
 }
