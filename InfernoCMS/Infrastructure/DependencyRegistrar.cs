@@ -1,11 +1,10 @@
 ﻿using Autofac;
 using Dependo.Autofac;
-using Extenso.AspNetCore.OData;
 using Inferno.Localization;
 using Inferno.Security.Membership;
-using Inferno.Web.OData;
+using Inferno.Web.Navigation;
+using InfernoCMS.Areas.Admin;
 using InfernoCMS.Identity.Services;
-using InfernoCMS.Services;
 using Radzen;
 
 namespace InfernoCMS.Infrastructure
@@ -40,7 +39,7 @@ namespace InfernoCMS.Infrastructure
             builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();
 
             // Navigation
-            //builder.RegisterType<AdminNavigationProvider>().As<INavigationProvider>().SingleInstance();
+            builder.RegisterType<AdminNavigationProvider>().As<INavigationProvider>().SingleInstance();
         }
     }
 }
