@@ -1,6 +1,6 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=gordon_matt%40live%2ecom&lc=AU&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
-![Inferno CMS](https://github.com/gordon-matt/MantleCMS/raw/master/MantleCMS/wwwroot/img/logo.png)
+![Inferno CMS](https://github.com/gordon-matt/Inferno/raw/master/InfernoCMS/wwwroot/img/logo.png)
 
 ## Intro
 Inferno is intended to be a multi-purpose framework and CMS similar to KoreCMS, but built with Blazor.
@@ -11,8 +11,8 @@ I had intended to keep the repo private until I had a BETA version, but I have b
 
 | | | |
 | :---: | :---: | :---: |
-|[<br />![.NET Core](https://raw.githubusercontent.com/gordon-matt/MantleCMS/master/_SolutionItems/Logos/Blazor.png) ](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)|[<br />![Web API OData](https://raw.githubusercontent.com/gordon-matt/MantleCMS/master/_SolutionItems/Logos/OData.png) ](https://github.com/OData/WebApi)|
-| [<br />![Bootstrap](https://raw.githubusercontent.com/gordon-matt/MantleCMS/master/_SolutionItems/Logos/Bootstrap.jpg) ](http://getbootstrap.com/)|[<br />![Blazorise](https://raw.githubusercontent.com/gordon-matt/MantleCMS/master/_SolutionItems/Logos/Blazorise.png) ](https://blazorise.com/)|[<br />![Radzen](https://raw.githubusercontent.com/gordon-matt/MantleCMS/master/_SolutionItems/Logos/Radzen.png) ](https://blazor.radzen.com/)
+|[<br />![.NET Core](https://raw.githubusercontent.com/gordon-matt/Inferno/master/_SolutionItems/Logos/Blazor.png) ](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)|[<br />![Web API OData](https://raw.githubusercontent.com/gordon-matt/Inferno/master/_SolutionItems/Logos/OData.png) ](https://github.com/OData/WebApi)|
+| [<br />![Bootstrap](https://raw.githubusercontent.com/gordon-matt/Inferno/master/_SolutionItems/Logos/Bootstrap.jpg) ](http://getbootstrap.com/)|[<br />![Blazorise](https://raw.githubusercontent.com/gordon-matt/Inferno/master/_SolutionItems/Logos/Blazorise.png) ](https://blazorise.com/)|[<br />![Radzen](https://raw.githubusercontent.com/gordon-matt/Inferno/master/_SolutionItems/Logos/Radzen.png) ](https://blazor.radzen.com/)
 
 ## License
 
