@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Video" Version="1.1.5" />
+    <PackageReference Include="Blazorise.Video" Version="1.2.0" />
   </ItemGroup>
 
 

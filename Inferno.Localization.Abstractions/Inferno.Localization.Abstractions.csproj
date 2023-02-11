@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dependo" Version="1.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>
