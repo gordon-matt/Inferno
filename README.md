@@ -11,12 +11,8 @@ I had intended to keep the repo private until I had a BETA version, but I have b
 
 | | | |
 | :---: | :---: | :---: |
-|[<br />![Blazor](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Blazor.jpg) ](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)|[<br />![Web API OData](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/OData.png) ](https://github.com/OData/AspNetCoreOData)|[<br />![Extenso](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Extenso.png) ](https://github.com/gordon-matt/Extenso)|
+|[<br />![Blazor](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Blazor.jpg) ](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)|[<br />![OData .NET Core](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/OData.png) ](https://github.com/OData/AspNetCoreOData)|[<br />![Extenso](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Extenso.png) ](https://github.com/gordon-matt/Extenso)|
 | [<br />![Bootstrap](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Bootstrap.jpg) ](http://getbootstrap.com/)|[<br />![Blazorise](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Blazorise.png) ](https://blazorise.com/)|[<br />![Radzen](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Radzen.png) ](https://blazor.radzen.com/)
-
-## License
-
-This project is licensed under the [MIT license](LICENSE.txt).
 
 ## Donate
 If you find this project helpful, consider buying me a cup of coffee.  :-)
