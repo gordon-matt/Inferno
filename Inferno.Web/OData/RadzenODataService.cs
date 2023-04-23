@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using Dependo;
+using Extenso;
+using Inferno.Web.Models;
 using Microsoft.Extensions.Configuration;
 using Radzen;
 
@@ -21,29 +23,36 @@ namespace Inferno.Web.OData
         protected readonly Uri baseUri;
         protected readonly string entitySetName;
         protected readonly HttpClient httpClient;
-        private readonly HttpClientHandler httpClientHandler;
         private bool isDisposed;
+
+        private IConfiguration Configuration { get; init; }
 
         public RadzenODataService(string entitySetName)
         {
-            var configuration = EngineContext.Current.Resolve<IConfiguration>();
-            baseUri = new Uri(configuration.GetValue<string>("ApiBaseUri"));
+            Configuration = EngineContext.Current.Resolve<IConfiguration>();
+            baseUri = new Uri(Configuration.GetValue<string>("ApiBaseUri"));
 
-            httpClientHandler = new HttpClientHandler
-            {
-                UseCookies = true,
-                CookieContainer = new CookieContainer()
-            };
-
-            // This should not be used in production.. it's just to bypass certificate validation for localhost..
-            if (baseUri.IsLoopback)
-            {
-                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-            }
-
-            httpClient = new HttpClient(httpClientHandler);
+            var httpClientFactory = EngineContext.Current.Resolve<IHttpClientFactory>();
+            httpClient = httpClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             this.entitySetName = entitySetName;
+        }
+
+        private async Task<string> GetBearerTokenAsync()
+        {
+            string json = new AuthModel { ApiKey = Configuration.GetValue<string>("ApiKey") }.JsonSerialize();
+            using var data = new StringContent(json, Encoding.UTF8, "application/json");
+            using var responseMessage = await httpClient.PostAsync(Configuration.GetValue<string>("ApiAuthUri"), data);
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var responseData = await responseMessage.Content.ReadAsStringAsync();
+                var response = responseData.JsonDeserialize<TokenModel>();
+                return response.Token;
+            }
+
+            return string.Empty;
         }
 
         public virtual async Task<ODataServiceResult<TEntity>> FindAsync(
@@ -55,6 +64,8 @@ namespace Inferno.Web.OData
             string select = default,
             bool? count = default)
         {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetBearerTokenAsync());
+
             var uri = new Uri(baseUri, entitySetName);
             uri = uri.GetODataUri(filter: filter, top: top, skip: skip, orderby: orderby, expand: expand, select: select, count: count);
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -64,6 +75,8 @@ namespace Inferno.Web.OData
 
         public virtual async Task<TEntity> FindOneAsync(TKey key)
         {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetBearerTokenAsync());
+
             var uri = new Uri(baseUri, $"{entitySetName}({key})");
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
             using var response = await httpClient.SendAsync(httpRequestMessage);
@@ -72,6 +85,8 @@ namespace Inferno.Web.OData
 
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetBearerTokenAsync());
+
             var uri = new Uri(baseUri, entitySetName);
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
             {
@@ -83,6 +98,8 @@ namespace Inferno.Web.OData
 
         public virtual async Task<TEntity> UpdateAsync(TKey key, TEntity entity)
         {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetBearerTokenAsync());
+
             var uri = new Uri(baseUri, $"{entitySetName}({key})");
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Patch, uri)
             {
@@ -94,6 +111,8 @@ namespace Inferno.Web.OData
 
         public virtual async Task<HttpResponseMessage> DeleteAsync(TKey key)
         {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetBearerTokenAsync());
+
             var uri = new Uri(baseUri, $"{entitySetName}({key})");
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, uri);
             return await httpClient.SendAsync(httpRequestMessage);
@@ -115,7 +134,6 @@ namespace Inferno.Web.OData
                 if (disposing)
                 {
                     httpClient?.Dispose();
-                    httpClientHandler?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

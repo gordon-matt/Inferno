@@ -10,6 +10,7 @@ using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -113,6 +114,13 @@ namespace InfernoCMS
             services.AddRazorPages().AddNewtonsoftJson();
 
             services.AddServerSideBlazor();
+
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+            services.AddResponseCompression();
 
             ////  TODO: Will this work for Blazor?? For themes..
             //services.Configure<RazorViewEngineOptions>(options =>

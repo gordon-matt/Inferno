@@ -4,11 +4,13 @@ using Extenso.Data.Entity;
 using Inferno.Localization.Entities;
 using Inferno.Localization.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Api
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class EntityTypeContentBlockApiController : BaseODataController<EntityTypeContentBlock, Guid>
     {
         private readonly Lazy<ILocalizablePropertyService> localizablePropertyService;

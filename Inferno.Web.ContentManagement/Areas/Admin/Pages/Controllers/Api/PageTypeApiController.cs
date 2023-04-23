@@ -1,9 +1,11 @@
 ﻿using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class PageTypeApiController : BaseODataController<PageType, Guid>
     {
         public PageTypeApiController(IRepository<PageType> repository)
