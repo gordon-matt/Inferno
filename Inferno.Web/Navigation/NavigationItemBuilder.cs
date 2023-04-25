@@ -35,9 +35,9 @@ namespace Inferno.Web.Navigation
             return this;
         }
 
-        public NavigationItemBuilder Icons(params string[] icons)
+        public NavigationItemBuilder Icon(string icon)
         {
-            item.Icons = item.Icons.Concat(icons);
+            item.Icon = icon;
             return this;
         }
 

@@ -14,27 +14,44 @@
         <BarStart>
             @foreach (var menuItem in menuItems)
             {
-                int iconCount = menuItem.Icons.Count();
-
-                <BarItem>
-                    <BarLink To="@menuItem.Href">
-                        @if (iconCount == 1)
-                        {
-                            <i class="@menuItem.Icons.ElementAt(0)"></i>@:&nbsp;
-                        }
-                        else if (iconCount > 1)
-                        {
-                            // We only support 2 icons max:
-                            string firstIcon = menuItem.Icons.ElementAt(0);
-                            string secondIcon = menuItem.Icons.ElementAt(1);
-                            <span class="fa-stack">
-                                <i class="@firstIcon fa-stack-1x"></i>
-                                <i class="@secondIcon fa-stack-1x" style="top:-7px;left:7px;"></i>
-                            </span>
-                        }
-                        @menuItem.Text
-                    </BarLink>
-                </BarItem>
+                if (menuItem.Items.Any())
+                {
+                    <BarItem>
+                        <BarDropdown>
+                            <BarDropdownToggle>
+                                @if (!string.IsNullOrEmpty(menuItem.Icon))
+                                {
+                                    <i class="@menuItem.Icon"></i>@:&nbsp;
+                                }
+                                @menuItem.Text
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                @foreach (var item in menuItem.Items)
+                                {
+                                    <BarLink To="@item.Href">
+                                        @if (!string.IsNullOrEmpty(item.Icon))
+                                        {
+                                            <i class="@item.Icon"></i>@:&nbsp;
+                                        }
+                                        @item.Text
+                                    </BarLink>
+                                }
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                }
+                else
+                {
+                    <BarItem>
+                        <BarLink To="@menuItem.Href">
+                            @if (!string.IsNullOrEmpty(menuItem.Icon))
+                            {
+                                <i class="@menuItem.Icon"></i>@:&nbsp;
+                            }
+                            @menuItem.Text
+                        </BarLink>
+                    </BarItem>
+                }
             }
         </BarStart>
         <BarEnd>

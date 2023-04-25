@@ -20,12 +20,12 @@ namespace InfernoCMS.Areas.Admin
 
         public void GetNavigation(NavigationBuilder builder)
         {
-            builder.Add(T[InfernoWebLocalizableStrings.Dashboard.Title], "0", BuildDashboardMenu);
+            builder.Add(T[InfernoWebLocalizableStrings.General.Home], "0", BuildDashboardMenu);
         }
 
         private static void BuildDashboardMenu(NavigationItemBuilder builder)
         {
-            builder.Icons("fa fa-dashboard");
+            builder.Icon("fa fa-home");
         }
 
         #endregion INavigationProvider Members

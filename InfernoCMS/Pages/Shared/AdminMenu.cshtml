@@ -9,25 +9,12 @@
     DisplayMenuItems = (menuItem) => new Func<MenuItem, IHtmlContent>(
         @<text>
         <li class="@(menuItem.Items.Any() ? "dropdown" : "") @(menuItem.Selected ? "active" : "")">
-            @{
-                int iconCount = menuItem.Icons.Count();
-            }
             @if (menuItem.Items.Any())
             {
                 <a href="@menuItem.Href" style="cursor: pointer;" data-toggle="dropdown">
-                    @if (iconCount == 1)
+                    @if (!string.IsNullOrEmpty(menuItem.Icon))
                     {
-                        <i class="@menuItem.Icons.ElementAt(0)"></i>@:&nbsp;
-                    }
-                    else if (iconCount > 1)
-                    {
-                        // We only support 2 icons max:
-                        string firstIcon = menuItem.Icons.ElementAt(0);
-                        string secondIcon = menuItem.Icons.ElementAt(1);
-                        <span class="fa-stack">
-                            <i class="@firstIcon fa-stack-1x"></i>
-                            <i class="@secondIcon fa-stack-1x" style="top:-7px;left:7px;"></i>
-                        </span>
+                        <i class="@menuItem.Icon"></i>@:&nbsp;
                     }
                     <span>@menuItem.Text</span>
                 </a>
@@ -43,19 +30,9 @@
                 if (!string.IsNullOrEmpty(menuItem.Href))
                 {
                     <a href="@menuItem.Href" style="cursor: pointer;">
-                        @if (iconCount == 1)
+                        @if (!string.IsNullOrEmpty(menuItem.Icon))
                         {
-                            <i class="@menuItem.Icons.ElementAt(0)"></i>@:&nbsp;
-                        }
-                        else if (iconCount > 1)
-                        {
-                            // We only support 2 icons max:
-                            string firstIcon = menuItem.Icons.ElementAt(0);
-                            string secondIcon = menuItem.Icons.ElementAt(1);
-                            <span class="fa-stack">
-                                <i class="@firstIcon fa-stack-1x"></i>
-                                <i class="@secondIcon fa-stack-1x" style="top:-7px;left:7px;"></i>
-                            </span>
+                            <i class="@menuItem.Icon"></i>@:&nbsp;
                         }
                         <span>@menuItem.Text</span>
                     </a>

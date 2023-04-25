@@ -20,7 +20,7 @@
 
         public string CssClass { get; set; }
 
-        public IEnumerable<string> Icons { get; set; } = Enumerable.Empty<string>();
+        public string Icon { get; set; }
 
         public override string ToString() => Text;
     }
