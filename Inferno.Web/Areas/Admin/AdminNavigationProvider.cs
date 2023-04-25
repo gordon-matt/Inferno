@@ -1,9 +1,8 @@
 ﻿using Dependo;
-using Inferno.Web;
 using Inferno.Web.Navigation;
 using Microsoft.Extensions.Localization;
 
-namespace InfernoCMS.Areas.Admin
+namespace Inferno.Web.Areas.Admin
 {
     public class AdminNavigationProvider : INavigationProvider
     {

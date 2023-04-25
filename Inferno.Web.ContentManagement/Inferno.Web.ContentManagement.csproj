@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Newsletters\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Blazorise.Video" Version="1.2.2" />
   </ItemGroup>
 

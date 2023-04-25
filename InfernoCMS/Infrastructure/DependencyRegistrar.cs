@@ -2,8 +2,6 @@
 using Dependo.Autofac;
 using Inferno.Localization;
 using Inferno.Security.Membership;
-using Inferno.Web.Navigation;
-using InfernoCMS.Areas.Admin;
 using InfernoCMS.Identity.Services;
 using Radzen;
 
@@ -37,9 +35,6 @@ namespace InfernoCMS.Infrastructure
 
             // Localization
             builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();
-
-            // Navigation
-            builder.RegisterType<AdminNavigationProvider>().As<INavigationProvider>().SingleInstance();
         }
     }
 }

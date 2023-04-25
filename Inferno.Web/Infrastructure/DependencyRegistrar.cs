@@ -5,6 +5,7 @@ using Inferno.Localization;
 using Inferno.Localization.Entities;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Areas.Admin;
 using Inferno.Web.Areas.Admin.Configuration.Services;
 using Inferno.Web.Areas.Admin.Localization.Services;
 using Inferno.Web.Areas.Tenants.Services;
@@ -59,7 +60,7 @@ namespace Inferno.Web.Infrastructure
 
             // Navigation
             builder.RegisterType<NavigationManager>().As<INavigationManager>().InstancePerDependency();
-            //builder.RegisterType<NavigationProvider>().As<INavigationProvider>().SingleInstance();
+            builder.RegisterType<AdminNavigationProvider>().As<INavigationProvider>().SingleInstance();
 
             // Work Context State Providers
             builder.RegisterType<CurrentUserStateProvider>().As<IWorkContextStateProvider>();

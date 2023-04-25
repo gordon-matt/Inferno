@@ -50,6 +50,7 @@
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Areas\Admin\" />
     <Folder Include="Models\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
