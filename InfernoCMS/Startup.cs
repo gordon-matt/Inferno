@@ -76,6 +76,7 @@ namespace InfernoCMS
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy(StandardPolicies.AdminAccess, policy => policy.RequireClaim("Permission", "AdminAccess"));
                 options.AddPolicy(StandardPolicies.FullAccess, policy => policy.RequireClaim("Permission", "FullAccess"));
                 options.AddInfernoWebPolicies();
             });

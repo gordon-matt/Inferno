@@ -12,10 +12,10 @@
             @if (menuItem.Items.Any())
             {
                 <a href="@menuItem.Href" style="cursor: pointer;" data-toggle="dropdown">
-                    @if (!string.IsNullOrEmpty(menuItem.Icon))
+                    @*@if (!string.IsNullOrEmpty(menuItem.Icon))
                     {
                         <i class="@menuItem.Icon"></i>@:&nbsp;
-                    }
+                    }*@
                     <span>@menuItem.Text</span>
                 </a>
                 <ul class="dropdown-menu">
@@ -30,10 +30,10 @@
                 if (!string.IsNullOrEmpty(menuItem.Href))
                 {
                     <a href="@menuItem.Href" style="cursor: pointer;">
-                        @if (!string.IsNullOrEmpty(menuItem.Icon))
+                        @*@if (!string.IsNullOrEmpty(menuItem.Icon))
                         {
                             <i class="@menuItem.Icon"></i>@:&nbsp;
-                        }
+                        }*@
                         <span>@menuItem.Text</span>
                     </a>
                 }

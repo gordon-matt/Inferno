@@ -19,9 +19,13 @@
                     <BarItem>
                         <BarDropdown>
                             <BarDropdownToggle>
-                                @if (!string.IsNullOrEmpty(menuItem.Icon))
+                                @if (menuItem.Icon.HasValue)
                                 {
-                                    <i class="@menuItem.Icon"></i>@:&nbsp;
+                                    <Icon Name="menuItem.Icon.Value" />@:&nbsp;
+                                }
+                                else if (!string.IsNullOrEmpty(menuItem.IconName))
+                                {
+                                    <i class="@menuItem.IconName"></i>@:&nbsp;
                                 }
                                 @menuItem.Text
                             </BarDropdownToggle>
@@ -29,9 +33,13 @@
                                 @foreach (var item in menuItem.Items)
                                 {
                                     <BarLink To="@item.Href">
-                                        @if (!string.IsNullOrEmpty(item.Icon))
+                                        @if (item.Icon.HasValue)
                                         {
-                                            <i class="@item.Icon"></i>@:&nbsp;
+                                            <Icon Name="item.Icon.Value" />@:&nbsp;
+                                        }
+                                        else if (!string.IsNullOrEmpty(item.IconName))
+                                        {
+                                            <i class="@item.IconName"></i>@:&nbsp;
                                         }
                                         @item.Text
                                     </BarLink>
@@ -44,9 +52,13 @@
                 {
                     <BarItem>
                         <BarLink To="@menuItem.Href">
-                            @if (!string.IsNullOrEmpty(menuItem.Icon))
+                            @if (menuItem.Icon.HasValue)
                             {
-                                <i class="@menuItem.Icon"></i>@:&nbsp;
+                                <Icon Name="menuItem.Icon.Value" />@:&nbsp;
+                            }
+                            else if (!string.IsNullOrEmpty(menuItem.IconName))
+                            {
+                                <i class="@menuItem.IconName"></i>@:&nbsp;
                             }
                             @menuItem.Text
                         </BarLink>

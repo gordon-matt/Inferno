@@ -1,4 +1,6 @@
-﻿namespace Inferno.Web.Navigation
+﻿using Blazorise;
+
+namespace Inferno.Web.Navigation
 {
     public class MenuItem
     {
@@ -20,7 +22,9 @@
 
         public string CssClass { get; set; }
 
-        public string Icon { get; set; }
+        public IconName? Icon { get; set; }
+
+        public string IconName { get; set; }
 
         public override string ToString() => Text;
     }

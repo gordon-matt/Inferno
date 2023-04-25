@@ -1,4 +1,5 @@
-﻿using Microsoft.OData.ModelBuilder.Core.V1;
+﻿using Blazorise;
+using Microsoft.OData.ModelBuilder.Core.V1;
 
 namespace Inferno.Web.Navigation
 {
@@ -35,9 +36,15 @@ namespace Inferno.Web.Navigation
             return this;
         }
 
-        public NavigationItemBuilder Icon(string icon)
+        public NavigationItemBuilder Icon(IconName icon)
         {
             item.Icon = icon;
+            return this;
+        }
+
+        public NavigationItemBuilder IconName(string iconName)
+        {
+            item.IconName = iconName;
             return this;
         }
 
