@@ -1,11 +1,12 @@
-﻿using Radzen;
+﻿using Inferno.Web.Models;
+using Radzen;
 
 namespace Inferno.Web.OData
 {
     public interface IRadzenODataService<TEntity, TKey> : IDisposable
         where TEntity : class
     {
-        Task<ODataServiceResult<TEntity>> FindAsync(
+        Task<ApiResponse<ODataServiceResult<TEntity>>> FindAsync(
             string filter = default,
             int? top = default,
             int? skip = default,
@@ -14,12 +15,12 @@ namespace Inferno.Web.OData
             string select = default,
             bool? count = default);
 
-        Task<TEntity> FindOneAsync(TKey key);
+        Task<ApiResponse<TEntity>> FindOneAsync(TKey key);
 
-        Task<TEntity> InsertAsync(TEntity entity);
+        Task<ApiResponse<TEntity>> InsertAsync(TEntity entity);
 
-        Task<TEntity> UpdateAsync(TKey key, TEntity entity);
+        Task<ApiResponse<TEntity>> UpdateAsync(TKey key, TEntity entity);
 
-        Task<HttpResponseMessage> DeleteAsync(TKey key);
+        Task<ApiResponse> DeleteAsync(TKey key);
     }
 }

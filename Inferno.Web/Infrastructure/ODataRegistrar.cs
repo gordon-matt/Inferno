@@ -1,5 +1,6 @@
 ﻿using Extenso.AspNetCore.OData;
 using Inferno.Localization.Entities;
+using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin.Localization.Models;
 using Inferno.Web.Configuration.Entities;
@@ -30,8 +31,8 @@ namespace Inferno.Web.Infrastructure
 
             //// Membership
             //builder.EntitySet<InfernoPermission>("PermissionApi");
-            //builder.EntitySet<InfernoRole>("RoleApi");
-            //builder.EntitySet<InfernoUser>("UserApi");
+            builder.EntitySet<InfernoRole>("RoleApi");
+            builder.EntitySet<InfernoUser>("UserApi");
             ////builder.EntitySet<PublicUserInfo>("PublicUserApi");
 
             ////// Plugins
@@ -46,7 +47,7 @@ namespace Inferno.Web.Infrastructure
             RegisterLanguageODataActions(builder);
             RegisterLocalizableStringODataActions(builder);
             //RegisterLogODataActions(builder);
-            //RegisterMembershipODataActions(builder);
+            RegisterMembershipODataActions(builder);
             //RegisterPluginODataActions(builder);
             //RegisterScheduledTaskODataActions(builder);
             //RegisterThemeODataActions(builder);
@@ -62,35 +63,35 @@ namespace Inferno.Web.Infrastructure
         //    clearAction.Returns<IActionResult>();
         //}
 
-        //private static void RegisterMembershipODataActions(ODataModelBuilder builder)
-        //{
-        //    var getUsersInRoleFunction = builder.EntityType<InfernoUser>().Collection.Function("GetUsersInRole");
-        //    getUsersInRoleFunction.Parameter<string>("roleId");
-        //    getUsersInRoleFunction.Returns<IActionResult>();
+        private static void RegisterMembershipODataActions(ODataModelBuilder builder)
+        {
+            var getUsersInRoleFunction = builder.EntityType<InfernoUser>().Collection.Function("GetUsersInRole");
+            getUsersInRoleFunction.Parameter<string>("roleId");
+            getUsersInRoleFunction.Returns<IActionResult>();
 
-        //    var assignUserToRolesAction = builder.EntityType<InfernoUser>().Collection.Action("AssignUserToRoles");
-        //    assignUserToRolesAction.Parameter<string>("userId");
-        //    assignUserToRolesAction.CollectionParameter<string>("roles");
-        //    assignUserToRolesAction.Returns<IActionResult>();
+            var assignUserToRolesAction = builder.EntityType<InfernoUser>().Collection.Action("AssignUserToRoles");
+            assignUserToRolesAction.Parameter<string>("userId");
+            assignUserToRolesAction.CollectionParameter<string>("roles");
+            assignUserToRolesAction.Returns<IActionResult>();
 
-        //    var changePasswordAction = builder.EntityType<InfernoUser>().Collection.Action("ChangePassword");
-        //    changePasswordAction.Parameter<string>("userId");
-        //    changePasswordAction.Parameter<string>("password");
-        //    changePasswordAction.Returns<IActionResult>();
+            var changePasswordAction = builder.EntityType<InfernoUser>().Collection.Action("ChangePassword");
+            changePasswordAction.Parameter<string>("userId");
+            changePasswordAction.Parameter<string>("password");
+            changePasswordAction.Returns<IActionResult>();
 
-        //    var getRolesForUserFunction = builder.EntityType<InfernoRole>().Collection.Function("GetRolesForUser");
-        //    getRolesForUserFunction.Parameter<string>("userId");
-        //    getRolesForUserFunction.Returns<IActionResult>();
+            var getRolesForUserFunction = builder.EntityType<InfernoRole>().Collection.Function("GetRolesForUser");
+            getRolesForUserFunction.Parameter<string>("userId");
+            getRolesForUserFunction.Returns<IActionResult>();
 
-        //    var assignPermissionsToRoleAction = builder.EntityType<InfernoRole>().Collection.Action("AssignPermissionsToRole");
-        //    assignPermissionsToRoleAction.Parameter<string>("roleId");
-        //    assignPermissionsToRoleAction.CollectionParameter<string>("permissions");
-        //    assignPermissionsToRoleAction.Returns<IActionResult>();
+            //var assignPermissionsToRoleAction = builder.EntityType<InfernoRole>().Collection.Action("AssignPermissionsToRole");
+            //assignPermissionsToRoleAction.Parameter<string>("roleId");
+            //assignPermissionsToRoleAction.CollectionParameter<string>("permissions");
+            //assignPermissionsToRoleAction.Returns<IActionResult>();
 
-        //    var getPermissionsForRoleFunction = builder.EntityType<InfernoPermission>().Collection.Function("GetPermissionsForRole");
-        //    getPermissionsForRoleFunction.Parameter<string>("roleId");
-        //    getPermissionsForRoleFunction.Returns<IActionResult>();
-        //}
+            //var getPermissionsForRoleFunction = builder.EntityType<InfernoPermission>().Collection.Function("GetPermissionsForRole");
+            //getPermissionsForRoleFunction.Parameter<string>("roleId");
+            //getPermissionsForRoleFunction.Returns<IActionResult>();
+        }
 
         //private static void RegisterPluginODataActions(ODataModelBuilder builder)
         //{

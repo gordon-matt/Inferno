@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Inferno.Web.Areas.Tenants.Controllers.Api
 {
-    //[Authorize]
     [Authorize(AuthenticationSchemes = "Bearer")]
     public class TenantApiController : BaseODataController<Tenant, int>
     {

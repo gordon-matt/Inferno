@@ -1,0 +1,84 @@
+﻿@page "/admin/membership/roles/index"
+@inherits RadzenDataPage<InfernoRole, string>
+
+<h1>Membership</h1>
+
+<Row hidden="@(ShowEditMode == true)">
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Click="Create">
+            <Icon Name="IconName.PlusCircle"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Create]
+        </RadzenButton>
+        <RadzenButton Click="Users">
+            <Icon Name="IconName.User"></Icon>
+            @T[InfernoWebLocalizableStrings.Membership.Roles]
+        </RadzenButton>
+        <RadzenButton Text="Excel" Click="@(args => Export("excel"))">
+            Export to Excel
+        </RadzenButton>
+        <RadzenButton Text="CSV" Click="@(args => Export("csv"))">
+            Export to CSV
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="InfernoRole"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="10"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="InfernoRole" Property="Name" Title="@T[InfernoWebLocalizableStrings.Membership.RoleModel.Name]" />
+                <RadzenDataGridColumn TItem="InfernoRole" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">Details</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Membership.RoleModel.Name]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenTextBox @bind-Value="Model.Name" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <hr />
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

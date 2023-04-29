@@ -3,11 +3,12 @@ using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
 using Inferno.Localization;
 using Inferno.Localization.Entities;
-using Inferno.Security;
+using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
 using Inferno.Web.Areas.Admin.Configuration.Services;
 using Inferno.Web.Areas.Admin.Localization.Services;
+using Inferno.Web.Areas.Admin.Membership.Services;
 using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Entities;
@@ -88,10 +89,12 @@ namespace Inferno.Web.Infrastructure
             //// Embedded File Provider
             //builder.RegisterType<EmbeddedFileProviderRegistrar>().As<IEmbeddedFileProviderRegistrar>().InstancePerLifetimeScope();
 
-            builder.RegisterType<LanguageODataService>().As<IRadzenODataService<Language, Guid>>().SingleInstance();
+            builder.RegisterType<LanguageODataService>().As<IRadzenODataService<Language, Guid>>().AsSelf().SingleInstance();
             builder.RegisterType<LocalizableStringODataService>().As<IRadzenODataService<LocalizableString, Guid>>().AsSelf().SingleInstance();
-            builder.RegisterType<SettingODataService>().As<IRadzenODataService<Setting, Guid>>().SingleInstance();
-            builder.RegisterType<TenantODataService>().As<IRadzenODataService<Tenant, int>>().SingleInstance();
+            builder.RegisterType<RoleODataService>().As<IRadzenODataService<InfernoRole, string>>().AsSelf().SingleInstance();
+            builder.RegisterType<SettingODataService>().As<IRadzenODataService<Setting, Guid>>().AsSelf().SingleInstance();
+            builder.RegisterType<TenantODataService>().As<IRadzenODataService<Tenant, int>>().AsSelf().SingleInstance();
+            builder.RegisterType<UserODataService>().As<IRadzenODataService<InfernoUser, string>>().AsSelf().SingleInstance();
         }
 
         public int Order => 0;
