@@ -40,7 +40,7 @@ namespace Inferno.Web.Areas.Admin
         private void BuildMembershipMenu(NavigationItemBuilder builder)
         {
             builder
-                .Url("/admin/membership/index")
+                .Url("/admin/membership/users/index")
                 .Icon(IconName.Users)
                 .Permission(InfernoWebPolicies.MembershipManage);
         }
