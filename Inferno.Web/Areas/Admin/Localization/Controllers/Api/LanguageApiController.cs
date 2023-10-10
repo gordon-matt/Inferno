@@ -6,6 +6,7 @@ using Inferno.Localization.Entities;
 using Inferno.Localization.Services;
 using Inferno.Web.OData;
 using Inferno.Web.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using LanguageEntity = Inferno.Localization.Entities.Language;
@@ -18,10 +19,11 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
         private readonly Lazy<ILocalizableStringService> localizableStringService;
 
         public LanguageApiController(
+            IAuthorizationService authorizationService,
             IRepository<LanguageEntity> repository,
             Lazy<ILocalizableStringService> localizableStringService,
             Lazy<ICacheManager> cacheManager)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.localizableStringService = localizableStringService;
             this.cacheManager = cacheManager;

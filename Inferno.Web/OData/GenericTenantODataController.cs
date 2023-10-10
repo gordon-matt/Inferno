@@ -3,6 +3,7 @@ using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inferno.Web.OData
 {
@@ -13,8 +14,8 @@ namespace Inferno.Web.OData
 
         #region Constructors
 
-        public GenericTenantODataController(IRepository<TEntity> repository)
-            : base(repository)
+        public GenericTenantODataController(IAuthorizationService authorizationService, IRepository<TEntity> repository)
+            : base(authorizationService, repository)
         {
             workContext = EngineContext.Current.Resolve<IWorkContext>();
         }
@@ -38,7 +39,7 @@ namespace Inferno.Web.OData
 
         protected virtual int GetTenantId() => workContext.CurrentTenant.Id;
 
-        protected override async Task<bool> CanViewEntity(TEntity entity)
+        protected override async Task<bool> CanViewEntityAsync(TEntity entity)
         {
             if (entity == null)
             {
@@ -61,7 +62,7 @@ namespace Inferno.Web.OData
             return false;
         }
 
-        protected override async Task<bool> CanModifyEntity(TEntity entity)
+        protected override async Task<bool> CanModifyEntityAsync(TEntity entity)
         {
             if (entity == null)
             {

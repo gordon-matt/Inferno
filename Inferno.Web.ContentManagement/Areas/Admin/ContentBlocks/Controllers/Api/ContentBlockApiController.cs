@@ -12,15 +12,16 @@ using Microsoft.AspNetCore.OData.Query;
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Api
 {
     //[Authorize(Roles = InfernoConstants.Roles.Administrators)]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize]
     public class ContentBlockApiController : BaseODataController<ContentBlock, Guid>
     {
         private readonly Lazy<ILocalizablePropertyService> localizablePropertyService;
 
         public ContentBlockApiController(
+            IAuthorizationService authorizationService,
             IRepository<ContentBlock> repository,
             Lazy<ILocalizablePropertyService> localizablePropertyService)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.localizablePropertyService = localizablePropertyService;
         }

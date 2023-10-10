@@ -4,6 +4,7 @@ using Inferno.Web.ContentManagement.Areas.Admin.Media;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -21,11 +22,12 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
         private readonly ILogger logger;
 
         public PageVersionApiController(
+            IAuthorizationService authorizationService,
             IRepository<PageVersion> repository,
             IPageVersionService service,
             IRepository<Page> pageRepository,
             PageSettings settings)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.pageRepository = pageRepository;
             this.settings = settings;
@@ -44,7 +46,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
                 return NotFound();
             }
 
-            if (!await CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -89,7 +91,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
                 return NotFound();
             }
 
-            if (!await CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -150,7 +152,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
 
         public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] PageVersion entity)
         {
-            if (!await CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -254,7 +256,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
                 return NotFound();
             }
 
-            if (!await CanModifyEntity(versionToRestore))
+            if (!await CanModifyEntityAsync(versionToRestore))
             {
                 return Unauthorized();
             }

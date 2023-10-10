@@ -1,9 +1,7 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
+﻿using Inferno.Web.Identity;
 using Inferno.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace InfernoCMS.Api.Controllers
 {
@@ -11,43 +9,34 @@ namespace InfernoCMS.Api.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        private readonly IConfiguration config;
+        private readonly IConfiguration configuration;
+        private readonly ITokenService tokenService;
 
-        public AuthController(IConfiguration config) => this.config = config;
+        public AuthController(IConfiguration configuration, ITokenService tokenService)
+        {
+            this.configuration = configuration;
+            this.tokenService = tokenService;
+        }
 
+        // TODO: Should probably hash the user ID.. otherwise someone can post a userID and use the API as someone else
         [AllowAnonymous]
         [HttpPost]
         [Route("authorize")]
-        public IActionResult Authorize([FromBody] AuthModel auth)
+        public async Task<IActionResult> Authorize([FromBody] LoginModel model)
         {
             IActionResult response = Unauthorized();
-            var authenticateResult = Authenticate(auth);
+            var authenticateResult = Authenticate(model);
 
             if (authenticateResult.Succeeded)
             {
-                string token = GenerateJSONWebToken();
+                string token = await tokenService.GenerateJsonWebTokenAsync(model.UserId);
                 response = Ok(new { token });
             }
 
             return response;
         }
 
-        private string GenerateJSONWebToken()
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                config["Jwt:Issuer"],
-                config["Jwt:Issuer"],
-                null,
-                expires: DateTime.Now.AddMinutes(120),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private StandardJsonResult Authenticate(AuthModel auth) => auth.ApiKey == config.GetValue<string>("ApiKey")
+        private StandardJsonResult Authenticate(LoginModel auth) => auth.ApiKey == configuration.GetValue<string>("ApiKey")
             ? StandardJsonResult.Success()
             : StandardJsonResult.Failure("Validation Error");
     }

@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="6.2.2" />
-    <PackageReference Include="Extenso.Core" Version="7.0.0" />
+    <PackageReference Include="EPPlus" Version="6.2.10" />
+    <PackageReference Include="Extenso.Core" Version="7.1.1" />
   </ItemGroup>
 
 </Project>

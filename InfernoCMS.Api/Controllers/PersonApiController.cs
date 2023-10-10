@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InfernoCMS.Controllers.Api
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class PersonApiController : GenericODataController<Person, int>
     {
-        public PersonApiController(IRepository<Person> repository)
-            : base(repository)
+        public PersonApiController(IAuthorizationService authorizationService, IRepository<Person> repository)
+            : base(authorizationService, repository)
         {
         }
 

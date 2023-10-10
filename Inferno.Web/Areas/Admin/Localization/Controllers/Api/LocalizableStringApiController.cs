@@ -4,6 +4,7 @@ using Inferno.Localization.Entities;
 using Inferno.Web.Areas.Admin.Localization.Models;
 using Inferno.Web.OData;
 using Inferno.Web.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
@@ -14,8 +15,8 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
     {
         private readonly ICacheManager cacheManager;
 
-        public LocalizableStringApiController(IRepository<LocalizableString> repository, ICacheManager cacheManager)
-            : base(repository)
+        public LocalizableStringApiController(IAuthorizationService authorizationService, IRepository<LocalizableString> repository, ICacheManager cacheManager)
+            : base(authorizationService, repository)
         {
             this.cacheManager = cacheManager;
         }

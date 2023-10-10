@@ -4,6 +4,7 @@ using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Entities;
 using Inferno.Web.OData;
 using Inferno.Web.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -14,8 +15,8 @@ namespace Inferno.Web.Areas.Admin.Configuration.Controllers.Api
     {
         private readonly ICacheManager cacheManager;
 
-        public SettingsApiController(IRepository<Setting> repository, ICacheManager cacheManager)
-            : base(repository)
+        public SettingsApiController(IAuthorizationService authorizationService, IRepository<Setting> repository, ICacheManager cacheManager)
+            : base(authorizationService, repository)
         {
             this.cacheManager = cacheManager;
         }

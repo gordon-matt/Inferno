@@ -4,6 +4,7 @@ using Inferno.Security.Membership;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Media;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 
@@ -17,11 +18,12 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
         private readonly Lazy<IWorkContext> workContext;
 
         public BlogPostApiController(
+            IAuthorizationService authorizationService,
             IRepository<BlogPost> repository,
             Lazy<IMembershipService> membershipService,
             Lazy<IRepository<BlogPostTag>> postTagRepository,
             Lazy<IWorkContext> workContext)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.membershipService = membershipService;
             this.postTagRepository = postTagRepository;
@@ -33,7 +35,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
             int tenantId = GetTenantId();
             entity.TenantId = tenantId;
 
-            if (!await CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }

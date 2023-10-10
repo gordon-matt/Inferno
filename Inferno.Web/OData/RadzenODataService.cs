@@ -1,10 +1,10 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
-using Dependo;
-using Extenso;
+﻿using Dependo;
+using Inferno.Web.Identity;
 using Inferno.Web.Models;
 using Microsoft.Extensions.Configuration;
 using Radzen;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace Inferno.Web.OData
 {
@@ -25,10 +25,14 @@ namespace Inferno.Web.OData
         protected readonly HttpClient httpClient;
         private bool isDisposed;
 
+        private ITokenService TokenService { get; init; }
+        private IWorkContext WorkContext { get; init; }
         private IConfiguration Configuration { get; init; }
 
         public RadzenODataService(string entitySetName)
         {
+            TokenService = EngineContext.Current.Resolve<ITokenService>();
+            WorkContext = EngineContext.Current.Resolve<IWorkContext>();
             Configuration = EngineContext.Current.Resolve<IConfiguration>();
             baseUri = new Uri(Configuration.GetValue<string>("ApiBaseUri"));
 
@@ -40,19 +44,10 @@ namespace Inferno.Web.OData
             this.entitySetName = entitySetName;
         }
 
+        // TODO: Store the token to reuse
         private async Task<string> GetBearerTokenAsync()
         {
-            string json = new AuthModel { ApiKey = Configuration.GetValue<string>("ApiKey") }.JsonSerialize();
-            using var data = new StringContent(json, Encoding.UTF8, "application/json");
-            using var responseMessage = await httpClient.PostAsync(Configuration.GetValue<string>("ApiAuthUri"), data);
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var responseData = await responseMessage.Content.ReadAsStringAsync();
-                var response = responseData.JsonDeserialize<TokenModel>();
-                return response.Token;
-            }
-
-            return string.Empty;
+            return await TokenService.GenerateJsonWebTokenAsync(WorkContext.CurrentUser.Id);
         }
 
         public virtual async Task<ApiResponse<ODataServiceResult<TEntity>>> FindAsync(

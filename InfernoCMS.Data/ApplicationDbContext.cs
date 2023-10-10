@@ -19,6 +19,10 @@ namespace InfernoCMS.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationUser>().HasMany(x => x.Roles).WithOne().HasForeignKey(x => x.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<ApplicationUser>().HasMany(x => x.Claims).WithOne().HasForeignKey(x => x.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<ApplicationRole>().HasMany(x => x.Claims).WithOne().HasForeignKey(x => x.RoleId).IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

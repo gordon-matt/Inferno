@@ -10,15 +10,16 @@ using Microsoft.AspNetCore.OData.Formatter;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Api
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize]
     public class EntityTypeContentBlockApiController : BaseODataController<EntityTypeContentBlock, Guid>
     {
         private readonly Lazy<ILocalizablePropertyService> localizablePropertyService;
 
         public EntityTypeContentBlockApiController(
+            IAuthorizationService authorizationService,
             IRepository<EntityTypeContentBlock> repository,
             Lazy<ILocalizablePropertyService> localizablePropertyService)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.localizablePropertyService = localizablePropertyService;
         }

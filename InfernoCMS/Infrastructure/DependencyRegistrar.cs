@@ -2,6 +2,7 @@
 using Dependo.Autofac;
 using Inferno.Localization;
 using Inferno.Security.Membership;
+using Inferno.Web.Identity;
 using InfernoCMS.Identity.Services;
 using Radzen;
 
@@ -32,6 +33,7 @@ namespace InfernoCMS.Infrastructure
 
             // Services
             builder.RegisterType<MembershipService>().As<IMembershipService>().InstancePerDependency();
+            builder.RegisterType<TokenService>().As<ITokenService>().InstancePerLifetimeScope();
 
             // Localization
             builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();

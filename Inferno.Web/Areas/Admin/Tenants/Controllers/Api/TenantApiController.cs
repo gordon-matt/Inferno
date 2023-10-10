@@ -6,23 +6,27 @@ using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace Inferno.Web.Areas.Tenants.Controllers.Api
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize]
     public class TenantApiController : BaseODataController<Tenant, int>
     {
         private readonly IMembershipService membershipService;
-        private readonly IWebHelper webHelper;
 
         public TenantApiController(
+            IAuthorizationService authorizationService,
             IRepository<Tenant> repository,
-            IMembershipService membershipService,
-            IWebHelper webHelper)
-            : base(repository)
+            IMembershipService membershipService)
+            : base(authorizationService, repository)
         {
             this.membershipService = membershipService;
-            this.webHelper = webHelper;
+        }
+
+        public override Task<IActionResult> Get(ODataQueryOptions<Tenant> options)
+        {
+            return base.Get(options);
         }
 
         public override async Task<IActionResult> Post([FromBody] Tenant entity)

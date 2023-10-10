@@ -10,6 +10,7 @@ using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Models;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -27,11 +28,12 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Controllers.Api
         private readonly ILogger logger;
 
         public XmlSitemapApiController(
+            IAuthorizationService authorizationService,
             IRepository<SitemapConfig> repository,
             IPageService pageService,
             IPageVersionService pageVersionService,
             Lazy<ILanguageService> languageService)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.pageService = pageService;
             this.pageVersionService = pageVersionService;

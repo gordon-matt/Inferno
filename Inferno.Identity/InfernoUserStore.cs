@@ -1,11 +1,11 @@
-﻿using System.Globalization;
-using System.Security.Claims;
-using Dependo;
+﻿using Dependo;
 using Inferno.Identity.Entities;
 using Inferno.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Security.Claims;
 
 namespace Inferno.Identity
 {
@@ -15,86 +15,26 @@ namespace Inferno.Identity
         where TRole : InfernoIdentityRole
         where TContext : DbContext
     {
-        private IWorkContext workContext;
+        protected IWorkContext workContext;
 
         public InfernoUserStore(TContext context, IdentityErrorDescriber describer = null)
             : base(context, describer)
         {
         }
 
-        #region Private Properties
+        #region Properties
 
-        private DbSet<TUser> UsersSet => Context.Set<TUser>();
+        protected DbSet<TRole> Roles => Context.Set<TRole>();
+        protected int TenantId => WorkContext.CurrentTenant.Id;
+        protected DbSet<IdentityUserClaim<string>> UserClaims => Context.Set<IdentityUserClaim<string>>();
+        protected DbSet<IdentityUserLogin<string>> UserLogins => Context.Set<IdentityUserLogin<string>>();
+        protected DbSet<IdentityUserRole<string>> UserRoles => Context.Set<IdentityUserRole<string>>();
+        protected DbSet<TUser> UsersSet => Context.Set<TUser>();
+        protected DbSet<IdentityUserToken<string>> UserTokens => Context.Set<IdentityUserToken<string>>();
 
-        private DbSet<TRole> Roles => Context.Set<TRole>();
+        protected IWorkContext WorkContext => workContext ??= EngineContext.Current.Resolve<IWorkContext>();
 
-        private DbSet<IdentityUserClaim<string>> UserClaims => Context.Set<IdentityUserClaim<string>>();
-
-        private DbSet<IdentityUserRole<string>> UserRoles => Context.Set<IdentityUserRole<string>>();
-
-        private DbSet<IdentityUserLogin<string>> UserLogins => Context.Set<IdentityUserLogin<string>>();
-
-        private DbSet<IdentityUserToken<string>> UserTokens => Context.Set<IdentityUserToken<string>>();
-
-        private IWorkContext WorkContext => workContext ??= EngineContext.Current.Resolve<IWorkContext>();
-
-        private int TenantId => WorkContext.CurrentTenant.Id;
-
-        #endregion Private Properties
-
-        protected override IdentityUserRole<string> CreateUserRole(TUser user, TRole role) =>
-            new()
-            {
-                UserId = user.Id,
-                RoleId = role.Id
-            };
-
-        protected override IdentityUserClaim<string> CreateUserClaim(TUser user, Claim claim)
-        {
-            var userClaim = new IdentityUserClaim<string> { UserId = user.Id };
-            userClaim.InitializeFromClaim(claim);
-            return userClaim;
-        }
-
-        protected override IdentityUserLogin<string> CreateUserLogin(TUser user, UserLoginInfo login) =>
-            new()
-            {
-                UserId = user.Id,
-                ProviderKey = login.ProviderKey,
-                LoginProvider = login.LoginProvider,
-                ProviderDisplayName = login.ProviderDisplayName
-            };
-
-        protected override IdentityUserToken<string> CreateUserToken(TUser user, string loginProvider, string name, string value) =>
-            new()
-            {
-                UserId = user.Id,
-                LoginProvider = loginProvider,
-                Name = name,
-                Value = value
-            };
-
-        public override Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            return Users.FirstOrDefaultAsync(
-                u =>
-                    u.NormalizedEmail == normalizedEmail
-                    && (u.TenantId == TenantId || (u.TenantId == null)),
-                cancellationToken);
-        }
-
-        public override Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            return Users.FirstOrDefaultAsync(
-                u =>
-                    u.NormalizedUserName == normalizedUserName
-                    && (u.TenantId == TenantId || (u.TenantId == null)),
-                cancellationToken);
-        }
+        #endregion Properties
 
         public override async Task AddToRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default)
         {
@@ -118,6 +58,28 @@ namespace Inferno.Identity
             }
 
             UserRoles.Add(CreateUserRole(user, roleEntity));
+        }
+
+        public override async Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            return await Users.FirstOrDefaultAsync(
+                u =>
+                    u.NormalizedEmail == normalizedEmail
+                    && (u.TenantId == TenantId || (u.TenantId == null)),
+                cancellationToken);
+        }
+
+        public override async Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            return await Users.FirstOrDefaultAsync(
+                u =>
+                    u.NormalizedUserName == normalizedUserName
+                    && (u.TenantId == TenantId || (u.TenantId == null)),
+                cancellationToken);
         }
 
         public override async Task<bool> IsInRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default)
@@ -170,13 +132,45 @@ namespace Inferno.Identity
             }
         }
 
-        protected override Task<TRole> FindRoleAsync(string normalizedRoleName, CancellationToken cancellationToken) =>
-            Roles.SingleOrDefaultAsync(r =>
+        protected override IdentityUserClaim<string> CreateUserClaim(TUser user, Claim claim)
+        {
+            var userClaim = new IdentityUserClaim<string> { UserId = user.Id };
+            userClaim.InitializeFromClaim(claim);
+            return userClaim;
+        }
+
+        protected override IdentityUserLogin<string> CreateUserLogin(TUser user, UserLoginInfo login) =>
+            new()
+            {
+                UserId = user.Id,
+                ProviderKey = login.ProviderKey,
+                LoginProvider = login.LoginProvider,
+                ProviderDisplayName = login.ProviderDisplayName
+            };
+
+        protected override IdentityUserRole<string> CreateUserRole(TUser user, TRole role) =>
+            new()
+            {
+                UserId = user.Id,
+                RoleId = role.Id
+            };
+
+        protected override IdentityUserToken<string> CreateUserToken(TUser user, string loginProvider, string name, string value) =>
+            new()
+            {
+                UserId = user.Id,
+                LoginProvider = loginProvider,
+                Name = name,
+                Value = value
+            };
+
+        protected override async Task<TRole> FindRoleAsync(string normalizedRoleName, CancellationToken cancellationToken) =>
+            await Roles.SingleOrDefaultAsync(r =>
                 r.NormalizedName == normalizedRoleName
                 && (r.TenantId == TenantId || (r.TenantId == null)),
                 cancellationToken);
 
-        protected override Task<IdentityUserRole<string>> FindUserRoleAsync(string userId, string roleId, CancellationToken cancellationToken) =>
-            UserRoles.FindAsync(new object[] { userId, roleId }, cancellationToken).AsTask();
+        protected override async Task<IdentityUserRole<string>> FindUserRoleAsync(string userId, string roleId, CancellationToken cancellationToken) =>
+            await UserRoles.FindAsync(new object[] { userId, roleId }, cancellationToken).AsTask();
     }
 }

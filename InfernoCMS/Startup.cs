@@ -8,11 +8,15 @@ using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity;
+using InfernoCMS.Identity.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace InfernoCMS
 {
@@ -35,9 +39,6 @@ namespace InfernoCMS
 
             #region Account / Identity
 
-            //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/account/login";
@@ -45,41 +46,14 @@ namespace InfernoCMS
                 options.AccessDeniedPath = "/account/access-denied";
             });
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = true;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddUserStore<ApplicationUserStore>()
-            .AddRoleStore<ApplicationRoleStore>()
-            //.AddRoleValidator<ApplicationRoleValidator>()
-            .AddDefaultTokenProviders()
-            .AddDefaultUI();
+            services.AddInfernoIdentity().AddDefaultUI();
 
-            //services.AddIdentityServer()
-            //    .AddAspNetIdentity<ApplicationUser>();
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddInfernoJwtBearer(Configuration);
 
-            ////services.AddAuthentication("Identity.Application").AddCookie();
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultScheme = "cookies";
-            //    options.DefaultChallengeScheme = "oidc";
-            //})
-            //.AddCookie("cookies")
-            //.AddOpenIdConnect("oidc", options =>
-            //{
-            //    options.Authority = "https://localhost:7209";
-            //    options.ClientId = "client";
-            //    options.MapInboundClaims = false;
-            //    options.SaveTokens = true;
-            //});
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(StandardPolicies.AdminAccess, policy => policy.RequireClaim("Permission", "AdminAccess"));
-                options.AddPolicy(StandardPolicies.FullAccess, policy => policy.RequireClaim("Permission", "FullAccess"));
-                options.AddInfernoWebPolicies();
-            });
+            services.AddInfernoAuthorization(Configuration);
 
             #endregion Account / Identity
 

@@ -1,15 +1,10 @@
-﻿using System.Reflection;
-using System.Text;
-using Extenso.AspNetCore.OData;
+﻿using Extenso.AspNetCore.OData;
 using InfernoCMS.Data;
-using InfernoCMS.Data.Entities;
-using InfernoCMS.Identity;
+using InfernoCMS.Identity.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OData.Swagger.Services;
 
@@ -26,15 +21,7 @@ namespace InfernoCMS.Api
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = true;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddUserStore<ApplicationUserStore>()
-            .AddRoleStore<ApplicationRoleStore>()
-            //.AddRoleValidator<ApplicationRoleValidator>()
-            .AddDefaultTokenProviders();
+            services.AddInfernoIdentity();
 
             services.AddInfernoLocalization();
 
@@ -103,20 +90,15 @@ namespace InfernoCMS.Api
             });
             services.AddResponseCompression();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            services
+                .AddAuthentication(opt =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                    };
-                });
+                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddInfernoJwtBearer(Configuration);
+
+            services.AddInfernoAuthorization(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -147,6 +129,7 @@ namespace InfernoCMS.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => endpoints.MapControllers());

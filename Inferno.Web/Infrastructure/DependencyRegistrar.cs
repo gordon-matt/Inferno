@@ -13,6 +13,7 @@ using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Entities;
 using Inferno.Web.Configuration.Services;
+using Inferno.Web.Identity;
 using Inferno.Web.Mvc.Themes;
 using Inferno.Web.Navigation;
 using Inferno.Web.OData;

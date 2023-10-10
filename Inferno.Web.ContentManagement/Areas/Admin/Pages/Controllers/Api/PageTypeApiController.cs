@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize]
     public class PageTypeApiController : BaseODataController<PageType, Guid>
     {
-        public PageTypeApiController(IRepository<PageType> repository)
-            : base(repository)
+        public PageTypeApiController(IAuthorizationService authorizationService, IRepository<PageType> repository)
+            : base(authorizationService, repository)
         {
         }
 

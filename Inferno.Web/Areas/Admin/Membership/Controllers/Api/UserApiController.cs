@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.Areas.Admin.Membership.Controllers.Api
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize]
     public class UserApiController : ODataController
     {
         private readonly ILogger logger;

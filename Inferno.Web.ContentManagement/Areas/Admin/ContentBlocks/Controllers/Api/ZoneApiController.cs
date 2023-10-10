@@ -1,14 +1,15 @@
 ﻿using Extenso.Data.Entity;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Api
 {
     //[Authorize(Roles = InfernoConstants.Roles.Administrators)]
     public class ZoneApiController : GenericTenantODataController<Zone, Guid>
     {
-        public ZoneApiController(IRepository<Zone> repository)
-            : base(repository)
+        public ZoneApiController(IAuthorizationService authorizationService, IRepository<Zone> repository)
+            : base(authorizationService, repository)
         {
         }
 
