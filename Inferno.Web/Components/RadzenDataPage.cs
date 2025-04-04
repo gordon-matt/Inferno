@@ -42,7 +42,14 @@ namespace Inferno.Web.Components
             IsLoading = true;
 
             string odataFilter = GetODataFilter(args);
-            var response = await ODataService.FindAsync(filter: odataFilter, top: args.Top, skip: args.Skip, orderby: args.OrderBy, count: true);
+
+            var response = await ODataService.FindAsync(
+                filter: odataFilter,
+                top: args.Top,
+                skip: args.Skip,
+                orderby: args.OrderBy,
+                count: true);
+
             if (response.Succeeded)
             {
                 Records = response.Data.Value.AsODataEnumerable();

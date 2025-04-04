@@ -1,6 +1,7 @@
 ﻿@page "/admin/index"
 
-@attribute [Authorize(Policy = StandardPolicies.FullAccess)]
+@*@attribute [Authorize(Roles = InfernoSecurityConstants.Roles.Administrators)]
+@attribute [Authorize(Policy = StandardPolicies.AdminAccess)]*@
 
 <PageTitle>Admin</PageTitle>
 

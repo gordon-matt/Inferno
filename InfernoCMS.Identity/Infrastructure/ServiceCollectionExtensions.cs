@@ -1,8 +1,10 @@
-﻿using Inferno.Security;
+﻿using Inferno.Identity.Permissions;
+using Inferno.Security;
 using Inferno.Web.Security;
 using InfernoCMS.Data;
 using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,9 @@ namespace InfernoCMS.Identity.Infrastructure
 
         public static IdentityBuilder AddInfernoIdentity(this IServiceCollection services)
         {
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
             //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
