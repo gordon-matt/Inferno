@@ -2,37 +2,37 @@
 using Dependo;
 using Inferno.Data.Entity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Inferno.Data.Infrastructure
+namespace Inferno.Data.Infrastructure;
+
+public class DependencyRegistrar : IDependencyRegistrar
 {
-    public class DependencyRegistrar : IDependencyRegistrar
+    #region IDependencyRegistrar Members
+
+    public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
-        #region IDependencyRegistrar Members
+        var entityTypeConfigurations = typeFinder
+            .FindClassesOfType(typeof(IInfernoEntityTypeConfiguration))
+            .ToHashSet();
 
-        public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
+        foreach (var entityTypeConfiguration in entityTypeConfigurations)
         {
-            var entityTypeConfigurations = typeFinder
-                .FindClassesOfType(typeof(IInfernoEntityTypeConfiguration))
-                .ToHashSet();
-
-            foreach (var entityTypeConfiguration in entityTypeConfigurations)
+            if (entityTypeConfiguration.GetTypeInfo().IsGenericType)
             {
-                if (entityTypeConfiguration.GetTypeInfo().IsGenericType)
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                var isEnabled = (Activator.CreateInstance(entityTypeConfiguration) as IInfernoEntityTypeConfiguration).IsEnabled;
+            var isEnabled = (Activator.CreateInstance(entityTypeConfiguration) as IInfernoEntityTypeConfiguration).IsEnabled;
 
-                if (isEnabled)
-                {
-                    builder.RegisterInstance(typeof(IInfernoEntityTypeConfiguration), entityTypeConfiguration);
-                }
+            if (isEnabled)
+            {
+                builder.Register(typeof(IInfernoEntityTypeConfiguration), entityTypeConfiguration, ServiceLifetime.Scoped);
             }
         }
-
-        public int Order => 0;
-
-        #endregion IDependencyRegistrar Members
     }
+
+    public int Order => 0;
+
+    #endregion IDependencyRegistrar Members
 }
