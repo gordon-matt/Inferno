@@ -25,10 +25,13 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers
         {
             int tenantId = WorkContext.Value.CurrentTenant.Id;
 
-            var localizedStrings = await repository.FindAsync(x =>
-                x.TenantId == tenantId &&
-                x.CultureCode == cultureCode &&
-                x.TextValue != null);
+            var localizedStrings = await repository.FindAsync(new SearchOptions<LocalizableString>
+            {
+                Query = x =>
+                    x.TenantId == tenantId &&
+                    x.CultureCode == cultureCode &&
+                    x.TextValue != null
+            });
 
             var languagePack = new LanguagePackFile
             {

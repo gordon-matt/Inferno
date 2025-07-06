@@ -1,20 +1,18 @@
-﻿using Autofac;
-using Dependo.Autofac;
+﻿using Dependo;
 using Inferno.Tasks.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Inferno.Tasks.Infrastructure
+namespace Inferno.Tasks.Infrastructure;
+
+public class DependencyRegistrar : IDependencyRegistrar
 {
-    public class DependencyRegistrar : IDependencyRegistrar
-    {
-        #region IDependencyRegistrar Members
+    #region IDependencyRegistrar Members
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
-        {
-            builder.RegisterType<ScheduledTaskService>().As<IScheduledTaskService>().InstancePerDependency();
-        }
+    public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration) =>
+        builder.Register<IScheduledTaskService, ScheduledTaskService>(ServiceLifetime.Transient);
 
-        public int Order => 0;
+    public int Order => 0;
 
-        #endregion IDependencyRegistrar Members
-    }
+    #endregion IDependencyRegistrar Members
 }

@@ -12,6 +12,6 @@ namespace InfernoCMS.Api
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseServiceProviderFactory(new DependableAutofacServiceProviderFactory());
+                .UseServiceProviderFactory(new DependoAutofacServiceProviderFactory());
     }
 }

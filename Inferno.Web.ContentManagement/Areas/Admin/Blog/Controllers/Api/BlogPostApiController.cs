@@ -86,7 +86,11 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
             if (!entity.Tags.IsNullOrEmpty())
             {
                 var chosenTagIds = entity.Tags.Select(x => x.TagId);
-                var existingTags = await postTagRepository.Value.FindAsync(x => x.PostId == entity.Id);
+                var existingTags = await postTagRepository.Value.FindAsync(new SearchOptions<BlogPostTag>
+                {
+                    Query = x => x.PostId == entity.Id
+                });
+
                 var existingTagIds = existingTags.Select(x => x.TagId);
 
                 var toDelete = existingTags.Where(x => !chosenTagIds.Contains(x.TagId));

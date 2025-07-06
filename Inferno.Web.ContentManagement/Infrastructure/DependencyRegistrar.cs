@@ -1,5 +1,4 @@
-﻿using Autofac;
-using Dependo.Autofac;
+﻿using Dependo;
 using Extenso.AspNetCore.OData;
 using Inferno.Localization;
 using Inferno.Web.Configuration;
@@ -17,6 +16,8 @@ using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Navigation;
 using Inferno.Web.OData;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Inferno.Web.ContentManagement.Infrastructure
 {
@@ -24,98 +25,98 @@ namespace Inferno.Web.ContentManagement.Infrastructure
     {
         #region IDependencyRegistrar Members
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
+        public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
         {
-            builder.RegisterType<RouterAssemblyMarker>().As<IRouterAssemblyMarker>().SingleInstance();
+            builder.Register<IRouterAssemblyMarker, RouterAssemblyMarker>(ServiceLifetime.Singleton);
 
             // Embedded File Provider
-            //builder.RegisterType<EmbeddedFileProviderRegistrar>().As<IEmbeddedFileProviderRegistrar>().InstancePerLifetimeScope();
+            //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
 
             #region Services
 
             // Blog
-            builder.RegisterType<BlogCategoryService>().As<IBlogCategoryService>().InstancePerDependency();
-            builder.RegisterType<BlogPostService>().As<IBlogPostService>().InstancePerDependency();
-            builder.RegisterType<BlogTagService>().As<IBlogTagService>().InstancePerDependency();
-            builder.RegisterType<BlogPostTagService>().As<IBlogPostTagService>().InstancePerDependency();
+            builder.Register<IBlogCategoryService, BlogCategoryService>(ServiceLifetime.Transient);
+            builder.Register<IBlogPostService, BlogPostService>(ServiceLifetime.Transient);
+            builder.Register<IBlogTagService, BlogTagService>(ServiceLifetime.Transient);
+            builder.Register<IBlogPostTagService, BlogPostTagService>(ServiceLifetime.Transient);
 
             // Menus
-            builder.RegisterType<MenuService>().As<IMenuService>().InstancePerDependency();
-            builder.RegisterType<MenuItemService>().As<IMenuItemService>().InstancePerDependency();
+            builder.Register<IMenuService, MenuService>(ServiceLifetime.Transient);
+            builder.Register<IMenuItemService, MenuItemService>(ServiceLifetime.Transient);
 
             // Pages
-            builder.RegisterType<PageService>().As<IPageService>().InstancePerDependency();
-            builder.RegisterType<PageTypeService>().As<IPageTypeService>().InstancePerDependency();
-            builder.RegisterType<PageVersionService>().As<IPageVersionService>().InstancePerDependency();
+            builder.Register<IPageService, PageService>(ServiceLifetime.Transient);
+            builder.Register<IPageTypeService, PageTypeService>(ServiceLifetime.Transient);
+            builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
 
             // Content Blocks
-            builder.RegisterType<EntityTypeContentBlockService>().As<IEntityTypeContentBlockService>().InstancePerDependency();
-            builder.RegisterType<ContentBlockService>().As<IContentBlockService>().InstancePerDependency();
-            builder.RegisterType<ZoneService>().As<IZoneService>().InstancePerDependency();
-            builder.RegisterType<ContentBlockODataService>().As<IRadzenODataService<ContentBlock, Guid>>().SingleInstance();
+            builder.Register<IEntityTypeContentBlockService, EntityTypeContentBlockService>(ServiceLifetime.Transient);
+            builder.Register<IContentBlockService, ContentBlockService>(ServiceLifetime.Transient);
+            builder.Register<IZoneService, ZoneService>(ServiceLifetime.Transient);
+            builder.Register<IRadzenODataService<ContentBlock, Guid>, ContentBlockODataService>(ServiceLifetime.Singleton);
 
-            //builder.RegisterType<NewsletterService>().As<INewsletterService>().InstancePerDependency();
+            //builder.Register<INewsletterService, NewsletterService>(ServiceLifetime.Transient);
 
             #endregion Services
 
             #region Localization
 
-            builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().SingleInstance();
+            builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Singleton);
 
             #endregion Localization
 
             #region Navigation
 
-            builder.RegisterType<CmsNavigationProvider>().As<INavigationProvider>().SingleInstance();
+            builder.Register<INavigationProvider, CmsNavigationProvider>(ServiceLifetime.Singleton);
 
             #endregion Navigation
 
             #region Security
 
             // User Profile Providers
-            //builder.RegisterType<NewsletterUserProfileProvider>().As<IUserProfileProvider>().SingleInstance();
+            //builder.Register<IUserProfileProvider, NewsletterUserProfileProvider>(ServiceLifetime.Singleton);
 
             #endregion Security
 
             #region Configuration
 
-            builder.RegisterType<BlogSettings>().As<ISettings>().InstancePerLifetimeScope();
-            builder.RegisterType<PageSettings>().As<ISettings>().InstancePerLifetimeScope();
+            builder.Register<ISettings, BlogSettings>(ServiceLifetime.Scoped);
+            builder.Register<ISettings, PageSettings>(ServiceLifetime.Scoped);
 
             #endregion Configuration
 
             #region Content Blocks
 
             // Blogs
-            builder.RegisterType<FilteredPostsBlock>().As<IContentBlock>().InstancePerDependency();
-            builder.RegisterType<LastNPostsBlock>().As<IContentBlock>().InstancePerDependency();
-            builder.RegisterType<TagCloudBlock>().As<IContentBlock>().InstancePerDependency();
-            builder.RegisterType<CategoriesBlock>().As<IContentBlock>().InstancePerDependency();
+            builder.Register<IContentBlock, FilteredPostsBlock>(ServiceLifetime.Transient);
+            builder.Register<IContentBlock, LastNPostsBlock>(ServiceLifetime.Transient);
+            builder.Register<IContentBlock, TagCloudBlock>(ServiceLifetime.Transient);
+            builder.Register<IContentBlock, CategoriesBlock>(ServiceLifetime.Transient);
 
             // Other
-            builder.RegisterType<FormBlock>().As<IContentBlock>().InstancePerDependency();
-            builder.RegisterType<HtmlBlock>().As<IContentBlock>().InstancePerDependency();
-            builder.RegisterType<LanguageSwitchBlock>().As<IContentBlock>().InstancePerDependency();
-            //builder.RegisterType<NewsletterSubscriptionBlock>().As<IContentBlock>().InstancePerDependency();
-            builder.RegisterType<VideoBlock>().As<IContentBlock>().InstancePerDependency();
+            builder.Register<IContentBlock, FormBlock>(ServiceLifetime.Transient);
+            builder.Register<IContentBlock, HtmlBlock>(ServiceLifetime.Transient);
+            builder.Register<IContentBlock, LanguageSwitchBlock>(ServiceLifetime.Transient);
+            //builder.Register<IContentBlock, NewsletterSubscriptionBlock>(ServiceLifetime.Transient);
+            builder.Register<IContentBlock, VideoBlock>(ServiceLifetime.Transient);
 
             #endregion Content Blocks
 
             #region Other: Content Blocks
 
-            builder.RegisterType<DefaultContentBlockProvider>().As<IContentBlockProvider>().InstancePerDependency();
-            builder.RegisterType<DefaultEntityTypeContentBlockProvider>().As<IEntityTypeContentBlockProvider>().InstancePerDependency();
+            builder.Register<IContentBlockProvider, DefaultContentBlockProvider>(ServiceLifetime.Transient);
+            builder.Register<IEntityTypeContentBlockProvider, DefaultEntityTypeContentBlockProvider>(ServiceLifetime.Transient);
 
             #endregion Other: Content Blocks
 
             // Other
-            builder.RegisterType<ODataRegistrar>().As<IODataRegistrar>().SingleInstance();
+            builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
 
             // Indexing
-            //builder.RegisterType<PagesIndexingContentProvider>().As<IIndexingContentProvider>().InstancePerDependency(); // TODO
-            //builder.RegisterType<BlogIndexingContentProvider>().As<IIndexingContentProvider>().InstancePerDependency(); // TODO
+            //builder.Register<IIndexingContentProvider, PagesIndexingContentProvider>(ServiceLifetime.Transient); // TODO
+            //builder.Register<IIndexingContentProvider, BlogIndexingContentProvider>(ServiceLifetime.Transient); // TODO
 
-            //builder.RegisterType<NewsletterMessageTemplates>().As<IMessageTemplatesProvider>().InstancePerDependency();
+            //builder.Register<IMessageTemplatesProvider, NewsletterMessageTemplates>(ServiceLifetime.Transient);
         }
 
         public int Order => 1;

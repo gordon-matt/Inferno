@@ -31,12 +31,12 @@ namespace Inferno.Web.OData
 
         public RadzenODataService(string entitySetName)
         {
-            TokenService = EngineContext.Current.Resolve<ITokenService>();
-            WorkContext = EngineContext.Current.Resolve<IWorkContext>();
-            Configuration = EngineContext.Current.Resolve<IConfiguration>();
+            TokenService = DependoResolver.Instance.Resolve<ITokenService>();
+            WorkContext = DependoResolver.Instance.Resolve<IWorkContext>();
+            Configuration = DependoResolver.Instance.Resolve<IConfiguration>();
             baseUri = new Uri(Configuration.GetValue<string>("ApiBaseUri"));
 
-            var httpClientFactory = EngineContext.Current.Resolve<IHttpClientFactory>();
+            var httpClientFactory = DependoResolver.Instance.Resolve<IHttpClientFactory>();
             httpClient = httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

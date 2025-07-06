@@ -14,7 +14,7 @@
 //    {
 //        public IEnumerable<MenuItem> GetMenu(string menuName)
 //        {
-//            return EngineContext.Current.Resolve<INavigationManager>().BuildMenu(menuName);
+//            return DependoResolver.Instance.Resolve<INavigationManager>().BuildMenu(menuName);
 //        }
 
 //        [RazorInject]
@@ -33,7 +33,7 @@
 
 //        public bool CheckPermission(Permission permission)
 //        {
-//            var authorizationService = EngineContext.Current.Resolve<IAuthorizationService>();
+//            var authorizationService = DependoResolver.Instance.Resolve<IAuthorizationService>();
 //            if (authorizationService.TryCheckAccess(permission, WorkContext.CurrentUser))
 //            {
 //                return true;

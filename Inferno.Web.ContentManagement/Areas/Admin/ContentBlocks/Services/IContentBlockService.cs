@@ -2,6 +2,7 @@
 using Extenso.Data.Entity;
 using Inferno.Caching;
 using Inferno.Data.Services;
+using Inferno.Localization.Entities;
 using Inferno.Localization.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Microsoft.Extensions.Logging;
@@ -42,9 +43,12 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services
             string entityType = typeof(ContentBlock).FullName;
             string entityId = entity.Id.ToString();
 
-            var localizedRecords = localizablePropertyService.Value.Find(x =>
-                x.EntityType == entityType &&
-                x.EntityId == entityId);
+            var localizedRecords = localizablePropertyService.Value.Find(new SearchOptions<LocalizableProperty>
+            {
+                Query = x =>
+                    x.EntityType == entityType &&
+                    x.EntityId == entityId
+            });
 
             int rowsAffected = localizablePropertyService.Value.Delete(localizedRecords);
             rowsAffected += base.Delete(entity);
@@ -72,7 +76,10 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services
 
             var records = CacheManager.Get(key, () =>
             {
-                return Find(x => x.PageId == pageId);
+                return Find(new SearchOptions<ContentBlock>
+                {
+                    Query = x => x.PageId == pageId
+                });
             });
 
             return GetContentBlocks(records, cultureCode);
@@ -96,7 +103,12 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services
             {
                 records = CacheManager.Get(key, () =>
                 {
-                    var zone = zoneRepository.Value.FindOne(x => x.TenantId == tenantId && x.Name == zoneName);
+                    var zone = zoneRepository.Value.FindOne(new SearchOptions<Zone>
+                    {
+                        Query = x =>
+                            x.TenantId == tenantId &&
+                            x.Name == zoneName
+                    });
 
                     if (zone == null)
                     {
@@ -110,15 +122,26 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services
                     }
 
                     return pageId.HasValue
-                        ? Find(x => x.ZoneId == zone.Id && x.PageId == pageId.Value)
-                        : Find(x => x.ZoneId == zone.Id && x.PageId == null);
+                        ? Find(new SearchOptions<ContentBlock>
+                        {
+                            Query = x => x.ZoneId == zone.Id && x.PageId == pageId.Value
+                        })
+                        : Find(new SearchOptions<ContentBlock>
+                        {
+                            Query = x => x.ZoneId == zone.Id && x.PageId == null
+                        });
                 });
             }
             else
             {
                 records = CacheManager.Get(key, () =>
                 {
-                    var zone = zoneRepository.Value.FindOne(x => x.TenantId == tenantId && x.Name == zoneName);
+                    var zone = zoneRepository.Value.FindOne(new SearchOptions<Zone>
+                    {
+                        Query = x =>
+                            x.TenantId == tenantId &&
+                            x.Name == zoneName
+                    });
 
                     if (zone == null)
                     {
@@ -131,11 +154,17 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services
                         return Enumerable.Empty<ContentBlock>();
                     }
 
-                    var list = Find(x => x.IsEnabled && x.ZoneId == zone.Id && x.PageId == null).ToList();
+                    var list = Find(new SearchOptions<ContentBlock>
+                    {
+                        Query = x => x.IsEnabled && x.ZoneId == zone.Id && x.PageId == null
+                    }).ToList();
 
                     if (pageId.HasValue)
                     {
-                        list.AddRange(Find(x => x.IsEnabled && x.ZoneId == zone.Id && x.PageId == pageId.Value).ToList());
+                        list.AddRange(Find(new SearchOptions<ContentBlock>
+                        {
+                            Query = x => x.IsEnabled && x.ZoneId == zone.Id && x.PageId == pageId.Value
+                        }));
                     }
 
                     return list;
@@ -152,11 +181,14 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services
             string entityType = typeof(ContentBlock).FullName;
             var ids = records.Select(x => x.Id.ToString());
 
-            var localizedRecords = localizablePropertyService.Value.Find(x =>
-                x.CultureCode == cultureCode &&
-                x.EntityType == entityType &&
-                ids.Contains(x.EntityId) &&
-                x.Property == "BlockValues");
+            var localizedRecords = localizablePropertyService.Value.Find(new SearchOptions<LocalizableProperty>
+            {
+                Query = x =>
+                    x.CultureCode == cultureCode &&
+                    x.EntityType == entityType &&
+                    ids.Contains(x.EntityId) &&
+                    x.Property == "BlockValues"
+            });
 
             var result = new List<IContentBlock>();
             foreach (var record in records)

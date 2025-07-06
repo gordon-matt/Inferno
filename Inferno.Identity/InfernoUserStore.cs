@@ -32,7 +32,7 @@ namespace Inferno.Identity
         protected DbSet<TUser> UsersSet => Context.Set<TUser>();
         protected DbSet<IdentityUserToken<string>> UserTokens => Context.Set<IdentityUserToken<string>>();
 
-        protected IWorkContext WorkContext => workContext ??= EngineContext.Current.Resolve<IWorkContext>();
+        protected IWorkContext WorkContext => workContext ??= DependoResolver.Instance.Resolve<IWorkContext>();
 
         #endregion Properties
 

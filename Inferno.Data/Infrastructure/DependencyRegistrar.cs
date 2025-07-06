@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Autofac;
-using Dependo.Autofac;
+using Dependo;
 using Inferno.Data.Entity;
+using Microsoft.Extensions.Configuration;
 
 namespace Inferno.Data.Infrastructure
 {
@@ -9,24 +9,24 @@ namespace Inferno.Data.Infrastructure
     {
         #region IDependencyRegistrar Members
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
+        public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
         {
             var entityTypeConfigurations = typeFinder
                 .FindClassesOfType(typeof(IInfernoEntityTypeConfiguration))
                 .ToHashSet();
 
-            foreach (var configuration in entityTypeConfigurations)
+            foreach (var entityTypeConfiguration in entityTypeConfigurations)
             {
-                if (configuration.GetTypeInfo().IsGenericType)
+                if (entityTypeConfiguration.GetTypeInfo().IsGenericType)
                 {
                     continue;
                 }
 
-                var isEnabled = (Activator.CreateInstance(configuration) as IInfernoEntityTypeConfiguration).IsEnabled;
+                var isEnabled = (Activator.CreateInstance(entityTypeConfiguration) as IInfernoEntityTypeConfiguration).IsEnabled;
 
                 if (isEnabled)
                 {
-                    builder.RegisterType(configuration).As(typeof(IInfernoEntityTypeConfiguration)).InstancePerLifetimeScope();
+                    builder.RegisterInstance(typeof(IInfernoEntityTypeConfiguration), entityTypeConfiguration);
                 }
             }
         }

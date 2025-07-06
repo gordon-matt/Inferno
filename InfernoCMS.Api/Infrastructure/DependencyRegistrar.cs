@@ -1,5 +1,4 @@
-﻿using Autofac;
-using Dependo.Autofac;
+﻿using Dependo;
 using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
 using Inferno.Security.Membership;
@@ -12,18 +11,15 @@ namespace InfernoCMS.Api.Infrastructure
     {
         public int Order => 1;
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
+        public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
         {
-            builder.RegisterType<ApplicationDbContextFactory>().As<IDbContextFactory>().SingleInstance();
+            builder.Register<IDbContextFactory, ApplicationDbContextFactory>(ServiceLifetime.Singleton);
 
-            builder.RegisterGeneric(typeof(EntityFrameworkRepository<>))
-                .As(typeof(IRepository<>))
-                .InstancePerLifetimeScope();
+            builder.RegisterGeneric(typeof(IRepository<>), typeof(EntityFrameworkRepository<>), ServiceLifetime.Scoped);
 
-            builder.RegisterType<ODataRegistrar>().As<IODataRegistrar>().SingleInstance();
+            builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
 
-            // Services
-            builder.RegisterType<MembershipService>().As<IMembershipService>().InstancePerDependency();
+            builder.Register<IMembershipService, MembershipService>(ServiceLifetime.Transient);
         }
     }
 }

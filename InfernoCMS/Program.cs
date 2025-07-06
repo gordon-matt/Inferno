@@ -12,7 +12,7 @@ namespace InfernoCMS
     {
         public static void Main(string[] args)
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.License.SetNonCommercialOrganization("Inferno");
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -22,6 +22,6 @@ namespace InfernoCMS
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseServiceProviderFactory(new DependableAutofacServiceProviderFactory());
+                .UseServiceProviderFactory(new DependoAutofacServiceProviderFactory());
     }
 }

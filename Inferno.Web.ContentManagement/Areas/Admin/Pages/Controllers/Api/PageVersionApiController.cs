@@ -32,7 +32,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
             this.pageRepository = pageRepository;
             this.settings = settings;
 
-            var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
+            var loggerFactory = DependoResolver.Instance.Resolve<ILoggerFactory>();
             logger = loggerFactory.CreateLogger(GetType());
             this.service = service;
         }
@@ -66,7 +66,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
 
             if (previous == null)
             {
-                var localizer = EngineContext.Current.Resolve<IStringLocalizer>();
+                var localizer = DependoResolver.Instance.Resolve<IStringLocalizer>();
                 return BadRequest(localizer[InfernoCmsLocalizableStrings.Pages.CannotDeleteOnlyVersion].Value);
             }
 

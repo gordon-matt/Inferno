@@ -23,16 +23,22 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Services
         {
             if (string.IsNullOrEmpty(urlFilter))
             {
-                return FindOne(x =>
-                    x.TenantId == tenantId
-                    && x.Name == name
-                    && (x.UrlFilter == null || x.UrlFilter == ""));
+                return FindOne(new SearchOptions<Menu>
+                {
+                    Query = x =>
+                        x.TenantId == tenantId
+                        && x.Name == name
+                        && (x.UrlFilter == null || x.UrlFilter == "")
+                });
             }
 
-            return FindOne(x =>
-                x.TenantId == tenantId
-                && x.Name == name
-                && (x.UrlFilter.Contains(urlFilter)));
+            return FindOne(new SearchOptions<Menu>
+            {
+                Query = x =>
+                    x.TenantId == tenantId
+                    && x.Name == name
+                    && x.UrlFilter.Contains(urlFilter)
+            });
         }
 
         #endregion IMenuService Members

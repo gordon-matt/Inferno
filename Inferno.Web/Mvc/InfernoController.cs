@@ -21,17 +21,17 @@ namespace Inferno.Web.Mvc
 
         protected InfernoController()
         {
-            T = EngineContext.Current.Resolve<IStringLocalizer>();
-            WorkContext = new Lazy<IWorkContext>(() => EngineContext.Current.Resolve<IWorkContext>());
-            SiteSettings = new Lazy<SiteSettings>(() => EngineContext.Current.Resolve<SiteSettings>());
+            T = DependoResolver.Instance.Resolve<IStringLocalizer>();
+            WorkContext = new Lazy<IWorkContext>(() => DependoResolver.Instance.Resolve<IWorkContext>());
+            SiteSettings = new Lazy<SiteSettings>(() => DependoResolver.Instance.Resolve<SiteSettings>());
 
             Logger = new Lazy<ILogger>(() =>
             {
-                var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
+                var loggerFactory = DependoResolver.Instance.Resolve<ILoggerFactory>();
                 return loggerFactory.CreateLogger(GetType());
             });
 
-            authorizationService = new Lazy<IAuthorizationService>(() => EngineContext.Current.Resolve<IAuthorizationService>());
+            authorizationService = new Lazy<IAuthorizationService>(() => DependoResolver.Instance.Resolve<IAuthorizationService>());
         }
 
         protected virtual async Task<bool> AuthorizeAsync(string policyName)

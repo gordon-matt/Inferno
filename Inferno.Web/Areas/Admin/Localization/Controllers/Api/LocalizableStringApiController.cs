@@ -84,7 +84,13 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
             }
 
             int tenantId = GetTenantId();
-            var localizedString = await Repository.FindOneAsync(x => x.TenantId == tenantId && x.CultureCode == cultureCode && x.TextKey == key);
+            var localizedString = await Repository.FindOneAsync(new SearchOptions<LocalizableString>
+            {
+                Query = x =>
+                    x.TenantId == tenantId &&
+                    x.CultureCode == cultureCode &&
+                    x.TextKey == key
+            });
 
             if (localizedString == null)
             {
@@ -121,7 +127,14 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
             string key = (string)parameters["key"];
 
             int tenantId = GetTenantId();
-            var entity = await Repository.FindOneAsync(x => x.TenantId == tenantId && x.CultureCode == cultureCode && x.TextKey == key);
+            var entity = await Repository.FindOneAsync(new SearchOptions<LocalizableString>
+            {
+                Query = x =>
+                    x.TenantId == tenantId &&
+                    x.CultureCode == cultureCode &&
+                    x.TextKey == key
+            });
+
             if (entity == null)
             {
                 return NotFound();

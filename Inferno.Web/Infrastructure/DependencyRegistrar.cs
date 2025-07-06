@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Dependo;
 using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
 using Inferno.Localization;
@@ -13,93 +14,97 @@ using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Entities;
 using Inferno.Web.Configuration.Services;
-using Inferno.Web.Identity;
 using Inferno.Web.Mvc.Themes;
 using Inferno.Web.Navigation;
 using Inferno.Web.OData;
 using Inferno.Web.Security.Membership;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Inferno.Web.Infrastructure
+namespace Inferno.Web.Infrastructure;
+
+public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegistrar
 {
-    public class DependencyRegistrar : IDependencyRegistrar
+    #region IDependencyRegistrar Members
+
+    public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
-        #region IDependencyRegistrar Members
+        //var settings = DataSettingsManager.LoadSettings();
+        //builder.RegisterInstance(settings);
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
-        {
-            //var settings = DataSettingsManager.LoadSettings();
-            //builder.Register(x => settings).As<DataSettings>();
+        builder.Register<IRouterAssemblyMarker, RouterAssemblyMarker>(ServiceLifetime.Singleton);
 
-            builder.RegisterType<RouterAssemblyMarker>().As<IRouterAssemblyMarker>().SingleInstance();
+        // Helpers
+        builder.Register<IWebHelper, WebHelper>(ServiceLifetime.Scoped);
+        //builder.Register<IDateTimeHelper, DateTimeHelper>(ServiceLifetime.Scoped);
 
-            // Helpers
-            builder.RegisterType<WebHelper>().As<IWebHelper>().InstancePerLifetimeScope();
-            //builder.RegisterType<DateTimeHelper>().As<IDateTimeHelper>().InstancePerLifetimeScope();
+        //// Plugins
+        //builder.Register<IPluginFinder, PluginFinder>(ServiceLifetime.Scoped);
 
-            //// Plugins
-            //builder.RegisterType<PluginFinder>().As<IPluginFinder>().InstancePerLifetimeScope();
+        // Work Context, Themes, Routing, etc
+        builder.Register<IWorkContext, WorkContext>(ServiceLifetime.Scoped);
+        builder.Register<IThemeProvider, ThemeProvider>(ServiceLifetime.Scoped);
 
-            // Work Context, Themes, Routing, etc
-            builder.RegisterType<WorkContext>().AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<ThemeProvider>().As<IThemeProvider>().InstancePerLifetimeScope();
-            //builder.RegisterType<ThemeContext>().As<IThemeContext>().InstancePerLifetimeScope();
-            //builder.RegisterType<EmbeddedResourceResolver>().As<IEmbeddedResourceResolver>().SingleInstance();
-            //builder.RegisterType<RoutePublisher>().As<IRoutePublisher>().SingleInstance();
+        //builder.Register<IThemeContext, ThemeContext>(ServiceLifetime.Scoped);
+        //builder.Register<IEmbeddedResourceResolver, EmbeddedResourceResolver>(ServiceLifetime.Singleton);
+        //builder.Register<IRoutePublisher, RoutePublisher>(ServiceLifetime.Singleton);
 
-            //// Resources (JS and CSS)
-            //builder.RegisterType<ScriptRegistrar>().AsSelf().InstancePerLifetimeScope();
-            //builder.RegisterType<StyleRegistrar>().AsSelf().InstancePerLifetimeScope();
-            ////builder.RegisterType<ResourcesManager>().As<IResourcesManager>().InstancePerLifetimeScope();
+        //// Resources (JS and CSS)
+        //builder.Register<ScriptRegistrar>().AsSelf().InstancePerLifetimeScope();
+        //builder.Register<StyleRegistrar>().AsSelf().InstancePerLifetimeScope();
+        //builder.Register<ResourcesManager>().As<IResourcesManager>().InstancePerLifetimeScope();
 
-            // Security
-            //builder.RegisterType<RolesBasedAuthorizationService>().As<IAuthorizationService>().SingleInstance();
+        // Security
+        //builder.Register<RolesBasedAuthorizationService>().As<IAuthorizationService>().SingleInstance();
 
-            // Configuration
-            builder.RegisterModule<ConfigurationModule>();
-            builder.RegisterType<DefaultSettingService>().As<ISettingService>();
-            builder.RegisterType<SiteSettings>().As<ISettings>().InstancePerLifetimeScope();
-            builder.RegisterType<MembershipSettings>().As<ISettings>().InstancePerLifetimeScope();
+        // Configuration
+        builder.Register<ISettingService, DefaultSettingService>(ServiceLifetime.Transient);
+        builder.Register<ISettings, SiteSettings>(ServiceLifetime.Scoped);
+        builder.Register<ISettings, MembershipSettings>(ServiceLifetime.Scoped);
 
-            // Navigation
-            builder.RegisterType<NavigationManager>().As<INavigationManager>().InstancePerDependency();
-            builder.RegisterType<AdminNavigationProvider>().As<INavigationProvider>().SingleInstance();
+        // Navigation
+        builder.Register<INavigationManager, NavigationManager>(ServiceLifetime.Transient);
+        builder.Register<INavigationProvider, AdminNavigationProvider>(ServiceLifetime.Singleton);
 
-            // Work Context State Providers
-            builder.RegisterType<CurrentUserStateProvider>().As<IWorkContextStateProvider>();
-            builder.RegisterType<CurrentThemeStateProvider>().As<IWorkContextStateProvider>();
-            //builder.RegisterType<CurrentCultureCodeStateProvider>().As<IWorkContextStateProvider>();
+        // Work Context State Providers
+        builder.Register<IWorkContextStateProvider, CurrentUserStateProvider>(ServiceLifetime.Transient);
+        builder.Register<IWorkContextStateProvider, CurrentThemeStateProvider>(ServiceLifetime.Transient);
+        //builder.Register<IWorkContextStateProvider, CurrentCultureCodeStateProvider>(ServiceLifetime.Transient);
 
-            // Localization
-            builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();
-            //builder.RegisterType<WebCultureManager>().AsImplementedInterfaces().InstancePerLifetimeScope();
-            //builder.RegisterType<SiteCultureSelector>().As<ICultureSelector>().SingleInstance();
-            //builder.RegisterType<CookieCultureSelector>().As<ICultureSelector>().SingleInstance();
+        // Localization
+        builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Transient);
+        //builder.Register<IWebCultureManager, WebCultureManager>(ServiceLifetime.Scoped);
+        //builder.Register<ICultureSelector, SiteCultureSelector>(ServiceLifetime.Singleton);
+        //builder.Register<ICultureSelector, CookieCultureSelector>(ServiceLifetime.Singleton);
 
-            // User Profile Providers
-            builder.RegisterType<AccountUserProfileProvider>().As<IUserProfileProvider>().SingleInstance();
-            builder.RegisterType<ThemeUserProfileProvider>().As<IUserProfileProvider>().SingleInstance();
+        // User Profile Providers
+        builder.Register<IUserProfileProvider, AccountUserProfileProvider>(ServiceLifetime.Singleton);
+        builder.Register<IUserProfileProvider, ThemeUserProfileProvider>(ServiceLifetime.Singleton);
 
-            //// Data / Services
-            //builder.RegisterType<GenericAttributeService>().As<IGenericAttributeService>().InstancePerLifetimeScope();
+        //// Data / Services
+        //builder.Register<IGenericAttributeService, GenericAttributeService>(ServiceLifetime.Scoped);
 
-            //// Rendering
-            //builder.RegisterType<RazorViewRenderService>().As<IRazorViewRenderService>().SingleInstance();
+        //// Rendering
+        //builder.Register<IRazorViewRenderService, MantleRazorViewRenderService>(ServiceLifetime.Transient);
 
-            builder.RegisterType<ODataRegistrar>().As<IODataRegistrar>().SingleInstance();
+        builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
 
-            //// Embedded File Provider
-            //builder.RegisterType<EmbeddedFileProviderRegistrar>().As<IEmbeddedFileProviderRegistrar>().InstancePerLifetimeScope();
+        //// Embedded File Provider
+        //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
 
-            builder.RegisterType<LanguageODataService>().As<IRadzenODataService<Language, Guid>>().AsSelf().SingleInstance();
-            builder.RegisterType<LocalizableStringODataService>().As<IRadzenODataService<LocalizableString, Guid>>().AsSelf().SingleInstance();
-            builder.RegisterType<RoleODataService>().As<IRadzenODataService<InfernoRole, string>>().AsSelf().SingleInstance();
-            builder.RegisterType<SettingODataService>().As<IRadzenODataService<Setting, Guid>>().AsSelf().SingleInstance();
-            builder.RegisterType<TenantODataService>().As<IRadzenODataService<Tenant, int>>().AsSelf().SingleInstance();
-            builder.RegisterType<UserODataService>().As<IRadzenODataService<InfernoUser, string>>().AsSelf().SingleInstance();
-        }
 
-        public int Order => 0;
-
-        #endregion IDependencyRegistrar Members
+        builder.Register<IRadzenODataService<Language, Guid>, LanguageODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<LocalizableString, Guid>, LocalizableStringODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<InfernoRole, string>, RoleODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<Setting, Guid>, SettingODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<Tenant, int>, TenantODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<InfernoUser, string>, UserODataService>(ServiceLifetime.Singleton);
     }
+
+    public void Register(ContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration) =>
+        builder.RegisterModule<ConfigurationModule>();
+
+    public int Order => 0;
+
+    #endregion IDependencyRegistrar Members
 }

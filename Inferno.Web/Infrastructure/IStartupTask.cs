@@ -36,7 +36,7 @@ namespace Inferno.Web.Infrastructure
         {
             await EnsureTenantAsync();
 
-            var tenantService = EngineContext.Current.Resolve<ITenantService>();
+            var tenantService = DependoResolver.Instance.Resolve<ITenantService>();
             IEnumerable<int> tenantIds = null;
 
             using (var connection = tenantService.OpenConnection())
@@ -44,7 +44,7 @@ namespace Inferno.Web.Infrastructure
                 tenantIds = await connection.Query().Select(x => x.Id).ToListAsync();
             }
 
-            var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+            var membershipService = DependoResolver.Instance.Resolve<IMembershipService>();
             await EnsureMembershipAsync(membershipService, tenantIds);
 
             await EnsureSettingsAsync(tenantIds);
@@ -56,7 +56,7 @@ namespace Inferno.Web.Infrastructure
 
         private static async Task EnsureTenantAsync()
         {
-            var tenantService = EngineContext.Current.Resolve<ITenantService>();
+            var tenantService = DependoResolver.Instance.Resolve<ITenantService>();
 
             if (await tenantService.CountAsync() == 0)
             {
@@ -79,7 +79,7 @@ namespace Inferno.Web.Infrastructure
                 return;
             }
 
-            var dataSettings = EngineContext.Current.Resolve<DataSettings>();
+            var dataSettings = DependoResolver.Instance.Resolve<DataSettings>();
 
             var adminUser = await membershipService.GetUserByEmailAsync(null, dataSettings.AdminEmail);
             if (adminUser == null)
@@ -126,13 +126,17 @@ namespace Inferno.Web.Infrastructure
 
         private static async Task EnsureSettingsAsync(IEnumerable<int> tenantIds)
         {
-            var settingsRepository = EngineContext.Current.Resolve<IRepository<Setting>>();
-            var allSettings = EngineContext.Current.ResolveAll<ISettings>();
+            var settingsRepository = DependoResolver.Instance.Resolve<IRepository<Setting>>();
+            var allSettings = DependoResolver.Instance.ResolveAll<ISettings>();
             var allSettingNames = allSettings.Select(x => x.Name).ToList();
 
             #region NULL Tenant (In case we want default settings)
 
-            var installedSettings = await settingsRepository.FindAsync(x => x.TenantId == null);
+            var installedSettings = await settingsRepository.FindAsync(new SearchOptions<Setting>
+            {
+                Query = x => x.TenantId == null
+            });
+
             var installedSettingNames = installedSettings.Select(x => x.Name).ToList();
 
             var settingsToAdd = allSettings.Where(x => x.IsTenantRestricted && !installedSettingNames.Contains(x.Name)).Select(x => new Setting
@@ -162,7 +166,11 @@ namespace Inferno.Web.Infrastructure
 
             foreach (var tenantId in tenantIds)
             {
-                installedSettings = await settingsRepository.FindAsync(x => x.TenantId == tenantId);
+                installedSettings = await settingsRepository.FindAsync(new SearchOptions<Setting>
+                {
+                    Query = x => x.TenantId == tenantId
+                });
+
                 installedSettingNames = installedSettings.Select(x => x.Name).ToList();
 
                 settingsToAdd = allSettings.Where(x => !x.IsTenantRestricted && !installedSettingNames.Contains(x.Name)).Select(x => new Setting

@@ -44,7 +44,7 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
             int tenantId = GetTenantId();
             await localizableStringService.Value.DeleteAsync(x => x.TenantId == tenantId);
 
-            var languagePacks = EngineContext.Current.ResolveAll<ILanguagePack>();
+            var languagePacks = DependoResolver.Instance.ResolveAll<ILanguagePack>();
 
             var toInsert = new HashSet<LocalizableString>();
             foreach (var languagePack in languagePacks)

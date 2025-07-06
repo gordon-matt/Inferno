@@ -12,11 +12,11 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages
     {
         public static async Task<bool> CheckUserHasAccessToBlog(IPrincipal user)
         {
-            var blogSettings = EngineContext.Current.Resolve<BlogSettings>();
+            var blogSettings = DependoResolver.Instance.Resolve<BlogSettings>();
 
             if (!blogSettings.RoleIds.IsNullOrEmpty())
             {
-                var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+                var membershipService = DependoResolver.Instance.Resolve<IMembershipService>();
                 var roles = await membershipService.GetRolesByIdsAsync(blogSettings.RoleIds);
 
                 var roleNames = roles
@@ -47,7 +47,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages
 
                 if (!string.IsNullOrEmpty(selectedRoles))
                 {
-                    var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+                    var membershipService = DependoResolver.Instance.Resolve<IMembershipService>();
 
                     var roleIds = selectedRoles.Split(',');
                     var roles = await membershipService.GetRolesByIdsAsync(roleIds);

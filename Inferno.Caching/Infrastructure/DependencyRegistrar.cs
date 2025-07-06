@@ -1,6 +1,7 @@
-﻿using Autofac;
-using Dependo.Autofac;
+﻿using Dependo;
 using Inferno.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Inferno.Caching.Infrastructure
 {
@@ -8,10 +9,10 @@ namespace Inferno.Caching.Infrastructure
     {
         #region IDependencyRegistrar Members
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
+        public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
         {
-            builder.RegisterType<MemoryCacheManager>().As<ICacheManager>().Named<ICacheManager>("Inferno_Cache_Static").SingleInstance();
-            builder.RegisterType<ClearCacheTask>().As<ITask>().SingleInstance();
+            builder.RegisterNamed<ICacheManager, MemoryCacheManager>("Inferno_Cache_Static", ServiceLifetime.Singleton);
+            builder.Register<ITask, ClearCacheTask>(ServiceLifetime.Singleton);
         }
 
         public int Order => 0;

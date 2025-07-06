@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Dependo;
 using Extenso;
+using Extenso.Data.Entity;
 using Inferno.Exceptions;
 using Inferno.Security.Membership;
 using Inferno.Tenants;
@@ -20,8 +21,8 @@ namespace Inferno.Web
 
         public WorkContext()
         {
-            webHelper = EngineContext.Current.Resolve<IWebHelper>();
-            workContextStateProviders = EngineContext.Current.ResolveAll<IWorkContextStateProvider>();
+            webHelper = DependoResolver.Instance.Resolve<IWebHelper>();
+            workContextStateProviders = DependoResolver.Instance.ResolveAll<IWorkContextStateProvider>();
             Breadcrumbs = new BreadcrumbCollection();
         }
 
@@ -69,8 +70,11 @@ namespace Inferno.Web
                         host = host.LeftOf(':');
                     }
 
-                    var tenantService = EngineContext.Current.Resolve<ITenantService>();
-                    var allTenants = tenantService.Find();
+                    var tenantService = DependoResolver.Instance.Resolve<ITenantService>();
+                    var allTenants = tenantService.Find(new SearchOptions<Tenant>
+                    {
+                        Query = x => true
+                    });
                     var tenant = allTenants.FirstOrDefault(s => s.ContainsHostValue(host));
 
                     // Load the first found tenant

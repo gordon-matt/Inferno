@@ -48,7 +48,7 @@
 //                {
 //                    if (workContext.CurrentUser != null)
 //                    {
-//                        var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+//                        var membershipService = DependoResolver.Instance.Resolve<IMembershipService>();
 //                        string userTheme = AsyncHelper.RunSync(() => membershipService.GetProfileEntry(workContext.CurrentUser.Id, ThemeUserProfileProvider.Fields.PreferredTheme));
 
 //                        if (!string.IsNullOrEmpty(userTheme))
@@ -95,7 +95,7 @@
 //                    return;
 //                }
 
-//                var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+//                var membershipService = DependoResolver.Instance.Resolve<IMembershipService>();
 //                AsyncHelper.RunSync(() => membershipService.SaveProfileEntry(workContext.CurrentUser.Id, ThemeUserProfileProvider.Fields.PreferredTheme, value));
 
 //                //clear cache

@@ -9,7 +9,7 @@ namespace Inferno.Web.ContentManagement
     {
         public CmsNavigationProvider()
         {
-            T = EngineContext.Current.Resolve<IStringLocalizer>();
+            T = DependoResolver.Instance.Resolve<IStringLocalizer>();
         }
 
         public IStringLocalizer T { get; set; }

@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="6.2.10" />
-    <PackageReference Include="Extenso.Core" Version="7.1.1" />
+    <PackageReference Include="EPPlus" Version="8.0.7" />
+    <PackageReference Include="Extenso.Core" Version="9.4.0" />
   </ItemGroup>
-
 </Project>

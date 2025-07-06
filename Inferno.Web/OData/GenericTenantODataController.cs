@@ -17,7 +17,7 @@ namespace Inferno.Web.OData
         public GenericTenantODataController(IAuthorizationService authorizationService, IRepository<TEntity> repository)
             : base(authorizationService, repository)
         {
-            workContext = EngineContext.Current.Resolve<IWorkContext>();
+            workContext = DependoResolver.Instance.Resolve<IWorkContext>();
         }
 
         #endregion Constructors
