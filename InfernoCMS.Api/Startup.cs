@@ -3,10 +3,12 @@ using InfernoCMS.Data;
 using InfernoCMS.Identity.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OData.Swagger.Services;
+using System.Threading.RateLimiting;
 
 namespace InfernoCMS.Api
 {
@@ -99,6 +101,26 @@ namespace InfernoCMS.Api
                 .AddInfernoJwtBearer(Configuration);
 
             services.AddInfernoAuthorization(Configuration);
+
+            // Rate limit the authentication endpoints to blunt brute-force attacks. The
+            // limiter is partitioned per client IP so a single attacker cannot starve the
+            // whole system.
+            services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                options.AddPolicy("auth", httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 10,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 0,
+                            AutoReplenishment = true
+                        }));
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -128,6 +150,8 @@ namespace InfernoCMS.Api
             //app.UseODataBatching();
 
             app.UseRouting();
+
+            app.UseRateLimiter();
 
             app.UseAuthentication();
             app.UseAuthorization();
