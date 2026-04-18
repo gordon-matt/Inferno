@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Inferno.Logging</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Inferno.Data.Abstractions\Inferno.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

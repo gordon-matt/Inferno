@@ -80,22 +80,22 @@ namespace Inferno.Web.Areas.Admin
                 .Icon(IconName.Building)
                 .Permission(StandardPolicies.FullAccess));
 
-            //// Themes — TODO: not yet ported from MantleCMS
-            //builder.Add(T[InfernoWebLocalizableStrings.General.Themes], "5", item => item
-            //    .Url("/admin/configuration/themes/index")
-            //    .Icon(IconName.Tint)
-            //    .Permission(InfernoWebPolicies.ThemesRead));
+            // Themes
+            builder.Add(T[InfernoWebLocalizableStrings.General.Themes], "5", item => item
+                .Url("/admin/configuration/themes/index")
+                .Icon(IconName.Tint)
+                .Permission(InfernoWebPolicies.ThemesRead));
         }
 
         private void BuildMaintenanceMenu(NavigationItemBuilder builder)
         {
             builder.Icon(IconName.Wrench);
 
-            //// Log — TODO: not yet ported from MantleCMS
-            //builder.Add(T[InfernoWebLocalizableStrings.Log.Title], "5", item => item
-            //    .Url("/admin/log/index")
-            //    .Icon(IconName.ExclamationTriangle)
-            //    .Permission(InfernoWebPolicies.LogRead));
+            // Log
+            builder.Add(T[InfernoWebLocalizableStrings.Log.Title], "5", item => item
+                .Url("/admin/log/index")
+                .Icon(IconName.ExclamationTriangle)
+                .Permission(InfernoWebPolicies.LogRead));
 
             // Scheduled Tasks
             builder.Add(T[InfernoWebLocalizableStrings.ScheduledTasks.Title], "5", item => item

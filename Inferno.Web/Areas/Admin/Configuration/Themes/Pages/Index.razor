@@ -1,0 +1,63 @@
+@page "/admin/configuration/themes/index"
+@inherits RadzenDataPage<EdmThemeConfiguration, Guid>
+
+<h1>@T[InfernoWebLocalizableStrings.General.Themes]</h1>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="EdmThemeConfiguration"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="20"
+                        ColumnWidth="160px">
+            <Columns>
+                <RadzenDataGridColumn TItem="EdmThemeConfiguration" Property="Title" Title="@T[InfernoWebLocalizableStrings.General.Name]" />
+                <RadzenDataGridColumn TItem="EdmThemeConfiguration" Property="PreviewImageUrl" Title="@T[InfernoWebLocalizableStrings.Themes.Model.PreviewImageUrl]" Filterable="false" Sortable="false">
+                    <Template Context="record">
+                        @if (!string.IsNullOrEmpty(record.PreviewImageUrl))
+                        {
+                            <img src="@record.PreviewImageUrl" alt="@record.Title" style="max-height:80px" />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="EdmThemeConfiguration" Property="PreviewText" Title="@T[InfernoWebLocalizableStrings.General.Preview]" />
+                <RadzenDataGridColumn TItem="EdmThemeConfiguration" Property="SupportRtl" Title="@T[InfernoWebLocalizableStrings.Themes.Model.SupportRtl]" Width="120px">
+                    <Template Context="record">
+                        @if (record.SupportRtl)
+                        {
+                            <Icon Name="IconName.Check" TextColor="TextColor.Success" />
+                        }
+                        else
+                        {
+                            <Icon Name="IconName.Times" TextColor="TextColor.Danger" />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="EdmThemeConfiguration" Property="IsDefaultTheme" Title="@T[InfernoWebLocalizableStrings.Themes.Model.IsDefaultTheme]" Width="140px">
+                    <Template Context="record">
+                        @if (record.IsDefaultTheme)
+                        {
+                            <Icon Name="IconName.Check" TextColor="TextColor.Success" />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="EdmThemeConfiguration" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="160px">
+                    <Template Context="record">
+                        @if (!record.IsDefaultTheme)
+                        {
+                            <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="check" Size="ButtonSize.Medium" Text="@T[InfernoWebLocalizableStrings.General.SetDefault]" Click="@(args => SetThemeAsync(record.Title))" @onclick:stopPropagation="true" />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>

@@ -17,10 +17,13 @@ namespace Inferno.Web.Security
             options.AddPermission(InfernoWebPolicies.LocalizableStringsRead, "LocalizableStringsRead");
             options.AddPermission(InfernoWebPolicies.LocalizableStringsWrite, "LocalizableStringsWrite");
             options.AddPermission(InfernoWebPolicies.LogRead, "LogRead");
+            options.AddPermission(InfernoWebPolicies.LogWrite, "LogWrite");
             options.AddPermission(InfernoWebPolicies.ScheduledTasksRead, "ScheduledTasksRead");
             options.AddPermission(InfernoWebPolicies.ScheduledTasksWrite, "ScheduledTasksWrite");
             options.AddPermission(InfernoWebPolicies.SettingsRead, "SettingsRead");
             options.AddPermission(InfernoWebPolicies.SettingsWrite, "SettingsWrite");
+            options.AddPermission(InfernoWebPolicies.ThemesRead, "ThemesRead");
+            options.AddPermission(InfernoWebPolicies.ThemesWrite, "ThemesWrite");
             options.AddPermission(InfernoWebPolicies.MembershipManage, "MembershipManage");
             options.AddPermission(InfernoWebPolicies.MembershipPermissionsRead, "MembershipPermissionsRead");
             options.AddPermission(InfernoWebPolicies.MembershipPermissionsWrite, "MembershipPermissionsWrite");

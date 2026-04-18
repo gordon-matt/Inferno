@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
     <ProjectReference Include="..\Inferno.Localization\Inferno.Localization.csproj" />
+    <ProjectReference Include="..\Inferno.Logging.Abstractions\Inferno.Logging.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />
     <ProjectReference Include="..\Inferno.Tasks.Abstractions\Inferno.Tasks.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Tasks\Inferno.Tasks.csproj" />

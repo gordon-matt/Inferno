@@ -1,8 +1,10 @@
 ﻿using Extenso.AspNetCore.OData;
 using Inferno.Localization.Entities;
+using Inferno.Logging.Entities;
 using Inferno.Security.Membership;
 using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Areas.Admin.Configuration.Themes.Models;
 using Inferno.Web.Areas.Admin.Localization.Models;
 using Inferno.Web.Configuration.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -21,14 +23,14 @@ namespace Inferno.Web.Infrastructure
 
             // Configuration
             builder.EntitySet<Setting>("SettingsApi");
-            //builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
+            builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
 
             // Localization
             builder.EntitySet<Language>(InfernoWebConstants.ODataRoutes.EntitySetNames.Language);
             builder.EntitySet<LocalizableString>(InfernoWebConstants.ODataRoutes.EntitySetNames.LocalizableString);
 
-            ////// Log
-            ////builder.EntitySet<LogEntry>("LogApi");
+            // Log
+            builder.EntitySet<LogEntry>(InfernoWebConstants.ODataRoutes.EntitySetNames.Log);
 
             //// Membership
             //builder.EntitySet<InfernoPermission>("PermissionApi");
@@ -47,22 +49,22 @@ namespace Inferno.Web.Infrastructure
 
             RegisterLanguageODataActions(builder);
             RegisterLocalizableStringODataActions(builder);
-            //RegisterLogODataActions(builder);
+            RegisterLogODataActions(builder);
             RegisterMembershipODataActions(builder);
             //RegisterPluginODataActions(builder);
             RegisterScheduledTaskODataActions(builder);
-            //RegisterThemeODataActions(builder);
+            RegisterThemeODataActions(builder);
 
             options.AddRouteComponents($"odata/{InfernoWebConstants.ODataRoutes.Prefix}", builder.GetEdmModel());
         }
 
         #endregion IODataRegistrar Members
 
-        //private static void RegisterLogODataActions(ODataModelBuilder builder)
-        //{
-        //    var clearAction = builder.EntityType<LogEntry>().Collection.Action("Clear");
-        //    clearAction.Returns<IActionResult>();
-        //}
+        private static void RegisterLogODataActions(ODataModelBuilder builder)
+        {
+            var clearAction = builder.EntityType<LogEntry>().Collection.Action("Clear");
+            clearAction.Returns<IActionResult>();
+        }
 
         private static void RegisterMembershipODataActions(ODataModelBuilder builder)
         {
@@ -112,12 +114,12 @@ namespace Inferno.Web.Infrastructure
             runNowAction.Returns<IActionResult>();
         }
 
-        //private static void RegisterThemeODataActions(ODataModelBuilder builder)
-        //{
-        //    var setDesktopThemeAction = builder.EntityType<EdmThemeConfiguration>().Collection.Action("SetTheme");
-        //    setDesktopThemeAction.Parameter<string>("themeName");
-        //    setDesktopThemeAction.Returns<IActionResult>();
-        //}
+        private static void RegisterThemeODataActions(ODataModelBuilder builder)
+        {
+            var setThemeAction = builder.EntityType<EdmThemeConfiguration>().Collection.Action("SetTheme");
+            setThemeAction.Parameter<string>("themeName");
+            setThemeAction.Returns<IActionResult>();
+        }
 
         private static void RegisterLanguageODataActions(ODataModelBuilder builder)
         {

@@ -10,6 +10,7 @@
 
         // Log
         public const string LogRead = "Inferno_Log_Read";
+        public const string LogWrite = "Inferno_Log_Write";
 
         //// Plugins
         //public const string PluginsManage = "Inferno_Plugins_Manage";
@@ -22,9 +23,9 @@
         public const string SettingsRead = "Inferno_Settings_Read";
         public const string SettingsWrite = "Inferno_Settings_Write";
 
-        //// Themes
-        //public const string ThemesRead = "Inferno_Themes_Read";
-        //public const string ThemesWrite = "Inferno_Themes_Write";
+        // Themes
+        public const string ThemesRead = "Inferno_Themes_Read";
+        public const string ThemesWrite = "Inferno_Themes_Write";
 
         // Membership
         public const string MembershipManage = "Inferno_Membership_Manage";
