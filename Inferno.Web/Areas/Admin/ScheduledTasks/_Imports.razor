@@ -1,4 +1,4 @@
-﻿@using System.Net.Http
+@using System.Net.Http
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
@@ -8,15 +8,14 @@
 @using Microsoft.JSInterop
 @using Blazorise
 @using Inferno
+@using Inferno.Security
+@using Inferno.Tasks.Entities
 @using Inferno.Web
 @using Inferno.Web.Components
-@using Inferno.Web.ContentManagement
 @using Inferno.Web.OData
 @using Radzen
 @using Radzen.Blazor
 @using ButtonType = Radzen.ButtonType
-
-@layout Inferno.Web.Areas.Admin.Home.Shared.AdminLayout
 
 @inject Microsoft.Extensions.Localization.IStringLocalizer T
 @inject Inferno.Web.Configuration.SiteSettings SiteSettings

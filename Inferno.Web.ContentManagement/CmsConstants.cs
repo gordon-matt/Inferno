@@ -62,6 +62,9 @@ namespace Inferno.Web.ContentManagement
             public const string MenusRead = "Menus: Read";
             public const string MenusWrite = "Menus: Write";
 
+            public const string NewsletterRead = "Newsletters: Read";
+            public const string NewsletterWrite = "Newsletters: Write";
+
             public const string PageHistoryRead = "Page History: Read";
             public const string PageHistoryRestore = "Page History: Restore";
             public const string PageHistoryWrite = "Page History: Write";

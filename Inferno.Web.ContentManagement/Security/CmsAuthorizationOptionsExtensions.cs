@@ -26,6 +26,9 @@ namespace Inferno.Web.ContentManagement.Security
             options.AddPermission(CmsConstants.Policies.MenusRead, "MenusRead");
             options.AddPermission(CmsConstants.Policies.MenusWrite, "MenusWrite");
 
+            options.AddPermission(CmsConstants.Policies.NewsletterRead, "NewsletterRead");
+            options.AddPermission(CmsConstants.Policies.NewsletterWrite, "NewsletterWrite");
+
             options.AddPermission(CmsConstants.Policies.PageHistoryRead, "PageHistoryRead");
             options.AddPermission(CmsConstants.Policies.PageHistoryRestore, "PageHistoryRestore");
             options.AddPermission(CmsConstants.Policies.PageHistoryWrite, "PageHistoryWrite");

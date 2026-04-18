@@ -25,8 +25,7 @@ namespace Inferno.Web.Areas.Admin
             builder.Add(T[InfernoWebLocalizableStrings.General.Home], "0", BuildHomeMenu);
             builder.Add(T[InfernoWebLocalizableStrings.Membership.Title], "1", BuildMembershipMenu);
             builder.Add(T[InfernoWebLocalizableStrings.General.Configuration], "2", BuildConfigurationMenu);
-            //// Maintenance menu — hidden until Log/Scheduled Tasks pages are ported from MantleCMS.
-            //builder.Add(T[InfernoWebLocalizableStrings.Maintenance.Title], "3", BuildMaintenanceMenu);
+            builder.Add(T[InfernoWebLocalizableStrings.Maintenance.Title], "3", BuildMaintenanceMenu);
             //builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "99999", BuildPluginsMenu);
         }
 
@@ -98,11 +97,11 @@ namespace Inferno.Web.Areas.Admin
             //    .Icon(IconName.ExclamationTriangle)
             //    .Permission(InfernoWebPolicies.LogRead));
 
-            //// Scheduled Tasks — TODO: not yet ported from MantleCMS
-            //builder.Add(T[InfernoWebLocalizableStrings.ScheduledTasks.Title], "5", item => item
-            //    .Url("/admin/scheduled-tasks/index")
-            //    .Icon(IconName.Clock)
-            //    .Permission(InfernoWebPolicies.ScheduledTasksRead));
+            // Scheduled Tasks
+            builder.Add(T[InfernoWebLocalizableStrings.ScheduledTasks.Title], "5", item => item
+                .Url("/admin/scheduled-tasks/index")
+                .Icon(IconName.Clock)
+                .Permission(InfernoWebPolicies.ScheduledTasksRead));
         }
 
         //private void BuildPluginsMenu(NavigationItemBuilder builder)

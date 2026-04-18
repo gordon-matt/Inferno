@@ -5,11 +5,13 @@ using Extenso.AspNetCore.OData;
 using Inferno.Localization;
 using Inferno.Localization.Entities;
 using Inferno.Security.Membership;
+using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
 using Inferno.Web.Areas.Admin.Configuration.Services;
 using Inferno.Web.Areas.Admin.Localization.Services;
 using Inferno.Web.Areas.Admin.Membership.Services;
+using Inferno.Web.Areas.Admin.ScheduledTasks.Services;
 using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Entities;
@@ -99,6 +101,8 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.RegisterSelf<LocalizableStringODataService>(ServiceLifetime.Singleton);
 
         builder.Register<IRadzenODataService<InfernoRole, string>, RoleODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<ScheduledTask, int>, ScheduledTaskODataService>(ServiceLifetime.Singleton);
+        builder.RegisterSelf<ScheduledTaskODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<Setting, Guid>, SettingODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<Tenant, int>, TenantODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<InfernoUser, string>, UserODataService>(ServiceLifetime.Singleton);

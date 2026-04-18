@@ -29,11 +29,26 @@ namespace Inferno.Web.ContentManagement
         {
             builder.Icon(IconName.Edit);
 
-            //// Blog — TODO: page not yet ported from MantleCMS
-            //builder.Add(T[InfernoCmsLocalizableStrings.Blog.Title].Value, "5", item => item
-            //    .Url("/admin/blog/index")
-            //    .Icon(IconName.Paperclip)
-            //    .Permission(CmsConstants.Policies.BlogRead));
+            // Blog
+            builder.Add(T[InfernoCmsLocalizableStrings.Blog.Title].Value, "5", blog =>
+            {
+                blog.Icon(IconName.Paperclip).Permission(CmsConstants.Policies.BlogRead);
+
+                blog.Add(T[InfernoCmsLocalizableStrings.Blog.Posts].Value, "1", item => item
+                    .Url("/admin/blog/posts")
+                    .Icon(IconName.File)
+                    .Permission(CmsConstants.Policies.BlogRead));
+
+                blog.Add(T[InfernoCmsLocalizableStrings.Blog.Categories].Value, "2", item => item
+                    .Url("/admin/blog/categories")
+                    .Icon(IconName.Folder)
+                    .Permission(CmsConstants.Policies.BlogRead));
+
+                blog.Add(T[InfernoCmsLocalizableStrings.Blog.Tags].Value, "3", item => item
+                    .Url("/admin/blog/tags")
+                    .Icon(IconName.Tag)
+                    .Permission(CmsConstants.Policies.BlogRead));
+            });
 
             // Content Blocks — the page lives at /admin/blocks/content-blocks (see ContentBlocks.razor)
             builder.Add(T[InfernoCmsLocalizableStrings.ContentBlocks.Title].Value, "5", item => item
@@ -59,11 +74,11 @@ namespace Inferno.Web.ContentManagement
                 .Icon(IconName.Code)
                 .Permission(CmsConstants.Policies.PagesRead));
 
-            //// Subscribers — TODO: not yet ported from MantleCMS
-            //builder.Add(T[InfernoCmsLocalizableStrings.Newsletters.Subscribers].Value, "5", item => item
-            //    .Url("/admin/newsletters/subscribers")
-            //    .Icon(IconName.Users)
-            //    .Permission(CmsConstants.Policies.NewsletterRead));
+            // Subscribers
+            builder.Add(T[InfernoCmsLocalizableStrings.Newsletters.Subscribers].Value, "5", item => item
+                .Url("/admin/newsletters/subscribers")
+                .Icon(IconName.Users)
+                .Permission(CmsConstants.Policies.NewsletterRead));
 
             // XML Sitemap
             builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item

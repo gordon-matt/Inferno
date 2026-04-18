@@ -1,6 +1,7 @@
 ﻿using Extenso.AspNetCore.OData;
 using Inferno.Localization.Entities;
 using Inferno.Security.Membership;
+using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin.Localization.Models;
 using Inferno.Web.Configuration.Entities;
@@ -38,8 +39,8 @@ namespace Inferno.Web.Infrastructure
             ////// Plugins
             ////builder.EntitySet<EdmPluginDescriptor>("PluginApi");
 
-            //// Scheduled Tasks
-            //builder.EntitySet<ScheduledTask>("ScheduledTaskApi");
+            // Scheduled Tasks
+            builder.EntitySet<ScheduledTask>(InfernoWebConstants.ODataRoutes.EntitySetNames.ScheduledTask);
 
             // Tenants
             builder.EntitySet<Tenant>(InfernoWebConstants.ODataRoutes.EntitySetNames.Tenant);
@@ -49,7 +50,7 @@ namespace Inferno.Web.Infrastructure
             //RegisterLogODataActions(builder);
             RegisterMembershipODataActions(builder);
             //RegisterPluginODataActions(builder);
-            //RegisterScheduledTaskODataActions(builder);
+            RegisterScheduledTaskODataActions(builder);
             //RegisterThemeODataActions(builder);
 
             options.AddRouteComponents($"odata/{InfernoWebConstants.ODataRoutes.Prefix}", builder.GetEdmModel());
@@ -104,12 +105,12 @@ namespace Inferno.Web.Infrastructure
         //    uninstallAction.Returns<IHttpActionResult>();
         //}
 
-        //private static void RegisterScheduledTaskODataActions(ODataModelBuilder builder)
-        //{
-        //    var runNowAction = builder.EntityType<ScheduledTask>().Collection.Action("RunNow");
-        //    runNowAction.Parameter<int>("taskId");
-        //    runNowAction.Returns<IActionResult>();
-        //}
+        private static void RegisterScheduledTaskODataActions(ODataModelBuilder builder)
+        {
+            var runNowAction = builder.EntityType<ScheduledTask>().Collection.Action("RunNow");
+            runNowAction.Parameter<int>("taskId");
+            runNowAction.Returns<IActionResult>();
+        }
 
         //private static void RegisterThemeODataActions(ODataModelBuilder builder)
         //{

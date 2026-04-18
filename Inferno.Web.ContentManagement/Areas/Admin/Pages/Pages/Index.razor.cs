@@ -9,6 +9,12 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Pages
         [Inject]
         private IPageTypeService PageTypeService { get; set; }
 
+        [Inject]
+        private NavigationManager NavigationManager { get; set; }
+
+        private void NavigateToVersions(Guid pageId) =>
+            NavigationManager.NavigateTo($"/admin/pages/versions/{pageId}");
+
         private IEnumerable<PageType> PageTypesSelectList { get; set; } = Enumerable.Empty<PageType>();
 
         private bool ShowCreateMode { get; set; }

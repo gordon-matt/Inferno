@@ -1,0 +1,32 @@
+@page "/admin/newsletters/subscribers"
+@inherits RadzenDataPage<Subscriber, string>
+
+<h1>@T[InfernoCmsLocalizableStrings.Newsletters.Subscribers]</h1>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="Subscriber"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="20"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="Subscriber" Property="Name" Title="@T[InfernoWebLocalizableStrings.General.Name]" />
+                <RadzenDataGridColumn TItem="Subscriber" Property="Email" Title="Email" />
+                <RadzenDataGridColumn TItem="Subscriber" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="80px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(() => DeleteAsync(record.Id))" @onclick:stopPropagation="true" Title="@T[InfernoWebLocalizableStrings.General.Delete]" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>

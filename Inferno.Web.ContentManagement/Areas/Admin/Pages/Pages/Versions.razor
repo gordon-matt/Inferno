@@ -1,0 +1,194 @@
+@page "/admin/pages/versions/{PageId:guid}"
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
+@inherits RadzenDataPage<PageVersion, Guid>
+
+<h1>@T[InfernoCmsLocalizableStrings.Pages.PageHistory] — @PageName</h1>
+
+<Row hidden="@(ShowEditMode == true)">
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Click="Create">
+            <Icon Name="IconName.PlusCircle"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Create]
+        </RadzenButton>
+        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="GoBack">
+            <Icon Name="IconName.ArrowLeft"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Back]
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="PageVersion"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="20"
+                        ColumnWidth="180px">
+            <Columns>
+                <RadzenDataGridColumn TItem="PageVersion" Property="Title" Title="@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Title]" />
+                <RadzenDataGridColumn TItem="PageVersion" Property="Slug" Title="@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Slug]" />
+                <RadzenDataGridColumn TItem="PageVersion" Property="CultureCode" Title="@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.CultureCode]" Width="120px">
+                    <Template Context="record">
+                        @(string.IsNullOrEmpty(record.CultureCode) ? "—" : record.CultureCode)
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PageVersion" Property="Status" Title="@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Status]" Width="120px" />
+                <RadzenDataGridColumn TItem="PageVersion" Property="DateModifiedUtc" Title="@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.DateModified]" Width="180px">
+                    <Template Context="record">
+                        @record.DateModifiedUtc.ToString("yyyy-MM-dd HH:mm")
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PageVersion" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="180px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(() => EditAsync(record.Id))" @onclick:stopPropagation="true" Title="@T[InfernoWebLocalizableStrings.General.Edit]"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="restore" Size="ButtonSize.Medium" Click="@(() => RestoreAsync(record))" @onclick:stopPropagation="true" Title="@T[InfernoCmsLocalizableStrings.Pages.RestoreVersion]" Disabled="@(record.Status == VersionStatus.Published)"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(() => DeleteAsync(record.Id))" @onclick:stopPropagation="true" Title="@T[InfernoWebLocalizableStrings.General.Delete]"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <DataAnnotationsValidator />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Title]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.Title" Style="width:100%" Name="Title" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Slug]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.Slug" Style="width:100%" Name="Slug" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.CultureCode]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenDropDown @bind-Value="Model.CultureCode"
+                                                    Data="CultureSelectList"
+                                                    TextProperty="Name"
+                                                    ValueProperty="Value"
+                                                    AllowClear="true"
+                                                    Style="width:100%"
+                                                    Name="CultureCode" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Status]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenDropDown TValue="VersionStatus"
+                                                    @bind-Value="Model.Status"
+                                                    Data="StatusSelectList"
+                                                    Style="width:100%"
+                                                    Name="Status" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    @if (IsStandardPage)
+                    {
+                        <hr />
+                        <h5>@T[InfernoCmsLocalizableStrings.Pages.PageTypes.Title]: Standard Page</h5>
+
+                        <Row>
+                            <Column ColumnSize="ColumnSize.Is6">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Pages.PageTypes.StandardPage.MetaTitle]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is8">
+                                        <RadzenTextBox @bind-Value="Fields.MetaTitle" Style="width:100%" />
+                                    </FieldBody>
+                                </Field>
+                            </Column>
+                            <Column ColumnSize="ColumnSize.Is6">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Pages.PageTypes.StandardPage.MetaKeywords]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is8">
+                                        <RadzenTextBox @bind-Value="Fields.MetaKeywords" Style="width:100%" />
+                                    </FieldBody>
+                                </Field>
+                            </Column>
+                        </Row>
+
+                        <Row>
+                            <Column ColumnSize="ColumnSize.Is12">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2">@T[InfernoCmsLocalizableStrings.Pages.PageTypes.StandardPage.MetaDescription]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10">
+                                        <RadzenTextArea @bind-Value="Fields.MetaDescription" Rows="2" Style="width:100%" />
+                                    </FieldBody>
+                                </Field>
+                            </Column>
+                        </Row>
+
+                        <Row>
+                            <Column ColumnSize="ColumnSize.Is12">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2">@T[InfernoCmsLocalizableStrings.Pages.PageTypes.StandardPage.BodyContent]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10">
+                                        <RadzenHtmlEditor @bind-Value="Fields.BodyContent" Style="height: 400px" />
+                                    </FieldBody>
+                                </Field>
+                            </Column>
+                        </Row>
+                    }
+                    else
+                    {
+                        <hr />
+                        <Row>
+                            <Column ColumnSize="ColumnSize.Is12">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2">Fields (JSON)</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10">
+                                        <RadzenTextArea @bind-Value="Model.Fields" Rows="12" Style="width:100%; font-family: monospace;" />
+                                    </FieldBody>
+                                </Field>
+                            </Column>
+                        </Row>
+                    }
+
+                    <hr />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

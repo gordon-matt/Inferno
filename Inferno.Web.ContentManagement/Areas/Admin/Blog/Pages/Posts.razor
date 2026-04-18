@@ -1,0 +1,196 @@
+@page "/admin/blog/posts"
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities
+@inherits RadzenDataPage<BlogPost, Guid>
+
+<h1>@T[InfernoCmsLocalizableStrings.Blog.Posts]</h1>
+
+<Row hidden="@(ShowEditMode == true)">
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Click="Create">
+            <Icon Name="IconName.PlusCircle"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Create]
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="BlogPost"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="20"
+                        ColumnWidth="180px">
+            <Columns>
+                <RadzenDataGridColumn TItem="BlogPost" Property="Headline" Title="@T[InfernoCmsLocalizableStrings.Blog.PostModel.Headline]" />
+                <RadzenDataGridColumn TItem="BlogPost" Property="CategoryId" Title="@T[InfernoCmsLocalizableStrings.Blog.PostModel.CategoryId]" Filterable="false" Sortable="false" Width="180px">
+                    <Template Context="record">
+                        @(GetCategoryName(record.CategoryId))
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="BlogPost" Property="Slug" Title="@T[InfernoCmsLocalizableStrings.Blog.PostModel.Slug]" />
+                <RadzenDataGridColumn TItem="BlogPost" Property="DateCreatedUtc" Title="@T[InfernoCmsLocalizableStrings.Blog.PostModel.DateCreatedUtc]" Width="180px">
+                    <Template Context="record">
+                        @record.DateCreatedUtc.ToString("yyyy-MM-dd HH:mm")
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="BlogPost" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(() => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(() => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <DataAnnotationsValidator />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Blog.PostModel.Headline]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.Headline" Style="width:100%" Name="Headline" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Blog.PostModel.Slug]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.Slug" Style="width:100%" Name="Slug" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Blog.PostModel.CategoryId]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenDropDown @bind-Value="Model.CategoryId"
+                                                    Data="CategoriesSelectList"
+                                                    TextProperty="Name"
+                                                    ValueProperty="Id"
+                                                    Style="width:100%"
+                                                    Name="CategoryId" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Blog.Tags]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenDropDown TValue="IEnumerable<int>"
+                                                    Data="TagsSelectList"
+                                                    TextProperty="Name"
+                                                    ValueProperty="Id"
+                                                    Multiple="true"
+                                                    AllowClear="true"
+                                                    Chips="true"
+                                                    @bind-Value="SelectedTagIds"
+                                                    Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is2">@T[InfernoCmsLocalizableStrings.Blog.PostModel.TeaserImageUrl]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is10">
+                                    <RadzenTextBox @bind-Value="Model.TeaserImageUrl" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is2">@T[InfernoCmsLocalizableStrings.Blog.PostModel.ShortDescription]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is10">
+                                    <RadzenTextArea @bind-Value="Model.ShortDescription" Rows="3" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is2">@T[InfernoCmsLocalizableStrings.Blog.PostModel.FullDescription]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is10">
+                                    <RadzenHtmlEditor @bind-Value="Model.FullDescription" Style="height: 400px" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Check TValue="bool" @bind-Checked="@Model.UseExternalLink">@T[InfernoCmsLocalizableStrings.Blog.PostModel.UseExternalLink]</Check>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Blog.PostModel.ExternalLink]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.ExternalLink" Style="width:100%" Disabled="@(!Model.UseExternalLink)" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Blog.PostModel.MetaKeywords]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.MetaKeywords" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Blog.PostModel.MetaDescription]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.MetaDescription" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <hr />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

@@ -4,6 +4,7 @@ using Inferno.Localization;
 using Inferno.Web.Configuration;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks;
+using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
@@ -12,6 +13,9 @@ using Inferno.Web.ContentManagement.Areas.Admin.Localization;
 using Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Services;
+using Inferno.Web.ContentManagement.Areas.Admin.Newsletters;
+using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Models;
+using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
@@ -42,6 +46,9 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             builder.Register<IBlogPostService, BlogPostService>(ServiceLifetime.Transient);
             builder.Register<IBlogTagService, BlogTagService>(ServiceLifetime.Transient);
             builder.Register<IBlogPostTagService, BlogPostTagService>(ServiceLifetime.Transient);
+            builder.Register<IRadzenODataService<BlogCategory, int>, BlogCategoryODataService>(ServiceLifetime.Singleton);
+            builder.Register<IRadzenODataService<BlogTag, int>, BlogTagODataService>(ServiceLifetime.Singleton);
+            builder.Register<IRadzenODataService<BlogPost, Guid>, BlogPostODataService>(ServiceLifetime.Singleton);
 
             // Menus
             builder.Register<IMenuService, MenuService>(ServiceLifetime.Transient);
@@ -58,6 +65,8 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
             builder.Register<IRadzenODataService<Page, Guid>, PageODataService>(ServiceLifetime.Singleton);
             builder.Register<IRadzenODataService<PageType, Guid>, PageTypeODataService>(ServiceLifetime.Singleton);
+            builder.Register<IRadzenODataService<PageVersion, Guid>, PageVersionODataService>(ServiceLifetime.Singleton);
+            builder.Register<IPageVersionODataService, PageVersionODataService>(ServiceLifetime.Singleton);
 
             // Content Blocks
             builder.Register<IEntityTypeContentBlockService, EntityTypeContentBlockService>(ServiceLifetime.Transient);
@@ -65,7 +74,8 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             builder.Register<IZoneService, ZoneService>(ServiceLifetime.Transient);
             builder.Register<IRadzenODataService<ContentBlock, Guid>, ContentBlockODataService>(ServiceLifetime.Singleton);
 
-            //builder.Register<INewsletterService, NewsletterService>(ServiceLifetime.Transient);
+            // Newsletters
+            builder.Register<IRadzenODataService<Subscriber, string>, SubscriberODataService>(ServiceLifetime.Singleton);
 
             #endregion Services
 
@@ -84,7 +94,7 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             #region Security
 
             // User Profile Providers
-            //builder.Register<IUserProfileProvider, NewsletterUserProfileProvider>(ServiceLifetime.Singleton);
+            builder.Register<Inferno.Web.Security.Membership.IUserProfileProvider, NewsletterUserProfileProvider>(ServiceLifetime.Singleton);
 
             #endregion Security
 

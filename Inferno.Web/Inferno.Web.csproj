@@ -25,6 +25,7 @@
     <ProjectReference Include="..\Inferno.Localization\Inferno.Localization.csproj" />
     <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />
     <ProjectReference Include="..\Inferno.Tasks.Abstractions\Inferno.Tasks.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Tasks\Inferno.Tasks.csproj" />
     <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
   </ItemGroup>
