@@ -10,9 +10,12 @@ using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Localization;
 using Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks;
+using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
+using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
+using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Navigation;
 using Inferno.Web.OData;
@@ -43,11 +46,18 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             // Menus
             builder.Register<IMenuService, MenuService>(ServiceLifetime.Transient);
             builder.Register<IMenuItemService, MenuItemService>(ServiceLifetime.Transient);
+            builder.Register<IRadzenODataService<Menu, Guid>, MenuODataService>(ServiceLifetime.Singleton);
+            builder.Register<IRadzenODataService<Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities.MenuItem, Guid>, MenuItemODataService>(ServiceLifetime.Singleton);
+
+            // Sitemap
+            builder.Register<ISitemapODataService, SitemapODataService>(ServiceLifetime.Singleton);
 
             // Pages
             builder.Register<IPageService, PageService>(ServiceLifetime.Transient);
             builder.Register<IPageTypeService, PageTypeService>(ServiceLifetime.Transient);
             builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
+            builder.Register<IRadzenODataService<Page, Guid>, PageODataService>(ServiceLifetime.Singleton);
+            builder.Register<IRadzenODataService<PageType, Guid>, PageTypeODataService>(ServiceLifetime.Singleton);
 
             // Content Blocks
             builder.Register<IEntityTypeContentBlockService, EntityTypeContentBlockService>(ServiceLifetime.Transient);

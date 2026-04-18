@@ -90,8 +90,10 @@ namespace Inferno.Web.OData
         /// <summary>
         /// Sends a request with a bearer token. Automatically retries once with a
         /// freshly-issued token if the server rejects the token as unauthorized.
+        /// Exposed as protected so subclasses can implement custom OData actions /
+        /// functions beyond standard CRUD.
         /// </summary>
-        private async Task<HttpResponseMessage> SendAuthorizedAsync(Func<HttpRequestMessage> requestFactory)
+        protected async Task<HttpResponseMessage> SendAuthorizedAsync(Func<HttpRequestMessage> requestFactory)
         {
             var request = requestFactory();
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await GetBearerTokenAsync().ConfigureAwait(false));

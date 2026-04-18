@@ -47,11 +47,11 @@ namespace Inferno.Web.ContentManagement
                 .Icon(IconName.Image)
                 .Permission(CmsConstants.Policies.MediaRead));
 
-            //// Menus — TODO: page not yet ported from MantleCMS
-            //builder.Add(T[InfernoCmsLocalizableStrings.Menus.Title].Value, "5", item => item
-            //    .Url("/admin/menus/index")
-            //    .Icon(IconName.ArrowRight)
-            //    .Permission(CmsConstants.Policies.MenusRead));
+            // Menus
+            builder.Add(T[InfernoCmsLocalizableStrings.Menus.Title].Value, "5", item => item
+                .Url("/admin/menus/index")
+                .Icon(IconName.ArrowRight)
+                .Permission(CmsConstants.Policies.MenusRead));
 
             // Pages
             builder.Add(T[InfernoCmsLocalizableStrings.Pages.Title].Value, "5", item => item
@@ -65,11 +65,11 @@ namespace Inferno.Web.ContentManagement
             //    .Icon(IconName.Users)
             //    .Permission(CmsConstants.Policies.NewsletterRead));
 
-            //// XML Sitemap — TODO: page not yet ported from MantleCMS
-            //builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item
-            //    .Url("/admin/sitemap/xml-sitemap")
-            //    .Icon(IconName.Map)
-            //    .Permission(CmsConstants.Policies.SitemapRead));
+            // XML Sitemap
+            builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item
+                .Url("/admin/sitemap/xml-sitemap")
+                .Icon(IconName.Map)
+                .Permission(CmsConstants.Policies.SitemapRead));
         }
     }
 }

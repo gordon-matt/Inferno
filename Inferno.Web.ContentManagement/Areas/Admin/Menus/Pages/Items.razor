@@ -1,0 +1,133 @@
+@page "/admin/menus/items/{MenuId:guid}"
+@using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities
+@inherits RadzenDataPage<MenuItem, Guid>
+
+<h1>@T[InfernoCmsLocalizableStrings.Menus.ManageMenuItems] — @MenuName</h1>
+
+<Row hidden="@(ShowEditMode == true)">
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Click="Create">
+            <Icon Name="IconName.PlusCircle"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Create]
+        </RadzenButton>
+        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="GoBack">
+            <Icon Name="IconName.ArrowLeft"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Back]
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="MenuItem"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="10"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="MenuItem" Property="Text" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Text]" />
+                <RadzenDataGridColumn TItem="MenuItem" Property="Url" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Url]" />
+                <RadzenDataGridColumn TItem="MenuItem" Property="Position" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Position]" Width="100px" />
+                <RadzenDataGridColumn TItem="MenuItem" Property="Enabled" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Enabled]" Width="100px" />
+                <RadzenDataGridColumn TItem="MenuItem" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(() => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(() => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <DataAnnotationsValidator />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Text]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.Text" Style="width:100%" Name="Text" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Url]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.Url" Style="width:100%" Name="Url" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is2">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Description]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is10">
+                                    <RadzenTextBox @bind-Value="Model.Description" Style="width:100%" Name="Description" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.CssClass]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenTextBox @bind-Value="Model.CssClass" Style="width:100%" Name="CssClass" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is4">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Position]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is8">
+                                    <RadzenNumeric @bind-Value="Model.Position" Style="width:100%" Name="Position" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Check TValue="bool" @bind-Checked="@Model.Enabled">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Enabled]</Check>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is6">
+                            <Check TValue="bool" @bind-Checked="@Model.IsExternalUrl">@T[InfernoCmsLocalizableStrings.Menus.IsExternalUrl]</Check>
+                        </Column>
+                    </Row>
+
+                    <hr />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
