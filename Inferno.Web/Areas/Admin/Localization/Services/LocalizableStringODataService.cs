@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Text;
+using System.Text.Json;
 using Extenso.Data.Entity;
 using Inferno.Localization.Entities;
 using Inferno.Web.Areas.Admin.Localization.Models;
@@ -18,8 +19,8 @@ namespace Inferno.Web.Areas.Admin.Localization.Services
         {
             var uri = new Uri(baseUri, $"{entitySetName}/Default.GetComparitiveTable(cultureCode='{cultureCode}')");
             uri = uri.GetODataUri(filter: args.Filter, top: args.Top, skip: args.Skip, orderby: args.OrderBy, count: true);
-            using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            using var response = await httpClient.SendAsync(httpRequestMessage);
+
+            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Get, uri));
             return await response.ReadAsync<ODataServiceResult<ComparitiveLocalizableString>>();
         }
 
@@ -33,7 +34,10 @@ namespace Inferno.Web.Areas.Admin.Localization.Services
             };
 
             var uri = new Uri(baseUri, $"{entitySetName}/Default.PutComparitive");
-            using var response = await httpClient.PostAsJsonAsync(uri, data);
+            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
+            });
             return response.IsSuccessStatusCode;
         }
 
@@ -46,7 +50,10 @@ namespace Inferno.Web.Areas.Admin.Localization.Services
             };
 
             var uri = new Uri(baseUri, $"{entitySetName}/Default.DeleteComparitive");
-            using var response = await httpClient.PostAsJsonAsync(uri, data);
+            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
+            {
+                Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
+            });
             return response.IsSuccessStatusCode;
         }
     }

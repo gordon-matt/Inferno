@@ -94,7 +94,10 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
 
         builder.Register<IRadzenODataService<Language, Guid>, LanguageODataService>(ServiceLifetime.Singleton);
+
         builder.Register<IRadzenODataService<LocalizableString, Guid>, LocalizableStringODataService>(ServiceLifetime.Singleton);
+        builder.RegisterSelf<LocalizableStringODataService>(ServiceLifetime.Singleton);
+
         builder.Register<IRadzenODataService<InfernoRole, string>, RoleODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<Setting, Guid>, SettingODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<Tenant, int>, TenantODataService>(ServiceLifetime.Singleton);

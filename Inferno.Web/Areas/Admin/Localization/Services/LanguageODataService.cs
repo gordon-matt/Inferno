@@ -14,11 +14,10 @@ namespace Inferno.Web.Areas.Admin.Localization.Services
         public virtual async Task<bool> ResetLocalizableStringsAsync()
         {
             var uri = new Uri(baseUri, $"{entitySetName}/Default.ResetLocalizableStrings");
-            using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
+            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
             {
-                Content = new StringContent(null, Encoding.UTF8, "application/json")
-            };
-            using var response = await httpClient.SendAsync(httpRequestMessage);
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            });
             return response.IsSuccessStatusCode;
         }
     }
