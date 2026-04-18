@@ -30,8 +30,17 @@ namespace InfernoCMS.Identity.Infrastructure
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(StandardPolicies.AdminAccess, policy => policy.RequireClaim("Permission", "AdminAccess"));
-                options.AddPolicy(StandardPolicies.FullAccess, policy => policy.RequireClaim("Permission", "FullAccess"));
+                // Baseline policies. Anyone in the built-in Administrators role satisfies these automatically,
+                // which lines up with how the seed "super admin" user gets provisioned in StartupTask.
+                options.AddPolicy(StandardPolicies.AdminAccess, policy => policy.RequireAssertion(ctx =>
+                    ctx.User.IsInRole(InfernoSecurityConstants.Roles.Administrators) ||
+                    ctx.User.HasClaim(AuthorizationOptionsExtensions.PermissionClaimType, StandardPolicies.AdminAccess) ||
+                    ctx.User.HasClaim(AuthorizationOptionsExtensions.PermissionClaimType, StandardPolicies.FullAccess)));
+
+                options.AddPolicy(StandardPolicies.FullAccess, policy => policy.RequireAssertion(ctx =>
+                    ctx.User.IsInRole(InfernoSecurityConstants.Roles.Administrators) ||
+                    ctx.User.HasClaim(AuthorizationOptionsExtensions.PermissionClaimType, StandardPolicies.FullAccess)));
+
                 options.AddInfernoWebPolicies();
             });
         }

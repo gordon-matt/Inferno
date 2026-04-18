@@ -25,7 +25,8 @@ namespace Inferno.Web.Areas.Admin
             builder.Add(T[InfernoWebLocalizableStrings.General.Home], "0", BuildHomeMenu);
             builder.Add(T[InfernoWebLocalizableStrings.Membership.Title], "1", BuildMembershipMenu);
             builder.Add(T[InfernoWebLocalizableStrings.General.Configuration], "2", BuildConfigurationMenu);
-            builder.Add(T[InfernoWebLocalizableStrings.Maintenance.Title], "3", BuildMaintenanceMenu);
+            //// Maintenance menu — hidden until Log/Scheduled Tasks pages are ported from MantleCMS.
+            //builder.Add(T[InfernoWebLocalizableStrings.Maintenance.Title], "3", BuildMaintenanceMenu);
             //builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "99999", BuildPluginsMenu);
         }
 
@@ -55,17 +56,18 @@ namespace Inferno.Web.Areas.Admin
                 .Icon(IconName.Language)
                 .Permission(InfernoWebPolicies.LanguagesRead));
 
-            //// Indexing
+            //// Indexing — TODO: not yet ported from MantleCMS
             //builder.Add(T[InfernoWebLocalizableStrings.Indexing.Title], "5", item => item
             //    .Url("/admin/indexing/index")
             //    .Icon(IconName.Search)
             //    .Permission(StandardPolicies.FullAccess));
 
-            // Plugins
-            builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "5", item => item
-                .Url("/admin/plugins/index")
-                .Icon(IconName.PuzzlePiece)
-                .Permission(StandardPolicies.FullAccess));
+            //// Plugins — TODO: not yet ported from MantleCMS. Removed from nav to avoid
+            //// "Nothing at this address" errors until the page is implemented.
+            //builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "5", item => item
+            //    .Url("/admin/plugins/index")
+            //    .Icon(IconName.PuzzlePiece)
+            //    .Permission(StandardPolicies.FullAccess));
 
             // Settings
             builder.Add(T[InfernoWebLocalizableStrings.General.Settings], "5", item => item
@@ -79,7 +81,7 @@ namespace Inferno.Web.Areas.Admin
                 .Icon(IconName.Building)
                 .Permission(StandardPolicies.FullAccess));
 
-            //// Themes
+            //// Themes — TODO: not yet ported from MantleCMS
             //builder.Add(T[InfernoWebLocalizableStrings.General.Themes], "5", item => item
             //    .Url("/admin/configuration/themes/index")
             //    .Icon(IconName.Tint)
@@ -90,17 +92,17 @@ namespace Inferno.Web.Areas.Admin
         {
             builder.Icon(IconName.Wrench);
 
-            // Log
-            builder.Add(T[InfernoWebLocalizableStrings.Log.Title], "5", item => item
-                .Url("/admin/log/index")
-                .Icon(IconName.ExclamationTriangle)
-                .Permission(InfernoWebPolicies.LogRead));
+            //// Log — TODO: not yet ported from MantleCMS
+            //builder.Add(T[InfernoWebLocalizableStrings.Log.Title], "5", item => item
+            //    .Url("/admin/log/index")
+            //    .Icon(IconName.ExclamationTriangle)
+            //    .Permission(InfernoWebPolicies.LogRead));
 
-            // Scheduled Tasks
-            builder.Add(T[InfernoWebLocalizableStrings.ScheduledTasks.Title], "5", item => item
-                .Url("/admin/scheduled-tasks/index")
-                .Icon(IconName.Clock)
-                .Permission(InfernoWebPolicies.ScheduledTasksRead));
+            //// Scheduled Tasks — TODO: not yet ported from MantleCMS
+            //builder.Add(T[InfernoWebLocalizableStrings.ScheduledTasks.Title], "5", item => item
+            //    .Url("/admin/scheduled-tasks/index")
+            //    .Icon(IconName.Clock)
+            //    .Permission(InfernoWebPolicies.ScheduledTasksRead));
         }
 
         //private void BuildPluginsMenu(NavigationItemBuilder builder)

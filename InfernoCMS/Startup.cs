@@ -2,11 +2,13 @@
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Inferno.Tenants.Entities;
+using Inferno.Web.ContentManagement.Security;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -49,6 +51,11 @@ namespace InfernoCMS
 
 
             services.AddInfernoAuthorization(Configuration);
+
+            // Register CMS-specific authorization policies (Blog, Pages, Menus, etc.). These are
+            // referenced from CMS OData controllers but aren't part of the core Identity module,
+            // so they're appended here via post-configuration of AuthorizationOptions.
+            services.Configure<AuthorizationOptions>(options => options.AddInfernoCmsPolicies());
 
             #endregion Account / Identity
 

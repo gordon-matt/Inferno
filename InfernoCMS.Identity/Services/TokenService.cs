@@ -17,11 +17,16 @@ namespace InfernoCMS.Identity.Services
 
         private readonly IConfiguration config;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<ApplicationRole> roleManager;
 
-        public TokenService(IConfiguration config, UserManager<ApplicationUser> userManager)
+        public TokenService(
+            IConfiguration config,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             this.config = config;
             this.userManager = userManager;
+            this.roleManager = roleManager;
         }
 
         public async Task<string> GenerateJsonWebTokenAsync(string userId)
@@ -79,13 +84,29 @@ namespace InfernoCMS.Identity.Services
                 claimsIdentity.AddClaims(await userManager.GetClaimsAsync(user).ConfigureAwait(false));
             }
 
-            // Include roles so [Authorize(Roles="...")] works against the API.
+            // Include roles so [Authorize(Roles="...")] works against the API, plus any claims
+            // assigned to those roles (e.g. "Permission=SettingsRead") so policy-based
+            // authorization sees them without us having to duplicate claims onto every user.
             if (userManager.SupportsUserRole)
             {
-                var roles = await userManager.GetRolesAsync(user).ConfigureAwait(false);
-                foreach (var role in roles)
+                var roleNames = await userManager.GetRolesAsync(user).ConfigureAwait(false);
+                foreach (var roleName in roleNames)
                 {
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roleName));
+
+                    var role = await roleManager.FindByNameAsync(roleName).ConfigureAwait(false);
+                    if (role is not null)
+                    {
+                        var roleClaims = await roleManager.GetClaimsAsync(role).ConfigureAwait(false);
+                        foreach (var roleClaim in roleClaims)
+                        {
+                            // Avoid duplicating a claim the user already has directly.
+                            if (!claimsIdentity.HasClaim(roleClaim.Type, roleClaim.Value))
+                            {
+                                claimsIdentity.AddClaim(roleClaim);
+                            }
+                        }
+                    }
                 }
             }
 

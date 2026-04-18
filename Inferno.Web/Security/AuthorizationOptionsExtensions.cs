@@ -1,9 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Inferno.Security;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inferno.Web.Security
 {
     public static class AuthorizationOptionsExtensions
     {
+        /// <summary>
+        /// The claim type used by Inferno to carry fine-grained permission values (e.g. "SettingsRead").
+        /// </summary>
+        public const string PermissionClaimType = "Permission";
+
         public static void AddInfernoWebPolicies(this AuthorizationOptions options)
         {
             options.AddPermission(InfernoWebPolicies.LanguagesRead, "LanguagesRead");
@@ -24,9 +30,23 @@ namespace Inferno.Web.Security
             options.AddPermission(InfernoWebPolicies.MembershipUsersWrite, "MembershipUsersWrite");
         }
 
+        /// <summary>
+        /// Registers an authorization policy that is satisfied when the caller either
+        /// <list type="bullet">
+        ///   <item>has the <c>Administrators</c> role, or</item>
+        ///   <item>has a <c>Permission</c> claim of <c>FullAccess</c> (super admin bypass), or</item>
+        ///   <item>has a <c>Permission</c> claim matching <paramref name="claimValue"/>.</c></item>
+        /// </list>
+        /// This lets the built-in admin user (who has the <c>Administrators</c> role) use every
+        /// admin feature, while still allowing granular <c>Permission</c> claims to be assigned
+        /// to non-admin roles/users to unlock individual endpoints.
+        /// </summary>
         public static void AddPermission(this AuthorizationOptions options, string policyName, string claimValue)
         {
-            options.AddPolicy(policyName, policy => policy.RequireClaim("Permission", claimValue));
+            options.AddPolicy(policyName, policy => policy.RequireAssertion(ctx =>
+                ctx.User.IsInRole(InfernoSecurityConstants.Roles.Administrators) ||
+                ctx.User.HasClaim(PermissionClaimType, StandardPolicies.FullAccess) ||
+                ctx.User.HasClaim(PermissionClaimType, claimValue)));
         }
     }
 }

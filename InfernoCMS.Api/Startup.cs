@@ -1,7 +1,9 @@
 ﻿using Extenso.AspNetCore.OData;
+using Inferno.Web.ContentManagement.Security;
 using InfernoCMS.Data;
 using InfernoCMS.Identity.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -101,6 +103,11 @@ namespace InfernoCMS.Api
                 .AddInfernoJwtBearer(Configuration);
 
             services.AddInfernoAuthorization(Configuration);
+
+            // Register CMS-specific authorization policies (Blog, Pages, Menus, etc.). These are
+            // referenced from CMS OData controllers but aren't part of the core Identity module,
+            // so they're appended here via post-configuration of AuthorizationOptions.
+            services.Configure<AuthorizationOptions>(options => options.AddInfernoCmsPolicies());
 
             // Rate limit the authentication endpoints to blunt brute-force attacks. The
             // limiter is partitioned per client IP so a single attacker cannot starve the

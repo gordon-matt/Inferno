@@ -29,15 +29,15 @@ namespace Inferno.Web.ContentManagement
         {
             builder.Icon(IconName.Edit);
 
-            // Blog
-            builder.Add(T[InfernoCmsLocalizableStrings.Blog.Title].Value, "5", item => item
-                .Url("/admin/blog/index")
-                .Icon(IconName.Paperclip)
-                .Permission(CmsConstants.Policies.BlogRead));
+            //// Blog — TODO: page not yet ported from MantleCMS
+            //builder.Add(T[InfernoCmsLocalizableStrings.Blog.Title].Value, "5", item => item
+            //    .Url("/admin/blog/index")
+            //    .Icon(IconName.Paperclip)
+            //    .Permission(CmsConstants.Policies.BlogRead));
 
-            // Content Blocks
+            // Content Blocks — the page lives at /admin/blocks/content-blocks (see ContentBlocks.razor)
             builder.Add(T[InfernoCmsLocalizableStrings.ContentBlocks.Title].Value, "5", item => item
-                .Url("/admin/content-blocks/index")
+                .Url("/admin/blocks/content-blocks")
                 .Icon(IconName.Square)
                 .Permission(CmsConstants.Policies.ContentBlocksRead));
 
@@ -47,11 +47,11 @@ namespace Inferno.Web.ContentManagement
                 .Icon(IconName.Image)
                 .Permission(CmsConstants.Policies.MediaRead));
 
-            // Menus
-            builder.Add(T[InfernoCmsLocalizableStrings.Menus.Title].Value, "5", item => item
-                .Url("/admin/menus/index")
-                .Icon(IconName.ArrowRight)
-                .Permission(CmsConstants.Policies.MenusRead));
+            //// Menus — TODO: page not yet ported from MantleCMS
+            //builder.Add(T[InfernoCmsLocalizableStrings.Menus.Title].Value, "5", item => item
+            //    .Url("/admin/menus/index")
+            //    .Icon(IconName.ArrowRight)
+            //    .Permission(CmsConstants.Policies.MenusRead));
 
             // Pages
             builder.Add(T[InfernoCmsLocalizableStrings.Pages.Title].Value, "5", item => item
@@ -59,17 +59,17 @@ namespace Inferno.Web.ContentManagement
                 .Icon(IconName.Code)
                 .Permission(CmsConstants.Policies.PagesRead));
 
-            //// Subscribers
+            //// Subscribers — TODO: not yet ported from MantleCMS
             //builder.Add(T[InfernoCmsLocalizableStrings.Newsletters.Subscribers].Value, "5", item => item
             //    .Url("/admin/newsletters/subscribers")
             //    .Icon(IconName.Users)
             //    .Permission(CmsConstants.Policies.NewsletterRead));
 
-            // XML Sitemap
-            builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item
-                .Url("/admin/sitemap/xml-sitemap")
-                .Icon(IconName.Map)
-                .Permission(CmsConstants.Policies.SitemapRead));
+            //// XML Sitemap — TODO: page not yet ported from MantleCMS
+            //builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item
+            //    .Url("/admin/sitemap/xml-sitemap")
+            //    .Icon(IconName.Map)
+            //    .Permission(CmsConstants.Policies.SitemapRead));
         }
     }
 }
