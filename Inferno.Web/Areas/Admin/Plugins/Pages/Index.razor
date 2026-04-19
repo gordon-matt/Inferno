@@ -85,12 +85,12 @@ else
 
                         <Field>
                             <FieldLabel>@T[InfernoWebLocalizableStrings.Plugins.Model.FriendlyName]</FieldLabel>
-                            <TextEdit @bind-Text="Model.FriendlyName" />
+                            <TextInput @bind-Value="Model.FriendlyName" />
                         </Field>
 
                         <Field>
                             <FieldLabel>@T[InfernoWebLocalizableStrings.Plugins.Model.DisplayOrder]</FieldLabel>
-                            <NumericEdit TValue="int" @bind-Value="Model.DisplayOrder" />
+                            <NumericInput TValue="int" @bind-Value="Model.DisplayOrder" />
                         </Field>
 
                         <Field>

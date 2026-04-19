@@ -11,6 +11,6 @@
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Blazorise.Video" Version="1.7.7" />
+    <PackageReference Include="Blazorise.Video" Version="2.1.0" />
   </ItemGroup>
 </Project>
