@@ -1,0 +1,33 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Framework/">
+    <Project Path="Inferno.Caching.Abstractions/Inferno.Caching.Abstractions.csproj" />
+    <Project Path="Inferno.Caching/Inferno.Caching.csproj" />
+    <Project Path="Inferno.Data.Abstractions/Inferno.Data.Abstractions.csproj" />
+    <Project Path="Inferno.Data/Inferno.Data.csproj" />
+    <Project Path="Inferno.Identity/Inferno.Identity.csproj" />
+    <Project Path="Inferno.Localization.Abstractions/Inferno.Localization.Abstractions.csproj" />
+    <Project Path="Inferno.Localization/Inferno.Localization.csproj" />
+    <Project Path="Inferno.Logging.Abstractions/Inferno.Logging.Abstractions.csproj" />
+    <Project Path="Inferno.Logging/Inferno.Logging.csproj" />
+    <Project Path="Inferno.Plugins/Inferno.Plugins.csproj" />
+    <Project Path="Inferno.Security/Inferno.Security.csproj" />
+    <Project Path="Inferno.Tasks.Abstractions/Inferno.Tasks.Abstractions.csproj" />
+    <Project Path="Inferno.Tasks/Inferno.Tasks.csproj" />
+    <Project Path="Inferno.Tenants.Abstractions/Inferno.Tenants.Abstractions.csproj" />
+    <Project Path="Inferno.Tenants/Inferno.Tenants.csproj" />
+    <Project Path="Inferno.Web.ContentManagement/Inferno.Web.ContentManagement.csproj" />
+    <Project Path="Inferno.Web/Inferno.Web.csproj" />
+    <Project Path="Inferno/Inferno.csproj" />
+  </Folder>
+  <Folder Name="/Tests/" />
+  <Project Path="InfernoCMS.Api/InfernoCMS.Api.csproj" />
+  <Project Path="InfernoCMS.Data/InfernoCMS.Data.csproj" />
+  <Project Path="InfernoCMS.Identity/InfernoCMS.Identity.csproj" />
+  <Project Path="InfernoCMS.Services/InfernoCMS.Services.csproj" />
+  <Project Path="InfernoCMS/InfernoCMS.csproj" />
+</Solution>
