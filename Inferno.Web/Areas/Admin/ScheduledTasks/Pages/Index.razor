@@ -1,0 +1,103 @@
+@page "/admin/scheduled-tasks/index"
+@inherits RadzenDataPage<ScheduledTask, int>
+
+<h1>@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]</h1>
+
+<Row hidden="@(ShowEditMode == true)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="ScheduledTask"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="20"
+                        ColumnWidth="160px">
+            <Columns>
+                <RadzenDataGridColumn TItem="ScheduledTask" Property="Name" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Name]" />
+                <RadzenDataGridColumn TItem="ScheduledTask" Property="Seconds" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Seconds]" Width="120px" />
+                <RadzenDataGridColumn TItem="ScheduledTask" Property="Enabled" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Enabled]" Width="100px" />
+                <RadzenDataGridColumn TItem="ScheduledTask" Property="StopOnError" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.StopOnError]" Width="120px" />
+                <RadzenDataGridColumn TItem="ScheduledTask" Property="LastStartUtc" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastStartUtc]" FormatString="{0:yyyy-MM-dd HH:mm:ss}" />
+                <RadzenDataGridColumn TItem="ScheduledTask" Property="LastEndUtc" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastEndUtc]" FormatString="{0:yyyy-MM-dd HH:mm:ss}" />
+                <RadzenDataGridColumn TItem="ScheduledTask" Property="LastSuccessUtc" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastSuccessUtc]" FormatString="{0:yyyy-MM-dd HH:mm:ss}" />
+                <RadzenDataGridColumn TItem="ScheduledTask" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="160px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true" />
+                        <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="play_arrow" Size="ButtonSize.Medium" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.RunNow]" Click="@(args => RunNowAsync(record.Id))" @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Name]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <p class="form-control-plaintext">@Model.Name</p>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Seconds" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Seconds]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenNumeric TValue="int" @bind-Value="Model.Seconds" Min="1" Style="width:100%" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="Enabled" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Enabled]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenCheckBox TValue="bool" @bind-Value="Model.Enabled" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel For="StopOnError" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.StopOnError]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenCheckBox TValue="bool" @bind-Value="Model.StopOnError" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+                    <hr />
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

@@ -23,7 +23,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Services
         {
             infernoPageTypes = new Lazy<IEnumerable<InfernoPageType>>(() =>
             {
-                var typeFinder = EngineContext.Current.Resolve<ITypeFinder>();
+                var typeFinder = DependoResolver.Instance.Resolve<ITypeFinder>();
 
                 var pageTypes = typeFinder.FindClassesOfType<InfernoPageType>()
                     .Select(x => (InfernoPageType)Activator.CreateInstance(x));

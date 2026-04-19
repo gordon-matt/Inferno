@@ -4,21 +4,25 @@ using Extenso.Data.Entity;
 using Inferno.Localization.Entities;
 using Inferno.Localization.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Api
 {
     //[Authorize(Roles = InfernoConstants.Roles.Administrators)]
+    [Authorize]
     public class ContentBlockApiController : BaseODataController<ContentBlock, Guid>
     {
         private readonly Lazy<ILocalizablePropertyService> localizablePropertyService;
 
         public ContentBlockApiController(
+            IAuthorizationService authorizationService,
             IRepository<ContentBlock> repository,
             Lazy<ILocalizablePropertyService> localizablePropertyService)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.localizablePropertyService = localizablePropertyService;
         }
@@ -27,7 +31,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
 
         protected override void SetNewId(ContentBlock entity) => entity.Id = Guid.NewGuid();
 
-        public override async Task<IActionResult> Get(ODataQueryOptions<ContentBlock> options)
+        public override async Task<IActionResult> Get(ODataQueryOptions<ContentBlock> options, CancellationToken cancellationToken)
         {
             if (!await AuthorizeAsync(ReadPermission))
             {
@@ -43,7 +47,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
             // NOTE: Change due to: https://github.com/OData/WebApi/issues/1235
             var connection = GetDisposableConnection();
             var query = connection.Query(x => x.PageId == null);
-            query = await ApplyMandatoryFilterAsync(query);
+            query = await ApplyMandatoryFilterAsync(query, cancellationToken);
             var results = options.ApplyTo(query, IgnoreQueryOptions);
 
             var response = await Task.FromResult((results as IQueryable<ContentBlock>).ToHashSet());
@@ -71,22 +75,22 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
             return await (results as IQueryable<ContentBlock>).ToHashSetAsync();
         }
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] ContentBlock entity)
+        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] ContentBlock entity, CancellationToken cancellationToken)
         {
             var blockType = Type.GetType(entity.BlockType);
-            var contentBlocks = EngineContext.Current.ResolveAll<IContentBlock>();
+            var contentBlocks = DependoResolver.Instance.ResolveAll<IContentBlock>();
             var contentBlock = contentBlocks.First(x => x.GetType() == blockType);
             entity.BlockName = contentBlock.Name;
-            return await base.Put(key, entity);
+            return await base.Put(key, entity, cancellationToken);
         }
 
-        public override async Task<IActionResult> Post([FromBody] ContentBlock entity)
+        public override async Task<IActionResult> Post([FromBody] ContentBlock entity, CancellationToken cancellationToken)
         {
             var blockType = Type.GetType(entity.BlockType);
-            var contentBlocks = EngineContext.Current.ResolveAll<IContentBlock>();
+            var contentBlocks = DependoResolver.Instance.ResolveAll<IContentBlock>();
             var contentBlock = contentBlocks.First(x => x.GetType() == blockType);
             entity.BlockName = contentBlock.Name;
-            return await base.Post(entity);
+            return await base.Post(entity, cancellationToken);
         }
 
         [HttpGet]
@@ -112,11 +116,14 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
             string entityType = typeof(ContentBlock).FullName;
             string entityId = entity.Id.ToString();
 
-            var localizedRecord = await localizablePropertyService.Value.FindOneAsync(x =>
-                x.CultureCode == cultureCode &&
-                x.EntityType == entityType &&
-                x.EntityId == entityId &&
-                x.Property == "BlockValues");
+            var localizedRecord = await localizablePropertyService.Value.FindOneAsync(new SearchOptions<LocalizableProperty>
+            {
+                Query = x =>
+                    x.CultureCode == cultureCode &&
+                    x.EntityType == entityType &&
+                    x.EntityId == entityId &&
+                    x.Property == "BlockValues"
+            });
 
             if (localizedRecord != null)
             {
@@ -149,11 +156,14 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
             string entityType = typeof(ContentBlock).FullName;
             string entityId = entity.Id.ToString();
 
-            var localizedRecord = await localizablePropertyService.Value.FindOneAsync(x =>
-                x.CultureCode == cultureCode &&
-                x.EntityType == entityType &&
-                x.EntityId == entityId &&
-                x.Property == "BlockValues");
+            var localizedRecord = await localizablePropertyService.Value.FindOneAsync(new SearchOptions<LocalizableProperty>
+            {
+                Query = x =>
+                    x.CultureCode == cultureCode &&
+                    x.EntityType == entityType &&
+                    x.EntityId == entityId &&
+                    x.Property == "BlockValues"
+            });
 
             if (localizedRecord == null)
             {

@@ -2,6 +2,7 @@
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
@@ -10,8 +11,8 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
     {
         private readonly IPageService service;
 
-        public PageApiController(IRepository<Page> repository, IPageService service)
-            : base(repository)
+        public PageApiController(IAuthorizationService authorizationService, IRepository<Page> repository, IPageService service)
+            : base(authorizationService, repository)
         {
             this.service = service;
         }

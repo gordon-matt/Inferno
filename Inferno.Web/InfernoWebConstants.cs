@@ -40,6 +40,10 @@
             {
                 public const string Language = "LanguageApi";
                 public const string LocalizableString = "LocalizableStringApi";
+                public const string Log = "LogApi";
+                public const string MembershipUser = "UserApi";
+                public const string MembershipRole = "RoleApi";
+                public const string ScheduledTask = "ScheduledTaskApi";
                 public const string Settings = "SettingsApi";
                 public const string Tenant = "TenantApi";
             }

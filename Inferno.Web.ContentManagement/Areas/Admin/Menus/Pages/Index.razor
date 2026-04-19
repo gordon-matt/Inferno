@@ -1,0 +1,92 @@
+@page "/admin/menus/index"
+@using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities
+@inherits RadzenDataPage<Menu, Guid>
+
+<h1>@T[InfernoCmsLocalizableStrings.Menus.ManageMenus]</h1>
+
+<Row hidden="@(ShowEditMode == true)">
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Click="Create">
+            <Icon Name="IconName.PlusCircle"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Create]
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="Menu"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="10"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="Menu" Property="Name" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuModel.Name]" />
+                <RadzenDataGridColumn TItem="Menu" Property="UrlFilter" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuModel.UrlFilter]" />
+                <RadzenDataGridColumn TItem="Menu" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="180px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="list" Size="ButtonSize.Medium" Click="@(() => NavigateToItems(record.Id))" @onclick:stopPropagation="true" Title="@T[InfernoCmsLocalizableStrings.Menus.ManageMenuItems]"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(() => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(() => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <DataAnnotationsValidator />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Menus.MenuModel.Name]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenTextBox @bind-Value="Model.Name" Style="width:100%" Name="Name" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Menus.MenuModel.UrlFilter]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenTextBox @bind-Value="Model.UrlFilter" Style="width:100%" Name="UrlFilter" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <hr />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

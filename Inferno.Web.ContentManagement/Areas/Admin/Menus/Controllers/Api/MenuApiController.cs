@@ -1,14 +1,15 @@
 ﻿using Extenso.Data.Entity;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Controllers.Api
 {
     //[Authorize(Roles = InfernoConstants.Roles.Administrators)]
     public class MenuApiController : GenericTenantODataController<Menu, Guid>
     {
-        public MenuApiController(IRepository<Menu> repository)
-            : base(repository)
+        public MenuApiController(IAuthorizationService authorizationService, IRepository<Menu> repository)
+            : base(authorizationService, repository)
         {
         }
 

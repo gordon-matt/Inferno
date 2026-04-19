@@ -2,6 +2,7 @@
 {
     public static class StandardPolicies
     {
-        public const string FullAccess = "Full Access";
+        public const string AdminAccess = "AdminAccess";
+        public const string FullAccess = "FullAccess";
     }
 }

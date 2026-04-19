@@ -23,7 +23,10 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Services
         {
             return refId == Guid.Empty
                 ? null
-                : FindOne(x => x.RefId == refId);
+                : FindOne(new SearchOptions<MenuItem>
+                {
+                    Query = x => x.RefId == refId
+                });
         }
 
         public IEnumerable<MenuItem> GetMenuItems(Guid menuId, bool enabledOnly = false)

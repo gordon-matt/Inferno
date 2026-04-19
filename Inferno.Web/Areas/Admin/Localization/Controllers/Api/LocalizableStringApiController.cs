@@ -4,6 +4,7 @@ using Inferno.Localization.Entities;
 using Inferno.Web.Areas.Admin.Localization.Models;
 using Inferno.Web.OData;
 using Inferno.Web.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
@@ -14,8 +15,8 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
     {
         private readonly ICacheManager cacheManager;
 
-        public LocalizableStringApiController(IRepository<LocalizableString> repository, ICacheManager cacheManager)
-            : base(repository)
+        public LocalizableStringApiController(IAuthorizationService authorizationService, IRepository<LocalizableString> repository, ICacheManager cacheManager)
+            : base(authorizationService, repository)
         {
             this.cacheManager = cacheManager;
         }
@@ -83,7 +84,13 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
             }
 
             int tenantId = GetTenantId();
-            var localizedString = await Repository.FindOneAsync(x => x.TenantId == tenantId && x.CultureCode == cultureCode && x.TextKey == key);
+            var localizedString = await Repository.FindOneAsync(new SearchOptions<LocalizableString>
+            {
+                Query = x =>
+                    x.TenantId == tenantId &&
+                    x.CultureCode == cultureCode &&
+                    x.TextKey == key
+            });
 
             if (localizedString == null)
             {
@@ -120,7 +127,14 @@ namespace Inferno.Web.Areas.Admin.Localization.Controllers.Api
             string key = (string)parameters["key"];
 
             int tenantId = GetTenantId();
-            var entity = await Repository.FindOneAsync(x => x.TenantId == tenantId && x.CultureCode == cultureCode && x.TextKey == key);
+            var entity = await Repository.FindOneAsync(new SearchOptions<LocalizableString>
+            {
+                Query = x =>
+                    x.TenantId == tenantId &&
+                    x.CultureCode == cultureCode &&
+                    x.TextKey == key
+            });
+
             if (entity == null)
             {
                 return NotFound();

@@ -1,6 +1,7 @@
-﻿using Autofac;
-using Dependo.Autofac;
+﻿using Dependo;
 using Inferno.Localization.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Inferno.Localization.Infrastructure
 {
@@ -8,11 +9,11 @@ namespace Inferno.Localization.Infrastructure
     {
         #region IDependencyRegistrar Members
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
+        public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
         {
-            builder.RegisterType<LanguageService>().As<ILanguageService>().InstancePerDependency();
-            builder.RegisterType<LocalizableStringService>().As<ILocalizableStringService>().InstancePerDependency();
-            builder.RegisterType<LocalizablePropertyService>().As<ILocalizablePropertyService>().InstancePerDependency();
+            builder.Register<ILanguageService, LanguageService>(ServiceLifetime.Transient);
+            builder.Register<ILocalizableStringService, LocalizableStringService>(ServiceLifetime.Transient);
+            builder.Register<ILocalizablePropertyService, LocalizablePropertyService>(ServiceLifetime.Transient);
         }
 
         public int Order => 0;

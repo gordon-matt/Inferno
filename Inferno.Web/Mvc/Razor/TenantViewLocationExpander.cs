@@ -13,7 +13,7 @@ namespace Inferno.Web.Mvc.Razor
         {
             base.PopulateValues(context);
             //context.Values[THEME_KEY] = context.ActionContext.HttpContext.GetTenant<Tenant>()?.Theme;
-            var siteSettings = EngineContext.Current.Resolve<SiteSettings>();
+            var siteSettings = DependoResolver.Instance.Resolve<SiteSettings>();
             //context.Values[THEME_KEY] = siteSettings.DefaultTheme;
         }
 

@@ -1,293 +1,246 @@
 ﻿using System.Linq.Expressions;
 using Dependo;
+using Extenso.Collections.Generic;
 using Extenso.Data.Entity;
 using Inferno.Caching;
 using Microsoft.Extensions.Logging;
 
-namespace Inferno.Data.Services
+namespace Inferno.Data.Services;
+
+public class GenericDataService<TEntity> : IGenericDataService<TEntity> where TEntity : class
 {
-    public class GenericDataService<TEntity> : IGenericDataService<TEntity> where TEntity : class
+    #region Private Members
+
+    private static string cacheKey;
+    private static string cacheKeyFiltered;
+    private readonly IRepository<TEntity> repository;
+
+    #endregion Private Members
+
+    #region Properties
+
+    protected virtual string CacheKey
     {
-        #region Private Members
-
-        private static string cacheKey;
-        private static string cacheKeyFiltered;
-        private readonly IRepository<TEntity> repository;
-
-        #endregion Private Members
-
-        #region Properties
-
-        protected virtual string CacheKey
+        get
         {
-            get
+            if (string.IsNullOrEmpty(cacheKey))
             {
-                if (string.IsNullOrEmpty(cacheKey))
-                {
-                    cacheKey = string.Format("Repository_{0}", typeof(TEntity).Name);
-                }
-                return cacheKey;
+                cacheKey = string.Format("Repository_{0}", typeof(TEntity).Name);
             }
+            return cacheKey;
         }
+    }
 
-        protected virtual string CacheKeyFiltered
+    protected virtual string CacheKeyFiltered
+    {
+        get
         {
-            get
+            if (string.IsNullOrEmpty(cacheKeyFiltered))
             {
-                if (string.IsNullOrEmpty(cacheKeyFiltered))
-                {
-                    cacheKeyFiltered = string.Format("Repository_{0}_{{0}}", typeof(TEntity).Name);
-                }
-                return cacheKeyFiltered;
+                cacheKeyFiltered = string.Format("Repository_{0}_{{0}}", typeof(TEntity).Name);
             }
+            return cacheKeyFiltered;
         }
+    }
 
-        public ICacheManager CacheManager { get; private set; }
+    public ICacheManager CacheManager { get; private set; }
 
-        public ILogger Logger { get; private set; }
+    public ILogger Logger { get; private set; }
 
-        #endregion Properties
+    #endregion Properties
 
-        #region Constructor
+    #region Constructor
 
-        public GenericDataService(
-            ICacheManager cacheManager,
-            IRepository<TEntity> repository)
-        {
-            CacheManager = cacheManager;
-            this.repository = repository;
+    public GenericDataService(
+        ICacheManager cacheManager,
+        IRepository<TEntity> repository)
+    {
+        CacheManager = cacheManager;
+        this.repository = repository;
 
-            var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
-            Logger = loggerFactory.CreateLogger<GenericDataService<TEntity>>();
-        }
+        var loggerFactory = DependoResolver.Instance.Resolve<ILoggerFactory>();
+        Logger = loggerFactory.CreateLogger<GenericDataService<TEntity>>();
+    }
 
-        #endregion Constructor
+    #endregion Constructor
 
-        #region IGenericDataService<TEntity> Members
+    #region IGenericDataService<TEntity> Members
 
-        #region Find
+    #region Find
 
-        public virtual IEnumerable<TEntity> Find(params Expression<Func<TEntity, dynamic>>[] includePaths)
-        {
-            return CacheManager.Get(CacheKey, () =>
-            {
-                return repository.Find(includePaths);
-            });
-        }
+    // TODO: Caching.
 
-        public virtual IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> filterExpression, params Expression<Func<TEntity, dynamic>>[] includePaths)
-        {
-            return repository.Find(filterExpression, includePaths);
-        }
+    public virtual IPagedCollection<TEntity> Find(SearchOptions<TEntity> options) =>
+        repository.Find(options);
 
-        public virtual async Task<IEnumerable<TEntity>> FindAsync(params Expression<Func<TEntity, dynamic>>[] includePaths)
-        {
-            return await CacheManager.Get(CacheKey, async () =>
-            {
-                return await repository.FindAsync(includePaths);
-            });
-        }
+    public virtual IPagedCollection<TResult> Find<TResult>(SearchOptions<TEntity> options, Expression<Func<TEntity, TResult>> projection) =>
+        repository.Find(options, projection);
 
-        public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> filterExpression, params Expression<Func<TEntity, dynamic>>[] includePaths)
-        {
-            return await repository.FindAsync(filterExpression, includePaths);
-        }
+    public virtual Task<IPagedCollection<TEntity>> FindAsync(SearchOptions<TEntity> options) =>
+        repository.FindAsync(options);
 
-        public virtual TEntity FindOne(params object[] keyValues)
-        {
-            return repository.FindOne(keyValues);
-        }
+    public virtual Task<IPagedCollection<TResult>> FindAsync<TResult>(SearchOptions<TEntity> options, Expression<Func<TEntity, TResult>> projection) =>
+        repository.FindAsync(options, projection);
 
-        public virtual TEntity FindOne(Expression<Func<TEntity, bool>> filterExpression, params Expression<Func<TEntity, dynamic>>[] includePaths)
-        {
-            return repository.FindOne(filterExpression, includePaths);
-        }
+    public virtual TEntity FindOne(params object[] keyValues) =>
+        repository.FindOne(keyValues);
 
-        public virtual async Task<TEntity> FindOneAsync(params object[] keyValues)
-        {
-            return await repository.FindOneAsync(keyValues);
-        }
+    public virtual TEntity FindOne(SearchOptions<TEntity> options) =>
+        repository.FindOne(options);
 
-        public virtual async Task<TEntity> FindOneAsync(Expression<Func<TEntity, bool>> filterExpression, params Expression<Func<TEntity, dynamic>>[] includePaths)
-        {
-            return await repository.FindOneAsync(filterExpression, includePaths);
-        }
+    public virtual TResult FindOne<TResult>(SearchOptions<TEntity> options, Expression<Func<TEntity, TResult>> projection) =>
+        repository.FindOne(options, projection);
 
-        #endregion Find
+    public virtual Task<TEntity> FindOneAsync(params object[] keyValues) =>
+        repository.FindOneAsync(keyValues);
 
-        #region Open/Use Connection
+    public virtual Task<TEntity> FindOneAsync(SearchOptions<TEntity> options) =>
+        repository.FindOneAsync(options);
 
-        public virtual IRepositoryConnection<TEntity> OpenConnection()
-        {
-            return repository.OpenConnection();
-        }
+    public virtual Task<TResult> FindOneAsync<TResult>(SearchOptions<TEntity> options, Expression<Func<TEntity, TResult>> projection) =>
+        repository.FindOneAsync(options, projection);
 
-        public virtual IRepositoryConnection<TEntity> UseConnection<TOther>(IRepositoryConnection<TOther> connection)
-            where TOther : class
-        {
-            return repository.UseConnection(connection);
-        }
+    #endregion Find
 
-        #endregion Open/Use Connection
+    #region Open/Use Connection
 
-        #region Count
+    public virtual IRepositoryConnection<TEntity> OpenConnection() => repository.OpenConnection();
 
-        public virtual int Count()
-        {
-            return repository.Count();
-        }
+    public virtual IRepositoryConnection<TEntity> UseConnection<TOther>(IRepositoryConnection<TOther> connection)
+        where TOther : class => repository.UseConnection(connection);
 
-        public virtual int Count(Expression<Func<TEntity, bool>> countExpression)
-        {
-            return repository.Count(countExpression);
-        }
+    #endregion Open/Use Connection
 
-        public virtual async Task<int> CountAsync()
-        {
-            return await repository.CountAsync();
-        }
+    #region Count
 
-        public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>> countExpression)
-        {
-            return await repository.CountAsync(countExpression);
-        }
+    public virtual int Count() => repository.Count();
 
-        #endregion Count
+    public virtual int Count(Expression<Func<TEntity, bool>> countExpression) => repository.Count(countExpression);
 
-        #region Delete
+    public virtual async Task<int> CountAsync() => await repository.CountAsync();
 
-        public virtual int DeleteAll()
-        {
-            int rowsAffected = repository.DeleteAll();
-            ClearCache();
-            return rowsAffected;
-        }
+    public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>> countExpression) => await repository.CountAsync(countExpression);
 
-        public virtual int Delete(TEntity entity)
-        {
-            int rowsAffected = repository.Delete(entity);
-            ClearCache();
-            return rowsAffected;
-        }
+    #endregion Count
 
-        public virtual int Delete(IEnumerable<TEntity> entities)
-        {
-            int rowsAffected = repository.Delete(entities);
-            ClearCache();
-            return rowsAffected;
-        }
+    #region Delete
 
-        public virtual int Delete(Expression<Func<TEntity, bool>> filterExpression)
-        {
-            int rowsAffected = repository.Delete(filterExpression);
-            ClearCache();
-            return rowsAffected;
-        }
+    public virtual int DeleteAll()
+    {
+        int rowsAffected = repository.DeleteAll();
+        ClearCache();
+        return rowsAffected;
+    }
 
-        public virtual int Delete(IQueryable<TEntity> query)
-        {
-            int rowsAffected = repository.Delete(query);
-            ClearCache();
-            return rowsAffected;
-        }
+    public virtual int Delete(TEntity entity)
+    {
+        int rowsAffected = repository.Delete(entity);
+        ClearCache();
+        return rowsAffected;
+    }
 
-        public virtual async Task<int> DeleteAllAsync()
-        {
-            return await repository.DeleteAllAsync();
-        }
+    public virtual int Delete(IEnumerable<TEntity> entities)
+    {
+        int rowsAffected = repository.Delete(entities);
+        ClearCache();
+        return rowsAffected;
+    }
 
-        public virtual async Task<int> DeleteAsync(TEntity entity)
-        {
-            return await repository.DeleteAsync(entity);
-        }
+    public virtual int Delete(Expression<Func<TEntity, bool>> filterExpression)
+    {
+        int rowsAffected = repository.Delete(filterExpression);
+        ClearCache();
+        return rowsAffected;
+    }
 
-        public virtual async Task<int> DeleteAsync(IEnumerable<TEntity> entities)
-        {
-            return await repository.DeleteAsync(entities);
-        }
+    public virtual int Delete(IQueryable<TEntity> query)
+    {
+        int rowsAffected = repository.Delete(query);
+        ClearCache();
+        return rowsAffected;
+    }
 
-        public virtual async Task<int> DeleteAsync(Expression<Func<TEntity, bool>> filterExpression)
-        {
-            return await repository.DeleteAsync(filterExpression);
-        }
+    public virtual async Task<int> DeleteAllAsync() => await repository.DeleteAllAsync();
 
-        public virtual async Task<int> DeleteAsync(IQueryable<TEntity> query)
-        {
-            return await repository.DeleteAsync(query);
-        }
+    public virtual async Task<int> DeleteAsync(TEntity entity) => await repository.DeleteAsync(entity);
 
-        #endregion Delete
+    public virtual async Task<int> DeleteAsync(IEnumerable<TEntity> entities) => await repository.DeleteAsync(entities);
 
-        #region Insert
+    public virtual async Task<int> DeleteAsync(Expression<Func<TEntity, bool>> filterExpression) => await repository.DeleteAsync(filterExpression);
 
-        public virtual int Insert(TEntity entity)
-        {
-            int rowsAffected = repository.Insert(entity);
-            ClearCache();
-            return rowsAffected;
-        }
+    public virtual async Task<int> DeleteAsync(IQueryable<TEntity> query) => await repository.DeleteAsync(query);
 
-        public virtual int Insert(IEnumerable<TEntity> entities)
-        {
-            int rowsAffected = repository.Insert(entities);
-            ClearCache();
-            return rowsAffected;
-        }
+    #endregion Delete
 
-        public virtual async Task<int> InsertAsync(TEntity entity)
-        {
-            int rowsAffected = await repository.InsertAsync(entity);
-            ClearCache();
-            return rowsAffected;
-        }
+    #region Insert
 
-        public virtual async Task<int> InsertAsync(IEnumerable<TEntity> entities)
-        {
-            int rowsAffected = await repository.InsertAsync(entities);
-            ClearCache();
-            return rowsAffected;
-        }
+    public virtual TEntity Insert(TEntity entity)
+    {
+        entity = repository.Insert(entity);
+        ClearCache();
+        return entity;
+    }
 
-        #endregion Insert
+    public virtual IEnumerable<TEntity> Insert(IEnumerable<TEntity> entities)
+    {
+        entities = repository.Insert(entities);
+        ClearCache();
+        return entities;
+    }
 
-        #region Update
+    public virtual async Task<TEntity> InsertAsync(TEntity entity)
+    {
+        entity = await repository.InsertAsync(entity);
+        ClearCache();
+        return entity;
+    }
 
-        public virtual int Update(TEntity entity)
-        {
-            int rowsAffected = repository.Update(entity);
-            ClearCache();
-            return rowsAffected;
-        }
+    public virtual async Task<IEnumerable<TEntity>> InsertAsync(IEnumerable<TEntity> entities)
+    {
+        entities = await repository.InsertAsync(entities);
+        ClearCache();
+        return entities;
+    }
 
-        public virtual int Update(IEnumerable<TEntity> entities)
-        {
-            int rowsAffected = repository.Update(entities);
-            ClearCache();
-            return rowsAffected;
-        }
+    #endregion Insert
 
-        public virtual async Task<int> UpdateAsync(TEntity entity)
-        {
-            int rowsAffected = await repository.UpdateAsync(entity);
-            ClearCache();
-            return rowsAffected;
-        }
+    #region Update
 
-        public virtual async Task<int> UpdateAsync(IEnumerable<TEntity> entities)
-        {
-            int rowsAffected = await repository.UpdateAsync(entities);
-            ClearCache();
-            return rowsAffected;
-        }
+    public virtual TEntity Update(TEntity entity)
+    {
+        entity = repository.Update(entity);
+        ClearCache();
+        return entity;
+    }
 
-        #endregion Update
+    public virtual IEnumerable<TEntity> Update(IEnumerable<TEntity> entities)
+    {
+        entities = repository.Update(entities);
+        ClearCache();
+        return entities;
+    }
 
-        #endregion IGenericDataService<TEntity> Members
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity)
+    {
+        entity = await repository.UpdateAsync(entity);
+        ClearCache();
+        return entity;
+    }
 
-        protected virtual void ClearCache()
-        {
-            CacheManager.Remove(CacheKey);
-            CacheManager.RemoveByPattern(string.Format(CacheKeyFiltered, ".*"));
-        }
+    public virtual async Task<IEnumerable<TEntity>> UpdateAsync(IEnumerable<TEntity> entities)
+    {
+        entities = await repository.UpdateAsync(entities);
+        ClearCache();
+        return entities;
+    }
+
+    #endregion Update
+
+    #endregion IGenericDataService<TEntity> Members
+
+    protected virtual void ClearCache()
+    {
+        CacheManager.Remove(CacheKey);
+        CacheManager.RemoveByPattern(string.Format(CacheKeyFiltered, ".*"));
     }
 }

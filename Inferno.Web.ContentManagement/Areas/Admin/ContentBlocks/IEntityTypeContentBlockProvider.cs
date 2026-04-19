@@ -19,7 +19,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 
         public virtual IEnumerable<IContentBlock> GetContentBlocks(string zoneName, string entityType, string entityId)
         {
-            var workContext = EngineContext.Current.Resolve<IWorkContext>();
+            var workContext = DependoResolver.Instance.Resolve<IWorkContext>();
 
             var contentBlocks = entityTypeContentBlockService.GetContentBlocks(entityType, entityId, zoneName, workContext.CurrentCultureCode);
             return contentBlocks.ToList();

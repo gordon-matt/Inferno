@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dependo.Autofac" Version="1.2.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
+    <ProjectReference Include="..\Inferno.Logging.Abstractions\Inferno.Logging.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

@@ -29,7 +29,10 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
             }
 
             int tenantId = GetTenantId();
-            var pages = await repository.FindAsync(x => x.TenantId == tenantId);
+            var pages = await repository.FindAsync(new SearchOptions<Page>
+            {
+                Query = x => x.TenantId == tenantId
+            });
 
             var hierarchy = pages
                 .Where(x => x.ParentId == null)
@@ -63,7 +66,11 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
             }
 
             int tenantId = GetTenantId();
-            var pages = await repository.FindAsync(x => x.TenantId == tenantId);
+            var pages = await repository.FindAsync(new SearchOptions<Page>
+            {
+                Query = x => x.TenantId == tenantId
+            });
+
             var entity = pages.FirstOrDefault(x => x.Id == key);
 
             return SingleResult.Create(new[] { entity }.Select(x => new PageTreeItem
@@ -92,7 +99,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
 
         protected virtual async Task<bool> AuthorizeAsync(string policyName)
         {
-            var authorizationService = EngineContext.Current.Resolve<IAuthorizationService>();
+            var authorizationService = DependoResolver.Instance.Resolve<IAuthorizationService>();
             if (authorizationService == null || string.IsNullOrEmpty(policyName))
             {
                 return true;

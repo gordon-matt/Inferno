@@ -1,4 +1,5 @@
-﻿@using Inferno.Models;
+﻿@using Extenso.Data.Entity
+@using Inferno.Models;
 @using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
@@ -51,8 +52,14 @@
     protected override async Task OnInitializedAsync()
     {
         availableFilterTypes = Extenso.EnumExtensions.GetValues<FilterType>().Select(x => new IdNamePair<byte> { Id = (byte)x, Name = x.ToString() });
-        availableCategories = await CategoryService.FindAsync();
-        availableTags = await TagService.FindAsync();
+        availableCategories = await CategoryService.FindAsync(new SearchOptions<BlogCategory>
+        {
+            Query = x => true
+        });
+        availableTags = await TagService.FindAsync(new SearchOptions<BlogTag>
+        {
+            Query = x => true
+        });
         await base.OnInitializedAsync();
     }
 }

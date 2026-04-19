@@ -44,7 +44,7 @@ namespace Inferno.Web.Security.Membership
 
         public async Task PopulateFieldsAsync(string userId)
         {
-            var membershipService = EngineContext.Current.Resolve<IMembershipService>();
+            var membershipService = DependoResolver.Instance.Resolve<IMembershipService>();
 
             var profile = await membershipService.GetProfileAsync(userId);
 

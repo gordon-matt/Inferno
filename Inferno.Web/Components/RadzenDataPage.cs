@@ -40,10 +40,22 @@ namespace Inferno.Web.Components
         protected virtual async Task LoadGridAsync(LoadDataArgs args)
         {
             IsLoading = true;
+
             string odataFilter = GetODataFilter(args);
-            var result = await ODataService.FindAsync(filter: odataFilter, top: args.Top, skip: args.Skip, orderby: args.OrderBy, count: true);
-            Records = result.Value.AsODataEnumerable();
-            RecordCount = result.Count;
+            var response = await ODataService.FindAsync(filter: odataFilter, top: args.Top, skip: args.Skip, orderby: args.OrderBy, count: true);
+            if (response.Succeeded)
+            {
+                Records = response.Data.Value.AsODataEnumerable();
+                RecordCount = response.Data.Count;
+            }
+            else
+            {
+                Records = Enumerable.Empty<TEntity>();
+                RecordCount = 0;
+                NotificationService.Notify(NotificationSeverity.Error, "Error", "Unable to retrieve records!");
+                // TODO: Log Error
+            }
+
             IsLoading = false;
         }
 
@@ -57,32 +69,45 @@ namespace Inferno.Web.Components
 
         protected virtual async Task EditAsync(TKey id)
         {
-            Model = await ODataService.FindOneAsync(id);
-            ShowEditMode = true;
+            var response = await ODataService.FindOneAsync(id);
+            if (response.Succeeded)
+            {
+                Model = response.Data;
+                ShowEditMode = true;
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Error", "Unable to retrieve record!");
+                // TODO: Log Error
+            }
         }
 
         protected virtual async Task OnValidSumbitAsync()
         {
-            try
-            {
-                var key = (TKey)Model.KeyValues.First();
-                if (key.IsDefault())
-                {
-                    var result = await ODataService.InsertAsync(Model);
-                    NotificationService.Notify(NotificationSeverity.Info, "Info", "Record created!");
-                }
-                else
-                {
-                    var result = await ODataService.UpdateAsync(key, Model);
-                    NotificationService.Notify(NotificationSeverity.Info, "Info", "Record updated!");
-                }
+            var key = (TKey)Model.KeyValues.First();
+            bool isInsert = key.IsDefault();
 
+            var response = isInsert
+                ? await ODataService.InsertAsync(Model)
+                : await ODataService.UpdateAsync(key, Model);
+
+            if (response.Succeeded)
+            {
                 await DataGrid.Reload();
                 ShowEditMode = false;
+
+                NotificationService.Notify(
+                    NotificationSeverity.Info,
+                    "Info",
+                    isInsert ? "Record created!" : "Record updated!");
             }
-            catch
+            else
             {
-                NotificationService.Notify(NotificationSeverity.Error, "Error", "Unable to save record!");
+                NotificationService.Notify(
+                    NotificationSeverity.Error,
+                    "Error",
+                    isInsert ? "Unable to insert record!" : "Unable to update record!");
+
                 // TODO: Log Error
             }
         }
@@ -93,9 +118,17 @@ namespace Inferno.Web.Components
             {
                 if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
                 {
-                    using var response = await ODataService.DeleteAsync(id);
-                    await DataGrid.Reload();
-                    NotificationService.Notify(NotificationSeverity.Info, "Info", "Record deleted!");
+                    var response = await ODataService.DeleteAsync(id);
+                    if (response.Succeeded)
+                    {
+                        await DataGrid.Reload();
+                        NotificationService.Notify(NotificationSeverity.Info, "Info", "Record deleted!");
+                    }
+                    else
+                    {
+                        NotificationService.Notify(NotificationSeverity.Error, "Error", "Unable to delete record!");
+                        // TODO: Log Error
+                    }
                 }
             }
             catch

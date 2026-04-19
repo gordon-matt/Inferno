@@ -1,0 +1,105 @@
+@page "/admin/plugins"
+
+<h1>@T[InfernoWebLocalizableStrings.Plugins.Title]</h1>
+
+@if (!ShowEditMode)
+{
+    <Row>
+        <Column ColumnSize="ColumnSize.Is12">
+            <RadzenDataGrid @ref="DataGrid"
+                            TItem="EdmPluginDescriptor"
+                            IsLoading="@IsLoading"
+                            LoadData="@LoadGridAsync"
+                            Data="Records"
+                            Count="@RecordCount"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            FilterMode="FilterMode.Advanced"
+                            AllowSorting="true"
+                            AllowFiltering="true"
+                            AllowPaging="true"
+                            PageSize="20"
+                            ColumnWidth="160px">
+                <Columns>
+                    <RadzenDataGridColumn TItem="EdmPluginDescriptor" Property="Group" Title="@T[InfernoWebLocalizableStrings.Plugins.Model.Group]" Width="160px" />
+                    <RadzenDataGridColumn TItem="EdmPluginDescriptor" Property="FriendlyName" Title="@T[InfernoWebLocalizableStrings.General.Name]">
+                        <Template Context="record">
+                            <strong>@record.FriendlyName</strong>
+                            <div class="text-muted small">
+                                @record.SystemName
+                                @if (!string.IsNullOrEmpty(record.Version))
+                                {
+                                    <text> &middot; v@(record.Version)</text>
+                                }
+                                @if (!string.IsNullOrEmpty(record.Author))
+                                {
+                                    <text> &middot; @record.Author</text>
+                                }
+                            </div>
+                            @if (!string.IsNullOrEmpty(record.Description))
+                            {
+                                <div class="small">@record.Description</div>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="EdmPluginDescriptor" Property="DisplayOrder" Title="@T[InfernoWebLocalizableStrings.Plugins.Model.DisplayOrder]" Width="120px" />
+                    <RadzenDataGridColumn TItem="EdmPluginDescriptor" Property="Installed" Title="@T[InfernoWebLocalizableStrings.General.Status]" Width="120px">
+                        <Template Context="record">
+                            @if (record.Installed)
+                            {
+                                <Badge Color="Color.Success">@T[InfernoWebLocalizableStrings.General.Installed]</Badge>
+                            }
+                            else
+                            {
+                                <Badge Color="Color.Secondary">@T[InfernoWebLocalizableStrings.General.NotInstalled]</Badge>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="EdmPluginDescriptor" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="240px">
+                        <Template Context="record">
+                            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="edit" Size="ButtonSize.Medium" Text="@T[InfernoWebLocalizableStrings.General.Edit]" Click="@(() => EditAsync(record))" @onclick:stopPropagation="true" />
+                            @if (record.Installed)
+                            {
+                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium" Text="@T[InfernoWebLocalizableStrings.General.Uninstall]" Click="@(() => UninstallAsync(record))" @onclick:stopPropagation="true" />
+                            }
+                            else
+                            {
+                                <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="check" Size="ButtonSize.Medium" Text="@T[InfernoWebLocalizableStrings.General.Install]" Click="@(() => InstallAsync(record))" @onclick:stopPropagation="true" />
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </Column>
+    </Row>
+}
+else
+{
+    <Row>
+        <Column ColumnSize="ColumnSize.Is12">
+            <Card>
+                <CardHeader>@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
+                <CardBody>
+                    <EditForm Model="@Model" OnValidSubmit="OnValidSubmitAsync">
+                        <DataAnnotationsValidator />
+                        <Microsoft.AspNetCore.Components.Forms.ValidationSummary />
+
+                        <Field>
+                            <FieldLabel>@T[InfernoWebLocalizableStrings.Plugins.Model.FriendlyName]</FieldLabel>
+                            <TextEdit @bind-Text="Model.FriendlyName" />
+                        </Field>
+
+                        <Field>
+                            <FieldLabel>@T[InfernoWebLocalizableStrings.Plugins.Model.DisplayOrder]</FieldLabel>
+                            <NumericEdit TValue="int" @bind-Value="Model.DisplayOrder" />
+                        </Field>
+
+                        <Field>
+                            <RadzenButton ButtonStyle="ButtonStyle.Light" ButtonType="Radzen.ButtonType.Button" Text="@T[InfernoWebLocalizableStrings.General.Cancel]" Click="Cancel" />
+                            <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="Radzen.ButtonType.Submit" Icon="save" Text="@T[InfernoWebLocalizableStrings.General.Save]" />
+                        </Field>
+                    </EditForm>
+                </CardBody>
+            </Card>
+        </Column>
+    </Row>
+}

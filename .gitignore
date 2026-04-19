@@ -284,3 +284,6 @@ build/
 InfernoCMS/wwwroot/lib
 InfernoCMS/wwwroot/Media
 InfernoCMS/keys
+
+!Inferno.Web/Areas/Admin/Log/
+!Inferno.Web/Areas/Admin/Log/Views/Log/

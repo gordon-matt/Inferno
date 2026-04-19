@@ -38,11 +38,17 @@ namespace Inferno.Web.Configuration.Services
 
                 if (tenantId.HasValue)
                 {
-                    settings = repository.FindOne(x => x.TenantId == tenantId && x.Type == type);
+                    settings = repository.FindOne(new SearchOptions<Setting>
+                    {
+                        Query = x => x.TenantId == tenantId && x.Type == type
+                    });
                 }
                 else
                 {
-                    settings = repository.FindOne(x => x.TenantId == null && x.Type == type);
+                    settings = repository.FindOne(new SearchOptions<Setting>
+                    {
+                        Query = x => x.TenantId == null && x.Type == type
+                    });
                 }
 
                 if (settings == null || string.IsNullOrEmpty(settings.Value))
@@ -64,11 +70,17 @@ namespace Inferno.Web.Configuration.Services
 
                 if (tenantId.HasValue)
                 {
-                    settings = repository.FindOne(x => x.TenantId == tenantId && x.Type == type);
+                    settings = repository.FindOne(new SearchOptions<Setting>
+                    {
+                        Query = x => x.TenantId == tenantId && x.Type == type
+                    });
                 }
                 else
                 {
-                    settings = repository.FindOne(x => x.TenantId == null && x.Type == type);
+                    settings = repository.FindOne(new SearchOptions<Setting>
+                    {
+                        Query = x => x.TenantId == null && x.Type == type
+                    });
                 }
 
                 if (settings == null || string.IsNullOrEmpty(settings.Value))
@@ -86,16 +98,22 @@ namespace Inferno.Web.Configuration.Services
 
             if (tenantId.HasValue)
             {
-                setting = repository.FindOne(x => x.TenantId == tenantId && x.Type == key);
+                setting = repository.FindOne(new SearchOptions<Setting>
+                {
+                    Query = x => x.TenantId == tenantId && x.Type == key
+                });
             }
             else
             {
-                setting = repository.FindOne(x => x.TenantId == null && x.Type == key);
+                setting = repository.FindOne(new SearchOptions<Setting>
+                {
+                    Query = x => x.TenantId == null && x.Type == key
+                });
             }
 
             if (setting == null)
             {
-                var iSettings = EngineContext.Current.ResolveAll<ISettings>().FirstOrDefault(x => x.GetType().FullName == key);
+                var iSettings = DependoResolver.Instance.ResolveAll<ISettings>().FirstOrDefault(x => x.GetType().FullName == key);
 
                 if (iSettings != null)
                 {

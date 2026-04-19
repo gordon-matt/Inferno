@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Dependo;
 using Extenso.Collections;
+using Extenso.Data.Entity;
 using Inferno.Caching;
 using Inferno.Localization;
 using Inferno.Localization.Entities;
@@ -94,10 +95,20 @@ namespace Inferno.Web.Localization
         {
             if (string.IsNullOrEmpty(cultureCode))
             {
-                return LoadTranslations(localizableStringService.Find(x => x.TenantId == tenantId && x.CultureCode == null));
+                return LoadTranslations(localizableStringService.Find(new SearchOptions<LocalizableString>
+                {
+                    Query = x =>
+                        x.TenantId == tenantId &&
+                        x.CultureCode == null
+                }));
             }
 
-            return LoadTranslations(localizableStringService.Find(x => x.TenantId == tenantId && x.CultureCode == cultureCode));
+            return LoadTranslations(localizableStringService.Find(new SearchOptions<LocalizableString>
+            {
+                Query = x =>
+                    x.TenantId == tenantId &&
+                    x.CultureCode == cultureCode
+            }));
         }
 
         private static Dictionary<string, string> LoadTranslations(IEnumerable<LocalizableString> items)
@@ -115,7 +126,7 @@ namespace Inferno.Web.Localization
         protected virtual string AddTranslation(int tenantId, string cultureCode, string key)
         {
             // TODO: Consider resolving this once for better performance?
-            var providers = EngineContext.Current.ResolveAll<ILanguagePack>();
+            var providers = DependoResolver.Instance.ResolveAll<ILanguagePack>();
             var languagePacks = providers.Where(x => x.CultureCode == null);
 
             string value = key;

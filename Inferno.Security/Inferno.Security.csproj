@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Extenso.Data.Entity" Version="7.0.0" />
+    <PackageReference Include="Extenso.Data.Entity" Version="10.1.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
   </ItemGroup>
-
 </Project>

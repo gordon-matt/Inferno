@@ -1,5 +1,6 @@
 ﻿using Dependo;
 using Extenso.Collections;
+using Extenso.Data.Entity;
 using Inferno.Tenants;
 using Inferno.Tenants.Entities;
 using Inferno.Tenants.Services;
@@ -22,7 +23,10 @@ namespace Inferno.Web.Tenants
             : base(cache, loggerFactory)
         {
             this.tenantService = tenantService;
-            tenants = tenantService.Find();
+            tenants = tenantService.Find(new SearchOptions<Tenant>
+            {
+                Query = x => true
+            });
         }
 
         protected override string GetContextIdentifier(HttpContext context)
@@ -40,7 +44,7 @@ namespace Inferno.Web.Tenants
         {
             TenantContext<Tenant> tenantContext = null;
 
-            var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
+            var loggerFactory = DependoResolver.Instance.Resolve<ILoggerFactory>();
             var logger = loggerFactory.CreateLogger(this.GetType());
 
             try
@@ -58,7 +62,10 @@ namespace Inferno.Web.Tenants
 
                 if (tenants.IsNullOrEmpty())
                 {
-                    tenants = tenantService.Find();
+                    tenants = tenantService.Find(new SearchOptions<Tenant>
+                    {
+                        Query = x => true
+                    });
                 }
 
                 if (tenants.IsNullOrEmpty())

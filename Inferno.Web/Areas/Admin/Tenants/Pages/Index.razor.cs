@@ -8,10 +8,7 @@ namespace Inferno.Web.Areas.Admin.Tenants.Pages
         [Inject]
         private NavigationManager NavigationManager { get; set; }
 
-        protected override string GetODataFilter(LoadDataArgs args)
-        {
-            return args.Filter;
-        }
+        protected override string GetODataFilter(LoadDataArgs args) => args.Filter;
 
         public async Task SearchAsync()
         {

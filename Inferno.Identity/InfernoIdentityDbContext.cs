@@ -52,7 +52,7 @@ namespace Inferno.Identity
         {
             base.OnModelCreating(modelBuilder);
 
-            var configurations = EngineContext.Current.ResolveAll<IInfernoEntityTypeConfiguration>();
+            var configurations = DependoResolver.Instance.ResolveAll<IInfernoEntityTypeConfiguration>();
 
             foreach (dynamic configuration in configurations)
             {
@@ -83,11 +83,11 @@ namespace Inferno.Identity
 
             InitializeLocalizableStrings();
 
-            //var dataSettings = EngineContext.Current.Resolve<DataSettings>();
+            //var dataSettings = DependoResolver.Instance.Resolve<DataSettings>();
 
             //if (dataSettings.CreateSampleData)
             //{
-            //    var seeders = EngineContext.Current.ResolveAll<IDbSeeder>().OrderBy(x => x.Order);
+            //    var seeders = DependoResolver.Instance.ResolveAll<IDbSeeder>().OrderBy(x => x.Order);
 
             //    foreach (var seeder in seeders)
             //    {
@@ -104,7 +104,7 @@ namespace Inferno.Identity
             //  but at this point there will only be 1 tenant, because this is initialization for the DB.
             //  TODO: When admin user creates a new tenant, we need to insert localized strings for it. Probably in TenantApiController somewhere...
             int tenantId = Tenants.First().Id;
-            var languagePacks = EngineContext.Current.ResolveAll<ILanguagePack>();
+            var languagePacks = DependoResolver.Instance.ResolveAll<ILanguagePack>();
 
             var toInsert = new HashSet<LocalizableString>();
             foreach (var languagePack in languagePacks)

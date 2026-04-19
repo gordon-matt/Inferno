@@ -6,10 +6,12 @@ using Extenso.Collections;
 using Extenso.Data.Entity;
 using Inferno.Helpers;
 using Inferno.Localization.Services;
+using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Models;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -27,17 +29,18 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Controllers.Api
         private readonly ILogger logger;
 
         public XmlSitemapApiController(
+            IAuthorizationService authorizationService,
             IRepository<SitemapConfig> repository,
             IPageService pageService,
             IPageVersionService pageVersionService,
             Lazy<ILanguageService> languageService)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.pageService = pageService;
             this.pageVersionService = pageVersionService;
             this.languageService = languageService;
 
-            var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
+            var loggerFactory = DependoResolver.Instance.Resolve<ILoggerFactory>();
             logger = loggerFactory.CreateLogger(GetType());
         }
 
@@ -67,7 +70,11 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Controllers.Api
             int tenantId = GetTenantId();
 
             // First ensure that current pages are in the config
-            var config = await Repository.FindAsync(x => x.TenantId == tenantId);
+            var config = await Repository.FindAsync(new SearchOptions<SitemapConfig>
+            {
+                Query = x => x.TenantId == tenantId
+            });
+
             var configPageIds = config.Select(x => x.PageId).ToHashSet();
             var pageVersions = pageVersionService.GetCurrentVersions(tenantId, shownOnMenusOnly: false); // temp fix: since we don't support localized routes yet
             var pageVersionIds = pageVersions.Select(x => x.Id).ToHashSet();
@@ -94,7 +101,10 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Controllers.Api
 
                 await Repository.InsertAsync(toInsert);
             }
-            config = await Repository.FindAsync(x => x.TenantId == tenantId);
+            config = await Repository.FindAsync(new SearchOptions<SitemapConfig>
+            {
+                Query = x => x.TenantId == tenantId
+            });
 
             var collection = new HashSet<SitemapConfigModel>();
             foreach (var item in config)
@@ -163,10 +173,17 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Controllers.Api
 
             int tenantId = GetTenantId();
 
-            var config = await Repository.FindAsync(x => x.TenantId == tenantId);
+            var config = await Repository.FindAsync(new SearchOptions<SitemapConfig>
+            {
+                Query = x => x.TenantId == tenantId
+            });
+
             var file = new SitemapXmlFile();
 
-            var pageVersions = await pageVersionService.FindAsync(x => x.TenantId == tenantId);
+            var pageVersions = await pageVersionService.FindAsync(new SearchOptions<PageVersion>
+            {
+                Query = x => x.TenantId == tenantId
+            });
 
             var urls = new HashSet<UrlElement>();
 

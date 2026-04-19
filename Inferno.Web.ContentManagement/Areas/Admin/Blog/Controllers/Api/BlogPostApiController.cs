@@ -4,6 +4,7 @@ using Inferno.Security.Membership;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Media;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 
@@ -17,23 +18,24 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
         private readonly Lazy<IWorkContext> workContext;
 
         public BlogPostApiController(
+            IAuthorizationService authorizationService,
             IRepository<BlogPost> repository,
             Lazy<IMembershipService> membershipService,
             Lazy<IRepository<BlogPostTag>> postTagRepository,
             Lazy<IWorkContext> workContext)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.membershipService = membershipService;
             this.postTagRepository = postTagRepository;
             this.workContext = workContext;
         }
 
-        public override async Task<IActionResult> Post([FromBody] BlogPost entity)
+        public override async Task<IActionResult> Post([FromBody] BlogPost entity, CancellationToken cancellationToken)
         {
             int tenantId = GetTenantId();
             entity.TenantId = tenantId;
 
-            if (!await CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -72,19 +74,23 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
             return result;
         }
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] BlogPost entity)
+        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] BlogPost entity, CancellationToken cancellationToken)
         {
             var currentEntry = await Repository.FindOneAsync(entity.Id);
             entity.TenantId = currentEntry.TenantId;
             entity.UserId = currentEntry.UserId;
             entity.DateCreatedUtc = currentEntry.DateCreatedUtc;
             entity.FullDescription = MediaHelper.EnsureCorrectUrls(entity.FullDescription);
-            var result = await base.Put(key, entity);
+            var result = await base.Put(key, entity, cancellationToken);
 
             if (!entity.Tags.IsNullOrEmpty())
             {
                 var chosenTagIds = entity.Tags.Select(x => x.TagId);
-                var existingTags = await postTagRepository.Value.FindAsync(x => x.PostId == entity.Id);
+                var existingTags = await postTagRepository.Value.FindAsync(new SearchOptions<BlogPostTag>
+                {
+                    Query = x => x.PostId == entity.Id
+                });
+
                 var existingTagIds = existingTags.Select(x => x.TagId);
 
                 var toDelete = existingTags.Where(x => !chosenTagIds.Contains(x.TagId));

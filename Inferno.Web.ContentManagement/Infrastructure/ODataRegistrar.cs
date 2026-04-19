@@ -2,6 +2,7 @@
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
+using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Models;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Entities;
@@ -41,9 +42,11 @@ namespace Inferno.Web.ContentManagement.Infrastructure
             builder.EntitySet<PageVersion>(CmsConstants.ODataRoutes.EntitySetNames.PageVersion);
             builder.EntitySet<PageTreeItem>(CmsConstants.ODataRoutes.EntitySetNames.PageTree);
 
+            // Newsletters
+            builder.EntitySet<Subscriber>(CmsConstants.ODataRoutes.EntitySetNames.Subscriber);
+
             // Other
             builder.EntitySet<SitemapConfig>(CmsConstants.ODataRoutes.EntitySetNames.XmlSitemap);
-            //builder.EntitySet<Subscriber>(CmsConstants.ODataRoutes.EntitySetNames.Subscriber);
 
             // Action Configurations
             RegisterContentBlockODataActions(builder);

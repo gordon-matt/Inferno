@@ -1,13 +1,14 @@
 ﻿using Extenso.Data.Entity;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
 {
     public class BlogCategoryApiController : GenericTenantODataController<BlogCategory, int>
     {
-        public BlogCategoryApiController(IRepository<BlogCategory> repository)
-            : base(repository)
+        public BlogCategoryApiController(IAuthorizationService authorizationService, IRepository<BlogCategory> repository)
+            : base(authorizationService, repository)
         {
         }
 

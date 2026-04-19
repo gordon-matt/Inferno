@@ -22,7 +22,7 @@ namespace Inferno.Web.Infrastructure
 
         private static void RunStartupTasks()
         {
-            var typeFinder = EngineContext.Current.Resolve<ITypeFinder>();
+            var typeFinder = DependoResolver.Instance.Resolve<ITypeFinder>();
 
             if (!DataSettingsHelper.IsDatabaseInstalled)
             {

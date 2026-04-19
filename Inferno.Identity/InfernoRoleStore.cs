@@ -21,7 +21,7 @@ namespace Inferno.Identity
 
         #region Private Properties
 
-        private IWorkContext WorkContext => workContext ??= EngineContext.Current.Resolve<IWorkContext>();
+        private IWorkContext WorkContext => workContext ??= DependoResolver.Instance.Resolve<IWorkContext>();
 
         private int TenantId => WorkContext.CurrentTenant.Id;
 

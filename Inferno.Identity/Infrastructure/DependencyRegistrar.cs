@@ -1,24 +1,19 @@
-﻿using Autofac;
-using Dependo.Autofac;
+﻿using Dependo;
 using Inferno.Localization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Inferno.Identity.Infrastructure
+namespace Inferno.Identity.Infrastructure;
+
+public class DependencyRegistrar : IDependencyRegistrar
 {
-    public class DependencyRegistrar : IDependencyRegistrar
-    {
-        #region IDependencyRegistrar Members
+    #region IDependencyRegistrar Members
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
-        {
-            // localization
-            builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().SingleInstance();
-        }
+    public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration) =>
+        // localization
+        builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Singleton);
 
-        public int Order
-        {
-            get { return 0; }
-        }
+    public int Order => 0;
 
-        #endregion IDependencyRegistrar Members
-    }
+    #endregion IDependencyRegistrar Members
 }

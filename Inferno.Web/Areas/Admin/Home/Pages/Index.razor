@@ -1,0 +1,214 @@
+@page "/admin"
+@page "/admin/index"
+
+@attribute [Authorize(Policy = StandardPolicies.AdminAccess)]
+
+<PageTitle>@T[InfernoWebLocalizableStrings.Dashboard.Title]</PageTitle>
+
+<div class="dashboard-header mb-4">
+    <h2><i class="fa fa-tachometer-alt"></i>&nbsp;@T[InfernoWebLocalizableStrings.Dashboard.Title]</h2>
+    <p class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Welcome]</p>
+</div>
+
+<Row Margin="Margin.Is4.FromBottom">
+    <Column ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet">
+        <a href="/admin/membership/users/index" class="text-decoration-none">
+            <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small" Class="dashboard-card h-100">
+                <CardBody Class="d-flex align-items-center">
+                    <div class="dashboard-card-icon bg-primary text-white rounded-circle me-3">
+                        <i class="fa fa-users"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">@T[InfernoWebLocalizableStrings.Membership.Title]</h6>
+                        <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Cards.MembershipSubtitle]</small>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet">
+        <a href="/admin/cms/pages/index" class="text-decoration-none">
+            <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small" Class="dashboard-card h-100">
+                <CardBody Class="d-flex align-items-center">
+                    <div class="dashboard-card-icon bg-success text-white rounded-circle me-3">
+                        <i class="fa fa-file-alt"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">@T[InfernoWebLocalizableStrings.Dashboard.Cards.Pages]</h6>
+                        <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Cards.PagesSubtitle]</small>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet">
+        <a href="/admin/cms/blog/posts/index" class="text-decoration-none">
+            <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small" Class="dashboard-card h-100">
+                <CardBody Class="d-flex align-items-center">
+                    <div class="dashboard-card-icon bg-info text-white rounded-circle me-3">
+                        <i class="fa fa-edit"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">@T[InfernoWebLocalizableStrings.Dashboard.Cards.Blog]</h6>
+                        <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Cards.BlogSubtitle]</small>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet">
+        <a href="/admin/cms/menus/index" class="text-decoration-none">
+            <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small" Class="dashboard-card h-100">
+                <CardBody Class="d-flex align-items-center">
+                    <div class="dashboard-card-icon bg-secondary text-white rounded-circle me-3">
+                        <i class="fa fa-bars"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">@T[InfernoWebLocalizableStrings.Dashboard.Cards.Menus]</h6>
+                        <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Cards.MenusSubtitle]</small>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
+    </Column>
+</Row>
+
+<Row Margin="Margin.Is4.FromBottom">
+    <Column ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet">
+        <a href="/admin/cms/content-blocks/index" class="text-decoration-none">
+            <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small" Class="dashboard-card h-100">
+                <CardBody Class="d-flex align-items-center">
+                    <div class="dashboard-card-icon bg-dark text-white rounded-circle me-3">
+                        <i class="fa fa-th-large"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">@T[InfernoWebLocalizableStrings.Dashboard.Cards.ContentBlocks]</h6>
+                        <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Cards.ContentBlocksSubtitle]</small>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet">
+        <a href="/admin/configuration/settings/index" class="text-decoration-none">
+            <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small" Class="dashboard-card h-100">
+                <CardBody Class="d-flex align-items-center">
+                    <div class="dashboard-card-icon bg-danger text-white rounded-circle me-3">
+                        <i class="fa fa-cog"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">@T[InfernoWebLocalizableStrings.General.Settings]</h6>
+                        <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Cards.SettingsSubtitle]</small>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet">
+        <a href="/admin/scheduled-tasks/index" class="text-decoration-none">
+            <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small" Class="dashboard-card h-100">
+                <CardBody Class="d-flex align-items-center">
+                    <div class="dashboard-card-icon bg-primary text-white rounded-circle me-3">
+                        <i class="fa fa-clock"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]</h6>
+                        <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Cards.ScheduledTasksSubtitle]</small>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is3.OnDesktop.Is6.OnTablet">
+        <a href="/admin/tenants/index" class="text-decoration-none">
+            <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small" Class="dashboard-card h-100">
+                <CardBody Class="d-flex align-items-center">
+                    <div class="dashboard-card-icon bg-warning text-white rounded-circle me-3">
+                        <i class="fa fa-building"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">@T[InfernoWebLocalizableStrings.Tenants.Title]</h6>
+                        <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Cards.TenantsSubtitle]</small>
+                    </div>
+                </CardBody>
+            </Card>
+        </a>
+    </Column>
+</Row>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is4.OnDesktop.Is6.OnTablet">
+        <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small">
+            <CardHeader Background="Background.White">
+                <h6 class="mb-0"><i class="fa fa-wrench me-2"></i>@T[InfernoWebLocalizableStrings.Maintenance.Title]</h6>
+            </CardHeader>
+            <ListGroup Flush>
+                <ListGroupItem To="/admin/log/index">
+                    <i class="fa fa-exclamation-triangle text-warning me-2"></i> @T[InfernoWebLocalizableStrings.Log.Title]
+                </ListGroupItem>
+                <ListGroupItem To="/admin/localization/index">
+                    <i class="fa fa-globe text-info me-2"></i> @T[InfernoWebLocalizableStrings.Localization.Title]
+                </ListGroupItem>
+                <ListGroupItem To="/admin/plugins/index">
+                    <i class="fa fa-puzzle-piece text-secondary me-2"></i> @T[InfernoWebLocalizableStrings.Plugins.Title]
+                </ListGroupItem>
+                <ListGroupItem To="/admin/configuration/themes/index">
+                    <i class="fa fa-tint text-primary me-2"></i> @T[InfernoWebLocalizableStrings.General.Themes]
+                </ListGroupItem>
+            </ListGroup>
+        </Card>
+    </Column>
+    <Column ColumnSize="ColumnSize.Is8.OnDesktop.Is6.OnTablet">
+        <Card Background="Background.White" Border="Border.Is0" Shadow="Shadow.Small">
+            <CardHeader Background="Background.White">
+                <h6 class="mb-0"><i class="fa fa-info-circle me-2"></i>@T[InfernoWebLocalizableStrings.Dashboard.About.Title]</h6>
+            </CardHeader>
+            <CardBody>
+                <p>@T[InfernoWebLocalizableStrings.Dashboard.About.Description]</p>
+                <Row Class="text-center mt-3">
+                    <Column ColumnSize="ColumnSize.Is4">
+                        <div class="border rounded p-3">
+                            <i class="fa fa-plug fa-2x text-muted mb-2"></i>
+                            <div><strong>@T[InfernoWebLocalizableStrings.Dashboard.About.Extensible]</strong></div>
+                            <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.About.ExtensibleSubtitle]</small>
+                        </div>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is4">
+                        <div class="border rounded p-3">
+                            <i class="fa fa-building fa-2x text-muted mb-2"></i>
+                            <div><strong>@T[InfernoWebLocalizableStrings.Dashboard.About.MultiTenant]</strong></div>
+                            <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.About.MultiTenantSubtitle]</small>
+                        </div>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is4">
+                        <div class="border rounded p-3">
+                            <i class="fa fa-paint-brush fa-2x text-muted mb-2"></i>
+                            <div><strong>@T[InfernoWebLocalizableStrings.Dashboard.About.Themeable]</strong></div>
+                            <small class="text-muted">@T[InfernoWebLocalizableStrings.Dashboard.About.ThemeableSubtitle]</small>
+                        </div>
+                    </Column>
+                </Row>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>
+
+<style>
+    .dashboard-card {
+        transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .dashboard-card-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+</style>

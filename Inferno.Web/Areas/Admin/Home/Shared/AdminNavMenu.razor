@@ -1,0 +1,83 @@
+﻿@using Inferno.Web.Navigation;
+
+@inject INavigationManager navigationManager
+
+<Bar Breakpoint="Breakpoint.Desktop"
+     Background="Background.Light"
+     ThemeContrast="ThemeContrast.Light"
+     Padding="Padding.Is4.OnX">
+    <BarBrand>
+        <img src="img/logo.png" alt="Inferno CMS" width="100" />
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+            @foreach (var menuItem in menuItems)
+            {
+                if (menuItem.Items.Any())
+                {
+                    <BarItem>
+                        <BarDropdown>
+                            <BarDropdownToggle>
+                                @if (menuItem.Icon.HasValue)
+                                {
+                                    <Icon Name="menuItem.Icon.Value" />@:&nbsp;
+                                }
+                                else if (!string.IsNullOrEmpty(menuItem.IconName))
+                                {
+                                    <i class="@menuItem.IconName"></i>@:&nbsp;
+                                }
+                                @menuItem.Text
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                @foreach (var item in menuItem.Items)
+                                {
+                                    <BarLink To="@item.Href">
+                                        @if (item.Icon.HasValue)
+                                        {
+                                            <Icon Name="item.Icon.Value" />@:&nbsp;
+                                        }
+                                        else if (!string.IsNullOrEmpty(item.IconName))
+                                        {
+                                            <i class="@item.IconName"></i>@:&nbsp;
+                                        }
+                                        @item.Text
+                                    </BarLink>
+                                }
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                }
+                else
+                {
+                    <BarItem>
+                        <BarLink To="@menuItem.Href">
+                            @if (menuItem.Icon.HasValue)
+                            {
+                                <Icon Name="menuItem.Icon.Value" />@:&nbsp;
+                            }
+                            else if (!string.IsNullOrEmpty(menuItem.IconName))
+                            {
+                                <i class="@menuItem.IconName"></i>@:&nbsp;
+                            }
+                            @menuItem.Text
+                        </BarLink>
+                    </BarItem>
+                }
+            }
+        </BarStart>
+        <BarEnd>
+            <LoginDisplay />
+        </BarEnd>
+    </BarMenu>
+</Bar>
+
+@code {
+    private IEnumerable<MenuItem> menuItems;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        menuItems = navigationManager.BuildMenu(InfernoWebConstants.Areas.Admin);
+    }
+}

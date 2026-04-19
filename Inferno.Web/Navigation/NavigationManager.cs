@@ -88,7 +88,7 @@ namespace Inferno.Web.Navigation
                     Position = item.Position,
                     Text = item.Text,
                     CssClass = item.CssClass,
-                    Icons = item.Icons,
+                    Icon = item.Icon,
                     Url = item.Url,
                     Href = item.Href
                 };
@@ -124,7 +124,8 @@ namespace Inferno.Web.Navigation
             {
                 Text = items.First().Text,
                 CssClass = items.Select(x => x.CssClass).FirstOrDefault(x => !string.IsNullOrEmpty(x)),
-                Icons = items.Select(x => x.Icons).FirstOrDefault(x => !x.IsNullOrEmpty()),
+                Icon = items.Select(x => x.Icon).FirstOrDefault(x => x.HasValue),
+                IconName = items.Select(x => x.IconName).FirstOrDefault(x => !string.IsNullOrEmpty(x)),
                 Url = items.Select(x => x.Url).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)),
                 Href = items.Select(x => x.Href).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)),
                 Items = Merge(items.Select(x => x.Items)).ToArray(),

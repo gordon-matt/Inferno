@@ -1,7 +1,12 @@
 ﻿using Extenso.AspNetCore.OData;
 using Inferno.Localization.Entities;
+using Inferno.Logging.Entities;
+using Inferno.Security.Membership;
+using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Areas.Admin.Configuration.Themes.Models;
 using Inferno.Web.Areas.Admin.Localization.Models;
+using Inferno.Web.Areas.Admin.Plugins.Models;
 using Inferno.Web.Configuration.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData;
@@ -19,103 +24,103 @@ namespace Inferno.Web.Infrastructure
 
             // Configuration
             builder.EntitySet<Setting>("SettingsApi");
-            //builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
+            builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
 
             // Localization
             builder.EntitySet<Language>(InfernoWebConstants.ODataRoutes.EntitySetNames.Language);
             builder.EntitySet<LocalizableString>(InfernoWebConstants.ODataRoutes.EntitySetNames.LocalizableString);
 
-            ////// Log
-            ////builder.EntitySet<LogEntry>("LogApi");
+            // Log
+            builder.EntitySet<LogEntry>(InfernoWebConstants.ODataRoutes.EntitySetNames.Log);
 
             //// Membership
             //builder.EntitySet<InfernoPermission>("PermissionApi");
-            //builder.EntitySet<InfernoRole>("RoleApi");
-            //builder.EntitySet<InfernoUser>("UserApi");
+            builder.EntitySet<InfernoRole>("RoleApi");
+            builder.EntitySet<InfernoUser>("UserApi");
             ////builder.EntitySet<PublicUserInfo>("PublicUserApi");
 
-            ////// Plugins
-            ////builder.EntitySet<EdmPluginDescriptor>("PluginApi");
+            // Plugins
+            builder.EntitySet<EdmPluginDescriptor>("PluginApi");
 
-            //// Scheduled Tasks
-            //builder.EntitySet<ScheduledTask>("ScheduledTaskApi");
+            // Scheduled Tasks
+            builder.EntitySet<ScheduledTask>(InfernoWebConstants.ODataRoutes.EntitySetNames.ScheduledTask);
 
             // Tenants
             builder.EntitySet<Tenant>(InfernoWebConstants.ODataRoutes.EntitySetNames.Tenant);
 
             RegisterLanguageODataActions(builder);
             RegisterLocalizableStringODataActions(builder);
-            //RegisterLogODataActions(builder);
-            //RegisterMembershipODataActions(builder);
-            //RegisterPluginODataActions(builder);
-            //RegisterScheduledTaskODataActions(builder);
-            //RegisterThemeODataActions(builder);
+            RegisterLogODataActions(builder);
+            RegisterMembershipODataActions(builder);
+            RegisterPluginODataActions(builder);
+            RegisterScheduledTaskODataActions(builder);
+            RegisterThemeODataActions(builder);
 
             options.AddRouteComponents($"odata/{InfernoWebConstants.ODataRoutes.Prefix}", builder.GetEdmModel());
         }
 
         #endregion IODataRegistrar Members
 
-        //private static void RegisterLogODataActions(ODataModelBuilder builder)
-        //{
-        //    var clearAction = builder.EntityType<LogEntry>().Collection.Action("Clear");
-        //    clearAction.Returns<IActionResult>();
-        //}
+        private static void RegisterLogODataActions(ODataModelBuilder builder)
+        {
+            var clearAction = builder.EntityType<LogEntry>().Collection.Action("Clear");
+            clearAction.Returns<IActionResult>();
+        }
 
-        //private static void RegisterMembershipODataActions(ODataModelBuilder builder)
-        //{
-        //    var getUsersInRoleFunction = builder.EntityType<InfernoUser>().Collection.Function("GetUsersInRole");
-        //    getUsersInRoleFunction.Parameter<string>("roleId");
-        //    getUsersInRoleFunction.Returns<IActionResult>();
+        private static void RegisterMembershipODataActions(ODataModelBuilder builder)
+        {
+            var getUsersInRoleFunction = builder.EntityType<InfernoUser>().Collection.Function("GetUsersInRole");
+            getUsersInRoleFunction.Parameter<string>("roleId");
+            getUsersInRoleFunction.Returns<IActionResult>();
 
-        //    var assignUserToRolesAction = builder.EntityType<InfernoUser>().Collection.Action("AssignUserToRoles");
-        //    assignUserToRolesAction.Parameter<string>("userId");
-        //    assignUserToRolesAction.CollectionParameter<string>("roles");
-        //    assignUserToRolesAction.Returns<IActionResult>();
+            var assignUserToRolesAction = builder.EntityType<InfernoUser>().Collection.Action("AssignUserToRoles");
+            assignUserToRolesAction.Parameter<string>("userId");
+            assignUserToRolesAction.CollectionParameter<string>("roles");
+            assignUserToRolesAction.Returns<IActionResult>();
 
-        //    var changePasswordAction = builder.EntityType<InfernoUser>().Collection.Action("ChangePassword");
-        //    changePasswordAction.Parameter<string>("userId");
-        //    changePasswordAction.Parameter<string>("password");
-        //    changePasswordAction.Returns<IActionResult>();
+            var changePasswordAction = builder.EntityType<InfernoUser>().Collection.Action("ChangePassword");
+            changePasswordAction.Parameter<string>("userId");
+            changePasswordAction.Parameter<string>("password");
+            changePasswordAction.Returns<IActionResult>();
 
-        //    var getRolesForUserFunction = builder.EntityType<InfernoRole>().Collection.Function("GetRolesForUser");
-        //    getRolesForUserFunction.Parameter<string>("userId");
-        //    getRolesForUserFunction.Returns<IActionResult>();
+            var getRolesForUserFunction = builder.EntityType<InfernoRole>().Collection.Function("GetRolesForUser");
+            getRolesForUserFunction.Parameter<string>("userId");
+            getRolesForUserFunction.Returns<IActionResult>();
 
-        //    var assignPermissionsToRoleAction = builder.EntityType<InfernoRole>().Collection.Action("AssignPermissionsToRole");
-        //    assignPermissionsToRoleAction.Parameter<string>("roleId");
-        //    assignPermissionsToRoleAction.CollectionParameter<string>("permissions");
-        //    assignPermissionsToRoleAction.Returns<IActionResult>();
+            //var assignPermissionsToRoleAction = builder.EntityType<InfernoRole>().Collection.Action("AssignPermissionsToRole");
+            //assignPermissionsToRoleAction.Parameter<string>("roleId");
+            //assignPermissionsToRoleAction.CollectionParameter<string>("permissions");
+            //assignPermissionsToRoleAction.Returns<IActionResult>();
 
-        //    var getPermissionsForRoleFunction = builder.EntityType<InfernoPermission>().Collection.Function("GetPermissionsForRole");
-        //    getPermissionsForRoleFunction.Parameter<string>("roleId");
-        //    getPermissionsForRoleFunction.Returns<IActionResult>();
-        //}
+            //var getPermissionsForRoleFunction = builder.EntityType<InfernoPermission>().Collection.Function("GetPermissionsForRole");
+            //getPermissionsForRoleFunction.Parameter<string>("roleId");
+            //getPermissionsForRoleFunction.Returns<IActionResult>();
+        }
 
-        //private static void RegisterPluginODataActions(ODataModelBuilder builder)
-        //{
-        //    var installAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Install");
-        //    installAction.Parameter<string>("systemName");
-        //    installAction.Returns<IHttpActionResult>();
+        private static void RegisterPluginODataActions(ODataModelBuilder builder)
+        {
+            var installAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Install");
+            installAction.Parameter<string>("systemName");
+            installAction.Returns<IActionResult>();
 
-        //    var uninstallAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Uninstall");
-        //    uninstallAction.Parameter<string>("systemName");
-        //    uninstallAction.Returns<IHttpActionResult>();
-        //}
+            var uninstallAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Uninstall");
+            uninstallAction.Parameter<string>("systemName");
+            uninstallAction.Returns<IActionResult>();
+        }
 
-        //private static void RegisterScheduledTaskODataActions(ODataModelBuilder builder)
-        //{
-        //    var runNowAction = builder.EntityType<ScheduledTask>().Collection.Action("RunNow");
-        //    runNowAction.Parameter<int>("taskId");
-        //    runNowAction.Returns<IActionResult>();
-        //}
+        private static void RegisterScheduledTaskODataActions(ODataModelBuilder builder)
+        {
+            var runNowAction = builder.EntityType<ScheduledTask>().Collection.Action("RunNow");
+            runNowAction.Parameter<int>("taskId");
+            runNowAction.Returns<IActionResult>();
+        }
 
-        //private static void RegisterThemeODataActions(ODataModelBuilder builder)
-        //{
-        //    var setDesktopThemeAction = builder.EntityType<EdmThemeConfiguration>().Collection.Action("SetTheme");
-        //    setDesktopThemeAction.Parameter<string>("themeName");
-        //    setDesktopThemeAction.Returns<IActionResult>();
-        //}
+        private static void RegisterThemeODataActions(ODataModelBuilder builder)
+        {
+            var setThemeAction = builder.EntityType<EdmThemeConfiguration>().Collection.Action("SetTheme");
+            setThemeAction.Parameter<string>("themeName");
+            setThemeAction.Returns<IActionResult>();
+        }
 
         private static void RegisterLanguageODataActions(ODataModelBuilder builder)
         {

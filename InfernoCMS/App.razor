@@ -24,7 +24,7 @@
     {
         if (assemblies.IsNullOrEmpty())
         {
-            assemblies = EngineContext.Current.ResolveAll<IRouterAssemblyMarker>()
+            assemblies = DependoResolver.Instance.ResolveAll<IRouterAssemblyMarker>()
                 .Select(x => x.GetType().Assembly)
                 .ToList();
         }

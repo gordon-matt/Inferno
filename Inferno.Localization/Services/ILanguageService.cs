@@ -14,7 +14,10 @@ namespace Inferno.Localization.Services
 
         public IEnumerable<LanguageEntity> GetActiveLanguages(int tenantId)
         {
-            return Find(x => x.TenantId == tenantId && x.IsEnabled);
+            return Find(new SearchOptions<LanguageEntity>
+            {
+                Query = x => x.TenantId == tenantId && x.IsEnabled
+            });
         }
 
         public bool CheckIfRightToLeft(int tenantId, string cultureCode)

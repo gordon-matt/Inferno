@@ -691,9 +691,12 @@ namespace InfernoCMS.Identity.Services
 
         public async Task<string> GetProfileEntryAsync(string userId, string key)
         {
-            var entry = await userProfileRepository.FindOneAsync(x =>
-                x.UserId == userId &&
-                x.Key == key);
+            var entry = await userProfileRepository.FindOneAsync(new SearchOptions<UserProfileEntry>
+            {
+                Query = x =>
+                    x.UserId == userId &&
+                    x.Key == key
+            });
 
             if (entry != null)
             {
@@ -705,9 +708,12 @@ namespace InfernoCMS.Identity.Services
 
         public async Task SaveProfileEntryAsync(string userId, string key, string value)
         {
-            var entry = await userProfileRepository.FindOneAsync(x =>
-                x.UserId == userId &&
-                x.Key == key);
+            var entry = await userProfileRepository.FindOneAsync(new SearchOptions<UserProfileEntry>
+            {
+                Query = x =>
+                    x.UserId == userId &&
+                    x.Key == key
+            });
 
             if (entry != null)
             {
@@ -727,9 +733,12 @@ namespace InfernoCMS.Identity.Services
 
         public async Task DeleteProfileEntryAsync(string userId, string key)
         {
-            var entry = await userProfileRepository.FindOneAsync(x =>
-                x.UserId == userId &&
-                x.Key == key);
+            var entry = await userProfileRepository.FindOneAsync(new SearchOptions<UserProfileEntry>
+            {
+                Query = x =>
+                    x.UserId == userId &&
+                    x.Key == key
+            });
 
             if (entry != null)
             {

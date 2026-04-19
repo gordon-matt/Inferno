@@ -4,6 +4,7 @@ using Inferno.Web.ContentManagement.Areas.Admin.Media;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.OData;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -21,21 +22,22 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
         private readonly ILogger logger;
 
         public PageVersionApiController(
+            IAuthorizationService authorizationService,
             IRepository<PageVersion> repository,
             IPageVersionService service,
             IRepository<Page> pageRepository,
             PageSettings settings)
-            : base(repository)
+            : base(authorizationService, repository)
         {
             this.pageRepository = pageRepository;
             this.settings = settings;
 
-            var loggerFactory = EngineContext.Current.Resolve<ILoggerFactory>();
+            var loggerFactory = DependoResolver.Instance.Resolve<ILoggerFactory>();
             logger = loggerFactory.CreateLogger(GetType());
             this.service = service;
         }
 
-        public override async Task<IActionResult> Delete([FromODataUri] Guid key)
+        public override async Task<IActionResult> Delete([FromODataUri] Guid key, CancellationToken cancellationToken)
         {
             var entity = await Repository.FindOneAsync(key);
 
@@ -44,7 +46,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
                 return NotFound();
             }
 
-            if (!await CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -64,18 +66,18 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
 
             if (previous == null)
             {
-                var localizer = EngineContext.Current.Resolve<IStringLocalizer>();
+                var localizer = DependoResolver.Instance.Resolve<IStringLocalizer>();
                 return BadRequest(localizer[InfernoCmsLocalizableStrings.Pages.CannotDeleteOnlyVersion].Value);
             }
 
             previous.Status = VersionStatus.Published;
             await Repository.UpdateAsync(previous);
 
-            return await base.Delete(key);
+            return await base.Delete(key, cancellationToken);
         }
 
         [AcceptVerbs("PATCH", "MERGE")]
-        public override async Task<IActionResult> Patch([FromODataUri] Guid key, Delta<PageVersion> patch)
+        public override async Task<IActionResult> Patch([FromODataUri] Guid key, Delta<PageVersion> patch, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -89,7 +91,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
                 return NotFound();
             }
 
-            if (!await CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -140,17 +142,17 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
             return Updated(entity);
         }
 
-        public override async Task<IActionResult> Post([FromBody] PageVersion entity)
+        public override async Task<IActionResult> Post([FromBody] PageVersion entity, CancellationToken cancellationToken)
         {
             entity.DateCreatedUtc = DateTime.UtcNow;
             entity.DateModifiedUtc = DateTime.UtcNow;
             entity.Fields = MediaHelper.EnsureCorrectUrls(entity.Fields);
-            return await base.Post(entity);
+            return await base.Post(entity, cancellationToken);
         }
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] PageVersion entity)
+        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] PageVersion entity, CancellationToken cancellationToken)
         {
-            if (!await CanModifyEntity(entity))
+            if (!await CanModifyEntityAsync(entity))
             {
                 return Unauthorized();
             }
@@ -254,7 +256,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
                 return NotFound();
             }
 
-            if (!await CanModifyEntity(versionToRestore))
+            if (!await CanModifyEntityAsync(versionToRestore))
             {
                 return Unauthorized();
             }

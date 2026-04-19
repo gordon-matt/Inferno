@@ -1,0 +1,58 @@
+@page "/admin/sitemap/xml-sitemap"
+@using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Entities
+@using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Models
+@using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services
+@inject ISitemapODataService SitemapService
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<h1>@T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap]</h1>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton ButtonStyle="ButtonStyle.Primary" Click="GenerateAsync">
+            <Icon Name="IconName.Save"></Icon>
+            @T[InfernoCmsLocalizableStrings.Sitemap.GenerateFile]
+        </RadzenButton>
+    </Column>
+</Row>
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="SitemapConfigModel"
+                        IsLoading="@IsLoading"
+                        Data="Records"
+                        AllowSorting="true"
+                        AllowPaging="true"
+                        PageSize="20"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="SitemapConfigModel" Property="Location" Title="@T[InfernoCmsLocalizableStrings.Sitemap.Model.Location]" />
+                <RadzenDataGridColumn TItem="SitemapConfigModel" Property="ChangeFrequency" Title="@T[InfernoCmsLocalizableStrings.Sitemap.Model.ChangeFrequency]" Width="200px">
+                    <Template Context="record">
+                        <RadzenDropDown TValue="ChangeFrequency"
+                                        Value="@record.ChangeFrequency"
+                                        Data="@ChangeFrequencies"
+                                        TextProperty="Name"
+                                        ValueProperty="Value"
+                                        Change="@(args => OnChangeFrequencyChangedAsync(record, (ChangeFrequency)args))"
+                                        Style="width:100%" />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="SitemapConfigModel" Property="Priority" Title="@T[InfernoCmsLocalizableStrings.Sitemap.Model.Priority]" Width="180px">
+                    <Template Context="record">
+                        <RadzenNumeric TValue="float"
+                                       Value="@record.Priority"
+                                       Min="0"
+                                       Max="1"
+                                       Step="0.1"
+                                       Format="0.0"
+                                       Change="@(args => OnPriorityChangedAsync(record, args))"
+                                       Style="width:100%" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>

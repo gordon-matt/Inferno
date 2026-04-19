@@ -8,7 +8,7 @@ namespace Inferno.Localization.ComponentModel
     {
         private static IStringLocalizer localizer;
 
-        private static IStringLocalizer T => localizer ??= EngineContext.Current.Resolve<IStringLocalizer>();
+        private static IStringLocalizer T => localizer ??= DependoResolver.Instance.Resolve<IStringLocalizer>();
 
         public LocalizedHelpTextAttribute(string resourceKey)
         {

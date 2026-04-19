@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Blazorise;
 using Extenso;
+using Extenso.Data.Entity;
 using Inferno.Localization.Entities;
 using Inferno.Localization.Services;
 using Inferno.Web.Areas.Admin.Localization.Models;
@@ -105,7 +106,10 @@ namespace Inferno.Web.Areas.Admin.Localization.Pages
 
                     // Ignore strings that don't have an invariant version
                     var allInvariantStrings = (await LocalizableStringService
-                        .FindAsync(x => x.TenantId == tenantId && x.CultureCode == null))
+                        .FindAsync(new SearchOptions<LocalizableString>
+                        {
+                            Query = x => x.TenantId == tenantId && x.CultureCode == null
+                        }))
                         .Select(x => x.TextKey);
 
                     var toInsert = localizedStrings.Where(x => allInvariantStrings.Contains(x.TextKey));

@@ -1,17 +1,15 @@
-﻿using Autofac;
-using Dependo.Autofac;
+﻿using Dependo;
 using Inferno.Web.OData;
 using InfernoCMS.Data.Entities;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace InfernoCMS.Services
+namespace InfernoCMS.Services;
+
+public class DependencyRegistrar : IDependencyRegistrar
 {
-    public class DependencyRegistrar : IDependencyRegistrar
-    {
-        public int Order => 999;
+    public int Order => 999;
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
-        {
-            builder.RegisterType<PersonODataService>().As<IRadzenODataService<Person, int>>().SingleInstance();
-        }
-    }
+    public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration) =>
+        builder.Register<IRadzenODataService<Person, int>, PersonODataService>(ServiceLifetime.Singleton);
 }

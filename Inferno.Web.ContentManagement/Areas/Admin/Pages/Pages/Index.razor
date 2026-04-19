@@ -1,1 +1,137 @@
 ﻿@page "/admin/pages/index"
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
+@inherits RadzenDataPage<Page, Guid>
+
+<h1>@T[InfernoCmsLocalizableStrings.Pages.ManagePages]</h1>
+
+<Row hidden="@(ShowEditMode == true || ShowCreateMode == true)">
+    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+        <RadzenButton Click="Create">
+            <Icon Name="IconName.PlusCircle"></Icon>
+            @T[InfernoWebLocalizableStrings.General.Create]
+        </RadzenButton>
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12">
+        <RadzenDataGrid @ref="DataGrid"
+                        TItem="Page"
+                        IsLoading="@IsLoading"
+                        LoadData="@LoadGridAsync"
+                        Data="Records"
+                        Count="@RecordCount"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        AllowFiltering="true"
+                        AllowPaging="true"
+                        PageSize="10"
+                        ColumnWidth="200px">
+            <Columns>
+                <RadzenDataGridColumn TItem="Page" Property="Name" Title="@T[InfernoCmsLocalizableStrings.Pages.PageModel.Name]" />
+                <RadzenDataGridColumn TItem="Page" Property="PageTypeId" Title="@T[InfernoCmsLocalizableStrings.Pages.PageModel.PageTypeId]" Filterable="false" Sortable="false">
+                    <Template Context="record">
+                        @(GetPageTypeName(record.PageTypeId))
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Page" Property="Order" Title="@T[InfernoCmsLocalizableStrings.Pages.PageModel.Order]" Width="100px" />
+                <RadzenDataGridColumn TItem="Page" Property="IsEnabled" Title="@T[InfernoCmsLocalizableStrings.Pages.PageModel.IsEnabled]" Width="120px" />
+                <RadzenDataGridColumn TItem="Page" Property="ShowOnMenus" Title="@T[InfernoCmsLocalizableStrings.Pages.PageModel.ShowOnMenus]" Width="140px" />
+                <RadzenDataGridColumn TItem="Page" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="180px">
+                    <Template Context="record">
+                        <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="history" Size="ButtonSize.Medium" Click="@(args => NavigateToVersions(record.Id))" @onclick:stopPropagation="true" Title="@T[InfernoCmsLocalizableStrings.Pages.History]"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Column>
+</Row>
+
+<Row id="form-section" hidden="@(ShowEditMode == false && ShowCreateMode == false)">
+    <Column ColumnSize="ColumnSize.Is12">
+        <Card>
+            <CardHeader Class="text-white bg-primary">@T[InfernoCmsLocalizableStrings.Pages.Page]</CardHeader>
+            <CardBody>
+                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
+                    <DataAnnotationsValidator />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Pages.PageModel.PageTypeId]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenDropDown @bind-Value="Model.PageTypeId"
+                                                    Data="PageTypesSelectList"
+                                                    TextProperty="Name"
+                                                    ValueProperty="Id"
+                                                    Style="width:100%"
+                                                    Name="PageTypeId" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Pages.PageModel.Name]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenTextBox @bind-Value="Model.Name" Style="width:100%" Name="Name" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Pages.PageModel.Order]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <RadzenNumeric @bind-Value="Model.Order" Style="width:100%" Name="Order" />
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is3"></FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <Check TValue="bool" @bind-Checked="@Model.IsEnabled">@T[InfernoCmsLocalizableStrings.Pages.PageModel.IsEnabled]</Check>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is3"></FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                    <Check TValue="bool" @bind-Checked="@Model.ShowOnMenus">@T[InfernoCmsLocalizableStrings.Pages.PageModel.ShowOnMenus]</Check>
+                                </FieldBody>
+                            </Field>
+                        </Column>
+                    </Row>
+
+                    <hr />
+
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Field Class="float-end">
+                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
+                                    @T[InfernoWebLocalizableStrings.General.Cancel]
+                                </RadzenButton>
+                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
+                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                </RadzenButton>
+                            </Field>
+                        </Column>
+                    </Row>
+                </EditForm>
+            </CardBody>
+        </Card>
+    </Column>
+</Row>

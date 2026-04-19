@@ -8,7 +8,7 @@ namespace Inferno.Web.Mvc.Themes
         {
             if (name == InfernoWebConstants.StateProviders.CurrentTheme)
             {
-                string currentTheme = EngineContext.Current.Resolve<IThemeContext>().WorkingTheme;
+                string currentTheme = DependoResolver.Instance.Resolve<IThemeContext>().WorkingTheme;
                 return ctx => (T)(object)currentTheme;
             }
             return null;

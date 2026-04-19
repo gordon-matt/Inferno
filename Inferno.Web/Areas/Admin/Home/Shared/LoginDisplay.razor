@@ -1,0 +1,18 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <BarItem>
+            <BarLink To="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</BarLink>
+        </BarItem>
+        <form method="post" action="Identity/Account/Logout">
+            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <BarItem>
+            <BarLink To="Identity/Account/Register">Register</BarLink>
+        </BarItem>
+        <BarItem>
+            <BarLink To="Identity/Account/Login">Log in</BarLink>
+        </BarItem>
+    </NotAuthorized>
+</AuthorizeView>

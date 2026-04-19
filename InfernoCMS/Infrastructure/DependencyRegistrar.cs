@@ -1,45 +1,35 @@
-﻿using Autofac;
-using Dependo.Autofac;
+﻿using Dependo;
 using Inferno.Localization;
 using Inferno.Security.Membership;
-using Inferno.Web.Navigation;
-using InfernoCMS.Areas.Admin;
+using Inferno.Web.Identity;
 using InfernoCMS.Identity.Services;
 using Radzen;
 
-namespace InfernoCMS.Infrastructure
+namespace InfernoCMS.Infrastructure;
+
+public class DependencyRegistrar : IDependencyRegistrar
 {
-    public class DependencyRegistrar : IDependencyRegistrar
+    public int Order => 1;
+
+    public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
-        public int Order => 1;
+        builder.Register<IDbContextFactory, ApplicationDbContextFactory>(ServiceLifetime.Singleton);
+        builder.RegisterGeneric(typeof(IRepository<>), typeof(EntityFrameworkRepository<>), ServiceLifetime.Scoped);
 
-        public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
-        {
-            builder.RegisterType<ApplicationDbContextFactory>().As<IDbContextFactory>().SingleInstance();
+        // Radzen
+        builder.RegisterSelf<DialogService>(ServiceLifetime.Scoped);
+        builder.RegisterSelf<NotificationService>(ServiceLifetime.Scoped);
+        builder.RegisterSelf<TooltipService>(ServiceLifetime.Scoped);
+        builder.RegisterSelf<ContextMenuService>(ServiceLifetime.Scoped);
 
-            builder.RegisterGeneric(typeof(EntityFrameworkRepository<>))
-                .As(typeof(IRepository<>))
-                .InstancePerLifetimeScope();
+        // Services
+        //builder.RegisterGeneric(typeof(IGenericODataService<>), typeof(GenericODataService<>), ServiceLifetime.Scoped);
 
-            // Radzen
-            builder.RegisterType<DialogService>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<NotificationService>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<TooltipService>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<ContextMenuService>().AsSelf().InstancePerLifetimeScope();
+        // Services
+        builder.Register<IMembershipService, MembershipService>(ServiceLifetime.Transient);
+        builder.Register<ITokenService, TokenService>(ServiceLifetime.Scoped);
 
-            // Services
-            //builder.RegisterGeneric(typeof(GenericODataService<,>))
-            //    .As(typeof(IGenericODataService<,>))
-            //    .InstancePerLifetimeScope();
-
-            // Services
-            builder.RegisterType<MembershipService>().As<IMembershipService>().InstancePerDependency();
-
-            // Localization
-            builder.RegisterType<LanguagePackInvariant>().As<ILanguagePack>().InstancePerDependency();
-
-            // Navigation
-            builder.RegisterType<AdminNavigationProvider>().As<INavigationProvider>().SingleInstance();
-        }
+        // Localization
+        builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Transient);
     }
 }
