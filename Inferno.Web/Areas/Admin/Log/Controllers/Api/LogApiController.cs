@@ -1,4 +1,3 @@
-using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
 using Inferno.Logging.Entities;
 using Inferno.Security;
