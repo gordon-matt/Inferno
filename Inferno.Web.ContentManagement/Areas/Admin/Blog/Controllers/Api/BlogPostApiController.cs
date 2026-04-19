@@ -30,7 +30,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
             this.workContext = workContext;
         }
 
-        public override async Task<IActionResult> Post([FromBody] BlogPost entity)
+        public override async Task<IActionResult> Post([FromBody] BlogPost entity, CancellationToken cancellationToken)
         {
             int tenantId = GetTenantId();
             entity.TenantId = tenantId;
@@ -74,14 +74,14 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
             return result;
         }
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] BlogPost entity)
+        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] BlogPost entity, CancellationToken cancellationToken)
         {
             var currentEntry = await Repository.FindOneAsync(entity.Id);
             entity.TenantId = currentEntry.TenantId;
             entity.UserId = currentEntry.UserId;
             entity.DateCreatedUtc = currentEntry.DateCreatedUtc;
             entity.FullDescription = MediaHelper.EnsureCorrectUrls(entity.FullDescription);
-            var result = await base.Put(key, entity);
+            var result = await base.Put(key, entity, cancellationToken);
 
             if (!entity.Tags.IsNullOrEmpty())
             {

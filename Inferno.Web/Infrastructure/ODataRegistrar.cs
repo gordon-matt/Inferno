@@ -6,6 +6,7 @@ using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin.Configuration.Themes.Models;
 using Inferno.Web.Areas.Admin.Localization.Models;
+using Inferno.Web.Areas.Admin.Plugins.Models;
 using Inferno.Web.Configuration.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData;
@@ -38,8 +39,8 @@ namespace Inferno.Web.Infrastructure
             builder.EntitySet<InfernoUser>("UserApi");
             ////builder.EntitySet<PublicUserInfo>("PublicUserApi");
 
-            ////// Plugins
-            ////builder.EntitySet<EdmPluginDescriptor>("PluginApi");
+            // Plugins
+            builder.EntitySet<EdmPluginDescriptor>("PluginApi");
 
             // Scheduled Tasks
             builder.EntitySet<ScheduledTask>(InfernoWebConstants.ODataRoutes.EntitySetNames.ScheduledTask);
@@ -51,7 +52,7 @@ namespace Inferno.Web.Infrastructure
             RegisterLocalizableStringODataActions(builder);
             RegisterLogODataActions(builder);
             RegisterMembershipODataActions(builder);
-            //RegisterPluginODataActions(builder);
+            RegisterPluginODataActions(builder);
             RegisterScheduledTaskODataActions(builder);
             RegisterThemeODataActions(builder);
 
@@ -96,16 +97,16 @@ namespace Inferno.Web.Infrastructure
             //getPermissionsForRoleFunction.Returns<IActionResult>();
         }
 
-        //private static void RegisterPluginODataActions(ODataModelBuilder builder)
-        //{
-        //    var installAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Install");
-        //    installAction.Parameter<string>("systemName");
-        //    installAction.Returns<IHttpActionResult>();
+        private static void RegisterPluginODataActions(ODataModelBuilder builder)
+        {
+            var installAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Install");
+            installAction.Parameter<string>("systemName");
+            installAction.Returns<IActionResult>();
 
-        //    var uninstallAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Uninstall");
-        //    uninstallAction.Parameter<string>("systemName");
-        //    uninstallAction.Returns<IHttpActionResult>();
-        //}
+            var uninstallAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Uninstall");
+            uninstallAction.Parameter<string>("systemName");
+            uninstallAction.Returns<IActionResult>();
+        }
 
         private static void RegisterScheduledTaskODataActions(ODataModelBuilder builder)
         {

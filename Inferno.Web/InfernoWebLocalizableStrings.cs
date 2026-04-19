@@ -7,6 +7,35 @@
             public const string Administration = "Inferno.Web/Dashboard.Administration";
             public const string Frontend = "Inferno.Web/Dashboard.Frontend";
             public const string Title = "Inferno.Web/Dashboard.Title";
+            public const string Welcome = "Inferno.Web/Dashboard.Welcome";
+
+            public static class Cards
+            {
+                public const string Blog = "Inferno.Web/Dashboard.Cards.Blog";
+                public const string BlogSubtitle = "Inferno.Web/Dashboard.Cards.BlogSubtitle";
+                public const string ContentBlocks = "Inferno.Web/Dashboard.Cards.ContentBlocks";
+                public const string ContentBlocksSubtitle = "Inferno.Web/Dashboard.Cards.ContentBlocksSubtitle";
+                public const string MembershipSubtitle = "Inferno.Web/Dashboard.Cards.MembershipSubtitle";
+                public const string Menus = "Inferno.Web/Dashboard.Cards.Menus";
+                public const string MenusSubtitle = "Inferno.Web/Dashboard.Cards.MenusSubtitle";
+                public const string Pages = "Inferno.Web/Dashboard.Cards.Pages";
+                public const string PagesSubtitle = "Inferno.Web/Dashboard.Cards.PagesSubtitle";
+                public const string ScheduledTasksSubtitle = "Inferno.Web/Dashboard.Cards.ScheduledTasksSubtitle";
+                public const string SettingsSubtitle = "Inferno.Web/Dashboard.Cards.SettingsSubtitle";
+                public const string TenantsSubtitle = "Inferno.Web/Dashboard.Cards.TenantsSubtitle";
+            }
+
+            public static class About
+            {
+                public const string Title = "Inferno.Web/Dashboard.About.Title";
+                public const string Description = "Inferno.Web/Dashboard.About.Description";
+                public const string Extensible = "Inferno.Web/Dashboard.About.Extensible";
+                public const string ExtensibleSubtitle = "Inferno.Web/Dashboard.About.ExtensibleSubtitle";
+                public const string MultiTenant = "Inferno.Web/Dashboard.About.MultiTenant";
+                public const string MultiTenantSubtitle = "Inferno.Web/Dashboard.About.MultiTenantSubtitle";
+                public const string Themeable = "Inferno.Web/Dashboard.About.Themeable";
+                public const string ThemeableSubtitle = "Inferno.Web/Dashboard.About.ThemeableSubtitle";
+            }
         }
 
         public static class General
@@ -40,6 +69,7 @@
             public const string Id = "Inferno.Web/General.Id";
             public const string Import = "Inferno.Web/General.Import";
             public const string Install = "Inferno.Web/General.Install";
+            public const string Installed = "Inferno.Web/General.Installed";
             public const string Loading = "Inferno.Web/General.Loading";
             public const string Localize = "Inferno.Web/General.Localize";
             public const string Miscellaneous = "Inferno.Web/General.Miscellaneous";
@@ -47,6 +77,7 @@
             public const string Name = "Inferno.Web/General.Name";
             public const string Next = "Inferno.Web/General.Next";
             public const string None = "Inferno.Web/General.None";
+            public const string NotInstalled = "Inferno.Web/General.NotInstalled";
             public const string OK = "Inferno.Web/General.OK";
             public const string OnOff = "Inferno.Web/General.OnOff";
             public const string Order = "Inferno.Web/General.Order";
@@ -62,6 +93,7 @@
             public const string Set = "Inferno.Web/General.Set";
             public const string SetDefault = "Inferno.Web/General.SetDefault";
             public const string Settings = "Inferno.Web/General.Settings";
+            public const string Status = "Inferno.Web/General.Status";
             public const string Slug = "Inferno.Web/General.Slug";
             public const string Submit = "Inferno.Web/General.Submit";
             public const string Success = "Inferno.Web/General.Success";

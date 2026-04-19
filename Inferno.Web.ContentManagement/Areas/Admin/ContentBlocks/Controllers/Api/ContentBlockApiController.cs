@@ -31,7 +31,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
 
         protected override void SetNewId(ContentBlock entity) => entity.Id = Guid.NewGuid();
 
-        public override async Task<IActionResult> Get(ODataQueryOptions<ContentBlock> options)
+        public override async Task<IActionResult> Get(ODataQueryOptions<ContentBlock> options, CancellationToken cancellationToken)
         {
             if (!await AuthorizeAsync(ReadPermission))
             {
@@ -47,7 +47,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
             // NOTE: Change due to: https://github.com/OData/WebApi/issues/1235
             var connection = GetDisposableConnection();
             var query = connection.Query(x => x.PageId == null);
-            query = await ApplyMandatoryFilterAsync(query);
+            query = await ApplyMandatoryFilterAsync(query, cancellationToken);
             var results = options.ApplyTo(query, IgnoreQueryOptions);
 
             var response = await Task.FromResult((results as IQueryable<ContentBlock>).ToHashSet());
@@ -75,22 +75,22 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
             return await (results as IQueryable<ContentBlock>).ToHashSetAsync();
         }
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] ContentBlock entity)
+        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] ContentBlock entity, CancellationToken cancellationToken)
         {
             var blockType = Type.GetType(entity.BlockType);
             var contentBlocks = DependoResolver.Instance.ResolveAll<IContentBlock>();
             var contentBlock = contentBlocks.First(x => x.GetType() == blockType);
             entity.BlockName = contentBlock.Name;
-            return await base.Put(key, entity);
+            return await base.Put(key, entity, cancellationToken);
         }
 
-        public override async Task<IActionResult> Post([FromBody] ContentBlock entity)
+        public override async Task<IActionResult> Post([FromBody] ContentBlock entity, CancellationToken cancellationToken)
         {
             var blockType = Type.GetType(entity.BlockType);
             var contentBlocks = DependoResolver.Instance.ResolveAll<IContentBlock>();
             var contentBlock = contentBlocks.First(x => x.GetType() == blockType);
             entity.BlockName = contentBlock.Name;
-            return await base.Post(entity);
+            return await base.Post(entity, cancellationToken);
         }
 
         [HttpGet]

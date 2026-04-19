@@ -22,19 +22,18 @@ namespace Inferno.Web.Areas.Admin
 
         public void GetNavigation(NavigationBuilder builder)
         {
-            builder.Add(T[InfernoWebLocalizableStrings.General.Home], "0", BuildHomeMenu);
+            builder.Add(T[InfernoWebLocalizableStrings.Dashboard.Title], "0", BuildDashboardMenu);
             builder.Add(T[InfernoWebLocalizableStrings.Membership.Title], "1", BuildMembershipMenu);
             builder.Add(T[InfernoWebLocalizableStrings.General.Configuration], "2", BuildConfigurationMenu);
             builder.Add(T[InfernoWebLocalizableStrings.Maintenance.Title], "3", BuildMaintenanceMenu);
-            //builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "99999", BuildPluginsMenu);
         }
 
         #endregion INavigationProvider Members
 
-        private static void BuildHomeMenu(NavigationItemBuilder builder)
+        private static void BuildDashboardMenu(NavigationItemBuilder builder)
         {
             builder.Permission(StandardPolicies.AdminAccess);
-            builder.Icon(IconName.Home).Url("/admin/index");
+            builder.Icon(IconName.Dashboard).Url("/admin");
         }
 
         private void BuildMembershipMenu(NavigationItemBuilder builder)
@@ -61,12 +60,11 @@ namespace Inferno.Web.Areas.Admin
             //    .Icon(IconName.Search)
             //    .Permission(StandardPolicies.FullAccess));
 
-            //// Plugins — TODO: not yet ported from MantleCMS. Removed from nav to avoid
-            //// "Nothing at this address" errors until the page is implemented.
-            //builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "5", item => item
-            //    .Url("/admin/plugins/index")
-            //    .Icon(IconName.PuzzlePiece)
-            //    .Permission(StandardPolicies.FullAccess));
+            // Plugins
+            builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "5", item => item
+                .Url("/admin/plugins")
+                .Icon(IconName.PuzzlePiece)
+                .Permission(InfernoWebPolicies.PluginsRead));
 
             // Settings
             builder.Add(T[InfernoWebLocalizableStrings.General.Settings], "5", item => item

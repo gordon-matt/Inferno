@@ -24,14 +24,14 @@ namespace Inferno.Web.Areas.Tenants.Controllers.Api
             this.membershipService = membershipService;
         }
 
-        public override Task<IActionResult> Get(ODataQueryOptions<Tenant> options)
+        public override Task<IActionResult> Get(ODataQueryOptions<Tenant> options, CancellationToken cancellationToken)
         {
-            return base.Get(options);
+            return base.Get(options, cancellationToken);
         }
 
-        public override async Task<IActionResult> Post([FromBody] Tenant entity)
+        public override async Task<IActionResult> Post([FromBody] Tenant entity, CancellationToken cancellationToken)
         {
-            var result = await base.Post(entity);
+            var result = await base.Post(entity, cancellationToken);
             int tenantId = entity.Id; // EF should have populated the ID in base.Post()
             await membershipService.EnsureAdminRoleForTenantAsync(tenantId);
 
@@ -45,9 +45,9 @@ namespace Inferno.Web.Areas.Tenants.Controllers.Api
             return result;
         }
 
-        public override async Task<IActionResult> Delete(int key)
+        public override async Task<IActionResult> Delete(int key, CancellationToken cancellationToken)
         {
-            var result = await base.Delete(key);
+            var result = await base.Delete(key, cancellationToken);
 
             //TODO: Remove everything associated with the tenant.
 

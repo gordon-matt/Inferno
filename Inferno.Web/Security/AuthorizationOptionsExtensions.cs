@@ -18,6 +18,8 @@ namespace Inferno.Web.Security
             options.AddPermission(InfernoWebPolicies.LocalizableStringsWrite, "LocalizableStringsWrite");
             options.AddPermission(InfernoWebPolicies.LogRead, "LogRead");
             options.AddPermission(InfernoWebPolicies.LogWrite, "LogWrite");
+            options.AddPermission(InfernoWebPolicies.PluginsRead, "PluginsRead");
+            options.AddPermission(InfernoWebPolicies.PluginsManage, "PluginsManage");
             options.AddPermission(InfernoWebPolicies.ScheduledTasksRead, "ScheduledTasksRead");
             options.AddPermission(InfernoWebPolicies.ScheduledTasksWrite, "ScheduledTasksWrite");
             options.AddPermission(InfernoWebPolicies.SettingsRead, "SettingsRead");

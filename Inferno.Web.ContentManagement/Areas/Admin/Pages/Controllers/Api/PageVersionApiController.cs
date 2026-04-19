@@ -37,7 +37,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
             this.service = service;
         }
 
-        public override async Task<IActionResult> Delete([FromODataUri] Guid key)
+        public override async Task<IActionResult> Delete([FromODataUri] Guid key, CancellationToken cancellationToken)
         {
             var entity = await Repository.FindOneAsync(key);
 
@@ -73,11 +73,11 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
             previous.Status = VersionStatus.Published;
             await Repository.UpdateAsync(previous);
 
-            return await base.Delete(key);
+            return await base.Delete(key, cancellationToken);
         }
 
         [AcceptVerbs("PATCH", "MERGE")]
-        public override async Task<IActionResult> Patch([FromODataUri] Guid key, Delta<PageVersion> patch)
+        public override async Task<IActionResult> Patch([FromODataUri] Guid key, Delta<PageVersion> patch, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -142,15 +142,15 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
             return Updated(entity);
         }
 
-        public override async Task<IActionResult> Post([FromBody] PageVersion entity)
+        public override async Task<IActionResult> Post([FromBody] PageVersion entity, CancellationToken cancellationToken)
         {
             entity.DateCreatedUtc = DateTime.UtcNow;
             entity.DateModifiedUtc = DateTime.UtcNow;
             entity.Fields = MediaHelper.EnsureCorrectUrls(entity.Fields);
-            return await base.Post(entity);
+            return await base.Post(entity, cancellationToken);
         }
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] PageVersion entity)
+        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] PageVersion entity, CancellationToken cancellationToken)
         {
             if (!await CanModifyEntityAsync(entity))
             {

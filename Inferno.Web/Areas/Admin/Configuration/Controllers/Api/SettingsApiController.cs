@@ -25,9 +25,9 @@ namespace Inferno.Web.Areas.Admin.Configuration.Controllers.Api
 
         protected override void SetNewId(Setting entity) => entity.Id = Guid.NewGuid();
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] Setting entity)
+        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] Setting entity, CancellationToken cancellationToken)
         {
-            var result = await base.Put(key, entity);
+            var result = await base.Put(key, entity, cancellationToken);
 
             string cacheKey = string.Format(InfernoWebConstants.CacheKeys.SettingsKeyFormat, entity.TenantId, entity.Type);
             cacheManager.Remove(cacheKey);
@@ -41,9 +41,9 @@ namespace Inferno.Web.Areas.Admin.Configuration.Controllers.Api
             return result;
         }
 
-        public override async Task<IActionResult> Post([FromBody] Setting entity)
+        public override async Task<IActionResult> Post([FromBody] Setting entity, CancellationToken cancellationToken)
         {
-            var result = await base.Post(entity);
+            var result = await base.Post(entity, cancellationToken);
 
             string cacheKey = string.Format(InfernoWebConstants.CacheKeys.SettingsKeyFormat, entity.TenantId, entity.Type);
             cacheManager.Remove(cacheKey);
@@ -51,9 +51,9 @@ namespace Inferno.Web.Areas.Admin.Configuration.Controllers.Api
             return result;
         }
 
-        public override async Task<IActionResult> Patch([FromODataUri] Guid key, Delta<Setting> patch)
+        public override async Task<IActionResult> Patch([FromODataUri] Guid key, Delta<Setting> patch, CancellationToken cancellationToken)
         {
-            var result = await base.Patch(key, patch);
+            var result = await base.Patch(key, patch, cancellationToken);
 
             var entity = await Repository.FindOneAsync(key);
             string cacheKey = string.Format(InfernoWebConstants.CacheKeys.SettingsKeyFormat, entity.TenantId, entity.Type);
@@ -62,15 +62,15 @@ namespace Inferno.Web.Areas.Admin.Configuration.Controllers.Api
             return result;
         }
 
-        public override async Task<IActionResult> Delete([FromODataUri] Guid key)
+        public override async Task<IActionResult> Delete([FromODataUri] Guid key, CancellationToken cancellationToken)
         {
-            var result = base.Delete(key);
+            var result = await base.Delete(key, cancellationToken);
 
             var entity = await Repository.FindOneAsync(key);
             string cacheKey = string.Format(InfernoWebConstants.CacheKeys.SettingsKeyFormat, entity.TenantId, entity.Type);
             cacheManager.Remove(cacheKey);
 
-            return await result;
+            return result;
         }
 
         protected override string ReadPermission => InfernoWebPolicies.SettingsRead;

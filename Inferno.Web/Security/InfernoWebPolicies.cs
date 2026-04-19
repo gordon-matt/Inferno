@@ -12,8 +12,9 @@
         public const string LogRead = "Inferno_Log_Read";
         public const string LogWrite = "Inferno_Log_Write";
 
-        //// Plugins
-        //public const string PluginsManage = "Inferno_Plugins_Manage";
+        // Plugins
+        public const string PluginsRead = "Inferno_Plugins_Read";
+        public const string PluginsManage = "Inferno_Plugins_Manage";
 
         // Scheduled Tasks
         public const string ScheduledTasksRead = "Inferno_ScheduledTasks_Read";

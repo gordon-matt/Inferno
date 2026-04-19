@@ -24,16 +24,16 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
             this.localizablePropertyService = localizablePropertyService;
         }
 
-        public override async Task<IActionResult> Post([FromBody] EntityTypeContentBlock entity)
+        public override async Task<IActionResult> Post([FromBody] EntityTypeContentBlock entity, CancellationToken cancellationToken)
         {
             SetValues(entity);
-            return await base.Post(entity);
+            return await base.Post(entity, cancellationToken);
         }
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] EntityTypeContentBlock entity)
+        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] EntityTypeContentBlock entity, CancellationToken cancellationToken)
         {
             SetValues(entity);
-            return await base.Put(key, entity);
+            return await base.Put(key, entity, cancellationToken);
         }
 
         [HttpGet]

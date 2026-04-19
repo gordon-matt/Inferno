@@ -31,7 +31,7 @@ namespace Inferno.Web.Areas.Admin.ScheduledTasks.Controllers.Api
             // Database identity column will be assigned by EF Core.
         }
 
-        public override async Task<IActionResult> Put(int key, [FromBody] ScheduledTask entity)
+        public override async Task<IActionResult> Put(int key, [FromBody] ScheduledTask entity, CancellationToken cancellationToken)
         {
             if (!await AuthorizeAsync(WritePermission))
             {
@@ -50,7 +50,7 @@ namespace Inferno.Web.Areas.Admin.ScheduledTasks.Controllers.Api
             existing.Enabled = entity.Enabled;
             existing.StopOnError = entity.StopOnError;
 
-            return await base.Put(key, existing);
+            return await base.Put(key, existing, cancellationToken);
         }
 
         [HttpPost]

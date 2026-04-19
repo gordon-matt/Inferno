@@ -4,6 +4,8 @@ using Extenso.Data.Entity;
 using Inferno.Security;
 using Inferno.Tenants.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace Inferno.Web.OData
 {
@@ -22,9 +24,25 @@ namespace Inferno.Web.OData
 
         #endregion Constructors
 
+        [HttpGet]
+        public override async Task<IActionResult> Get(ODataQueryOptions<TEntity> options, CancellationToken cancellationToken)
+        {
+            if (!await AuthorizeAsync(ReadPermission))
+            {
+                return Unauthorized();
+            }
+
+            // NOTE: Change due to: https://github.com/OData/WebApi/issues/1235
+            var connection = GetDisposableConnection();
+            var query = connection.Query();
+            query = await ApplyMandatoryFilterAsync(query, cancellationToken);
+            var results = options.ApplyTo(query, IgnoreQueryOptions);
+            return Ok(results);
+        }
+
         #region GenericODataController<TEntity, TKey> Members
 
-        protected override async Task<IQueryable<TEntity>> ApplyMandatoryFilterAsync(IQueryable<TEntity> query)
+        protected override async Task<IQueryable<TEntity>> ApplyMandatoryFilterAsync(IQueryable<TEntity> query, CancellationToken cancellationToken )
         {
             int tenantId = GetTenantId();
             if (await AuthorizeAsync(StandardPolicies.FullAccess))
@@ -32,6 +50,7 @@ namespace Inferno.Web.OData
                 // TODO: Not sure if this is the best solution. Maybe we should only show the items with NULL for Tenant ID?
                 return query.Where(x => x.TenantId == null || x.TenantId == tenantId);
             }
+
             return query.Where(x => x.TenantId == tenantId);
         }
 

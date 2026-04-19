@@ -5,6 +5,7 @@ using Extenso.AspNetCore.OData;
 using Inferno.Localization;
 using Inferno.Localization.Entities;
 using Inferno.Logging.Entities;
+using Inferno.Plugins;
 using Inferno.Security.Membership;
 using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
@@ -15,6 +16,8 @@ using Inferno.Web.Areas.Admin.Configuration.Themes.Services;
 using Inferno.Web.Areas.Admin.Localization.Services;
 using Inferno.Web.Areas.Admin.Log.Services;
 using Inferno.Web.Areas.Admin.Membership.Services;
+using Inferno.Web.Areas.Admin.Plugins.Models;
+using Inferno.Web.Areas.Admin.Plugins.Services;
 using Inferno.Web.Areas.Admin.ScheduledTasks.Services;
 using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
@@ -44,8 +47,8 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.Register<IWebHelper, WebHelper>(ServiceLifetime.Scoped);
         //builder.Register<IDateTimeHelper, DateTimeHelper>(ServiceLifetime.Scoped);
 
-        //// Plugins
-        //builder.Register<IPluginFinder, PluginFinder>(ServiceLifetime.Scoped);
+        // Plugins
+        builder.Register<IPluginFinder, PluginFinder>(ServiceLifetime.Scoped);
 
         // Work Context, Themes, Routing, etc
         builder.Register<IWorkContext, WorkContext>(ServiceLifetime.Scoped);
@@ -109,6 +112,9 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.Register<IRadzenODataService<InfernoRole, string>, RoleODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<ScheduledTask, int>, ScheduledTaskODataService>(ServiceLifetime.Singleton);
         builder.RegisterSelf<ScheduledTaskODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<EdmPluginDescriptor, string>, PluginODataService>(ServiceLifetime.Singleton);
+        builder.RegisterSelf<PluginODataService>(ServiceLifetime.Singleton);
+
         builder.Register<IRadzenODataService<Setting, Guid>, SettingODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<Tenant, int>, TenantODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<EdmThemeConfiguration, Guid>, ThemeODataService>(ServiceLifetime.Singleton);
