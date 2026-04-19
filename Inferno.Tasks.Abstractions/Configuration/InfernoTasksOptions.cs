@@ -1,7 +1,6 @@
-﻿namespace Inferno.Tasks.Configuration
+﻿namespace Inferno.Tasks.Configuration;
+
+public class InfernoTasksOptions
 {
-    public class InfernoTasksOptions
-    {
-        public bool ScheduledTasksEnabled { get; set; }
-    }
+    public bool ScheduledTasksEnabled { get; set; }
 }

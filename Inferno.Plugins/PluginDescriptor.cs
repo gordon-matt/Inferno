@@ -40,10 +40,7 @@ public class PluginDescriptor : IDescriptor, IComparable<PluginDescriptor>
         instance ??= DependoResolver.Instance.ResolveUnregistered(PluginType);
 
         var typedInstance = instance as T;
-        if (typedInstance != null)
-        {
-            typedInstance.PluginDescriptor = this;
-        }
+        typedInstance?.PluginDescriptor = this;
 
         return typedInstance;
     }

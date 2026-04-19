@@ -23,7 +23,7 @@ public class DependencyRegistrar : IDependencyRegistrar
                 continue;
             }
 
-            var isEnabled = (Activator.CreateInstance(entityTypeConfiguration) as IInfernoEntityTypeConfiguration).IsEnabled;
+            bool isEnabled = (Activator.CreateInstance(entityTypeConfiguration) as IInfernoEntityTypeConfiguration).IsEnabled;
 
             if (isEnabled)
             {

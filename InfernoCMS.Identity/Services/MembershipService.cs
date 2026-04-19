@@ -2,17 +2,16 @@
 using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace InfernoCMS.Identity.Services
+namespace InfernoCMS.Identity.Services;
+
+public class MembershipService : IdentityMembershipService
 {
-    public class MembershipService : IdentityMembershipService
+    public MembershipService(
+        IDbContextFactory contextFactory,
+        UserManager<ApplicationUser> userManager,
+        RoleManager<ApplicationRole> roleManager,
+        IRepository<UserProfileEntry> userProfileRepository)
+        : base(contextFactory, userManager, roleManager, userProfileRepository)
     {
-        public MembershipService(
-            IDbContextFactory contextFactory,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager,
-            IRepository<UserProfileEntry> userProfileRepository)
-            : base(contextFactory, userManager, roleManager, userProfileRepository)
-        {
-        }
     }
 }

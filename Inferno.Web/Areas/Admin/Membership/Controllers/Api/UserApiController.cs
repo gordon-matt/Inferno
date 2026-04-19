@@ -11,257 +11,243 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Inferno.Web.Areas.Admin.Membership.Controllers.Api
+namespace Inferno.Web.Areas.Admin.Membership.Controllers.Api;
+
+[Authorize]
+public class UserApiController : ODataController
 {
-    [Authorize]
-    public class UserApiController : ODataController
+    private readonly ILogger logger;
+    private readonly IWorkContext workContext;
+    private readonly IAuthorizationService authorizationService;
+
+    protected IMembershipService Service { get; private set; }
+
+    private readonly Lazy<MembershipSettings> membershipSettings;
+
+    public UserApiController(
+        IMembershipService service,
+        Lazy<MembershipSettings> membershipSettings,
+        ILoggerFactory loggerFactory,
+        IWorkContext workContext,
+        IAuthorizationService authorizationService)
     {
-        private readonly ILogger logger;
-        private readonly IWorkContext workContext;
-        private readonly IAuthorizationService authorizationService;
+        this.Service = service;
+        this.membershipSettings = membershipSettings;
+        this.logger = loggerFactory.CreateLogger<UserApiController>();
+        this.workContext = workContext;
+        this.authorizationService = authorizationService;
+    }
 
-        protected IMembershipService Service { get; private set; }
-
-        private readonly Lazy<MembershipSettings> membershipSettings;
-
-        public UserApiController(
-            IMembershipService service,
-            Lazy<MembershipSettings> membershipSettings,
-            ILoggerFactory loggerFactory,
-            IWorkContext workContext,
-            IAuthorizationService authorizationService)
+    public virtual async Task<IActionResult> Get(ODataQueryOptions<InfernoUser> options)
+    {
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersRead))
         {
-            this.Service = service;
-            this.membershipSettings = membershipSettings;
-            this.logger = loggerFactory.CreateLogger<UserApiController>();
-            this.workContext = workContext;
-            this.authorizationService = authorizationService;
+            return Unauthorized();
         }
 
-        public virtual async Task<IActionResult> Get(ODataQueryOptions<InfernoUser> options)
+        var query = (await Service.GetAllUsersAsync(workContext.CurrentTenant.Id)).AsQueryable();
+        var results = options.ApplyTo(query);
+
+        var response = await Task.FromResult((results as IQueryable<InfernoUser>).ToHashSet());
+        return Ok(response);
+    }
+
+    [EnableQuery]
+    public virtual async Task<IActionResult> Get([FromODataUri] string key)
+    {
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersRead))
         {
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersRead))
-            {
-                return Unauthorized();
-            }
-
-            var query = (await Service.GetAllUsersAsync(workContext.CurrentTenant.Id)).AsQueryable();
-            var results = options.ApplyTo(query);
-
-            var response = await Task.FromResult((results as IQueryable<InfernoUser>).ToHashSet());
-            return Ok(response);
+            return Unauthorized();
         }
 
-        [EnableQuery]
-        public virtual async Task<IActionResult> Get([FromODataUri] string key)
+        var entity = await Service.GetUserByIdAsync(key);
+
+        return entity == null ? NotFound() : Ok(entity);
+    }
+
+    public virtual async Task<IActionResult> Put([FromODataUri] string key, [FromBody] InfernoUser entity)
+    {
+        if (entity == null)
         {
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersRead))
-            {
-                return Unauthorized();
-            }
+            return BadRequest();
+        }
 
-            var entity = await Service.GetUserByIdAsync(key);
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
+        {
+            return Unauthorized();
+        }
 
-            if (entity == null)
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (!key.Equals(entity.Id))
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            await Service.UpdateUserAsync(entity);
+        }
+        catch (DbUpdateConcurrencyException x)
+        {
+            logger.LogError(new EventId(), x, x.Message);
+
+            if (!await CheckEntityExistsAsync(key))
             {
                 return NotFound();
             }
-
-            return Ok(entity);
+            else { throw; }
         }
 
-        public virtual async Task<IActionResult> Put([FromODataUri] string key, [FromBody] InfernoUser entity)
+        return Updated(entity);
+    }
+
+    public virtual async Task<IActionResult> Post([FromBody] InfernoUser entity)
+    {
+        if (entity == null)
         {
-            if (entity == null)
-            {
-                return BadRequest();
-            }
-
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
-            {
-                return Unauthorized();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (!key.Equals(entity.Id))
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                await Service.UpdateUserAsync(entity);
-            }
-            catch (DbUpdateConcurrencyException x)
-            {
-                logger.LogError(new EventId(), x, x.Message);
-
-                if (!await CheckEntityExistsAsync(key))
-                {
-                    return NotFound();
-                }
-                else { throw; }
-            }
-
-            return Updated(entity);
+            return BadRequest();
         }
 
-        public virtual async Task<IActionResult> Post([FromBody] InfernoUser entity)
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
         {
-            if (entity == null)
-            {
-                return BadRequest();
-            }
-
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
-            {
-                return Unauthorized();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            string password = Password.Generate(
-                membershipSettings.Value.GeneratedPasswordLength,
-                membershipSettings.Value.GeneratedPasswordNumberOfNonAlphanumericChars);
-
-            entity.TenantId = workContext.CurrentTenant.Id;
-            await Service.InsertUserAsync(entity, password);
-
-            return Created(entity);
+            return Unauthorized();
         }
 
-        [AcceptVerbs("PATCH", "MERGE")]
-        public virtual async Task<IActionResult> Patch([FromODataUri] string key, Delta<InfernoUser> patch)
+        if (!ModelState.IsValid)
         {
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
-            {
-                return Unauthorized();
-            }
+            return BadRequest(ModelState);
+        }
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        string password = Password.Generate(
+            membershipSettings.Value.GeneratedPasswordLength,
+            membershipSettings.Value.GeneratedPasswordNumberOfNonAlphanumericChars);
 
-            InfernoUser entity = await Service.GetUserByIdAsync(key);
-            if (entity == null)
+        entity.TenantId = workContext.CurrentTenant.Id;
+        await Service.InsertUserAsync(entity, password);
+
+        return Created(entity);
+    }
+
+    [AcceptVerbs("PATCH", "MERGE")]
+    public virtual async Task<IActionResult> Patch([FromODataUri] string key, Delta<InfernoUser> patch)
+    {
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
+        {
+            return Unauthorized();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var entity = await Service.GetUserByIdAsync(key);
+        if (entity == null)
+        {
+            return NotFound();
+        }
+
+        patch.Patch(entity);
+
+        try
+        {
+            await Service.UpdateUserAsync(entity);
+        }
+        catch (DbUpdateConcurrencyException x)
+        {
+            logger.LogError(new EventId(), x, x.Message);
+
+            if (!await CheckEntityExistsAsync(key))
             {
                 return NotFound();
             }
-
-            patch.Patch(entity);
-
-            try
-            {
-                await Service.UpdateUserAsync(entity);
-            }
-            catch (DbUpdateConcurrencyException x)
-            {
-                logger.LogError(new EventId(), x, x.Message);
-
-                if (!await CheckEntityExistsAsync(key))
-                {
-                    return NotFound();
-                }
-                else { throw; }
-            }
-
-            return Updated(entity);
+            else { throw; }
         }
 
-        public virtual async Task<IActionResult> Delete([FromODataUri] string key)
+        return Updated(entity);
+    }
+
+    public virtual async Task<IActionResult> Delete([FromODataUri] string key)
+    {
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
         {
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
-            {
-                return Unauthorized();
-            }
-
-            InfernoUser entity = await Service.GetUserByIdAsync(key);
-            if (entity == null)
-            {
-                return NotFound();
-            }
-
-            await Service.DeleteUserAsync(key);
-
-            return NoContent();
+            return Unauthorized();
         }
 
-        protected virtual async Task<bool> CheckEntityExistsAsync(string key)
+        var entity = await Service.GetUserByIdAsync(key);
+        if (entity == null)
         {
-            var user = await Service.GetUserByIdAsync(key);
-            return user != null;
+            return NotFound();
         }
 
-        public virtual async Task<IActionResult> GetUsersInRole(
-            [FromODataUri] string roleId,
-            ODataQueryOptions<InfernoUser> options)
+        await Service.DeleteUserAsync(key);
+
+        return NoContent();
+    }
+
+    protected virtual async Task<bool> CheckEntityExistsAsync(string key)
+    {
+        var user = await Service.GetUserByIdAsync(key);
+        return user != null;
+    }
+
+    public virtual async Task<IActionResult> GetUsersInRole(
+        [FromODataUri] string roleId,
+        ODataQueryOptions<InfernoUser> options)
+    {
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersRead))
         {
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersRead))
-            {
-                return Unauthorized();
-            }
-
-            var query = (await Service.GetUsersByRoleIdAsync(roleId)).AsQueryable();
-            var results = options.ApplyTo(query);
-
-            var response = await Task.FromResult((results as IQueryable<InfernoUser>).ToHashSet());
-            return Ok(response);
+            return Unauthorized();
         }
 
-        [HttpPost]
-        public virtual async Task<IActionResult> AssignUserToRoles([FromBody] ODataActionParameters parameters)
+        var query = (await Service.GetUsersByRoleIdAsync(roleId)).AsQueryable();
+        var results = options.ApplyTo(query);
+
+        var response = await Task.FromResult((results as IQueryable<InfernoUser>).ToHashSet());
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public virtual async Task<IActionResult> AssignUserToRoles([FromBody] ODataActionParameters parameters)
+    {
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
         {
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
-            {
-                return Unauthorized();
-            }
+            return Unauthorized();
+        }
 
-            string userId = (string)parameters["userId"];
-            var roleIds = (IEnumerable<string>)parameters["roles"];
+        string userId = (string)parameters["userId"];
+        var roleIds = (IEnumerable<string>)parameters["roles"];
 
-            await Service.AssignUserToRolesAsync(workContext.CurrentTenant.Id, userId, roleIds);
+        await Service.AssignUserToRolesAsync(workContext.CurrentTenant.Id, userId, roleIds);
 
+        return Ok();
+    }
+
+    [HttpPost]
+    public virtual async Task<IActionResult> ChangePassword([FromBody] ODataActionParameters parameters)
+    {
+        if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
+        {
+            return Unauthorized();
+        }
+
+        string userId = (string)parameters["userId"];
+        string password = (string)parameters["password"];
+
+        try
+        {
+            await Service.ChangePasswordAsync(userId, password);
             return Ok();
         }
-
-        [HttpPost]
-        public virtual async Task<IActionResult> ChangePassword([FromBody] ODataActionParameters parameters)
+        catch (Exception x)
         {
-            if (!await AuthorizeAsync(InfernoWebPolicies.MembershipUsersWrite))
-            {
-                return Unauthorized();
-            }
-
-            string userId = (string)parameters["userId"];
-            string password = (string)parameters["password"];
-
-            try
-            {
-                await Service.ChangePasswordAsync(userId, password);
-                return Ok();
-            }
-            catch (Exception x)
-            {
-                return StatusCode(500, x.Message);
-            }
-        }
-
-        protected virtual async Task<bool> AuthorizeAsync(string policyName)
-        {
-            if (authorizationService == null || string.IsNullOrEmpty(policyName))
-            {
-                return true;
-            }
-
-            return (await authorizationService.AuthorizeAsync(User, policyName)).Succeeded;
+            return StatusCode(500, x.Message);
         }
     }
+
+    protected virtual async Task<bool> AuthorizeAsync(string policyName) => authorizationService == null || string.IsNullOrEmpty(policyName) || (await authorizationService.AuthorizeAsync(User, policyName)).Succeeded;
 }

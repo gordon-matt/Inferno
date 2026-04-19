@@ -101,7 +101,6 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         //// Embedded File Provider
         //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
 
-
         builder.Register<IRadzenODataService<Language, Guid>, LanguageODataService>(ServiceLifetime.Singleton);
 
         builder.Register<IRadzenODataService<LocalizableString, Guid>, LocalizableStringODataService>(ServiceLifetime.Singleton);

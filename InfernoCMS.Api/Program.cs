@@ -32,13 +32,11 @@ services.AddInfernoLocalization();
 
 services
     .AddControllers(options =>
-    {
         // Strip the inherited Stream action from every OData controller. Extenso
         // 10.x decorates it with a [Route] attribute that is not constrained to
         // a verb, which both confuses Swashbuckle and disrupts OData convention
         // routing for the standard CRUD methods on every derived controller.
-        options.Conventions.Add(new OmitODataStreamActionConvention());
-    })
+        options.Conventions.Add(new OmitODataStreamActionConvention()))
     // Discover every controller-bearing assembly via the IRouterAssemblyMarker
     // pattern. This replaces explicit AddApplicationPart calls and makes new
     // referenced (or plugin) assemblies just-work as long as they ship a marker.

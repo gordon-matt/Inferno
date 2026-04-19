@@ -5,21 +5,20 @@ using Inferno.Security.Membership;
 using InfernoCMS.Data;
 using InfernoCMS.Identity.Services;
 
-namespace InfernoCMS.Api.Infrastructure
+namespace InfernoCMS.Api.Infrastructure;
+
+public class DependencyRegistrar : IDependencyRegistrar
 {
-    public class DependencyRegistrar : IDependencyRegistrar
+    public int Order => 1;
+
+    public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
-        public int Order => 1;
+        builder.Register<IDbContextFactory, ApplicationDbContextFactory>(ServiceLifetime.Singleton);
 
-        public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
-        {
-            builder.Register<IDbContextFactory, ApplicationDbContextFactory>(ServiceLifetime.Singleton);
+        builder.RegisterGeneric(typeof(IRepository<>), typeof(EntityFrameworkRepository<>), ServiceLifetime.Scoped);
 
-            builder.RegisterGeneric(typeof(IRepository<>), typeof(EntityFrameworkRepository<>), ServiceLifetime.Scoped);
+        builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
 
-            builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
-
-            builder.Register<IMembershipService, MembershipService>(ServiceLifetime.Transient);
-        }
+        builder.Register<IMembershipService, MembershipService>(ServiceLifetime.Transient);
     }
 }

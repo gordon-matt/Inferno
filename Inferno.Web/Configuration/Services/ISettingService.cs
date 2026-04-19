@@ -4,138 +4,105 @@ using Extenso.Data.Entity;
 using Inferno.Caching;
 using Inferno.Web.Configuration.Entities;
 
-namespace Inferno.Web.Configuration.Services
+namespace Inferno.Web.Configuration.Services;
+
+public interface ISettingService
 {
-    public interface ISettingService
+    TSettings GetSettings<TSettings>(int? tenantId = null) where TSettings : ISettings, new();
+
+    ISettings GetSettings(Type settingsType, int? tenantId = null);
+
+    void SaveSettings(string key, string value, int? tenantId = null);
+
+    void SaveSettings<TSettings>(TSettings settings, int? tenantId = null) where TSettings : ISettings;
+}
+
+public class DefaultSettingService : ISettingService
+{
+    private readonly ICacheManager cacheManager;
+    private readonly IRepository<Setting> repository;
+
+    public DefaultSettingService(ICacheManager cacheManager, IRepository<Setting> repository)
     {
-        TSettings GetSettings<TSettings>(int? tenantId = null) where TSettings : ISettings, new();
-
-        ISettings GetSettings(Type settingsType, int? tenantId = null);
-
-        void SaveSettings(string key, string value, int? tenantId = null);
-
-        void SaveSettings<TSettings>(TSettings settings, int? tenantId = null) where TSettings : ISettings;
+        this.cacheManager = cacheManager;
+        this.repository = repository;
     }
 
-    public class DefaultSettingService : ISettingService
+    public TSettings GetSettings<TSettings>(int? tenantId = null) where TSettings : ISettings, new()
     {
-        private readonly ICacheManager cacheManager;
-        private readonly IRepository<Setting> repository;
-
-        public DefaultSettingService(ICacheManager cacheManager, IRepository<Setting> repository)
+        string type = typeof(TSettings).FullName;
+        string key = string.Format(InfernoWebConstants.CacheKeys.SettingsKeyFormat, tenantId, type);
+        return cacheManager.Get(key, () =>
         {
-            this.cacheManager = cacheManager;
-            this.repository = repository;
-        }
-
-        public TSettings GetSettings<TSettings>(int? tenantId = null) where TSettings : ISettings, new()
-        {
-            string type = typeof(TSettings).FullName;
-            string key = string.Format(InfernoWebConstants.CacheKeys.SettingsKeyFormat, tenantId, type);
-            return cacheManager.Get(key, () =>
-            {
-                Setting settings = null;
-
-                if (tenantId.HasValue)
+            var settings = tenantId.HasValue
+                ? repository.FindOne(new SearchOptions<Setting>
                 {
-                    settings = repository.FindOne(new SearchOptions<Setting>
-                    {
-                        Query = x => x.TenantId == tenantId && x.Type == type
-                    });
-                }
-                else
+                    Query = x => x.TenantId == tenantId && x.Type == type
+                })
+                : repository.FindOne(new SearchOptions<Setting>
                 {
-                    settings = repository.FindOne(new SearchOptions<Setting>
-                    {
-                        Query = x => x.TenantId == null && x.Type == type
-                    });
-                }
-
-                if (settings == null || string.IsNullOrEmpty(settings.Value))
-                {
-                    return new TSettings();
-                }
-
-                return settings.Value.JsonDeserialize<TSettings>();
-            });
-        }
-
-        public ISettings GetSettings(Type settingsType, int? tenantId = null)
-        {
-            string type = settingsType.FullName;
-            string key = string.Format(InfernoWebConstants.CacheKeys.SettingsKeyFormat, tenantId, type);
-            return cacheManager.Get(key, () =>
-            {
-                Setting settings = null;
-
-                if (tenantId.HasValue)
-                {
-                    settings = repository.FindOne(new SearchOptions<Setting>
-                    {
-                        Query = x => x.TenantId == tenantId && x.Type == type
-                    });
-                }
-                else
-                {
-                    settings = repository.FindOne(new SearchOptions<Setting>
-                    {
-                        Query = x => x.TenantId == null && x.Type == type
-                    });
-                }
-
-                if (settings == null || string.IsNullOrEmpty(settings.Value))
-                {
-                    return (ISettings)Activator.CreateInstance(settingsType);
-                }
-
-                return (ISettings)settings.Value.JsonDeserialize(settingsType);
-            });
-        }
-
-        public void SaveSettings(string key, string value, int? tenantId = null)
-        {
-            Setting setting = null;
-
-            if (tenantId.HasValue)
-            {
-                setting = repository.FindOne(new SearchOptions<Setting>
-                {
-                    Query = x => x.TenantId == tenantId && x.Type == key
+                    Query = x => x.TenantId == null && x.Type == type
                 });
-            }
-            else
-            {
-                setting = repository.FindOne(new SearchOptions<Setting>
+            return settings == null || string.IsNullOrEmpty(settings.Value) ? new TSettings() : settings.Value.JsonDeserialize<TSettings>();
+        });
+    }
+
+    public ISettings GetSettings(Type settingsType, int? tenantId = null)
+    {
+        string type = settingsType.FullName;
+        string key = string.Format(InfernoWebConstants.CacheKeys.SettingsKeyFormat, tenantId, type);
+        return cacheManager.Get(key, () =>
+        {
+            var settings = tenantId.HasValue
+                ? repository.FindOne(new SearchOptions<Setting>
                 {
-                    Query = x => x.TenantId == null && x.Type == key
+                    Query = x => x.TenantId == tenantId && x.Type == type
+                })
+                : repository.FindOne(new SearchOptions<Setting>
+                {
+                    Query = x => x.TenantId == null && x.Type == type
                 });
-            }
+            return settings == null || string.IsNullOrEmpty(settings.Value)
+                ? (ISettings)Activator.CreateInstance(settingsType)
+                : (ISettings)settings.Value.JsonDeserialize(settingsType);
+        });
+    }
 
-            if (setting == null)
+    public void SaveSettings(string key, string value, int? tenantId = null)
+    {
+        var setting = tenantId.HasValue
+            ? repository.FindOne(new SearchOptions<Setting>
             {
-                var iSettings = DependoResolver.Instance.ResolveAll<ISettings>().FirstOrDefault(x => x.GetType().FullName == key);
+                Query = x => x.TenantId == tenantId && x.Type == key
+            })
+            : repository.FindOne(new SearchOptions<Setting>
+            {
+                Query = x => x.TenantId == null && x.Type == key
+            });
+        if (setting == null)
+        {
+            var iSettings = DependoResolver.Instance.ResolveAll<ISettings>().FirstOrDefault(x => x.GetType().FullName == key);
 
-                if (iSettings != null)
-                {
-                    setting = new Setting { TenantId = tenantId, Name = iSettings.Name, Type = key, Value = value };
-                    repository.Insert(setting);
-                    cacheManager.RemoveByPattern(string.Format(InfernoWebConstants.CacheKeys.SettingsKeysPatternFormat, tenantId));
-                }
-            }
-            else
+            if (iSettings != null)
             {
-                setting.Value = value;
-                repository.Update(setting);
+                setting = new Setting { TenantId = tenantId, Name = iSettings.Name, Type = key, Value = value };
+                repository.Insert(setting);
                 cacheManager.RemoveByPattern(string.Format(InfernoWebConstants.CacheKeys.SettingsKeysPatternFormat, tenantId));
             }
         }
-
-        public void SaveSettings<TSettings>(TSettings settings, int? tenantId = null) where TSettings : ISettings
+        else
         {
-            var type = settings.GetType();
-            var key = type.FullName;
-            var value = settings.JsonSerialize();
-            SaveSettings(key, value, tenantId);
+            setting.Value = value;
+            repository.Update(setting);
+            cacheManager.RemoveByPattern(string.Format(InfernoWebConstants.CacheKeys.SettingsKeysPatternFormat, tenantId));
         }
+    }
+
+    public void SaveSettings<TSettings>(TSettings settings, int? tenantId = null) where TSettings : ISettings
+    {
+        var type = settings.GetType();
+        string key = type.FullName;
+        string value = settings.JsonSerialize();
+        SaveSettings(key, value, tenantId);
     }
 }

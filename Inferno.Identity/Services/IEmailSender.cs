@@ -1,7 +1,6 @@
-﻿namespace Inferno.Identity.Services
+﻿namespace Inferno.Identity.Services;
+
+public interface IEmailSender
 {
-    public interface IEmailSender
-    {
-        Task SendEmailAsync(string email, string subject, string message);
-    }
+    Task SendEmailAsync(string email, string subject, string message);
 }

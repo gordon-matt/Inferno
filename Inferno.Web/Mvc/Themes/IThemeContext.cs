@@ -1,7 +1,6 @@
-﻿namespace Inferno.Web.Mvc.Themes
+﻿namespace Inferno.Web.Mvc.Themes;
+
+public interface IThemeContext
 {
-    public interface IThemeContext
-    {
-        string WorkingTheme { get; set; }
-    }
+    string WorkingTheme { get; set; }
 }

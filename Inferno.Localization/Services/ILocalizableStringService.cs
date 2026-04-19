@@ -3,15 +3,14 @@ using Inferno.Caching;
 using Inferno.Data.Services;
 using Inferno.Localization.Entities;
 
-namespace Inferno.Localization.Services
+namespace Inferno.Localization.Services;
+
+public class LocalizableStringService : GenericDataService<LocalizableString>, ILocalizableStringService
 {
-    public class LocalizableStringService : GenericDataService<LocalizableString>, ILocalizableStringService
+    public LocalizableStringService(
+        ICacheManager cacheManager,
+        IRepository<LocalizableString> repository)
+        : base(cacheManager, repository)
     {
-        public LocalizableStringService(
-            ICacheManager cacheManager,
-            IRepository<LocalizableString> repository)
-            : base(cacheManager, repository)
-        {
-        }
     }
 }

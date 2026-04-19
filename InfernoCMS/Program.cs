@@ -7,7 +7,6 @@ using Inferno.Tenants.Entities;
 using Inferno.Web.ContentManagement.Security;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Tenants;
-using InfernoCMS;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -104,17 +103,11 @@ services.AddResponseCompression();
 services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 services.AddDatabaseDeveloperPageExceptionFilter();
 
-services.AddBlazorise(options =>
-{
-    options.Immediate = true;
-})
+services.AddBlazorise(options => options.Immediate = true)
 .AddBootstrap5Providers()
 .AddFontAwesomeIcons();
 
-services.AddResponsiveFileManager(options =>
-{
-    options.MaxSizeUpload = 32;
-});
+services.AddResponsiveFileManager(options => options.MaxSizeUpload = 32);
 
 services.AddHttpContextAccessor();
 

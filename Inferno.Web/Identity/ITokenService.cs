@@ -1,7 +1,6 @@
-﻿namespace Inferno.Web.Identity
+﻿namespace Inferno.Web.Identity;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        Task<string> GenerateJsonWebTokenAsync(string userId);
-    }
+    Task<string> GenerateJsonWebTokenAsync(string userId);
 }

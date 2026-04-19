@@ -3,23 +3,22 @@ using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 using Inferno.Web.OData;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api
+namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Controllers.Api;
+
+public class BlogCategoryApiController : GenericTenantODataController<BlogCategory, int>
 {
-    public class BlogCategoryApiController : GenericTenantODataController<BlogCategory, int>
+    public BlogCategoryApiController(IAuthorizationService authorizationService, IRepository<BlogCategory> repository)
+        : base(authorizationService, repository)
     {
-        public BlogCategoryApiController(IAuthorizationService authorizationService, IRepository<BlogCategory> repository)
-            : base(authorizationService, repository)
-        {
-        }
-
-        protected override int GetId(BlogCategory entity) => entity.Id;
-
-        protected override void SetNewId(BlogCategory entity)
-        {
-        }
-
-        protected override string ReadPermission => CmsConstants.Policies.BlogRead;
-
-        protected override string WritePermission => CmsConstants.Policies.BlogWrite;
     }
+
+    protected override int GetId(BlogCategory entity) => entity.Id;
+
+    protected override void SetNewId(BlogCategory entity)
+    {
+    }
+
+    protected override string ReadPermission => CmsConstants.Policies.BlogRead;
+
+    protected override string WritePermission => CmsConstants.Policies.BlogWrite;
 }

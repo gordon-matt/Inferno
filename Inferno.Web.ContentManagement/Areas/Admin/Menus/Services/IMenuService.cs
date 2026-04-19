@@ -3,44 +3,37 @@ using Inferno.Caching;
 using Inferno.Data.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 
-namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Services
+namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Services;
+
+public interface IMenuService : IGenericDataService<Menu>
 {
-    public interface IMenuService : IGenericDataService<Menu>
+    Menu FindByName(int tenantId, string name, string urlFilter = null);
+}
+
+public class MenuService : GenericDataService<Menu>, IMenuService
+{
+    public MenuService(ICacheManager cacheManager, IRepository<Menu> repository)
+        : base(cacheManager, repository)
     {
-        Menu FindByName(int tenantId, string name, string urlFilter = null);
     }
 
-    public class MenuService : GenericDataService<Menu>, IMenuService
-    {
-        public MenuService(ICacheManager cacheManager, IRepository<Menu> repository)
-            : base(cacheManager, repository)
-        {
-        }
+    #region IMenuService Members
 
-        #region IMenuService Members
-
-        public Menu FindByName(int tenantId, string name, string urlFilter = null)
-        {
-            if (string.IsNullOrEmpty(urlFilter))
+    public Menu FindByName(int tenantId, string name, string urlFilter = null) => string.IsNullOrEmpty(urlFilter)
+            ? FindOne(new SearchOptions<Menu>
             {
-                return FindOne(new SearchOptions<Menu>
-                {
-                    Query = x =>
-                        x.TenantId == tenantId
-                        && x.Name == name
-                        && (x.UrlFilter == null || x.UrlFilter == "")
-                });
-            }
-
-            return FindOne(new SearchOptions<Menu>
+                Query = x =>
+                    x.TenantId == tenantId
+                    && x.Name == name
+                    && (x.UrlFilter == null || x.UrlFilter == "")
+            })
+            : FindOne(new SearchOptions<Menu>
             {
                 Query = x =>
                     x.TenantId == tenantId
                     && x.Name == name
                     && x.UrlFilter.Contains(urlFilter)
             });
-        }
 
-        #endregion IMenuService Members
-    }
+    #endregion IMenuService Members
 }

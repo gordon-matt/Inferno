@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Inferno.Data.Entity
-{
-    public interface IDbSeeder
-    {
-        void Seed(DbContext context);
+namespace Inferno.Data.Entity;
 
-        int Order { get; }
-    }
+public interface IDbSeeder
+{
+    void Seed(DbContext context);
+
+    int Order { get; }
 }

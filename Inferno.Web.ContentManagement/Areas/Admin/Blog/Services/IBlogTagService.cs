@@ -3,17 +3,16 @@ using Inferno.Caching;
 using Inferno.Data.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 
-namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
-{
-    public interface IBlogTagService : IGenericDataService<BlogTag>
-    {
-    }
+namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Services;
 
-    public class BlogTagService : GenericDataService<BlogTag>, IBlogTagService
+public interface IBlogTagService : IGenericDataService<BlogTag>
+{
+}
+
+public class BlogTagService : GenericDataService<BlogTag>, IBlogTagService
+{
+    public BlogTagService(ICacheManager cacheManager, IRepository<BlogTag> repository)
+        : base(cacheManager, repository)
     {
-        public BlogTagService(ICacheManager cacheManager, IRepository<BlogTag> repository)
-            : base(cacheManager, repository)
-        {
-        }
     }
 }

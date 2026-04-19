@@ -1,22 +1,19 @@
 ﻿using Dependo;
 using Microsoft.Extensions.Localization;
 
-namespace Inferno.Localization.ComponentModel
+namespace Inferno.Localization.ComponentModel;
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+public class LocalizedHelpTextAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class LocalizedHelpTextAttribute : Attribute
+    private static IStringLocalizer T => field ??= DependoResolver.Instance.Resolve<IStringLocalizer>();
+
+    public LocalizedHelpTextAttribute(string resourceKey)
     {
-        private static IStringLocalizer localizer;
-
-        private static IStringLocalizer T => localizer ??= DependoResolver.Instance.Resolve<IStringLocalizer>();
-
-        public LocalizedHelpTextAttribute(string resourceKey)
-        {
-            ResourceKey = resourceKey;
-        }
-
-        public string ResourceKey { get; set; }
-
-        public string HelpText => T[ResourceKey];
+        ResourceKey = resourceKey;
     }
+
+    public string ResourceKey { get; set; }
+
+    public string HelpText => T[ResourceKey];
 }

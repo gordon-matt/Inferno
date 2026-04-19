@@ -1,9 +1,8 @@
-﻿namespace Inferno.Localization
-{
-    public interface ICultureManager
-    {
-        string GetCurrentCulture();
+﻿namespace Inferno.Localization;
 
-        bool IsValidCulture(string cultureName);
-    }
+public interface ICultureManager
+{
+    string GetCurrentCulture();
+
+    bool IsValidCulture(string cultureName);
 }

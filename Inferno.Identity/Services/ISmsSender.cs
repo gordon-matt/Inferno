@@ -1,7 +1,6 @@
-﻿namespace Inferno.Identity.Services
+﻿namespace Inferno.Identity.Services;
+
+public interface ISmsSender
 {
-    public interface ISmsSender
-    {
-        Task SendSmsAsync(string number, string message);
-    }
+    Task SendSmsAsync(string number, string message);
 }

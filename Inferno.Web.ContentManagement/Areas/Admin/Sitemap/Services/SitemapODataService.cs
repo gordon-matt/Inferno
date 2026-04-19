@@ -6,80 +6,79 @@ using Inferno.Web.Models;
 using Inferno.Web.OData;
 using Radzen;
 
-namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services
+namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services;
+
+public interface ISitemapODataService : IRadzenODataService<SitemapConfig, int>
 {
-    public interface ISitemapODataService : IRadzenODataService<SitemapConfig, int>
+    Task<ApiResponse<ODataServiceResult<SitemapConfigModel>>> GetConfigAsync();
+
+    Task<ApiResponse> SetConfigAsync(int id, ChangeFrequency changeFrequency, float priority);
+
+    Task<ApiResponse> GenerateAsync();
+}
+
+public class SitemapODataService : RadzenODataService<SitemapConfig, int>, ISitemapODataService
+{
+    public SitemapODataService()
+        : base($"{CmsConstants.ODataRoutes.Prefix}/{CmsConstants.ODataRoutes.EntitySetNames.XmlSitemap}")
     {
-        Task<ApiResponse<ODataServiceResult<SitemapConfigModel>>> GetConfigAsync();
-
-        Task<ApiResponse> SetConfigAsync(int id, ChangeFrequency changeFrequency, float priority);
-
-        Task<ApiResponse> GenerateAsync();
     }
 
-    public class SitemapODataService : RadzenODataService<SitemapConfig, int>, ISitemapODataService
+    public async Task<ApiResponse<ODataServiceResult<SitemapConfigModel>>> GetConfigAsync()
     {
-        public SitemapODataService()
-            : base($"{CmsConstants.ODataRoutes.Prefix}/{CmsConstants.ODataRoutes.EntitySetNames.XmlSitemap}")
+        var uri = new Uri(baseUri, $"{entitySetName}/GetConfig");
+
+        using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Get, uri));
+
+        if (!response.IsSuccessStatusCode)
         {
+            string reason = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return ApiResponse<ODataServiceResult<SitemapConfigModel>>.Failure($"HTTP {(int)response.StatusCode}: {reason}");
         }
 
-        public async Task<ApiResponse<ODataServiceResult<SitemapConfigModel>>> GetConfigAsync()
+        var data = await response.ReadAsync<ODataServiceResult<SitemapConfigModel>>();
+        return ApiResponse<ODataServiceResult<SitemapConfigModel>>.Success(data);
+    }
+
+    public async Task<ApiResponse> SetConfigAsync(int id, ChangeFrequency changeFrequency, float priority)
+    {
+        var uri = new Uri(baseUri, $"{entitySetName}/SetConfig");
+        string body = ODataJsonSerializer.Serialize(new
         {
-            var uri = new Uri(baseUri, $"{entitySetName}/GetConfig");
+            id,
+            changeFrequency = (byte)changeFrequency,
+            priority
+        });
 
-            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Get, uri));
-
-            if (!response.IsSuccessStatusCode)
-            {
-                string reason = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return ApiResponse<ODataServiceResult<SitemapConfigModel>>.Failure($"HTTP {(int)response.StatusCode}: {reason}");
-            }
-
-            var data = await response.ReadAsync<ODataServiceResult<SitemapConfigModel>>();
-            return ApiResponse<ODataServiceResult<SitemapConfigModel>>.Success(data);
-        }
-
-        public async Task<ApiResponse> SetConfigAsync(int id, ChangeFrequency changeFrequency, float priority)
+        using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
         {
-            var uri = new Uri(baseUri, $"{entitySetName}/SetConfig");
-            string body = ODataJsonSerializer.Serialize(new
-            {
-                id,
-                changeFrequency = (byte)changeFrequency,
-                priority
-            });
+            Content = new StringContent(body, Encoding.UTF8, "application/json")
+        });
 
-            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
-            {
-                Content = new StringContent(body, Encoding.UTF8, "application/json")
-            });
-
-            if (!response.IsSuccessStatusCode)
-            {
-                string reason = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return ApiResponse.Failure($"HTTP {(int)response.StatusCode}: {reason}");
-            }
-
-            return ApiResponse.Success();
-        }
-
-        public async Task<ApiResponse> GenerateAsync()
+        if (!response.IsSuccessStatusCode)
         {
-            var uri = new Uri(baseUri, $"{entitySetName}/Generate");
-
-            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
-            {
-                Content = new StringContent("{}", Encoding.UTF8, "application/json")
-            });
-
-            if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NoContent)
-            {
-                return ApiResponse.Success();
-            }
-
             string reason = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return ApiResponse.Failure($"HTTP {(int)response.StatusCode}: {reason}");
         }
+
+        return ApiResponse.Success();
+    }
+
+    public async Task<ApiResponse> GenerateAsync()
+    {
+        var uri = new Uri(baseUri, $"{entitySetName}/Generate");
+
+        using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
+        {
+            Content = new StringContent("{}", Encoding.UTF8, "application/json")
+        });
+
+        if (response.StatusCode is HttpStatusCode.OK or HttpStatusCode.NoContent)
+        {
+            return ApiResponse.Success();
+        }
+
+        string reason = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        return ApiResponse.Failure($"HTTP {(int)response.StatusCode}: {reason}");
     }
 }

@@ -26,121 +26,120 @@ using Inferno.Web.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Inferno.Web.ContentManagement.Infrastructure
+namespace Inferno.Web.ContentManagement.Infrastructure;
+
+public class DependencyRegistrar : IDependencyRegistrar
 {
-    public class DependencyRegistrar : IDependencyRegistrar
+    #region IDependencyRegistrar Members
+
+    public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
-        #region IDependencyRegistrar Members
+        builder.Register<IRouterAssemblyMarker, RouterAssemblyMarker>(ServiceLifetime.Singleton);
 
-        public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
-        {
-            builder.Register<IRouterAssemblyMarker, RouterAssemblyMarker>(ServiceLifetime.Singleton);
+        // Embedded File Provider
+        //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
 
-            // Embedded File Provider
-            //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
+        #region Services
 
-            #region Services
+        // Blog
+        builder.Register<IBlogCategoryService, BlogCategoryService>(ServiceLifetime.Transient);
+        builder.Register<IBlogPostService, BlogPostService>(ServiceLifetime.Transient);
+        builder.Register<IBlogTagService, BlogTagService>(ServiceLifetime.Transient);
+        builder.Register<IBlogPostTagService, BlogPostTagService>(ServiceLifetime.Transient);
+        builder.Register<IRadzenODataService<BlogCategory, int>, BlogCategoryODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<BlogTag, int>, BlogTagODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<BlogPost, Guid>, BlogPostODataService>(ServiceLifetime.Singleton);
 
-            // Blog
-            builder.Register<IBlogCategoryService, BlogCategoryService>(ServiceLifetime.Transient);
-            builder.Register<IBlogPostService, BlogPostService>(ServiceLifetime.Transient);
-            builder.Register<IBlogTagService, BlogTagService>(ServiceLifetime.Transient);
-            builder.Register<IBlogPostTagService, BlogPostTagService>(ServiceLifetime.Transient);
-            builder.Register<IRadzenODataService<BlogCategory, int>, BlogCategoryODataService>(ServiceLifetime.Singleton);
-            builder.Register<IRadzenODataService<BlogTag, int>, BlogTagODataService>(ServiceLifetime.Singleton);
-            builder.Register<IRadzenODataService<BlogPost, Guid>, BlogPostODataService>(ServiceLifetime.Singleton);
+        // Menus
+        builder.Register<IMenuService, MenuService>(ServiceLifetime.Transient);
+        builder.Register<IMenuItemService, MenuItemService>(ServiceLifetime.Transient);
+        builder.Register<IRadzenODataService<Menu, Guid>, MenuODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities.MenuItem, Guid>, MenuItemODataService>(ServiceLifetime.Singleton);
 
-            // Menus
-            builder.Register<IMenuService, MenuService>(ServiceLifetime.Transient);
-            builder.Register<IMenuItemService, MenuItemService>(ServiceLifetime.Transient);
-            builder.Register<IRadzenODataService<Menu, Guid>, MenuODataService>(ServiceLifetime.Singleton);
-            builder.Register<IRadzenODataService<Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities.MenuItem, Guid>, MenuItemODataService>(ServiceLifetime.Singleton);
+        // Sitemap
+        builder.Register<ISitemapODataService, SitemapODataService>(ServiceLifetime.Singleton);
 
-            // Sitemap
-            builder.Register<ISitemapODataService, SitemapODataService>(ServiceLifetime.Singleton);
+        // Pages
+        builder.Register<IPageService, PageService>(ServiceLifetime.Transient);
+        builder.Register<IPageTypeService, PageTypeService>(ServiceLifetime.Transient);
+        builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
+        builder.Register<IRadzenODataService<Page, Guid>, PageODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<PageType, Guid>, PageTypeODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<PageVersion, Guid>, PageVersionODataService>(ServiceLifetime.Singleton);
+        builder.Register<IPageVersionODataService, PageVersionODataService>(ServiceLifetime.Singleton);
 
-            // Pages
-            builder.Register<IPageService, PageService>(ServiceLifetime.Transient);
-            builder.Register<IPageTypeService, PageTypeService>(ServiceLifetime.Transient);
-            builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
-            builder.Register<IRadzenODataService<Page, Guid>, PageODataService>(ServiceLifetime.Singleton);
-            builder.Register<IRadzenODataService<PageType, Guid>, PageTypeODataService>(ServiceLifetime.Singleton);
-            builder.Register<IRadzenODataService<PageVersion, Guid>, PageVersionODataService>(ServiceLifetime.Singleton);
-            builder.Register<IPageVersionODataService, PageVersionODataService>(ServiceLifetime.Singleton);
+        // Content Blocks
+        builder.Register<IEntityTypeContentBlockService, EntityTypeContentBlockService>(ServiceLifetime.Transient);
+        builder.Register<IContentBlockService, ContentBlockService>(ServiceLifetime.Transient);
+        builder.Register<IZoneService, ZoneService>(ServiceLifetime.Transient);
+        builder.Register<IRadzenODataService<ContentBlock, Guid>, ContentBlockODataService>(ServiceLifetime.Singleton);
 
-            // Content Blocks
-            builder.Register<IEntityTypeContentBlockService, EntityTypeContentBlockService>(ServiceLifetime.Transient);
-            builder.Register<IContentBlockService, ContentBlockService>(ServiceLifetime.Transient);
-            builder.Register<IZoneService, ZoneService>(ServiceLifetime.Transient);
-            builder.Register<IRadzenODataService<ContentBlock, Guid>, ContentBlockODataService>(ServiceLifetime.Singleton);
+        // Newsletters
+        builder.Register<IRadzenODataService<Subscriber, string>, SubscriberODataService>(ServiceLifetime.Singleton);
 
-            // Newsletters
-            builder.Register<IRadzenODataService<Subscriber, string>, SubscriberODataService>(ServiceLifetime.Singleton);
+        #endregion Services
 
-            #endregion Services
+        #region Localization
 
-            #region Localization
+        builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Singleton);
 
-            builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Singleton);
+        #endregion Localization
 
-            #endregion Localization
+        #region Navigation
 
-            #region Navigation
+        builder.Register<INavigationProvider, CmsNavigationProvider>(ServiceLifetime.Singleton);
 
-            builder.Register<INavigationProvider, CmsNavigationProvider>(ServiceLifetime.Singleton);
+        #endregion Navigation
 
-            #endregion Navigation
+        #region Security
 
-            #region Security
+        // User Profile Providers
+        builder.Register<Inferno.Web.Security.Membership.IUserProfileProvider, NewsletterUserProfileProvider>(ServiceLifetime.Singleton);
 
-            // User Profile Providers
-            builder.Register<Inferno.Web.Security.Membership.IUserProfileProvider, NewsletterUserProfileProvider>(ServiceLifetime.Singleton);
+        #endregion Security
 
-            #endregion Security
+        #region Configuration
 
-            #region Configuration
+        builder.Register<ISettings, BlogSettings>(ServiceLifetime.Scoped);
+        builder.Register<ISettings, PageSettings>(ServiceLifetime.Scoped);
 
-            builder.Register<ISettings, BlogSettings>(ServiceLifetime.Scoped);
-            builder.Register<ISettings, PageSettings>(ServiceLifetime.Scoped);
+        #endregion Configuration
 
-            #endregion Configuration
+        #region Content Blocks
 
-            #region Content Blocks
+        // Blogs
+        builder.Register<IContentBlock, FilteredPostsBlock>(ServiceLifetime.Transient);
+        builder.Register<IContentBlock, LastNPostsBlock>(ServiceLifetime.Transient);
+        builder.Register<IContentBlock, TagCloudBlock>(ServiceLifetime.Transient);
+        builder.Register<IContentBlock, CategoriesBlock>(ServiceLifetime.Transient);
 
-            // Blogs
-            builder.Register<IContentBlock, FilteredPostsBlock>(ServiceLifetime.Transient);
-            builder.Register<IContentBlock, LastNPostsBlock>(ServiceLifetime.Transient);
-            builder.Register<IContentBlock, TagCloudBlock>(ServiceLifetime.Transient);
-            builder.Register<IContentBlock, CategoriesBlock>(ServiceLifetime.Transient);
+        // Other
+        builder.Register<IContentBlock, FormBlock>(ServiceLifetime.Transient);
+        builder.Register<IContentBlock, HtmlBlock>(ServiceLifetime.Transient);
+        builder.Register<IContentBlock, LanguageSwitchBlock>(ServiceLifetime.Transient);
+        //builder.Register<IContentBlock, NewsletterSubscriptionBlock>(ServiceLifetime.Transient);
+        builder.Register<IContentBlock, VideoBlock>(ServiceLifetime.Transient);
 
-            // Other
-            builder.Register<IContentBlock, FormBlock>(ServiceLifetime.Transient);
-            builder.Register<IContentBlock, HtmlBlock>(ServiceLifetime.Transient);
-            builder.Register<IContentBlock, LanguageSwitchBlock>(ServiceLifetime.Transient);
-            //builder.Register<IContentBlock, NewsletterSubscriptionBlock>(ServiceLifetime.Transient);
-            builder.Register<IContentBlock, VideoBlock>(ServiceLifetime.Transient);
+        #endregion Content Blocks
 
-            #endregion Content Blocks
+        #region Other: Content Blocks
 
-            #region Other: Content Blocks
+        builder.Register<IContentBlockProvider, DefaultContentBlockProvider>(ServiceLifetime.Transient);
+        builder.Register<IEntityTypeContentBlockProvider, DefaultEntityTypeContentBlockProvider>(ServiceLifetime.Transient);
 
-            builder.Register<IContentBlockProvider, DefaultContentBlockProvider>(ServiceLifetime.Transient);
-            builder.Register<IEntityTypeContentBlockProvider, DefaultEntityTypeContentBlockProvider>(ServiceLifetime.Transient);
+        #endregion Other: Content Blocks
 
-            #endregion Other: Content Blocks
+        // Other
+        builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
 
-            // Other
-            builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
+        // Indexing
+        //builder.Register<IIndexingContentProvider, PagesIndexingContentProvider>(ServiceLifetime.Transient); // TODO
+        //builder.Register<IIndexingContentProvider, BlogIndexingContentProvider>(ServiceLifetime.Transient); // TODO
 
-            // Indexing
-            //builder.Register<IIndexingContentProvider, PagesIndexingContentProvider>(ServiceLifetime.Transient); // TODO
-            //builder.Register<IIndexingContentProvider, BlogIndexingContentProvider>(ServiceLifetime.Transient); // TODO
-
-            //builder.Register<IMessageTemplatesProvider, NewsletterMessageTemplates>(ServiceLifetime.Transient);
-        }
-
-        public int Order => 1;
-
-        #endregion IDependencyRegistrar Members
+        //builder.Register<IMessageTemplatesProvider, NewsletterMessageTemplates>(ServiceLifetime.Transient);
     }
+
+    public int Order => 1;
+
+    #endregion IDependencyRegistrar Members
 }

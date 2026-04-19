@@ -1,26 +1,25 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Inferno.Exceptions
+namespace Inferno.Exceptions;
+
+public class InfernoException : Exception
 {
-    public class InfernoException : Exception
+    public InfernoException()
     {
-        public InfernoException()
-        {
-        }
+    }
 
-        public InfernoException(string message)
-            : base(message)
-        {
-        }
+    public InfernoException(string message)
+        : base(message)
+    {
+    }
 
-        public InfernoException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    public InfernoException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 
-        protected InfernoException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    protected InfernoException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
+    {
     }
 }

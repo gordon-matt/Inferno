@@ -14,20 +14,14 @@ public abstract class BasePlugin : IPlugin
     public virtual void Install()
     {
         PluginManager.MarkPluginAsInstalled(PluginDescriptor.SystemName);
-        if (PluginDescriptor != null)
-        {
-            // Keep the in-memory descriptor in sync so consumers don't have to
-            // wait for an application restart to pick up the new state.
-            PluginDescriptor.Installed = true;
-        }
+        // Keep the in-memory descriptor in sync so consumers don't have to
+        // wait for an application restart to pick up the new state.
+        PluginDescriptor?.Installed = true;
     }
 
     public virtual void Uninstall()
     {
         PluginManager.MarkPluginAsUninstalled(PluginDescriptor.SystemName);
-        if (PluginDescriptor != null)
-        {
-            PluginDescriptor.Installed = false;
-        }
+        PluginDescriptor?.Installed = false;
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Inferno.Web.Models
+﻿namespace Inferno.Web.Models;
+
+public class TokenModel
 {
-    public class TokenModel
-    {
-        public string Token { get; set; }
-    }
+    public string Token { get; set; }
 }

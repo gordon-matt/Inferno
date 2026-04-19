@@ -1,9 +1,8 @@
-﻿namespace Inferno.Identity.Models.ManageViewModels
-{
-    public class RemoveLoginViewModel
-    {
-        public string LoginProvider { get; set; }
+﻿namespace Inferno.Identity.Models.ManageViewModels;
 
-        public string ProviderKey { get; set; }
-    }
+public class RemoveLoginViewModel
+{
+    public string LoginProvider { get; set; }
+
+    public string ProviderKey { get; set; }
 }

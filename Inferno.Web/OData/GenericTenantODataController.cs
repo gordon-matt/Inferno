@@ -7,107 +7,106 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 
-namespace Inferno.Web.OData
+namespace Inferno.Web.OData;
+
+public abstract class GenericTenantODataController<TEntity, TKey> : BaseODataController<TEntity, TKey>
+    where TEntity : BaseEntity<TKey>, ITenantEntity
 {
-    public abstract class GenericTenantODataController<TEntity, TKey> : BaseODataController<TEntity, TKey>
-        where TEntity : BaseEntity<TKey>, ITenantEntity
+    private readonly IWorkContext workContext;
+
+    #region Constructors
+
+    public GenericTenantODataController(IAuthorizationService authorizationService, IRepository<TEntity> repository)
+        : base(authorizationService, repository)
     {
-        private readonly IWorkContext workContext;
+        workContext = DependoResolver.Instance.Resolve<IWorkContext>();
+    }
 
-        #region Constructors
+    #endregion Constructors
 
-        public GenericTenantODataController(IAuthorizationService authorizationService, IRepository<TEntity> repository)
-            : base(authorizationService, repository)
+    [HttpGet]
+    public override async Task<IActionResult> Get(ODataQueryOptions<TEntity> options, CancellationToken cancellationToken)
+    {
+        if (!await AuthorizeAsync(ReadPermission))
         {
-            workContext = DependoResolver.Instance.Resolve<IWorkContext>();
+            return Unauthorized();
         }
 
-        #endregion Constructors
+        // NOTE: Change due to: https://github.com/OData/WebApi/issues/1235
+        var connection = GetDisposableConnection();
+        var query = connection.Query();
+        query = await ApplyMandatoryFilterAsync(query, cancellationToken);
+        var results = options.ApplyTo(query, IgnoreQueryOptions);
+        return Ok(results);
+    }
 
-        [HttpGet]
-        public override async Task<IActionResult> Get(ODataQueryOptions<TEntity> options, CancellationToken cancellationToken)
+    #region GenericODataController<TEntity, TKey> Members
+
+    protected override async Task<IQueryable<TEntity>> ApplyMandatoryFilterAsync(IQueryable<TEntity> query, CancellationToken cancellationToken)
+    {
+        int tenantId = GetTenantId();
+        if (await AuthorizeAsync(StandardPolicies.FullAccess))
         {
-            if (!await AuthorizeAsync(ReadPermission))
-            {
-                return Unauthorized();
-            }
-
-            // NOTE: Change due to: https://github.com/OData/WebApi/issues/1235
-            var connection = GetDisposableConnection();
-            var query = connection.Query();
-            query = await ApplyMandatoryFilterAsync(query, cancellationToken);
-            var results = options.ApplyTo(query, IgnoreQueryOptions);
-            return Ok(results);
+            // TODO: Not sure if this is the best solution. Maybe we should only show the items with NULL for Tenant ID?
+            return query.Where(x => x.TenantId == null || x.TenantId == tenantId);
         }
 
-        #region GenericODataController<TEntity, TKey> Members
+        return query.Where(x => x.TenantId == tenantId);
+    }
 
-        protected override async Task<IQueryable<TEntity>> ApplyMandatoryFilterAsync(IQueryable<TEntity> query, CancellationToken cancellationToken )
+    #endregion GenericODataController<TEntity, TKey> Members
+
+    protected virtual int GetTenantId() => workContext.CurrentTenant.Id;
+
+    protected override async Task<bool> CanViewEntityAsync(TEntity entity)
+    {
+        if (entity == null)
+        {
+            return false;
+        }
+
+        if (await AuthorizeAsync(StandardPolicies.FullAccess))
+        {
+            return true; // Only the super admin should have full access
+        }
+
+        // If not admin user, but possibly the tenant user...
+
+        if (await AuthorizeAsync(ReadPermission))
         {
             int tenantId = GetTenantId();
-            if (await AuthorizeAsync(StandardPolicies.FullAccess))
-            {
-                // TODO: Not sure if this is the best solution. Maybe we should only show the items with NULL for Tenant ID?
-                return query.Where(x => x.TenantId == null || x.TenantId == tenantId);
-            }
-
-            return query.Where(x => x.TenantId == tenantId);
+            return entity.TenantId == tenantId;
         }
 
-        #endregion GenericODataController<TEntity, TKey> Members
+        return false;
+    }
 
-        protected virtual int GetTenantId() => workContext.CurrentTenant.Id;
-
-        protected override async Task<bool> CanViewEntityAsync(TEntity entity)
+    protected override async Task<bool> CanModifyEntityAsync(TEntity entity)
+    {
+        if (entity == null)
         {
-            if (entity == null)
-            {
-                return false;
-            }
-
-            if (await AuthorizeAsync(StandardPolicies.FullAccess))
-            {
-                return true; // Only the super admin should have full access
-            }
-
-            // If not admin user, but possibly the tenant user...
-
-            if (await AuthorizeAsync(ReadPermission))
-            {
-                int tenantId = GetTenantId();
-                return entity.TenantId == tenantId;
-            }
-
             return false;
         }
 
-        protected override async Task<bool> CanModifyEntityAsync(TEntity entity)
+        if (await AuthorizeAsync(StandardPolicies.FullAccess))
         {
-            if (entity == null)
-            {
-                return false;
-            }
-
-            if (await AuthorizeAsync(StandardPolicies.FullAccess))
-            {
-                return true; // Only the super admin should have full access
-            }
-
-            // If not admin user, but possibly the tenant...
-
-            if (await AuthorizeAsync(WritePermission))
-            {
-                int tenantId = GetTenantId();
-                return entity.TenantId == tenantId;
-            }
-
-            return false;
+            return true; // Only the super admin should have full access
         }
 
-        protected override void OnBeforeSave(TEntity entity)
+        // If not admin user, but possibly the tenant...
+
+        if (await AuthorizeAsync(WritePermission))
         {
-            base.OnBeforeSave(entity);
-            entity.TenantId = GetTenantId();
+            int tenantId = GetTenantId();
+            return entity.TenantId == tenantId;
         }
+
+        return false;
+    }
+
+    protected override void OnBeforeSave(TEntity entity)
+    {
+        base.OnBeforeSave(entity);
+        entity.TenantId = GetTenantId();
     }
 }

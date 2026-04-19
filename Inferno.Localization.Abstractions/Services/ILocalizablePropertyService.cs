@@ -1,16 +1,15 @@
 ﻿using Inferno.Data.Services;
 using Inferno.Localization.Entities;
 
-namespace Inferno.Localization.Services
+namespace Inferno.Localization.Services;
+
+public interface ILocalizablePropertyService : IGenericDataService<LocalizableProperty>
 {
-    public interface ILocalizablePropertyService : IGenericDataService<LocalizableProperty>
-    {
-        LocalizableProperty FindOne(string cultureCode, string entityType, string entityId, string property);
+    LocalizableProperty FindOne(string cultureCode, string entityType, string entityId, string property);
 
-        IEnumerable<LocalizableProperty> Find(string cultureCode, string entityType, string entityId);
+    IEnumerable<LocalizableProperty> Find(string cultureCode, string entityType, string entityId);
 
-        IEnumerable<LocalizableProperty> Find(string cultureCode, string entityType, IEnumerable<string> entityIds);
+    IEnumerable<LocalizableProperty> Find(string cultureCode, string entityType, IEnumerable<string> entityIds);
 
-        IEnumerable<LocalizableProperty> Find(string cultureCode, string entityType, IEnumerable<string> entityIds, string property);
-    }
+    IEnumerable<LocalizableProperty> Find(string cultureCode, string entityType, IEnumerable<string> entityIds, string property);
 }

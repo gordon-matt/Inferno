@@ -1,7 +1,6 @@
-﻿namespace Inferno.Data.Entity
+﻿namespace Inferno.Data.Entity;
+
+public interface ISupportSeed
 {
-    public interface ISupportSeed
-    {
-        void Seed();
-    }
+    void Seed();
 }

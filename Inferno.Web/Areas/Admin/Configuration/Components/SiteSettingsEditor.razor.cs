@@ -1,13 +1,12 @@
-﻿namespace Inferno.Web.Areas.Admin.Configuration.Components
-{
-    public partial class SiteSettingsEditor
-    {
-        private string selectedTab = "General";
+﻿namespace Inferno.Web.Areas.Admin.Configuration.Components;
 
-        private Task OnSelectedTabChanged(string name)
-        {
-            selectedTab = name;
-            return Task.CompletedTask;
-        }
+public partial class SiteSettingsEditor
+{
+    private string selectedTab = "General";
+
+    private Task OnSelectedTabChanged(string name)
+    {
+        selectedTab = name;
+        return Task.CompletedTask;
     }
 }

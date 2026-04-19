@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Routing;
 
-namespace Inferno.Web.Mvc.Routing
+namespace Inferno.Web.Mvc.Routing;
+
+public interface IRouteProvider
 {
-    public interface IRouteProvider
-    {
-        void RegisterRoutes(IRouteBuilder routes);
+    void RegisterRoutes(IRouteBuilder routes);
 
-        void RegisterEndpoints(IEndpointRouteBuilder endpoints);
+    void RegisterEndpoints(IEndpointRouteBuilder endpoints);
 
-        int Priority { get; }
-    }
+    int Priority { get; }
 }

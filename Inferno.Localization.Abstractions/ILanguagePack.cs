@@ -1,12 +1,11 @@
-﻿namespace Inferno.Localization
-{
-    public interface ILanguagePack
-    {
-        /// <summary>
-        /// Leave NULL for default (invariant) culture
-        /// </summary>
-        string CultureCode { get; }
+﻿namespace Inferno.Localization;
 
-        IDictionary<string, string> LocalizedStrings { get; }
-    }
+public interface ILanguagePack
+{
+    /// <summary>
+    /// Leave NULL for default (invariant) culture
+    /// </summary>
+    string CultureCode { get; }
+
+    IDictionary<string, string> LocalizedStrings { get; }
 }

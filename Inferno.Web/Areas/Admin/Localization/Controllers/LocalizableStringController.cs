@@ -5,43 +5,42 @@ using Inferno.Web.Configuration;
 using Inferno.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inferno.Web.Areas.Admin.Localization.Controllers
+namespace Inferno.Web.Areas.Admin.Localization.Controllers;
+
+[Area(InfernoWebConstants.Areas.Localization)]
+[Route("admin/localization/localizable-strings")]
+public class LocalizableStringController : ExportController<LocalizableString>
 {
-    [Area(InfernoWebConstants.Areas.Localization)]
-    [Route("admin/localization/localizable-strings")]
-    public class LocalizableStringController : ExportController<LocalizableString>
+    private readonly IRepository<LocalizableString> repository;
+    private readonly SiteSettings siteSettings;
+
+    public LocalizableStringController(IRepository<LocalizableString> repository, SiteSettings siteSettings)
     {
-        private readonly IRepository<LocalizableString> repository;
-        private readonly SiteSettings siteSettings;
+        this.repository = repository;
+        this.siteSettings = siteSettings;
+    }
 
-        public LocalizableStringController(IRepository<LocalizableString> repository, SiteSettings siteSettings)
+    [HttpGet("export/{cultureCode}")]
+    public async Task<FileResult> ExportToJson(string cultureCode)
+    {
+        int tenantId = WorkContext.Value.CurrentTenant.Id;
+
+        var localizedStrings = await repository.FindAsync(new SearchOptions<LocalizableString>
         {
-            this.repository = repository;
-            this.siteSettings = siteSettings;
-        }
+            Query = x =>
+                x.TenantId == tenantId &&
+                x.CultureCode == cultureCode &&
+                x.TextValue != null
+        });
 
-        [HttpGet("export/{cultureCode}")]
-        public async Task<FileResult> ExportToJson(string cultureCode)
+        var languagePack = new LanguagePackFile
         {
-            int tenantId = WorkContext.Value.CurrentTenant.Id;
+            CultureCode = cultureCode,
+            LocalizedStrings = localizedStrings.ToDictionary(k => k.TextKey, v => v.TextValue)
+        };
 
-            var localizedStrings = await repository.FindAsync(new SearchOptions<LocalizableString>
-            {
-                Query = x =>
-                    x.TenantId == tenantId &&
-                    x.CultureCode == cultureCode &&
-                    x.TextValue != null
-            });
-
-            var languagePack = new LanguagePackFile
-            {
-                CultureCode = cultureCode,
-                LocalizedStrings = localizedStrings.ToDictionary(k => k.TextKey, v => v.TextValue)
-            };
-
-            using var connection = repository.OpenConnection();
-            string fileName = string.Format("{0}_LanguagePack_{1}_{2:yyyy-MM-dd}.json", siteSettings.SiteName, cultureCode, DateTime.Now);
-            return DownloadJson(languagePack, fileName);
-        }
+        using var connection = repository.OpenConnection();
+        string fileName = string.Format("{0}_LanguagePack_{1}_{2:yyyy-MM-dd}.json", siteSettings.SiteName, cultureCode, DateTime.Now);
+        return DownloadJson(languagePack, fileName);
     }
 }

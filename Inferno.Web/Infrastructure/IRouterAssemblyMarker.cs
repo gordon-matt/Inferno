@@ -1,10 +1,9 @@
-﻿namespace Inferno.Web.Infrastructure
-{
-    public interface IRouterAssemblyMarker
-    {
-    }
+﻿namespace Inferno.Web.Infrastructure;
 
-    public class RouterAssemblyMarker : IRouterAssemblyMarker
-    {
-    }
+public interface IRouterAssemblyMarker
+{
+}
+
+public class RouterAssemblyMarker : IRouterAssemblyMarker
+{
 }

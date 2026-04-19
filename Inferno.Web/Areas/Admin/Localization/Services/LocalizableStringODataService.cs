@@ -1,60 +1,58 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Extenso.Data.Entity;
 using Inferno.Localization.Entities;
 using Inferno.Web.Areas.Admin.Localization.Models;
 using Inferno.Web.OData;
 using Radzen;
 
-namespace Inferno.Web.Areas.Admin.Localization.Services
+namespace Inferno.Web.Areas.Admin.Localization.Services;
+
+public class LocalizableStringODataService : RadzenODataService<LocalizableString, Guid>
 {
-    public class LocalizableStringODataService : RadzenODataService<LocalizableString, Guid>
+    public LocalizableStringODataService()
+        : base($"{InfernoWebConstants.ODataRoutes.Prefix}/{InfernoWebConstants.ODataRoutes.EntitySetNames.LocalizableString}")
     {
-        public LocalizableStringODataService()
-            : base($"{InfernoWebConstants.ODataRoutes.Prefix}/{InfernoWebConstants.ODataRoutes.EntitySetNames.LocalizableString}")
+    }
+
+    public virtual async Task<ODataServiceResult<ComparitiveLocalizableString>> GetComparitiveAsync(string cultureCode, LoadDataArgs args)
+    {
+        var uri = new Uri(baseUri, $"{entitySetName}/Default.GetComparitiveTable(cultureCode='{cultureCode}')");
+        uri = uri.GetODataUri(filter: args.Filter, top: args.Top, skip: args.Skip, orderby: args.OrderBy, count: true);
+
+        using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Get, uri));
+        return await response.ReadAsync<ODataServiceResult<ComparitiveLocalizableString>>();
+    }
+
+    public virtual async Task<bool> PutComparitiveAsync(string cultureCode, ComparitiveLocalizableString row)
+    {
+        var data = new
         {
-        }
+            CultureCode = cultureCode,
+            row.Key,
+            Entity = row
+        };
 
-        public virtual async Task<ODataServiceResult<ComparitiveLocalizableString>> GetComparitiveAsync(string cultureCode, LoadDataArgs args)
+        var uri = new Uri(baseUri, $"{entitySetName}/Default.PutComparitive");
+        using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
         {
-            var uri = new Uri(baseUri, $"{entitySetName}/Default.GetComparitiveTable(cultureCode='{cultureCode}')");
-            uri = uri.GetODataUri(filter: args.Filter, top: args.Top, skip: args.Skip, orderby: args.OrderBy, count: true);
+            Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
+        });
+        return response.IsSuccessStatusCode;
+    }
 
-            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Get, uri));
-            return await response.ReadAsync<ODataServiceResult<ComparitiveLocalizableString>>();
-        }
-
-        public virtual async Task<bool> PutComparitiveAsync(string cultureCode, ComparitiveLocalizableString row)
+    public virtual async Task<bool> DeleteComparitiveAsync(string cultureCode, string key)
+    {
+        var data = new
         {
-            var data = new
-            {
-                CultureCode = cultureCode,
-                Key = row.Key,
-                Entity = row
-            };
+            CultureCode = cultureCode,
+            Key = key
+        };
 
-            var uri = new Uri(baseUri, $"{entitySetName}/Default.PutComparitive");
-            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
-            });
-            return response.IsSuccessStatusCode;
-        }
-
-        public virtual async Task<bool> DeleteComparitiveAsync(string cultureCode, string key)
+        var uri = new Uri(baseUri, $"{entitySetName}/Default.DeleteComparitive");
+        using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
         {
-            var data = new
-            {
-                CultureCode = cultureCode,
-                Key = key
-            };
-
-            var uri = new Uri(baseUri, $"{entitySetName}/Default.DeleteComparitive");
-            using var response = await SendAuthorizedAsync(() => new HttpRequestMessage(HttpMethod.Post, uri)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
-            });
-            return response.IsSuccessStatusCode;
-        }
+            Content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
+        });
+        return response.IsSuccessStatusCode;
     }
 }

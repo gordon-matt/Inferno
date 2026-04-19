@@ -3,23 +3,22 @@ using Inferno.Web.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Inferno.Web.Infrastructure
+namespace Inferno.Web.Infrastructure;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static void ConfigureInferno(this IServiceCollection services, IConfiguration configuration)
     {
-        public static void ConfigureInferno(this IServiceCollection services, IConfiguration configuration)
-        {
-            //var pluginOptions = new InfernoPluginOptions();
-            //configuration.Bind(pluginOptions);
-            //services.AddSingleton(pluginOptions);
+        //var pluginOptions = new InfernoPluginOptions();
+        //configuration.Bind(pluginOptions);
+        //services.AddSingleton(pluginOptions);
 
-            var tasksOptions = new InfernoTasksOptions();
-            configuration.Bind(tasksOptions);
-            services.AddSingleton(tasksOptions);
+        var tasksOptions = new InfernoTasksOptions();
+        configuration.Bind(tasksOptions);
+        services.AddSingleton(tasksOptions);
 
-            var webOptions = new InfernoWebOptions();
-            configuration.Bind(webOptions);
-            services.AddSingleton(webOptions);
-        }
+        var webOptions = new InfernoWebOptions();
+        configuration.Bind(webOptions);
+        services.AddSingleton(webOptions);
     }
 }

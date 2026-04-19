@@ -5,38 +5,37 @@ using Inferno.Web.OData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api
+namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Controllers.Api;
+
+public class PageApiController : GenericTenantODataController<Page, Guid>
 {
-    public class PageApiController : GenericTenantODataController<Page, Guid>
+    private readonly IPageService service;
+
+    public PageApiController(IAuthorizationService authorizationService, IRepository<Page> repository, IPageService service)
+        : base(authorizationService, repository)
     {
-        private readonly IPageService service;
+        this.service = service;
+    }
 
-        public PageApiController(IAuthorizationService authorizationService, IRepository<Page> repository, IPageService service)
-            : base(authorizationService, repository)
+    protected override Guid GetId(Page entity) => entity.Id;
+
+    protected override void SetNewId(Page entity) => entity.Id = Guid.NewGuid();
+
+    protected override string ReadPermission => CmsConstants.Policies.PagesRead;
+
+    protected override string WritePermission => CmsConstants.Policies.PagesWrite;
+
+    [HttpGet]
+    public async Task<IActionResult> GetTopLevelPages()
+    {
+        if (!await AuthorizeAsync(ReadPermission))
         {
-            this.service = service;
+            return Unauthorized();
         }
 
-        protected override Guid GetId(Page entity) => entity.Id;
+        int tenantId = GetTenantId();
+        var topLevelPages = service.GetTopLevelPages(tenantId);
 
-        protected override void SetNewId(Page entity) => entity.Id = Guid.NewGuid();
-
-        protected override string ReadPermission => CmsConstants.Policies.PagesRead;
-
-        protected override string WritePermission => CmsConstants.Policies.PagesWrite;
-
-        [HttpGet]
-        public async Task<IActionResult> GetTopLevelPages()
-        {
-            if (!await AuthorizeAsync(ReadPermission))
-            {
-                return Unauthorized();
-            }
-
-            int tenantId = GetTenantId();
-            var topLevelPages = service.GetTopLevelPages(tenantId);
-
-            return Ok(topLevelPages);
-        }
+        return Ok(topLevelPages);
     }
 }

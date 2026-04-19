@@ -1,26 +1,21 @@
 ﻿using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
 using InfernoCMS.Data.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
-namespace InfernoCMS.Controllers.Api
+namespace InfernoCMS.Controllers.Api;
+
+[Authorize]
+public class PersonApiController : GenericODataController<Person, int>
 {
-    [Authorize]
-    public class PersonApiController : GenericODataController<Person, int>
+    public PersonApiController(IAuthorizationService authorizationService, IRepository<Person> repository)
+        : base(authorizationService, repository)
     {
-        public PersonApiController(IAuthorizationService authorizationService, IRepository<Person> repository)
-            : base(authorizationService, repository)
-        {
-        }
+    }
 
-        protected override int GetId(Person entity)
-        {
-            return entity.Id;
-        }
+    protected override int GetId(Person entity) => entity.Id;
 
-        protected override void SetNewId(Person entity)
-        {
-        }
+    protected override void SetNewId(Person entity)
+    {
     }
 }

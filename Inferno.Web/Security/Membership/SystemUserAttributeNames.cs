@@ -1,7 +1,6 @@
-﻿namespace Inferno.Web.Security.Membership
+﻿namespace Inferno.Web.Security.Membership;
+
+public static class SystemUserAttributeNames
 {
-    public static class SystemUserAttributeNames
-    {
-        public const string TimeZoneId = "TimeZoneId";
-    }
+    public const string TimeZoneId = "TimeZoneId";
 }

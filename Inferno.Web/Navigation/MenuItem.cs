@@ -1,31 +1,30 @@
 ﻿using Blazorise;
 
-namespace Inferno.Web.Navigation
+namespace Inferno.Web.Navigation;
+
+public class MenuItem
 {
-    public class MenuItem
-    {
-        public string Text { get; set; }
+    public string Text { get; set; }
 
-        //public string Description { get; set; }
+    //public string Description { get; set; }
 
-        public string Url { get; set; }
+    public string Url { get; set; }
 
-        public string Href { get; set; }
+    public string Href { get; set; }
 
-        public string Position { get; set; }
+    public string Position { get; set; }
 
-        public bool Selected { get; set; }
+    public bool Selected { get; set; }
 
-        public IEnumerable<MenuItem> Items { get; set; }
+    public IEnumerable<MenuItem> Items { get; set; }
 
-        public IEnumerable<string> Policies { get; set; } = Enumerable.Empty<string>();
+    public IEnumerable<string> Policies { get; set; } = Enumerable.Empty<string>();
 
-        public string CssClass { get; set; }
+    public string CssClass { get; set; }
 
-        public IconName? Icon { get; set; }
+    public IconName? Icon { get; set; }
 
-        public string IconName { get; set; }
+    public string IconName { get; set; }
 
-        public override string ToString() => Text;
-    }
+    public override string ToString() => Text;
 }

@@ -1,7 +1,6 @@
-﻿namespace Inferno.Identity.Models.ManageViewModels
+﻿namespace Inferno.Identity.Models.ManageViewModels;
+
+public class GenerateRecoveryCodesViewModel
 {
-    public class GenerateRecoveryCodesViewModel
-    {
-        public string[] RecoveryCodes { get; set; }
-    }
+    public string[] RecoveryCodes { get; set; }
 }

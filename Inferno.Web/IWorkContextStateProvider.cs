@@ -1,7 +1,6 @@
-﻿namespace Inferno.Web
+﻿namespace Inferno.Web;
+
+public interface IWorkContextStateProvider
 {
-    public interface IWorkContextStateProvider
-    {
-        Func<IWorkContext, T> Get<T>(string name);
-    }
+    Func<IWorkContext, T> Get<T>(string name);
 }

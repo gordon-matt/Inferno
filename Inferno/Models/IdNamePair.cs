@@ -1,9 +1,8 @@
-﻿namespace Inferno.Models
-{
-    public class IdNamePair<TId>
-    {
-        public TId Id { get; set; }
+﻿namespace Inferno.Models;
 
-        public string Name { get; set; }
-    }
+public class IdNamePair<TId>
+{
+    public TId Id { get; set; }
+
+    public string Name { get; set; }
 }

@@ -432,12 +432,7 @@ public class PluginManager
         }
 
         string text = File.ReadAllText(filePath);
-        if (string.IsNullOrEmpty(text))
-        {
-            return [];
-        }
-
-        return JsonConvert.DeserializeObject<IList<string>>(text);
+        return string.IsNullOrEmpty(text) ? [] : JsonConvert.DeserializeObject<IList<string>>(text);
     }
 
     private static void SaveInstalledPluginNames(IList<string> pluginSystemNames, string filePath)

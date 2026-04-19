@@ -1,9 +1,8 @@
 ﻿using Inferno.Data.Services;
 using Inferno.Tenants.Entities;
 
-namespace Inferno.Tenants.Services
+namespace Inferno.Tenants.Services;
+
+public interface ITenantService : IGenericDataService<Tenant>
 {
-    public interface ITenantService : IGenericDataService<Tenant>
-    {
-    }
 }

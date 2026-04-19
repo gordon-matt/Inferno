@@ -1,9 +1,8 @@
-﻿namespace Inferno.Web.Navigation
-{
-    public interface INavigationManager
-    {
-        IEnumerable<MenuItem> BuildMenu(string menuName);
+﻿namespace Inferno.Web.Navigation;
 
-        string GetUrl(string menuItemUrl);
-    }
+public interface INavigationManager
+{
+    IEnumerable<MenuItem> BuildMenu(string menuName);
+
+    string GetUrl(string menuItemUrl);
 }

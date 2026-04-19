@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Inferno.Identity.Models.AccountViewModels
+namespace Inferno.Identity.Models.AccountViewModels;
+
+public class ForgotPasswordViewModel
 {
-    public class ForgotPasswordViewModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-    }
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
 }

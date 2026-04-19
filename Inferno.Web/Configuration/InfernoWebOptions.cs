@@ -1,7 +1,6 @@
-﻿namespace Inferno.Web.Configuration
+﻿namespace Inferno.Web.Configuration;
+
+public class InfernoWebOptions
 {
-    public class InfernoWebOptions
-    {
-        public bool IgnoreStartupTasks { get; set; }
-    }
+    public bool IgnoreStartupTasks { get; set; }
 }

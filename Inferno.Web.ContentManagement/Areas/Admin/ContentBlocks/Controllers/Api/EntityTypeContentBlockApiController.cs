@@ -8,141 +8,140 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 
-namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Api
+namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Api;
+
+[Authorize]
+public class EntityTypeContentBlockApiController : BaseODataController<EntityTypeContentBlock, Guid>
 {
-    [Authorize]
-    public class EntityTypeContentBlockApiController : BaseODataController<EntityTypeContentBlock, Guid>
+    private readonly Lazy<ILocalizablePropertyService> localizablePropertyService;
+
+    public EntityTypeContentBlockApiController(
+        IAuthorizationService authorizationService,
+        IRepository<EntityTypeContentBlock> repository,
+        Lazy<ILocalizablePropertyService> localizablePropertyService)
+        : base(authorizationService, repository)
     {
-        private readonly Lazy<ILocalizablePropertyService> localizablePropertyService;
+        this.localizablePropertyService = localizablePropertyService;
+    }
 
-        public EntityTypeContentBlockApiController(
-            IAuthorizationService authorizationService,
-            IRepository<EntityTypeContentBlock> repository,
-            Lazy<ILocalizablePropertyService> localizablePropertyService)
-            : base(authorizationService, repository)
+    public override async Task<IActionResult> Post([FromBody] EntityTypeContentBlock entity, CancellationToken cancellationToken)
+    {
+        SetValues(entity);
+        return await base.Post(entity, cancellationToken);
+    }
+
+    public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] EntityTypeContentBlock entity, CancellationToken cancellationToken)
+    {
+        SetValues(entity);
+        return await base.Put(key, entity, cancellationToken);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetLocalized([FromODataUri] Guid id, [FromODataUri] string cultureCode)
+    {
+        if (!await AuthorizeAsync(ReadPermission))
         {
-            this.localizablePropertyService = localizablePropertyService;
+            return Unauthorized();
         }
 
-        public override async Task<IActionResult> Post([FromBody] EntityTypeContentBlock entity, CancellationToken cancellationToken)
+        if (id == Guid.Empty)
         {
-            SetValues(entity);
-            return await base.Post(entity, cancellationToken);
+            return BadRequest();
         }
 
-        public override async Task<IActionResult> Put([FromODataUri] Guid key, [FromBody] EntityTypeContentBlock entity, CancellationToken cancellationToken)
+        var entity = await Repository.FindOneAsync(id);
+
+        if (entity == null)
         {
-            SetValues(entity);
-            return await base.Put(key, entity, cancellationToken);
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetLocalized([FromODataUri] Guid id, [FromODataUri] string cultureCode)
+        string entityType = typeof(EntityTypeContentBlock).FullName;
+        string entityId = entity.Id.ToString();
+
+        var localizedRecord = await localizablePropertyService.Value.FindOneAsync(new SearchOptions<LocalizableProperty>
         {
-            if (!await AuthorizeAsync(ReadPermission))
-            {
-                return Unauthorized();
-            }
+            Query = x =>
+                x.CultureCode == cultureCode &&
+                x.EntityType == entityType &&
+                x.EntityId == entityId &&
+                x.Property == "BlockValues"
+        });
 
-            if (id == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            var entity = await Repository.FindOneAsync(id);
-
-            if (entity == null)
-            {
-                return NotFound();
-            }
-
-            string entityType = typeof(EntityTypeContentBlock).FullName;
-            string entityId = entity.Id.ToString();
-
-            var localizedRecord = await localizablePropertyService.Value.FindOneAsync(new SearchOptions<LocalizableProperty>
-            {
-                Query = x =>
-                    x.CultureCode == cultureCode &&
-                    x.EntityType == entityType &&
-                    x.EntityId == entityId &&
-                    x.Property == "BlockValues"
-            });
-
-            if (localizedRecord != null)
-            {
-                entity.BlockValues = localizedRecord.Value;
-            }
-
-            return Ok(entity);
+        if (localizedRecord != null)
+        {
+            entity.BlockValues = localizedRecord.Value;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SaveLocalized([FromBody] ODataActionParameters parameters)
+        return Ok(entity);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SaveLocalized([FromBody] ODataActionParameters parameters)
+    {
+        if (!await AuthorizeAsync(WritePermission))
         {
-            if (!await AuthorizeAsync(WritePermission))
-            {
-                return Unauthorized();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            string cultureCode = (string)parameters["cultureCode"];
-            var entity = (EntityTypeContentBlock)parameters["entity"];
-
-            if (entity.Id == Guid.Empty)
-            {
-                return BadRequest();
-            }
-            string entityType = typeof(EntityTypeContentBlock).FullName;
-            string entityId = entity.Id.ToString();
-
-            var localizedRecord = await localizablePropertyService.Value.FindOneAsync(new SearchOptions<LocalizableProperty>
-            {
-                Query = x =>
-                    x.CultureCode == cultureCode &&
-                    x.EntityType == entityType &&
-                    x.EntityId == entityId &&
-                    x.Property == "BlockValues"
-            });
-
-            if (localizedRecord == null)
-            {
-                localizedRecord = new LocalizableProperty
-                {
-                    CultureCode = cultureCode,
-                    EntityType = entityType,
-                    EntityId = entityId,
-                    Property = "BlockValues",
-                    Value = entity.BlockValues
-                };
-                await localizablePropertyService.Value.InsertAsync(localizedRecord);
-                return Ok();
-            }
-            else
-            {
-                localizedRecord.Value = entity.BlockValues;
-                await localizablePropertyService.Value.UpdateAsync(localizedRecord);
-                return Ok();
-            }
+            return Unauthorized();
         }
 
-        protected override Guid GetId(EntityTypeContentBlock entity) => entity.Id;
-
-        protected override void SetNewId(EntityTypeContentBlock entity) => entity.Id = Guid.NewGuid();
-
-        protected override string ReadPermission => CmsConstants.Policies.ContentBlocksRead;
-
-        protected override string WritePermission => CmsConstants.Policies.ContentBlocksWrite;
-
-        private static void SetValues(EntityTypeContentBlock entity)
+        if (!ModelState.IsValid)
         {
-            var blockType = Type.GetType(entity.BlockType);
-            var contentBlocks = DependoResolver.Instance.ResolveAll<IContentBlock>();
-            var contentBlock = contentBlocks.First(x => x.GetType() == blockType);
-            entity.BlockName = contentBlock.Name;
+            return BadRequest(ModelState);
         }
+
+        string cultureCode = (string)parameters["cultureCode"];
+        var entity = (EntityTypeContentBlock)parameters["entity"];
+
+        if (entity.Id == Guid.Empty)
+        {
+            return BadRequest();
+        }
+        string entityType = typeof(EntityTypeContentBlock).FullName;
+        string entityId = entity.Id.ToString();
+
+        var localizedRecord = await localizablePropertyService.Value.FindOneAsync(new SearchOptions<LocalizableProperty>
+        {
+            Query = x =>
+                x.CultureCode == cultureCode &&
+                x.EntityType == entityType &&
+                x.EntityId == entityId &&
+                x.Property == "BlockValues"
+        });
+
+        if (localizedRecord == null)
+        {
+            localizedRecord = new LocalizableProperty
+            {
+                CultureCode = cultureCode,
+                EntityType = entityType,
+                EntityId = entityId,
+                Property = "BlockValues",
+                Value = entity.BlockValues
+            };
+            await localizablePropertyService.Value.InsertAsync(localizedRecord);
+            return Ok();
+        }
+        else
+        {
+            localizedRecord.Value = entity.BlockValues;
+            await localizablePropertyService.Value.UpdateAsync(localizedRecord);
+            return Ok();
+        }
+    }
+
+    protected override Guid GetId(EntityTypeContentBlock entity) => entity.Id;
+
+    protected override void SetNewId(EntityTypeContentBlock entity) => entity.Id = Guid.NewGuid();
+
+    protected override string ReadPermission => CmsConstants.Policies.ContentBlocksRead;
+
+    protected override string WritePermission => CmsConstants.Policies.ContentBlocksWrite;
+
+    private static void SetValues(EntityTypeContentBlock entity)
+    {
+        var blockType = Type.GetType(entity.BlockType);
+        var contentBlocks = DependoResolver.Instance.ResolveAll<IContentBlock>();
+        var contentBlock = contentBlocks.First(x => x.GetType() == blockType);
+        entity.BlockName = contentBlock.Name;
     }
 }

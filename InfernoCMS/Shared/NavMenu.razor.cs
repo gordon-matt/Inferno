@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace InfernoCMS.Shared
-{
-    public partial class NavMenu
-    {
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
+namespace InfernoCMS.Shared;
 
-        private void NavigateToAdminArea()
-        {
-            NavigationManager.NavigateTo("/admin/pages/index", forceLoad: true);
-        }
-    }
+public partial class NavMenu
+{
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    private void NavigateToAdminArea() => NavigationManager.NavigateTo("/admin/pages/index", forceLoad: true);
 }

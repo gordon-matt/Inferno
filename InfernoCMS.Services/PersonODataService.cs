@@ -1,12 +1,11 @@
 ﻿using Inferno.Web.OData;
 using InfernoCMS.Data.Entities;
 
-namespace InfernoCMS.Services
+namespace InfernoCMS.Services;
+
+public class PersonODataService : RadzenODataService<Person>
 {
-    public class PersonODataService : RadzenODataService<Person>
+    public PersonODataService() : base("PersonApi")
     {
-        public PersonODataService() : base("PersonApi")
-        {
-        }
     }
 }
