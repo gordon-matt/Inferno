@@ -12,5 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Blazorise.Video" Version="2.1.0" />
+    <PackageReference Include="Pickstack" Version="1.0.1" />
   </ItemGroup>
 </Project>

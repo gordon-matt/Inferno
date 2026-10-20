@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OfficeOpenXml;
+using Pickstack;
+using Pickstack.FileManager.WebFilez;
+using Pickstack.RichTextEditor.TinyMce7;
 
 ExcelPackage.License.SetNonCommercialOrganization("Inferno");
 
@@ -62,13 +65,6 @@ services
     .AddMemoryCache()
     .AddDistributedMemoryCache();
 
-// Peachpie needs this
-services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-});
-
 services.AddCors(options => options.AddPolicy("AllowAll", p => p
     .AllowAnyOrigin()
     .AllowAnyMethod()
@@ -107,7 +103,13 @@ services.AddBlazorise(options => options.Immediate = true)
 .AddBootstrap5Providers()
 .AddFontAwesomeIcons();
 
-services.AddResponsiveFileManager(options => options.MaxSizeUpload = 32);
+services.AddPickstack(configuration)
+    .AddWebFilez(files => files
+        .UseHostBlazor()
+        .Server(server => server.MaxUploadBytes = 32 * 1024 * 1024))
+    .AddTinyMce7(editor => editor
+        .WithHeight(400)
+        .WithToolbar("undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media | code"));
 
 services.AddHttpContextAccessor();
 
@@ -140,14 +142,9 @@ app.UseCors("AllowAll");
 var requestLocalizationOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
 app.UseRequestLocalization(requestLocalizationOptions!.Value);
 
-app.UseSession();
-
 app.UseStaticFiles();
 app.UseInfernoPlugins();
-app.UseDefaultFiles(); // For PeachPie
-
-// PeachPie / Responsive File Manager
-app.UseResponsiveFileManager();
+app.UseDefaultFiles();
 
 app.UseRouting();
 
@@ -160,6 +157,7 @@ app.UseInferno();
 
 app.MapControllers();
 app.MapAreaControllerRoute("admin_route", "Admin", "Admin/{controller}/{action}/{id?}");
+app.UsePickstack();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

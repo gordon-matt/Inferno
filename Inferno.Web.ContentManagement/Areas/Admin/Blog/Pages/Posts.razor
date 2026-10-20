@@ -136,7 +136,8 @@
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is2">@T[InfernoCmsLocalizableStrings.Blog.PostModel.FullDescription]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is10">
-                                    <RadzenHtmlEditor @bind-Value="Model.FullDescription" Style="height: 400px" />
+                                    <PickstackScripts />
+                                    <PickstackEditor @bind-Value="Model.FullDescription" FileRoot="@WorkContext.TenantRoot" Height="400" />
                                 </FieldBody>
                             </Field>
                         </Column>

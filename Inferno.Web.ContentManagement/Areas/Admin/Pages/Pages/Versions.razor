@@ -152,7 +152,8 @@
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2">@T[InfernoCmsLocalizableStrings.Pages.PageTypes.StandardPage.BodyContent]</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.Is10">
-                                        <RadzenHtmlEditor @bind-Value="Fields.BodyContent" Style="height: 400px" />
+                                        <PickstackScripts />
+                                        <PickstackEditor @bind-Value="Fields.BodyContent" FileRoot="@WorkContext.TenantRoot" Height="400" />
                                     </FieldBody>
                                 </Field>
                             </Column>

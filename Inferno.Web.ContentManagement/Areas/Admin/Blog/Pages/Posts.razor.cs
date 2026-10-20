@@ -15,6 +15,9 @@ public partial class Posts
     [Inject]
     private IBlogPostTagService BlogPostTagService { get; set; }
 
+    [Inject]
+    private IWorkContext WorkContext { get; set; }
+
     private IEnumerable<BlogCategory> CategoriesSelectList { get; set; } = Enumerable.Empty<BlogCategory>();
 
     private IEnumerable<BlogTag> TagsSelectList { get; set; } = Enumerable.Empty<BlogTag>();
