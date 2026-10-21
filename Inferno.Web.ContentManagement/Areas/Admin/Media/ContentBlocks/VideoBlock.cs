@@ -1,5 +1,4 @@
-﻿using Blazorise.Video;
-using Inferno.Localization.ComponentModel;
+﻿using Inferno.Localization.ComponentModel;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 using Inferno.Web.ContentManagement.Areas.Admin.Media.Components;
 

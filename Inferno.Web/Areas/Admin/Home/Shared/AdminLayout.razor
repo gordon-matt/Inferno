@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <PageTitle>InfernoCMS</PageTitle>
 
@@ -7,11 +7,11 @@
 <RadzenContextMenu />
 <RadzenTooltip />
 
-<Layout>
-    <LayoutHeader Fixed>
+<div class="inferno-shell d-flex flex-column min-vh-100">
+    <header class="inferno-shell-header fixed-top">
         <AdminNavMenu />
-    </LayoutHeader>
-    <LayoutContent Padding="Padding.Is4.OnX" Style="margin-top:70px">
+    </header>
+    <main class="inferno-shell-content flex-grow-1 px-4" style="margin-top:70px">
         @Body
-    </LayoutContent>
-</Layout>
+    </main>
+</div>

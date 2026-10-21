@@ -1,4 +1,4 @@
-﻿@using Dependo
+@using Dependo
 @using Inferno.Security.Membership
 @using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
@@ -8,78 +8,78 @@
 @inject IMembershipService MembershipService
 @inject IWorkContext WorkContext
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="PageTitle" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.PageTitle]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="PageTitle">@T[InfernoCmsLocalizableStrings.Settings.Blog.PageTitle]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.PageTitle" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="DateFormat" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.DateFormat]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="DateFormat">@T[InfernoCmsLocalizableStrings.Settings.Blog.DateFormat]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.DateFormat" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ItemsPerPage" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.ItemsPerPage]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ItemsPerPage">@T[InfernoCmsLocalizableStrings.Settings.Blog.ItemsPerPage]</label>
+            <div class="col-md-9">
                 <RadzenNumeric @bind-Value="Model.ItemsPerPage" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ShowOnMenus" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.ShowOnMenus">@T[InfernoCmsLocalizableStrings.Settings.Blog.ShowOnMenus]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="MenuPosition" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.MenuPosition]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ShowOnMenus"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.ShowOnMenus" />@T[InfernoCmsLocalizableStrings.Settings.Blog.ShowOnMenus]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="MenuPosition">@T[InfernoCmsLocalizableStrings.Settings.Blog.MenuPosition]</label>
+            <div class="col-md-9">
                 <RadzenNumeric @bind-Value="Model.MenuPosition" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="RoleIds" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.RoleIds]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="RoleIds">@T[InfernoCmsLocalizableStrings.Settings.Blog.RoleIds]</label>
+            <div class="col-md-9">
                 <RadzenCheckBoxList @bind-Value=@Model.RoleIds TValue="string" Data="@availableRoles" TextProperty="Name" ValueProperty="Id" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="LayoutPathOverride" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Settings.Blog.LayoutPathOverride]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="LayoutPathOverride">@T[InfernoCmsLocalizableStrings.Settings.Blog.LayoutPathOverride]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.LayoutPathOverride" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     private IEnumerable<InfernoRole> availableRoles;

@@ -1,5 +1,4 @@
-﻿using Blazorise;
-using Dependo;
+﻿using Dependo;
 using Inferno.Web.Navigation;
 using Microsoft.Extensions.Localization;
 
@@ -24,63 +23,63 @@ public class CmsNavigationProvider : INavigationProvider
 
     private void BuildCmsMenu(NavigationItemBuilder builder)
     {
-        builder.Icon(IconName.Edit);
+        builder.Icon("fas fa-edit");
 
         // Blog
         builder.Add(T[InfernoCmsLocalizableStrings.Blog.Title].Value, "5", blog =>
         {
-            blog.Icon(IconName.Paperclip).Permission(CmsConstants.Policies.BlogRead);
+            blog.Icon("fas fa-paperclip").Permission(CmsConstants.Policies.BlogRead);
 
             blog.Add(T[InfernoCmsLocalizableStrings.Blog.Posts].Value, "1", item => item
                 .Url("/admin/blog/posts")
-                .Icon(IconName.File)
+                .Icon("fas fa-file")
                 .Permission(CmsConstants.Policies.BlogRead));
 
             blog.Add(T[InfernoCmsLocalizableStrings.Blog.Categories].Value, "2", item => item
                 .Url("/admin/blog/categories")
-                .Icon(IconName.Folder)
+                .Icon("fas fa-folder")
                 .Permission(CmsConstants.Policies.BlogRead));
 
             blog.Add(T[InfernoCmsLocalizableStrings.Blog.Tags].Value, "3", item => item
                 .Url("/admin/blog/tags")
-                .Icon(IconName.Tag)
+                .Icon("fas fa-tag")
                 .Permission(CmsConstants.Policies.BlogRead));
         });
 
         // Content Blocks — the page lives at /admin/blocks/content-blocks (see ContentBlocks.razor)
         builder.Add(T[InfernoCmsLocalizableStrings.ContentBlocks.Title].Value, "5", item => item
             .Url("/admin/blocks/content-blocks")
-            .Icon(IconName.Square)
+            .Icon("fas fa-square")
             .Permission(CmsConstants.Policies.ContentBlocksRead));
 
         // Media
         builder.Add(T[InfernoCmsLocalizableStrings.Media.Title].Value, "5", item => item
             .Url("/admin/media/index")
-            .Icon(IconName.Image)
+            .Icon("fas fa-image")
             .Permission(CmsConstants.Policies.MediaRead));
 
         // Menus
         builder.Add(T[InfernoCmsLocalizableStrings.Menus.Title].Value, "5", item => item
             .Url("/admin/menus/index")
-            .Icon(IconName.ArrowRight)
+            .Icon("fas fa-arrow-right")
             .Permission(CmsConstants.Policies.MenusRead));
 
         // Pages
         builder.Add(T[InfernoCmsLocalizableStrings.Pages.Title].Value, "5", item => item
             .Url("/admin/pages/index")
-            .Icon(IconName.Code)
+            .Icon("fas fa-code")
             .Permission(CmsConstants.Policies.PagesRead));
 
         // Subscribers
         builder.Add(T[InfernoCmsLocalizableStrings.Newsletters.Subscribers].Value, "5", item => item
             .Url("/admin/newsletters/subscribers")
-            .Icon(IconName.Users)
+            .Icon("fas fa-users")
             .Permission(CmsConstants.Policies.NewsletterRead));
 
         // XML Sitemap
         builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item
             .Url("/admin/sitemap/xml-sitemap")
-            .Icon(IconName.Map)
+            .Icon("fas fa-map")
             .Permission(CmsConstants.Policies.SitemapRead));
     }
 }

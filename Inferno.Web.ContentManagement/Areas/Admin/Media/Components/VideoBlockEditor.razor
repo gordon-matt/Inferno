@@ -1,4 +1,3 @@
-﻿@using Blazorise.Video
 @using Inferno.Models
 @using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Media
@@ -7,218 +6,218 @@
 @using Orientation = Radzen.Orientation
 @inherits ContentBlockEditor<VideoBlock>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ControlId" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ControlId]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ControlId">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ControlId]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.ControlId" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Source" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Source]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Source">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Source]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.Source" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="AutomaticallyHideControls" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.AutomaticallyHideControls">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutomaticallyHideControls]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="AutoPause" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.AutoPause">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPause]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="AutoPlay" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.AutoPlay">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPlay]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ClickToPlay" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.ClickToPlay">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ClickToPlay]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Controls" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.Controls">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Controls]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="AutomaticallyHideControls"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.AutomaticallyHideControls" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutomaticallyHideControls]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="AutoPause"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.AutoPause" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPause]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="AutoPlay"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.AutoPlay" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPlay]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ClickToPlay"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.ClickToPlay" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ClickToPlay]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Controls"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.Controls" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Controls]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ControlsList" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ControlsList"></label>
+            <div class="col-md-9">
                 <RadzenCheckBoxList @bind-Value="Model.ControlsList" TValue="string" Orientation="Orientation.Vertical" Data="@availableControls" TextProperty="Name" ValueProperty="Id" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="DisableContextMenu" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.DisableContextMenu">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.DisableContextMenu]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="InvertTime" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.InvertTime">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.InvertTime]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Muted" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.Muted">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Muted]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Poster" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Poster]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="DisableContextMenu"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.DisableContextMenu" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.DisableContextMenu]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="InvertTime"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.InvertTime" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.InvertTime]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Muted"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.Muted" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Muted]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Poster">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Poster]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.Poster" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ProtectionData" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionData]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ProtectionData">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionData]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.ProtectionData" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ProtectionHttpRequestHeaders" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionHttpRequestHeaders]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ProtectionHttpRequestHeaders">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionHttpRequestHeaders]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.ProtectionHttpRequestHeaders" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ProtectionServerUrl" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionServerUrl]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ProtectionServerUrl">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionServerUrl]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.ProtectionServerUrl" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ProtectionType" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionType]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ProtectionType">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionType]</label>
+            <div class="col-md-9">
                 <RadzenDropDown Data="videoProtectionTypeValues" @bind-Value="Model.ProtectionType" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Ratio" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Ratio]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Ratio">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Ratio]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.Ratio" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="ResetOnEnd" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="Model.ResetOnEnd">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ResetOnEnd]</Check>
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="SeekTime" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.SeekTime]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="ResetOnEnd"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.ResetOnEnd" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ResetOnEnd]</label></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="SeekTime">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.SeekTime]</label>
+            <div class="col-md-9">
                 <RadzenNumeric @bind-Value="Model.SeekTime" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="StreamingLibrary" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.StreamingLibrary]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="StreamingLibrary">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.StreamingLibrary]</label>
+            <div class="col-md-9">
                 <RadzenDropDown Data="streamingLibraryValues" @bind-Value="Model.StreamingLibrary" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Volume" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Volume]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Volume">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Volume]</label>
+            <div class="col-md-9">
                 <RadzenSlider @bind-Value="Model.Volume" Min="0" Max="1" Step="0.1" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     private IEnumerable<IdNamePair<string>> availableControls = new List<IdNamePair<string>>

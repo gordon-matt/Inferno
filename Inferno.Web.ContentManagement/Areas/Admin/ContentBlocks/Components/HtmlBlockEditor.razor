@@ -1,25 +1,25 @@
-﻿@using Inferno.Web.Components
+@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockEditor<HtmlBlock>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="BodyContent" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.BodyContent]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="BodyContent">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.BodyContent]</label>
+            <div class="col-md-9">
                 <RadzenTextArea @bind-Value="Model.BodyContent" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Script" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.Script]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Script">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.Script]</label>
+            <div class="col-md-9">
                 <RadzenTextArea @bind-Value="Model.Script" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>

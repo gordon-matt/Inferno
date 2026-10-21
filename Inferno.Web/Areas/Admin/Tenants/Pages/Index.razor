@@ -1,12 +1,12 @@
-﻿@page "/admin/tenants/index"
+@page "/admin/tenants/index"
 @inherits RadzenDataPage<Tenant, int>
 
 <h1>Tenants</h1>
 
-<Row hidden="@(ShowEditMode == true)">
-    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+<div class="row" hidden="@(ShowEditMode == true)">
+    <div class="col-12 mb-3">
         <RadzenButton Click="Create">
-            <Icon Name="IconName.PlusCircle"></Icon>
+            <i class="fas fa-plus-circle" aria-hidden="true"></i>
             @T[InfernoWebLocalizableStrings.General.Create]
         </RadzenButton>
         <RadzenButton Text="Excel" Click="@(args => Export("excel"))">
@@ -15,9 +15,9 @@
         <RadzenButton Text="CSV" Click="@(args => Export("csv"))">
             Export to CSV
         </RadzenButton>
-    </Column>
+    </div>
 
-    <Column ColumnSize="ColumnSize.Is12">
+    <div class="col-12">
         <RadzenDataGrid @ref="DataGrid"
                         TItem="Tenant"
                         IsLoading="@IsLoading"
@@ -41,60 +41,60 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </Column>
-</Row>
+    </div>
+</div>
 
-<Row id="form-section" hidden="@(ShowEditMode == false)">
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader Class="text-white bg-primary">Details</CardHeader>
-            <CardBody>
+<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white bg-primary">Details</div>
+            <div class="card-body">
                 <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.General.Name]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Name">@T[InfernoWebLocalizableStrings.General.Name]</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.Name" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Url" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Tenants.Model.Url]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Url">@T[InfernoWebLocalizableStrings.Tenants.Model.Url]</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.Url" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Hosts" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Tenants.Model.Hosts]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Hosts">@T[InfernoWebLocalizableStrings.Tenants.Model.Hosts]</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.Hosts" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <hr />
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Class="float-end">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3 float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     @T[InfernoWebLocalizableStrings.General.Cancel]
                                 </RadzenButton>
                                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
                                 </RadzenButton>
-                            </Field>
-                        </Column>
-                    </Row>
+                            </div>
+                        </div>
+                    </div>
                 </EditForm>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>

@@ -87,7 +87,7 @@ public class NavigationManager : INavigationManager
                 Position = item.Position,
                 Text = item.Text,
                 CssClass = item.CssClass,
-                Icon = item.Icon,
+                IconName = item.IconName,
                 Url = item.Url,
                 Href = item.Href
             };
@@ -125,7 +125,6 @@ public class NavigationManager : INavigationManager
         {
             Text = items.First().Text,
             CssClass = items.Select(x => x.CssClass).FirstOrDefault(x => !string.IsNullOrEmpty(x)),
-            Icon = items.Select(x => x.Icon).FirstOrDefault(x => x.HasValue),
             IconName = items.Select(x => x.IconName).FirstOrDefault(x => !string.IsNullOrEmpty(x)),
             Url = items.Select(x => x.Url).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)),
             Href = items.Select(x => x.Href).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)),

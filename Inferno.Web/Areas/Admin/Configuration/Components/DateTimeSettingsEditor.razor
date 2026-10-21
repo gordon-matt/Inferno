@@ -1,24 +1,24 @@
-﻿@using Inferno.Web.Configuration
+@using Inferno.Web.Configuration
 @inherits SettingsEditor<DateTimeSettings>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.Settings.DateTime.DefaultTimeZoneId]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Name">@T[InfernoWebLocalizableStrings.Settings.DateTime.DefaultTimeZoneId]</label>
+            <div class="col-md-9">
                 <RadzenTextBox @bind-Value="Model.DefaultTimeZoneId" Style="width:100%" />
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
-<Row>
-    <Column ColumnSize="ColumnSize.Is12">
-        <Field Horizontal="true">
-            <FieldLabel For="Name" ColumnSize="ColumnSize.Is3"></FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <Check TValue="bool" @bind-Checked="@Model.AllowUsersToSetTimeZone">@T[InfernoWebLocalizableStrings.Settings.DateTime.AllowUsersToSetTimeZone]</Check>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3" for="Name"></label>
+            <div class="col-md-9">
+                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.AllowUsersToSetTimeZone" />@T[InfernoWebLocalizableStrings.Settings.DateTime.AllowUsersToSetTimeZone]</label></div>
                 @*<RadzenCheckBox @bind-Value="Model.AllowUsersToSetTimeZone" Style="width:100%" /> @T[InfernoWebLocalizableStrings.Settings.DateTime.AllowUsersToSetTimeZone]*@
-            </FieldBody>
-        </Field>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>

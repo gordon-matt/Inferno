@@ -10,7 +10,6 @@
     <SupportedPlatform Include="browser" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Blazorise" Version="2.1.0" />
     <PackageReference Include="Dependo.Autofac" Version="1.2.1" />
     <PackageReference Include="Extenso.AspNetCore.OData" Version="10.0.2" />
     <PackageReference Include="Radzen.Blazor" Version="10.2.3" />

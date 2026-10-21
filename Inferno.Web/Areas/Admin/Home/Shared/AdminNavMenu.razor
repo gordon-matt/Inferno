@@ -1,83 +1,76 @@
-﻿@using Inferno.Web.Navigation;
+﻿@using Inferno.Web.Navigation
 
 @inject INavigationManager navigationManager
 
-<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light"
-     Padding="Padding.Is4.OnX">
-    <BarBrand>
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+    <a class="navbar-brand" href="/admin">
         <img src="img/logo.png" alt="Inferno CMS" width="100" />
-    </BarBrand>
-    <BarToggler />
-    <BarMenu>
-        <BarStart>
+    </a>
+    <button class="navbar-toggler" type="button" @onclick="ToggleMenu" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse @(menuOpen ? "show" : null)">
+        <ul class="navbar-nav me-auto">
             @foreach (var menuItem in menuItems)
             {
-                if (menuItem.Items.Any())
+                if (menuItem.Items?.Any() == true)
                 {
-                    <BarItem>
-                        <BarDropdown>
-                            <BarDropdownToggle>
-                                @if (menuItem.Icon.HasValue)
-                                {
-                                    <Icon Name="menuItem.Icon.Value" />@:&nbsp;
-                                }
-                                else if (!string.IsNullOrEmpty(menuItem.IconName))
-                                {
-                                    <i class="@menuItem.IconName"></i>@:&nbsp;
-                                }
-                                @menuItem.Text
-                            </BarDropdownToggle>
-                            <BarDropdownMenu>
-                                @foreach (var item in menuItem.Items)
-                                {
-                                    <BarLink To="@item.Href">
-                                        @if (item.Icon.HasValue)
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" @onclick="() => ToggleDropdown(menuItem)" @onclick:preventDefault>
+                            @if (!string.IsNullOrEmpty(menuItem.IconName))
+                            {
+                                <i class="@menuItem.IconName" aria-hidden="true"></i>
+                            }
+                            @menuItem.Text
+                        </a>
+                        <ul class="dropdown-menu @(openDropdown == menuItem ? "show" : null)">
+                            @foreach (var item in menuItem.Items)
+                            {
+                                <li>
+                                    <NavLink class="dropdown-item" href="@item.Href">
+                                        @if (!string.IsNullOrEmpty(item.IconName))
                                         {
-                                            <Icon Name="item.Icon.Value" />@:&nbsp;
-                                        }
-                                        else if (!string.IsNullOrEmpty(item.IconName))
-                                        {
-                                            <i class="@item.IconName"></i>@:&nbsp;
+                                            <i class="@item.IconName" aria-hidden="true"></i>
                                         }
                                         @item.Text
-                                    </BarLink>
-                                }
-                            </BarDropdownMenu>
-                        </BarDropdown>
-                    </BarItem>
+                                    </NavLink>
+                                </li>
+                            }
+                        </ul>
+                    </li>
                 }
                 else
                 {
-                    <BarItem>
-                        <BarLink To="@menuItem.Href">
-                            @if (menuItem.Icon.HasValue)
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="@menuItem.Href">
+                            @if (!string.IsNullOrEmpty(menuItem.IconName))
                             {
-                                <Icon Name="menuItem.Icon.Value" />@:&nbsp;
-                            }
-                            else if (!string.IsNullOrEmpty(menuItem.IconName))
-                            {
-                                <i class="@menuItem.IconName"></i>@:&nbsp;
+                                <i class="@menuItem.IconName" aria-hidden="true"></i>
                             }
                             @menuItem.Text
-                        </BarLink>
-                    </BarItem>
+                        </NavLink>
+                    </li>
                 }
             }
-        </BarStart>
-        <BarEnd>
+        </ul>
+        <ul class="navbar-nav ms-auto align-items-lg-center">
             <LoginDisplay />
-        </BarEnd>
-    </BarMenu>
-</Bar>
+        </ul>
+    </div>
+</nav>
 
 @code {
-    private IEnumerable<MenuItem> menuItems;
+    private IEnumerable<MenuItem> menuItems = [];
+    private MenuItem openDropdown;
+    private bool menuOpen;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         menuItems = navigationManager.BuildMenu(InfernoWebConstants.Areas.Admin);
     }
+
+    private void ToggleMenu() => menuOpen = !menuOpen;
+
+    private void ToggleDropdown(MenuItem item) => openDropdown = openDropdown == item ? null : item;
 }

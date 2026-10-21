@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Blazorise;
 using Extenso;
 using Extenso.Data.Entity;
 using Inferno.Localization.Entities;
@@ -7,6 +6,7 @@ using Inferno.Localization.Services;
 using Inferno.Web.Areas.Admin.Localization.Models;
 using Inferno.Web.Areas.Admin.Localization.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 
@@ -49,19 +49,15 @@ public partial class Index
         ShowUploadSection = false;
     }
 
-    private async Task FileOnChangedAsync(FileChangedEventArgs e)
+    private async Task OnLanguagePackSelected(InputFileChangeEventArgs e)
     {
         try
         {
-            foreach (var file in e.Files) // TODO: There should only be one..
-            {
-                using var stream = new MemoryStream();
-                await file.WriteToStreamAsync(stream);
-                stream.Seek(0, SeekOrigin.Begin);
-
-                using var reader = new StreamReader(stream);
-                string json = await reader.ReadToEndAsync();
-                var languagePackFile = json.JsonDeserialize<LanguagePackFile>();
+            var file = e.File;
+            await using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+            using var reader = new StreamReader(stream);
+            string json = await reader.ReadToEndAsync();
+            var languagePackFile = json.JsonDeserialize<LanguagePackFile>();
 
                 #region Update Database
 
@@ -117,7 +113,6 @@ public partial class Index
                 await LocalizableStringService.InsertAsync(toInsert);
 
                 #endregion Update Database
-            }
         }
         catch (Exception x)
         {
@@ -128,8 +123,6 @@ public partial class Index
             StateHasChanged();
         }
     }
-
-    private void FileOnProgressed(FileProgressedEventArgs e) => Console.WriteLine($"File: {e.File.Name} Progress: {e.Percentage}");
 
     public void Localize(string cultureCode) => NavigationManager.NavigateTo($"/admin/localization/localizable-strings/{cultureCode}", forceLoad: true);
 }

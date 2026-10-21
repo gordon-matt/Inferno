@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <PageTitle>InfernoCMS</PageTitle>
 
@@ -7,16 +7,16 @@
 <RadzenContextMenu />
 <RadzenTooltip />
 
-<Layout>
-    <LayoutHeader Fixed>
+<div class="inferno-shell d-flex flex-column min-vh-100">
+    <header class="inferno-shell-header fixed-top">
         <NavMenu />
-    </LayoutHeader>
-    <LayoutContent Padding="Padding.Is4.OnX" Style="margin-top:70px">
+    </header>
+    <main class="inferno-shell-content flex-grow-1 px-4" style="margin-top:70px">
         @Body
-    </LayoutContent>
+    </main>
     <AuthorizeView>
         <Authorized>
-            <LayoutFooter Fixed>
+            <div class="inferno-shell-footer mt-auto">
                 <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
                     <p class="col-md-4 mb-0 text-muted">&copy; @DateTime.Now.Year</p>
 
@@ -28,7 +28,7 @@
                         <li class="nav-item"><a href="/admin/index" class="nav-link px-2 text-muted">@T[InfernoWebLocalizableStrings.Dashboard.Administration]</a></li>
                     </ul>
                 </footer>
-            </LayoutFooter>
+            </div>
         </Authorized>
     </AuthorizeView>
-</Layout>
+</div>

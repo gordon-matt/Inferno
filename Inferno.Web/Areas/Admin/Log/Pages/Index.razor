@@ -3,12 +3,12 @@
 
 <h1>@T[InfernoWebLocalizableStrings.Log.Title]</h1>
 
-<Row hidden="@(ShowEditMode == true)">
-    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+<div class="row" hidden="@(ShowEditMode == true)">
+    <div class="col-12 mb-3">
         <RadzenButton ButtonStyle="ButtonStyle.Warning" Icon="warning" Text="@T[InfernoWebLocalizableStrings.General.Clear]" Click="@(args => ClearAsync())" />
-    </Column>
+    </div>
 
-    <Column ColumnSize="ColumnSize.Is12">
+    <div class="col-12">
         <RadzenDataGrid @ref="DataGrid"
                         TItem="LogEntry"
                         IsLoading="@IsLoading"
@@ -37,97 +37,97 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </Column>
-</Row>
+    </div>
+</div>
 
-<Row id="form-section" hidden="@(ShowEditMode == false)">
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader Class="text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
-            <CardBody>
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.EventDateTime]</FieldLabel>
+<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.EventDateTime]</label>
                             <p class="form-control-plaintext">@Model.EventDateTime.ToString("yyyy-MM-dd HH:mm:ss")</p>
-                        </Field>
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.EventLevel]</FieldLabel>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.EventLevel]</label>
                             <p class="form-control-plaintext">@Model.EventLevel</p>
-                        </Field>
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.UserName]</FieldLabel>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.UserName]</label>
                             <p class="form-control-plaintext">@Model.UserName</p>
-                        </Field>
-                    </Column>
-                </Row>
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.MachineName]</FieldLabel>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.MachineName]</label>
                             <p class="form-control-plaintext">@Model.MachineName</p>
-                        </Field>
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.ErrorSource]</FieldLabel>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.ErrorSource]</label>
                             <p class="form-control-plaintext">@Model.ErrorSource</p>
-                        </Field>
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.ErrorClass]</FieldLabel>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.ErrorClass]</label>
                             <p class="form-control-plaintext">@Model.ErrorClass</p>
-                        </Field>
-                    </Column>
-                </Row>
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is12">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.ErrorMethod]</FieldLabel>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.ErrorMethod]</label>
                             <p class="form-control-plaintext">@Model.ErrorMethod</p>
-                        </Field>
-                    </Column>
-                </Row>
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is12">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.EventMessage]</FieldLabel>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.EventMessage]</label>
                             <pre class="bg-light p-3 rounded border" style="white-space:pre-wrap;word-break:break-word;">@Model.EventMessage</pre>
-                        </Field>
-                    </Column>
-                </Row>
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is12">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.ErrorMessage]</FieldLabel>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.ErrorMessage]</label>
                             <pre class="bg-light p-3 rounded border" style="white-space:pre-wrap;word-break:break-word;">@Model.ErrorMessage</pre>
-                        </Field>
-                    </Column>
-                </Row>
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is12">
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Log.Model.InnerErrorMessage]</FieldLabel>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Log.Model.InnerErrorMessage]</label>
                             <pre class="bg-light p-3 rounded border" style="white-space:pre-wrap;word-break:break-word;">@Model.InnerErrorMessage</pre>
-                        </Field>
-                    </Column>
-                </Row>
+                        </div>
+                    </div>
+                </div>
                 <hr />
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is12">
-                        <Field Class="float-end">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3 float-end">
                             <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                 @T[InfernoWebLocalizableStrings.General.Cancel]
                             </RadzenButton>
-                        </Field>
-                    </Column>
-                </Row>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,8 +4,8 @@
 
 @if (!ShowEditMode)
 {
-    <Row>
-        <Column ColumnSize="ColumnSize.Is12">
+    <div class="row">
+        <div class="col-12">
             <RadzenDataGrid @ref="DataGrid"
                             TItem="EdmPluginDescriptor"
                             IsLoading="@IsLoading"
@@ -46,11 +46,11 @@
                         <Template Context="record">
                             @if (record.Installed)
                             {
-                                <Badge Color="Color.Success">@T[InfernoWebLocalizableStrings.General.Installed]</Badge>
+                                <span class="badge text-bg-success">@T[InfernoWebLocalizableStrings.General.Installed]</span>
                             }
                             else
                             {
-                                <Badge Color="Color.Secondary">@T[InfernoWebLocalizableStrings.General.NotInstalled]</Badge>
+                                <span class="badge text-bg-secondary">@T[InfernoWebLocalizableStrings.General.NotInstalled]</span>
                             }
                         </Template>
                     </RadzenDataGridColumn>
@@ -69,37 +69,37 @@
                     </RadzenDataGridColumn>
                 </Columns>
             </RadzenDataGrid>
-        </Column>
-    </Row>
+        </div>
+    </div>
 }
 else
 {
-    <Row>
-        <Column ColumnSize="ColumnSize.Is12">
-            <Card>
-                <CardHeader>@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
-                <CardBody>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">@T[InfernoWebLocalizableStrings.General.Details]</div>
+                <div class="card-body">
                     <EditForm Model="@Model" OnValidSubmit="OnValidSubmitAsync">
                         <DataAnnotationsValidator />
                         <Microsoft.AspNetCore.Components.Forms.ValidationSummary />
 
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Plugins.Model.FriendlyName]</FieldLabel>
-                            <TextInput @bind-Value="Model.FriendlyName" />
-                        </Field>
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Plugins.Model.FriendlyName]</label>
+                            <input class="form-control" @bind="Model.FriendlyName" />
+                        </div>
 
-                        <Field>
-                            <FieldLabel>@T[InfernoWebLocalizableStrings.Plugins.Model.DisplayOrder]</FieldLabel>
-                            <NumericInput TValue="int" @bind-Value="Model.DisplayOrder" />
-                        </Field>
+                        <div class="mb-3">
+                            <label class="form-label">@T[InfernoWebLocalizableStrings.Plugins.Model.DisplayOrder]</label>
+                            <input class="form-control" type="number" @bind="Model.DisplayOrder" />
+                        </div>
 
-                        <Field>
+                        <div class="mb-3">
                             <RadzenButton ButtonStyle="ButtonStyle.Light" ButtonType="Radzen.ButtonType.Button" Text="@T[InfernoWebLocalizableStrings.General.Cancel]" Click="Cancel" />
                             <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="Radzen.ButtonType.Submit" Icon="save" Text="@T[InfernoWebLocalizableStrings.General.Save]" />
-                        </Field>
+                        </div>
                     </EditForm>
-                </CardBody>
-            </Card>
-        </Column>
-    </Row>
+                </div>
+            </div>
+        </div>
+    </div>
 }

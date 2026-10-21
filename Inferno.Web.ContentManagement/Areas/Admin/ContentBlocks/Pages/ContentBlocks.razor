@@ -1,17 +1,17 @@
-﻿@page "/admin/blocks/content-blocks"
+@page "/admin/blocks/content-blocks"
 @inherits RadzenDataPage<ContentBlock, Guid>
 
 <h1>Content Blocks</h1>
 
-<Row hidden="@(ShowEditMode == true || ShowCreateMode == true)">
-    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+<div class="row" hidden="@(ShowEditMode == true || ShowCreateMode == true)">
+    <div class="col-12 mb-3">
         <RadzenButton Click="Create">
-            <Icon Name="IconName.PlusCircle"></Icon>
+            <i class="fas fa-plus-circle" aria-hidden="true"></i>
             @T[InfernoWebLocalizableStrings.General.Create]
         </RadzenButton>
-    </Column>
+    </div>
 
-    <Column ColumnSize="ColumnSize.Is12">
+    <div class="col-12">
         <RadzenDataGrid @ref="DataGrid"
                         TItem="ContentBlock"
                         IsLoading="@IsLoading"
@@ -38,130 +38,130 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </Column>
-</Row>
+    </div>
+</div>
 
-<Row id="create-form-section" hidden="@(ShowCreateMode == false)">
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader Class="text-white bg-primary">Details</CardHeader>
-            <CardBody>
+<div class="row" id="create-form-section" hidden="@(ShowCreateMode == false)">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white bg-primary">Details</div>
+            <div class="card-body">
                 <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Title" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Title">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.Title" Style="width:100%" Name="Create_Title" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="BlockType" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.BlockType]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="BlockType">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.BlockType]</label>
+                                <div class="col-md-9">
                                     <RadzenDropDown @bind-Value="Model.BlockType" Data="BlockTypesSelectList" TextProperty="Name" ValueProperty="Id" Name="Create_BlockType" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Order" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Order">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]</label>
+                                <div class="col-md-9">
                                     <RadzenNumeric @bind-Value="Model.Order" Style="width:100%" Name="Create_Order" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="ZoneId" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="ZoneId">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]</label>
+                                <div class="col-md-9">
                                     <RadzenDropDown @bind-Value="Model.ZoneId" Data="ZonesSelectList" TextProperty="Name" ValueProperty="Id" Name="Create_ZoneId" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <hr />
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Class="float-end">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3 float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     @T[InfernoWebLocalizableStrings.General.Cancel]
                                 </RadzenButton>
                                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
                                 </RadzenButton>
-                            </Field>
-                        </Column>
-                    </Row>
+                            </div>
+                        </div>
+                    </div>
                 </EditForm>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>
 
-<Row id="edit-form-section" hidden="@(ShowEditMode == false)">
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader Class="text-white bg-primary">Details</CardHeader>
-            <CardBody>
+<div class="row" id="edit-form-section" hidden="@(ShowEditMode == false)">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white bg-primary">Details</div>
+            <div class="card-body">
                 <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Title" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Title">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.Title" Style="width:100%" ReadOnly="true" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="CustomTemplatePath" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.CustomTemplatePath]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="CustomTemplatePath">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.CustomTemplatePath]</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.CustomTemplatePath" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Order" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Order">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]</label>
+                                <div class="col-md-9">
                                     <RadzenNumeric @bind-Value="Model.Order" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="ZoneId" ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="ZoneId">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]</label>
+                                <div class="col-md-9">
                                     <RadzenDropDown @bind-Value="Model.ZoneId" Data="ZonesSelectList" TextProperty="Name" ValueProperty="Id" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="IsEnabled" ColumnSize="ColumnSize.Is3"></FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
-                                    <Check TValue="bool" @bind-Checked="@Model.IsEnabled">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.IsEnabled]</Check>
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="IsEnabled"></label>
+                                <div class="col-md-9">
+                                    <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.IsEnabled" />@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.IsEnabled]</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     @if (EditorType is not null)
                     {
                         <div id="block-details">
@@ -169,20 +169,20 @@
                         </div>
                     }
                     <hr />
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Class="float-end">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3 float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     @T[InfernoWebLocalizableStrings.General.Cancel]
                                 </RadzenButton>
                                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
                                 </RadzenButton>
-                            </Field>
-                        </Column>
-                    </Row>
+                            </div>
+                        </div>
+                    </div>
                 </EditForm>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>

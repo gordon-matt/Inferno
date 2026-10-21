@@ -1,16 +1,16 @@
-﻿@page "/admin/localization/localizable-strings/{cultureCode}"
+@page "/admin/localization/localizable-strings/{cultureCode}"
 @*@inherits RadzenDataPage<LocalizableString, Guid>*@
 
 <h1>Localization</h1>
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+<div class="row">
+    <div class="col-12 mb-3">
         <RadzenButton Text="Clear" Click="@(args => ExportLanguagePack())">
             @T[InfernoWebLocalizableStrings.General.Export]
         </RadzenButton>
-    </Column>
+    </div>
 
-    <Column ColumnSize="ColumnSize.Is12">
+    <div class="col-12">
         <RadzenDataGrid @ref="DataGrid"
                         TItem="ComparitiveLocalizableString"
                         IsLoading="@IsLoading"
@@ -41,5 +41,5 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </Column>
-</Row>
+    </div>
+</div>

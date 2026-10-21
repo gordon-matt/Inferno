@@ -1,5 +1,4 @@
-﻿using Blazorise;
-using Dependo;
+﻿using Dependo;
 using Inferno.Security;
 using Inferno.Web.Navigation;
 using Inferno.Web.Security;
@@ -33,69 +32,69 @@ public class AdminNavigationProvider : INavigationProvider
     private static void BuildDashboardMenu(NavigationItemBuilder builder)
     {
         builder.Permission(StandardPolicies.AdminAccess);
-        builder.Icon(IconName.Dashboard).Url("/admin");
+        builder.Icon("fas fa-tachometer-alt").Url("/admin");
     }
 
     private void BuildMembershipMenu(NavigationItemBuilder builder) => builder
             .Url("/admin/membership/users/index")
-            .Icon(IconName.Users)
+            .Icon("fas fa-users")
             .Permission(InfernoWebPolicies.MembershipManage);
 
     private void BuildConfigurationMenu(NavigationItemBuilder builder)
     {
-        builder.Icon(IconName.Star);
+        builder.Icon("fas fa-star");
 
         // Localization
         builder.Add(T[InfernoWebLocalizableStrings.Localization.Title], "5", item => item
             .Url("/admin/localization/index")
-            .Icon(IconName.Language)
+            .Icon("fas fa-language")
             .Permission(InfernoWebPolicies.LanguagesRead));
 
         //// Indexing — TODO: not yet ported from MantleCMS
         //builder.Add(T[InfernoWebLocalizableStrings.Indexing.Title], "5", item => item
         //    .Url("/admin/indexing/index")
-        //    .Icon(IconName.Search)
+        //    .Icon("fas fa-search")
         //    .Permission(StandardPolicies.FullAccess));
 
         // Plugins
         builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "5", item => item
             .Url("/admin/plugins")
-            .Icon(IconName.PuzzlePiece)
+            .Icon("fas fa-puzzle-piece")
             .Permission(InfernoWebPolicies.PluginsRead));
 
         // Settings
         builder.Add(T[InfernoWebLocalizableStrings.General.Settings], "5", item => item
             .Url("/admin/configuration/settings/index")
-            .Icon(IconName.Star)
+            .Icon("fas fa-star")
             .Permission(InfernoWebPolicies.SettingsRead));
 
         // Tenants
         builder.Add(T[InfernoWebLocalizableStrings.Tenants.Title], "5", item => item
             .Url("/admin/tenants/index")
-            .Icon(IconName.Building)
+            .Icon("fas fa-building")
             .Permission(StandardPolicies.FullAccess));
 
         // Themes
         builder.Add(T[InfernoWebLocalizableStrings.General.Themes], "5", item => item
             .Url("/admin/configuration/themes/index")
-            .Icon(IconName.Tint)
+            .Icon("fas fa-tint")
             .Permission(InfernoWebPolicies.ThemesRead));
     }
 
     private void BuildMaintenanceMenu(NavigationItemBuilder builder)
     {
-        builder.Icon(IconName.Wrench);
+        builder.Icon("fas fa-wrench");
 
         // Log
         builder.Add(T[InfernoWebLocalizableStrings.Log.Title], "5", item => item
             .Url("/admin/log/index")
-            .Icon(IconName.ExclamationTriangle)
+            .Icon("fas fa-exclamation-triangle")
             .Permission(InfernoWebPolicies.LogRead));
 
         // Scheduled Tasks
         builder.Add(T[InfernoWebLocalizableStrings.ScheduledTasks.Title], "5", item => item
             .Url("/admin/scheduled-tasks/index")
-            .Icon(IconName.Clock)
+            .Icon("fas fa-clock")
             .Permission(InfernoWebPolicies.ScheduledTasksRead));
     }
 

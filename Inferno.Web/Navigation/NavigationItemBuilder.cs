@@ -1,6 +1,4 @@
-﻿using Blazorise;
-
-namespace Inferno.Web.Navigation;
+﻿namespace Inferno.Web.Navigation;
 
 public class NavigationItemBuilder : NavigationBuilder
 {
@@ -35,11 +33,7 @@ public class NavigationItemBuilder : NavigationBuilder
         return this;
     }
 
-    public NavigationItemBuilder Icon(IconName icon)
-    {
-        item.Icon = icon;
-        return this;
-    }
+    public NavigationItemBuilder Icon(string iconName) => IconName(iconName);
 
     public NavigationItemBuilder IconName(string iconName)
     {

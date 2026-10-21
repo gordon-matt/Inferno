@@ -4,9 +4,5 @@ public partial class SiteSettingsEditor
 {
     private string selectedTab = "General";
 
-    private Task OnSelectedTabChanged(string name)
-    {
-        selectedTab = name;
-        return Task.CompletedTask;
-    }
+    private void SelectTab(string name) => selectedTab = name;
 }

@@ -1,4 +1,4 @@
-﻿@using Inferno.Web.Components
+@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
@@ -8,14 +8,14 @@
 
 @inject IBlogPostService Service
 
-<Row>
-    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
-        <Card>
-            <CardBody>
-                <UnorderedList>
+<div class="row">
+    <div class="col-12 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <ul class="mb-0">
                     @foreach (var entry in entries)
                     {
-                        <UnorderedListItem>
+                        <li>
                             @if (entry.UseExternalLink)
                             {
                                 <a href="@entry.ExternalLink" target="_blank">@entry.Headline</a>
@@ -24,13 +24,13 @@
                             {
                                 <a href="/blog/@entry.Slug">@entry.Headline</a>
                             }
-                        </UnorderedListItem>
+                        </li>
                     }
-                </UnorderedList>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     private List<BlogPost> entries = null;

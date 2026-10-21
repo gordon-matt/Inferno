@@ -1,10 +1,10 @@
-﻿@page "/admin/configuration/settings/index"
+@page "/admin/configuration/settings/index"
 @inherits RadzenDataPage<Setting, Guid>
 
 <h1>Settings</h1>
 
-<Row hidden="@(ShowEditMode == true)">
-    <Column ColumnSize="ColumnSize.Is12">
+<div class="row" hidden="@(ShowEditMode == true)">
+    <div class="col-12">
         <RadzenDataGrid @ref="DataGrid"
                         TItem="Setting"
                         IsLoading="@IsLoading"
@@ -27,14 +27,14 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </Column>
-</Row>
+    </div>
+</div>
 
-<Row id="form-section" hidden="@(ShowEditMode == false)">
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader Class="text-white bg-primary">Details</CardHeader>
-            <CardBody>
+<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white bg-primary">Details</div>
+            <div class="card-body">
                 <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
                     @if (EditorType is not null)
                     {
@@ -43,20 +43,20 @@
                         </div>
                     }
                     <hr />
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Class="float-end">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3 float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     @T[InfernoWebLocalizableStrings.General.Cancel]
                                 </RadzenButton>
                                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
                                 </RadzenButton>
-                            </Field>
-                        </Column>
-                    </Row>
+                            </div>
+                        </div>
+                    </div>
                 </EditForm>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>

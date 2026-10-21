@@ -4,15 +4,15 @@
 
 <h1>@T[InfernoCmsLocalizableStrings.Menus.ManageMenus]</h1>
 
-<Row hidden="@(ShowEditMode == true)">
-    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+<div class="row" hidden="@(ShowEditMode == true)">
+    <div class="col-12 mb-3">
         <RadzenButton Click="Create">
-            <Icon Name="IconName.PlusCircle"></Icon>
+            <i class="fas fa-plus-circle" aria-hidden="true"></i>
             @T[InfernoWebLocalizableStrings.General.Create]
         </RadzenButton>
-    </Column>
+    </div>
 
-    <Column ColumnSize="ColumnSize.Is12">
+    <div class="col-12">
         <RadzenDataGrid @ref="DataGrid"
                         TItem="Menu"
                         IsLoading="@IsLoading"
@@ -38,55 +38,55 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </Column>
-</Row>
+    </div>
+</div>
 
-<Row id="form-section" hidden="@(ShowEditMode == false)">
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader Class="text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
-            <CardBody>
+<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</div>
+            <div class="card-body">
                 <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
                     <DataAnnotationsValidator />
 
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Menus.MenuModel.Name]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3">@T[InfernoCmsLocalizableStrings.Menus.MenuModel.Name]</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.Name" Style="width:100%" Name="Name" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is3">@T[InfernoCmsLocalizableStrings.Menus.MenuModel.UrlFilter]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3">@T[InfernoCmsLocalizableStrings.Menus.MenuModel.UrlFilter]</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.UrlFilter" Style="width:100%" Name="UrlFilter" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <hr />
 
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Class="float-end">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3 float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     @T[InfernoWebLocalizableStrings.General.Cancel]
                                 </RadzenButton>
                                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
                                 </RadzenButton>
-                            </Field>
-                        </Column>
-                    </Row>
+                            </div>
+                        </div>
+                    </div>
                 </EditForm>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>

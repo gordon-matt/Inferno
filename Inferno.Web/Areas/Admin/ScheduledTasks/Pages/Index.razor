@@ -3,8 +3,8 @@
 
 <h1>@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]</h1>
 
-<Row hidden="@(ShowEditMode == true)">
-    <Column ColumnSize="ColumnSize.Is12">
+<div class="row" hidden="@(ShowEditMode == true)">
+    <div class="col-12">
         <RadzenDataGrid @ref="DataGrid"
                         TItem="ScheduledTask"
                         IsLoading="@IsLoading"
@@ -34,70 +34,70 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </Column>
-</Row>
+    </div>
+</div>
 
-<Row id="form-section" hidden="@(ShowEditMode == false)">
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader Class="text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</CardHeader>
-            <CardBody>
+<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</div>
+            <div class="card-body">
                 <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Name" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Name]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Name">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Name]</label>
+                                <div class="col-md-9">
                                     <p class="form-control-plaintext">@Model.Name</p>
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Seconds" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Seconds]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Seconds">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Seconds]</label>
+                                <div class="col-md-9">
                                     <RadzenNumeric TValue="int" @bind-Value="Model.Seconds" Min="1" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="Enabled" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Enabled]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="Enabled">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Enabled]</label>
+                                <div class="col-md-9">
                                     <RadzenCheckBox TValue="bool" @bind-Value="Model.Enabled" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="StopOnError" ColumnSize="ColumnSize.Is3">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.StopOnError]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="StopOnError">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.StopOnError]</label>
+                                <div class="col-md-9">
                                     <RadzenCheckBox TValue="bool" @bind-Value="Model.StopOnError" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <hr />
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Class="float-end">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3 float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     @T[InfernoWebLocalizableStrings.General.Cancel]
                                 </RadzenButton>
                                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <Icon Name="IconName.Save"></Icon> @T[InfernoWebLocalizableStrings.General.Save]
+                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
                                 </RadzenButton>
-                            </Field>
-                        </Column>
-                    </Row>
+                            </div>
+                        </div>
+                    </div>
                 </EditForm>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>

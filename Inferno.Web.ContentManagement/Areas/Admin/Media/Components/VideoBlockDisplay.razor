@@ -1,28 +1,44 @@
-﻿@using Blazorise.Video
-@using Inferno.Web.Components
+﻿@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Media
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks;
+@using Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks
 @inherits ContentBlockDisplay<VideoBlock>
 
-<Video id="@Model.ControlId"
-    Source="@Model.Source"
-    AutomaticallyHideControls="@Model.AutomaticallyHideControls"
-    AutoPause="@Model.AutoPause"
-    AutoPlay="@Model.AutoPlay"
-    ClickToPlay="@Model.ClickToPlay"
-    Controls="@Model.Controls"
-    ControlsList="@Model.ControlsList.ToArray()"
-    DisableContextMenu="@Model.DisableContextMenu"
-    InvertTime="@Model.InvertTime"
-    Muted="@Model.Muted"
-    Poster="@Model.Poster"
-    ProtectionData="@Model.ProtectionData"
-    ProtectionHttpRequestHeaders="@Model.ProtectionHttpRequestHeaders"
-    ProtectionServerUrl="@Model.ProtectionServerUrl"
-    ProtectionType="@Model.ProtectionType"
-    Ratio="@Model.Ratio"
-    ResetOnEnd="@Model.ResetOnEnd"
-    SeekTime="@Model.SeekTime"
-    StreamingLibrary="@Model.StreamingLibrary"
-    Volume="@Model.Volume" />
+<div class="ratio" style="@RatioStyle">
+    <video id="@Model.ControlId"
+           class="w-100"
+           src="@Model.Source"
+           poster="@Model.Poster"
+           controls="@Model.Controls"
+           autoplay="@Model.AutoPlay"
+           muted="@Model.Muted"
+           loop="@Model.ResetOnEnd"
+           oncontextmenu="@(Model.DisableContextMenu ? "return false;" : null)">
+    </video>
+</div>
+
+@code {
+    private string RatioStyle
+    {
+        get
+        {
+            const string fallback = "--bs-aspect-ratio: 56.25%;";
+            if (string.IsNullOrWhiteSpace(Model?.Ratio))
+            {
+                return fallback;
+            }
+
+            var parts = Model.Ratio.Split(':');
+            if (parts.Length == 2
+                && double.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var width)
+                && double.TryParse(parts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var height)
+                && width > 0)
+            {
+                var percent = (height / width * 100).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                return $"--bs-aspect-ratio: {percent}%;";
+            }
+
+            return fallback;
+        }
+    }
+}

@@ -1,28 +1,33 @@
-﻿<Bar Breakpoint="Breakpoint.Desktop"
-     Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light"
-     Padding="Padding.Is4.OnX">
-    <BarBrand>
+﻿<nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+    <a class="navbar-brand" href="/">
         <img src="img/logo.png" alt="Inferno CMS" width="100" />
-    </BarBrand>
-    <BarToggler />
-    <BarMenu>
-        <BarStart>
-            <BarItem>
-                <BarLink To="/">
-                    <Icon Name="IconName.Home"></Icon>
+    </a>
+    <button class="navbar-toggler" type="button" @onclick="ToggleMenu" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse @(menuOpen ? "show" : null)">
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                    <i class="fas fa-home" aria-hidden="true"></i>
                     Home
-                </BarLink>
-            </BarItem>
-            <BarItem>
-                <BarLink To="/people">
-                    <Icon Name="IconName.Users"></Icon>
+                </NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/people">
+                    <i class="fas fa-users" aria-hidden="true"></i>
                     People (Sample)
-                </BarLink>
-            </BarItem>
-        </BarStart>
-        <BarEnd>
+                </NavLink>
+            </li>
+        </ul>
+        <ul class="navbar-nav ms-auto align-items-lg-center">
             <LoginDisplay />
-        </BarEnd>
-    </BarMenu>
-</Bar>
+        </ul>
+    </div>
+</nav>
+
+@code {
+    private bool menuOpen;
+
+    private void ToggleMenu() => menuOpen = !menuOpen;
+}

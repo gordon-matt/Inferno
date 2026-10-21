@@ -1,7 +1,4 @@
-﻿using Blazorise;
-using Blazorise.Bootstrap5;
-using Blazorise.Icons.FontAwesome;
-using Dependo.Autofac;
+﻿using Dependo.Autofac;
 using Inferno.Plugins;
 using Inferno.Tenants.Entities;
 using Inferno.Web.ContentManagement.Security;
@@ -98,10 +95,6 @@ services.AddResponseCompression();
 
 services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 services.AddDatabaseDeveloperPageExceptionFilter();
-
-services.AddBlazorise(options => options.Immediate = true)
-.AddBootstrap5Providers()
-.AddFontAwesomeIcons();
 
 services.AddPickstack(configuration)
     .AddWebFilez(files => files

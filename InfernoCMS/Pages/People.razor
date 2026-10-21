@@ -1,14 +1,14 @@
-﻿@page "/people"
+@page "/people"
 @inherits RadzenDataPage<Person, int>
 
 <PageTitle>People</PageTitle>
 
 <h1>People</h1>
 
-<Row hidden="@(ShowEditMode == true)">
-    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
-        <Card>
-            <CardBody>
+<div class="row" hidden="@(ShowEditMode == true)">
+    <div class="col-12 mb-3">
+        <div class="card">
+            <div class="card-body">
                 <RadzenLabel Text="Family Name:"></RadzenLabel>
                 <RadzenTextBox @ref="FamilyNameTextBox" id="FamilyName" />
 
@@ -16,13 +16,13 @@
                 <RadzenTextBox @ref="GivenNamesTextBox" id="GivenNames" />
 
                 <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="search" Size="ButtonSize.Medium" Click="SearchAsync"></RadzenButton>
-            </CardBody>
-        </Card>
-    </Column>
+            </div>
+        </div>
+    </div>
 
-    <Column ColumnSize="ColumnSize.Is12" Class="mb-3">
+    <div class="col-12 mb-3">
         <RadzenButton Click="Create">
-            <Icon Name="IconName.PlusCircle"></Icon>
+            <i class="fas fa-plus-circle" aria-hidden="true"></i>
             Create
         </RadzenButton>
         <RadzenButton Text="Excel" Click="@(args => Export("excel"))">
@@ -31,9 +31,9 @@
         <RadzenButton Text="CSV" Click="@(args => Export("csv"))">
             Export to CSV
         </RadzenButton>
-    </Column>
+    </div>
 
-    <Column ColumnSize="ColumnSize.Is12">
+    <div class="col-12">
         <RadzenDataGrid @ref="DataGrid"
                         TItem="Person"
                         IsLoading="@IsLoading"
@@ -59,60 +59,60 @@
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
-    </Column>
-</Row>
+    </div>
+</div>
 
-<Row id="form-section" hidden="@(ShowEditMode == false)">
-    <Column ColumnSize="ColumnSize.Is12">
-        <Card>
-            <CardHeader Class="text-white bg-primary">Details</CardHeader>
-            <CardBody>
+<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header text-white bg-primary">Details</div>
+            <div class="card-body">
                 <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="FamilyName" ColumnSize="ColumnSize.Is3">Family Name</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="FamilyName">Family Name</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.FamilyName" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="GivenNames" ColumnSize="ColumnSize.Is3">Given Name/s</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="GivenNames">Given Name/s</label>
+                                <div class="col-md-9">
                                     <RadzenTextBox @bind-Value="Model.GivenNames" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
-                    <Row>
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Horizontal="true">
-                                <FieldLabel For="DateOfBirth" ColumnSize="ColumnSize.Is3">Date of Birth</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is9">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="DateOfBirth">Date of Birth</label>
+                                <div class="col-md-9">
                                     <RadzenDatePicker @bind-Value=Model.DateOfBirth DateFormat="yyyy-MM-dd" Style="width:100%" />
-                                </FieldBody>
-                            </Field>
-                        </Column>
-                    </Row>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <hr />
-                    <Row Class="float-right">
-                        <Column ColumnSize="ColumnSize.Is12">
-                            <Field Class="float-end">
+                    <div class="row float-right">
+                        <div class="col-12">
+                            <div class="mb-3 float-end">
                                 <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
                                     Cancel
                                 </RadzenButton>
                                 <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <Icon Name="IconName.Save"></Icon> Save
+                                    <i class="fas fa-save" aria-hidden="true"></i> Save
                                 </RadzenButton>
-                            </Field>
-                        </Column>
-                    </Row>
+                            </div>
+                        </div>
+                    </div>
                 </EditForm>
-            </CardBody>
-        </Card>
-    </Column>
-</Row>
+            </div>
+        </div>
+    </div>
+</div>
