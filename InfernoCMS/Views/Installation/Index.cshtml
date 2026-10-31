@@ -1,0 +1,47 @@
+@model InfernoCMS.Models.InstallationModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Install Inferno CMS</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body class="bg-light">
+    <main class="container py-5" style="max-width: 720px">
+        <h1 class="mb-4">Install Inferno CMS</h1>
+        <form method="post" action="/installation">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="ConnectionString">SQL Server connection string</label>
+                <textarea class="form-control" asp-for="ConnectionString" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="AdminEmail">Administrator email</label>
+                <input class="form-control" asp-for="AdminEmail" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="AdminPassword">Administrator password</label>
+                <input class="form-control" asp-for="AdminPassword" type="password" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="ConfirmPassword">Confirm password</label>
+                <input class="form-control" asp-for="ConfirmPassword" type="password" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="DefaultLanguage">Default language</label>
+                <input class="form-control" asp-for="DefaultLanguage" />
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" asp-for="CreateSampleData" />
+                <label class="form-check-label" asp-for="CreateSampleData">Create sample data</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Install</button>
+        </form>
+    </main>
+</body>
+</html>

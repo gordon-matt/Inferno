@@ -1,0 +1,27 @@
+@using System.Security.Claims
+@using Inferno.Web.ContentManagement.Components
+@using Microsoft.AspNetCore.Components.Authorization
+
+@if (items.Count > 0)
+{
+    <MenuBar Items="items" />
+}
+
+@code {
+    [Parameter]
+    public bool IncludeHomePageLink { get; set; } = true;
+
+    [Inject]
+    private CmsMenuBuilder MenuBuilder { get; set; }
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    private List<Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities.MenuItem> items = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        items = (await MenuBuilder.BuildMainMenuAsync(state.User, IncludeHomePageLink)).ToList();
+    }
+}

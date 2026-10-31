@@ -1,4 +1,79 @@
-﻿@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.Localization
+﻿@using Inferno.Web
+@using Inferno.Localization.Entities
+@using Inferno.Localization.Services
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@using Inferno.Web.ContentManagement.Areas.Admin.Localization
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
 @inherits ContentBlockDisplay<LanguageSwitchBlock>
+@inject ILanguageService LanguageService
+@inject IWorkContext WorkContext
+@inject IJSRuntime Js
+
+@if (Model.Style == LanguageSwitchBlock.LanguageSwitchStyle.BootstrapNavbarDropdown)
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Language</a>
+        <ul class="dropdown-menu">
+            @foreach (var language in languages)
+            {
+                <li>
+                    <button type="button" class="dropdown-item" @onclick="() => ChangeLanguage(language.CultureCode)">
+                        @if (language.CultureCode == WorkContext.CurrentCultureCode)
+                        {
+                            <span class="me-1">✓</span>
+                        }
+                        @language.Name
+                    </button>
+                </li>
+            }
+        </ul>
+    </li>
+}
+else if (Model.Style == LanguageSwitchBlock.LanguageSwitchStyle.Select)
+{
+    <select class="form-select" @onchange="OnSelectChanged">
+        @foreach (var language in languages)
+        {
+            <option value="@language.CultureCode" selected="@(language.CultureCode == WorkContext.CurrentCultureCode)">@language.Name</option>
+        }
+    </select>
+}
+else
+{
+    <ul class="list-unstyled">
+        @foreach (var language in languages)
+        {
+            <li>
+                <button type="button" class="btn btn-link p-0" @onclick="() => ChangeLanguage(language.CultureCode)">@language.Name</button>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<Language> languages = [];
+
+    protected override void OnParametersSet()
+    {
+        if (WorkContext.CurrentTenant == null)
+        {
+            languages = [];
+            return;
+        }
+
+        languages = LanguageService.GetActiveLanguages(WorkContext.CurrentTenant.Id).ToList();
+        if (Model.IncludeInvariant)
+        {
+            languages.Insert(0, new Language
+            {
+                CultureCode = null,
+                Name = string.IsNullOrWhiteSpace(Model.InvariantText) ? "[ Invariant ]" : Model.InvariantText
+            });
+        }
+    }
+
+    private Task OnSelectChanged(ChangeEventArgs args) => ChangeLanguage(args.Value?.ToString());
+
+    private Task ChangeLanguage(string cultureCode) => Js.InvokeVoidAsync("inferno.setCulture", cultureCode ?? string.Empty).AsTask();
+}

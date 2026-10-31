@@ -1,0 +1,74 @@
+@using System.Text.RegularExpressions
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages
+
+@if (Page != null)
+{
+    <HeadContent>
+        <PageTitle>@(string.IsNullOrWhiteSpace(Page.MetaTitle) ? Page.InstanceName : Page.MetaTitle)</PageTitle>
+        @if (!string.IsNullOrWhiteSpace(Page.MetaDescription))
+        {
+            <meta name="description" content="@Page.MetaDescription" />
+        }
+        @if (!string.IsNullOrWhiteSpace(Page.MetaKeywords))
+        {
+            <meta name="keywords" content="@Page.MetaKeywords" />
+        }
+    </HeadContent>
+
+    <article>
+        <h1>@Page.InstanceName</h1>
+        @foreach (var segment in segments)
+        {
+            if (segment.ZoneName == null)
+            {
+                @((MarkupString)segment.Html)
+            }
+            else
+            {
+                <ContentZone Name="@segment.ZoneName" />
+            }
+        }
+    </article>
+}
+
+@code {
+    private static readonly Regex ZonePattern = new(@"\[\[ContentZone:(?<Zone>.*?)\]\]", RegexOptions.Compiled);
+
+    [Parameter]
+    public StandardPage Page { get; set; }
+
+    private List<Segment> segments = [];
+
+    protected override void OnParametersSet()
+    {
+        segments = Split(Page?.BodyContent).ToList();
+    }
+
+    private static IEnumerable<Segment> Split(string content)
+    {
+        if (string.IsNullOrEmpty(content))
+        {
+            yield break;
+        }
+
+        int index = 0;
+        foreach (Match match in ZonePattern.Matches(content))
+        {
+            if (match.Index > index)
+            {
+                yield return new Segment(content[index..match.Index], null);
+            }
+
+            yield return new Segment(null, match.Groups["Zone"].Value);
+            index = match.Index + match.Length;
+        }
+
+        if (index < content.Length)
+        {
+            yield return new Segment(content[index..], null);
+        }
+    }
+
+    private sealed record Segment(string Html, string ZoneName);
+}

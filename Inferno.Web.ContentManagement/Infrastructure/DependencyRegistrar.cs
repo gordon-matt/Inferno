@@ -63,6 +63,7 @@ public class DependencyRegistrar : IDependencyRegistrar
         builder.Register<IPageService, PageService>(ServiceLifetime.Transient);
         builder.Register<IPageTypeService, PageTypeService>(ServiceLifetime.Transient);
         builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
+        builder.Register<IPageContentService, PageContentService>(ServiceLifetime.Transient);
         builder.Register<IRadzenODataService<Page, Guid>, PageODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<PageType, Guid>, PageTypeODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<PageVersion, Guid>, PageVersionODataService>(ServiceLifetime.Singleton);
@@ -73,6 +74,7 @@ public class DependencyRegistrar : IDependencyRegistrar
         builder.Register<IContentBlockService, ContentBlockService>(ServiceLifetime.Transient);
         builder.Register<IZoneService, ZoneService>(ServiceLifetime.Transient);
         builder.Register<IRadzenODataService<ContentBlock, Guid>, ContentBlockODataService>(ServiceLifetime.Singleton);
+        builder.Register<IRadzenODataService<EntityTypeContentBlock, Guid>, EntityTypeContentBlockODataService>(ServiceLifetime.Singleton);
 
         // Newsletters
         builder.Register<IRadzenODataService<Subscriber, string>, SubscriberODataService>(ServiceLifetime.Singleton);
@@ -117,7 +119,7 @@ public class DependencyRegistrar : IDependencyRegistrar
         builder.Register<IContentBlock, FormBlock>(ServiceLifetime.Transient);
         builder.Register<IContentBlock, HtmlBlock>(ServiceLifetime.Transient);
         builder.Register<IContentBlock, LanguageSwitchBlock>(ServiceLifetime.Transient);
-        //builder.Register<IContentBlock, NewsletterSubscriptionBlock>(ServiceLifetime.Transient);
+        builder.Register<IContentBlock, Inferno.Web.ContentManagement.Areas.Admin.Newsletters.ContentBlocks.NewsletterSubscriptionBlock>(ServiceLifetime.Transient);
         builder.Register<IContentBlock, VideoBlock>(ServiceLifetime.Transient);
 
         #endregion Content Blocks
@@ -126,6 +128,13 @@ public class DependencyRegistrar : IDependencyRegistrar
 
         builder.Register<IContentBlockProvider, DefaultContentBlockProvider>(ServiceLifetime.Transient);
         builder.Register<IEntityTypeContentBlockProvider, DefaultEntityTypeContentBlockProvider>(ServiceLifetime.Transient);
+
+        builder.Register<Components.CmsMenuBuilder, Components.CmsMenuBuilder>(ServiceLifetime.Transient);
+        builder.Register<Components.CmsBreadcrumbBuilder, Components.CmsBreadcrumbBuilder>(ServiceLifetime.Transient);
+        builder.Register<Areas.Admin.Newsletters.Services.INewsletterService, Areas.Admin.Newsletters.Services.NewsletterService>(ServiceLifetime.Transient);
+        builder.Register<Events.IConsumer<Areas.Admin.Newsletters.Events.NewsletterSubscribedEvent>, Areas.Admin.Newsletters.NewsletterEmailConsumer>(ServiceLifetime.Transient);
+        builder.Register<Events.IConsumer<Areas.Admin.Newsletters.Events.NewsletterUnsubscribedEvent>, Areas.Admin.Newsletters.NewsletterEmailConsumer>(ServiceLifetime.Transient);
+        builder.Register<Areas.Admin.ContentBlocks.Services.IFormBlockSubmissionService, Areas.Admin.ContentBlocks.Services.FormBlockSubmissionService>(ServiceLifetime.Transient);
 
         #endregion Other: Content Blocks
 

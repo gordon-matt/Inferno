@@ -2,6 +2,7 @@
 using Extenso;
 using Extenso.Collections;
 using Extenso.Data.Entity;
+using Inferno.Helpers;
 using Inferno.Security;
 using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
@@ -66,6 +67,21 @@ public class StartupTask : IStartupTask
                 Url = "my-domain.com",
                 Hosts = "my-domain.com"
             });
+        }
+
+        IEnumerable<int> tenantIds;
+        using (var connection = tenantService.OpenConnection())
+        {
+            tenantIds = await connection.Query().Select(x => x.Id).ToListAsync();
+        }
+
+        foreach (int tenantId in tenantIds)
+        {
+            var mediaFolder = new DirectoryInfo(CommonHelper.MapPath("~/Media/Uploads/Tenant_" + tenantId));
+            if (!mediaFolder.Exists)
+            {
+                mediaFolder.Create();
+            }
         }
     }
 

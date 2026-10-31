@@ -13,12 +13,13 @@ public class DependencyRegistrar : IDependencyRegistrar
 
     public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
-        builder.Register<IDbContextFactory, ApplicationDbContextFactory>(ServiceLifetime.Singleton);
+        builder.Register<IDbContextFactory, InfernoCMS.Services.DataSettingsDbContextFactory>(ServiceLifetime.Singleton);
 
         builder.RegisterGeneric(typeof(IRepository<>), typeof(EntityFrameworkRepository<>), ServiceLifetime.Scoped);
 
         builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
 
         builder.Register<IMembershipService, MembershipService>(ServiceLifetime.Transient);
+        builder.Register<Inferno.Web.Tenants.ITenantDataCleaner, InfernoCMS.Services.TenantDataCleaner>(ServiceLifetime.Scoped);
     }
 }

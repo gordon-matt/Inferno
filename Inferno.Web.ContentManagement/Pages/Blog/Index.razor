@@ -1,0 +1,8 @@
+@page "/blog"
+
+<BlogPostList Heading="@BlogSettings.PageTitle" PagingPath="/blog" />
+
+@code {
+    [Inject]
+    private Inferno.Web.ContentManagement.Areas.Admin.Blog.BlogSettings BlogSettings { get; set; }
+}

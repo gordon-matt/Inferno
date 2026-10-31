@@ -1,0 +1,66 @@
+@using Inferno.Web.ContentManagement.Areas.Admin.Menus.Services
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services
+
+@if (items.Count > 0)
+{
+    <MenuBar Items="items" />
+}
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public bool FilterByUrl { get; set; }
+
+    [Inject]
+    private IMenuService MenuService { get; set; }
+
+    [Inject]
+    private IMenuItemService MenuItemService { get; set; }
+
+    [Inject]
+    private IPageVersionService PageVersionService { get; set; }
+
+    [Inject]
+    private Microsoft.AspNetCore.Components.NavigationManager NavigationManager { get; set; }
+
+    private List<Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities.MenuItem> items = [];
+
+    protected override void OnParametersSet()
+    {
+        items = [];
+        if (string.IsNullOrWhiteSpace(Name) || WorkContext.CurrentTenant == null)
+        {
+            return;
+        }
+
+        string slug = FilterByUrl
+            ? NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Trim('/')
+            : null;
+
+        int tenantId = WorkContext.CurrentTenant.Id;
+        if (!string.IsNullOrEmpty(slug))
+        {
+            bool isCmsPage;
+            using (var connection = PageVersionService.OpenConnection())
+            {
+                isCmsPage = connection.Query(x => x.TenantId == tenantId && x.Slug == slug).Any();
+            }
+
+            if (!isCmsPage)
+            {
+                slug = null;
+            }
+        }
+
+        var menu = MenuService.FindByName(tenantId, Name, slug);
+        if (menu == null)
+        {
+            return;
+        }
+
+        items = MenuItemService.GetMenuItems(menu.Id, enabledOnly: true).ToList();
+    }
+}

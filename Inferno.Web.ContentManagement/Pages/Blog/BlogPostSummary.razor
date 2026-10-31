@@ -1,0 +1,50 @@
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities
+
+<article class="d-flex flex-column flex-md-row gap-3 mb-4 pb-4 border-bottom">
+    @if (!string.IsNullOrWhiteSpace(Post.TeaserImageUrl))
+    {
+        <img src="@Post.TeaserImageUrl" alt="" class="img-fluid rounded" style="max-width:200px" />
+    }
+    <div>
+        <h2 class="h4">
+            @if (Post.UseExternalLink)
+            {
+                <a href="@Post.ExternalLink" target="_blank" rel="noopener noreferrer">@Post.Headline</a>
+            }
+            else
+            {
+                <a href="/blog/@Post.Slug">@Post.Headline</a>
+            }
+        </h2>
+        <p class="text-muted">
+            @string.Format(T[InfernoCmsLocalizableStrings.Blog.PostedByXOnX].Value, Author, PostedOn)
+        </p>
+        @if (Post.Tags?.Count > 0 && Tags != null)
+        {
+            <p>
+                @foreach (var postTag in Post.Tags)
+                {
+                    if (Tags.TryGetValue(postTag.TagId, out var tag))
+                    {
+                        <a class="badge text-bg-secondary text-decoration-none me-1" href="/blog/tag/@tag.UrlSlug">@tag.Name</a>
+                    }
+                }
+            </p>
+        }
+        <p>@Post.ShortDescription</p>
+    </div>
+</article>
+
+@code {
+    [Parameter]
+    public BlogPost Post { get; set; }
+
+    [Parameter]
+    public string Author { get; set; }
+
+    [Parameter]
+    public string PostedOn { get; set; }
+
+    [Parameter]
+    public IReadOnlyDictionary<int, BlogTag> Tags { get; set; }
+}

@@ -1,5 +1,14 @@
 ﻿@page "/"
+@layout Inferno.Web.ContentManagement.Components.PublicLayout
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 
 <PageTitle>Home</PageTitle>
 
 <ContentZone Name="HomePageContent" />
+
+@code {
+    protected override void OnInitialized()
+    {
+        WorkContext.SetState<Guid?>("CurrentPageId", null);
+    }
+}

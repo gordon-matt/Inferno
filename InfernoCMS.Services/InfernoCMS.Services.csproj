@@ -6,6 +6,12 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
+    <ProjectReference Include="..\Inferno.Web.ContentManagement\Inferno.Web.ContentManagement.csproj" />
+    <ProjectReference Include="..\Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj" />
+    <ProjectReference Include="..\Inferno.Logging.Abstractions\Inferno.Logging.Abstractions.csproj" />
     <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.14" />
   </ItemGroup>
 </Project>

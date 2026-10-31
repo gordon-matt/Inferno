@@ -1,4 +1,5 @@
-﻿using Inferno.Tasks;
+﻿using Dependo;
+using Inferno.Tasks;
 
 namespace Inferno.Caching;
 
@@ -11,8 +12,5 @@ public class ClearCacheTask : ITask
 
     public int DefaultInterval => 600;
 
-    public void Execute()
-    {
-        //TODO
-    }
+    public void Execute() => DependoResolver.Instance.Resolve<ICacheManager>().Clear();
 }

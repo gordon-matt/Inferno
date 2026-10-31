@@ -1,4 +1,54 @@
-﻿@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
+﻿@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockDisplay<FormBlock>
+
+<form id="@formId" method="post" action="/inferno-cms/form-content-block/save" enctype="multipart/form-data">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" name="ThankYouMessage" value="@Model.ThankYouMessage" />
+    <input type="hidden" name="RedirectUrl" value="@Model.RedirectUrl" />
+    <input type="hidden" name="EmailAddress" value="@Model.EmailAddress" />
+    <input type="hidden" name="FormUrl" value="@Model.FormUrl" />
+    <input type="hidden" name="ContentBlockTitle" value="@Model.Title" />
+    @((MarkupString)(Model.HtmlTemplate ?? string.Empty))
+    @if (string.IsNullOrWhiteSpace(Model.HtmlTemplate) || !Model.HtmlTemplate.Contains("<button", StringComparison.OrdinalIgnoreCase))
+    {
+        <button type="submit" class="btn btn-primary">@T[InfernoWebLocalizableStrings.General.Submit]</button>
+    }
+</form>
+
+@if (Model.UseAjax)
+{
+    <div class="modal fade" id="@(formId)-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="@(formId)-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="@(formId)-message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string formId = "form-block";
+
+    [Inject]
+    private IJSRuntime Js { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        formId = "form-block-" + Model?.Id;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Model?.UseAjax == true)
+        {
+            await Js.InvokeVoidAsync("inferno.submitFormAjax", formId);
+        }
+    }
+}

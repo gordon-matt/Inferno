@@ -1,0 +1,59 @@
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@using Inferno.Web.Mvc.Themes
+@inherits LayoutComponentBase
+
+<HeadContent>
+    <link rel="stylesheet" href="/Themes/@themeName/theme.css" />
+</HeadContent>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="/">@SiteSettings.SiteName</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#public-nav" aria-controls="public-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="public-nav">
+                <AutoMenu />
+                <ContentZone Name="SearchForm" />
+                <ul class="navbar-nav ms-auto">
+                    <AuthorizeView>
+                        <Authorized>
+                            <li class="nav-item"><a class="nav-link" href="/account/profile">@context.User.Identity?.Name</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/admin">@T[InfernoWebLocalizableStrings.Dashboard.Administration]</a></li>
+                        </Authorized>
+                        <NotAuthorized>
+                            <li class="nav-item"><a class="nav-link" href="/Identity/Account/Login">Log in</a></li>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container pb-5">
+    <AutoBreadcrumbs />
+    <main role="main">
+        @Body
+    </main>
+</div>
+
+<footer class="border-top footer text-muted mt-auto py-3">
+    <div class="container d-flex justify-content-between">
+        <span>&copy; @DateTime.Now.Year - @SiteSettings.SiteName</span>
+        <ContentZone Name="Footer" />
+    </div>
+</footer>
+
+@code {
+    [Inject]
+    private IThemeContext ThemeContext { get; set; }
+
+    private string themeName = "Default";
+
+    protected override void OnInitialized()
+    {
+        themeName = string.IsNullOrWhiteSpace(ThemeContext.WorkingTheme) ? "Default" : ThemeContext.WorkingTheme;
+    }
+}

@@ -80,6 +80,30 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <div class="col-md-9 offset-md-3">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input me-2" type="checkbox" @bind="Model.SslEnabled" />
+                                            @T[InfernoWebLocalizableStrings.Tenants.Model.SslEnabled]
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <label class="col-form-label col-md-3" for="SecureUrl">@T[InfernoWebLocalizableStrings.Tenants.Model.SecureUrl]</label>
+                                <div class="col-md-9">
+                                    <RadzenTextBox @bind-Value="Model.SecureUrl" Style="width:100%" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <hr />
                     <div class="row">
                         <div class="col-12">

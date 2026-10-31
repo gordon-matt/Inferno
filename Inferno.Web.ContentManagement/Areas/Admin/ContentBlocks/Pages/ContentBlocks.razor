@@ -165,7 +165,7 @@
                     @if (EditorType is not null)
                     {
                         <div id="block-details">
-                            <DynamicComponent Type="EditorType" Parameters="@(new Dictionary<string, object> { { "Data", Model } })" />
+                            <DynamicComponent @ref="BlockEditor" Type="EditorType" Parameters="@(new Dictionary<string, object> { { "Data", Model } })" />
                         </div>
                     }
                     <hr />

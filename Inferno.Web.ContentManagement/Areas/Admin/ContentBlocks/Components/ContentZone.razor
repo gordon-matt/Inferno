@@ -1,26 +1,17 @@
-﻿@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+﻿@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 
-@inject IEnumerable<IContentBlockProvider> Providers
-
-@foreach (var contentBlock in contentBlocks)
+@foreach (var contentBlock in contentBlocks.OrderBy(x => x.Order))
 {
+    Type displayType = null;
     if (!string.IsNullOrEmpty(contentBlock.CustomDisplayType))
     {
-        var customDisplayType = Type.GetType(contentBlock.CustomDisplayType, throwOnError: false);
-        if (customDisplayType != null)
-        {
-            <DynamicComponent Type="customDisplayType" Parameters="@(new Dictionary<string, object> { { "Model", contentBlock } })" />
-        }
-        else
-        {
-            // TODO: Log error
-        }
+        displayType = Type.GetType(contentBlock.CustomDisplayType, throwOnError: false);
     }
-    else
+
+    displayType ??= contentBlock.DisplayType;
+    if (displayType != null)
     {
-        <DynamicComponent Type="contentBlock.EditorType" Parameters="@(new Dictionary<string, object> { { "Model", contentBlock } })" />
+        <DynamicComponent Type="displayType" Parameters="@(new Dictionary<string, object> { { "Model", contentBlock } })" />
     }
 }
 
@@ -28,14 +19,16 @@
     [Parameter]
     public string Name { get; set; }
 
-    private IEnumerable<IContentBlock> contentBlocks;
+    [Inject]
+    private IEnumerable<IContentBlockProvider> Providers { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private IEnumerable<IContentBlock> contentBlocks = [];
+
+    protected override void OnParametersSet()
     {
         contentBlocks = Providers
-            .SelectMany(x => x.GetContentBlocks(Name))
+            .SelectMany(x => x.GetContentBlocks(Name) ?? [])
+            .Where(x => x != null && x.Enabled)
             .ToList();
-
-        await base.OnInitializedAsync();
     }
 }

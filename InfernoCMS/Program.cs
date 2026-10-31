@@ -1,7 +1,9 @@
 ﻿using Dependo.Autofac;
+using Flatmate;
 using Inferno.Identity;
 using Inferno.Plugins;
 using Inferno.Tenants.Entities;
+using Inferno.Tenants;
 using Inferno.Web.ContentManagement.Security;
 using IdentityNexus;
 using Inferno.Web.Infrastructure;
@@ -15,6 +17,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using Pickstack;
@@ -32,8 +35,22 @@ builder.Host.UseServiceProviderFactory(new DependoAutofacServiceProviderFactory(
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+var installedSettings = Inferno.Web.Infrastructure.DataSettingsManager.LoadSettings();
+string configuredConnection = configuration.GetConnectionString("DefaultConnection");
+bool databaseInstalled = !string.IsNullOrWhiteSpace(installedSettings.ConnectionString)
+    || !string.IsNullOrWhiteSpace(configuredConnection);
+string connectionString = !string.IsNullOrWhiteSpace(installedSettings.ConnectionString)
+    ? installedSettings.ConnectionString
+    : configuredConnection;
+
+if (databaseInstalled)
+{
+    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+}
+else
+{
+    services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("InfernoCMS"));
+}
 
 #region Account / Identity
 
@@ -128,6 +145,27 @@ services.ConfigureInferno(configuration);
 
 var app = builder.Build();
 
+if (!databaseInstalled)
+{
+    app.Use(async (context, next) =>
+    {
+        var path = context.Request.Path;
+        if (path.StartsWithSegments("/installation")
+            || path.StartsWithSegments("/lib")
+            || path.StartsWithSegments("/css")
+            || path.StartsWithSegments("/img")
+            || path.StartsWithSegments("/favicon.png")
+            || path.StartsWithSegments("/_framework")
+            || path.StartsWithSegments("/_content"))
+        {
+            await next();
+            return;
+        }
+
+        context.Response.Redirect("/installation");
+    });
+}
+
 #region Pipeline
 
 if (app.Environment.IsDevelopment())
@@ -150,6 +188,11 @@ var requestLocalizationOptions = app.Services.GetService<IOptions<RequestLocaliz
 app.UseRequestLocalization(requestLocalizationOptions!.Value);
 
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Themes")),
+    RequestPath = "/Themes"
+});
 app.UseInfernoPlugins();
 app.UseDefaultFiles();
 
@@ -159,6 +202,21 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseFlatmate<Tenant>();
+
+app.Use(async (context, next) =>
+{
+    var tenant = context.GetTenant<Tenant>();
+    if (tenant is { SslEnabled: true } && !context.Request.IsHttps)
+    {
+        string target = !string.IsNullOrWhiteSpace(tenant.SecureUrl)
+            ? tenant.GetPublicBaseUrl(null) + context.Request.PathBase + context.Request.Path + context.Request.QueryString
+            : "https://" + context.Request.Host + context.Request.PathBase + context.Request.Path + context.Request.QueryString;
+        context.Response.Redirect(target);
+        return;
+    }
+
+    await next();
+});
 
 app.UseInferno();
 

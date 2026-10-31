@@ -28,7 +28,7 @@ public class AccountUserProfileProvider : IUserProfileProvider
 
     public string DisplayTemplatePath => "Inferno.Web.Views.Shared.DisplayTemplates.AccountUserProfileProvider";
 
-    public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.AccountUserProfileProvider";
+    public string EditorTemplatePath => typeof(Components.AccountUserProfileEditor).AssemblyQualifiedName;
 
     public int Order => 0;
 

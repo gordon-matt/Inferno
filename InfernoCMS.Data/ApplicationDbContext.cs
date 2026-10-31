@@ -12,8 +12,6 @@ public class ApplicationDbContext : InfernoIdentityDbContext<ApplicationUser, Ap
     {
     }
 
-    public DbSet<Person> People { get; set; } // Sample Data (TODO: Remove)
-
     public DbSet<UserProfileEntry> UserProfiles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)

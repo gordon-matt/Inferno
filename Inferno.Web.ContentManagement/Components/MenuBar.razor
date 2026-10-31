@@ -1,0 +1,36 @@
+@using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    @foreach (var item in Roots)
+    {
+        var children = Items.Where(x => x.ParentId == item.Id && x.Enabled).OrderBy(x => x.Position).ThenBy(x => x.Text).ToList();
+        if (children.Count == 0)
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="@item.Url">@item.Text</a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">@item.Text</a>
+                <ul class="dropdown-menu">
+                    @foreach (var child in children)
+                    {
+                        <li><a class="dropdown-item" href="@child.Url">@child.Text</a></li>
+                    }
+                </ul>
+            </li>
+        }
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public IEnumerable<MenuItem> Items { get; set; } = [];
+
+    private IEnumerable<MenuItem> Roots => (Items ?? [])
+        .Where(x => x.Enabled && x.ParentId == null)
+        .OrderBy(x => x.Position)
+        .ThenBy(x => x.Text);
+}

@@ -1,0 +1,119 @@
+@page "/account/profile"
+@layout Inferno.Web.ContentManagement.Components.PublicLayout
+@attribute [Authorize]
+@using System.Reflection
+@using Inferno.Security.Membership
+@using Inferno.Web.Security.Membership
+@using Microsoft.AspNetCore.Authorization
+
+<PageTitle>Profile</PageTitle>
+<h1>Profile</h1>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-success" role="alert">@message</div>
+}
+
+<EditForm Model="sections" OnValidSubmit="SaveAsync">
+    @foreach (var section in sections)
+    {
+        <section class="card mb-3">
+            <div class="card-header">@section.Provider.Name</div>
+            <div class="card-body">
+                @if (section.EditorType != null)
+                {
+                    <DynamicComponent Type="section.EditorType" Parameters="@(new Dictionary<string, object> { { "Model", section.Provider } })" />
+                }
+                else
+                {
+                    @foreach (string field in section.Provider.GetFieldNames())
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">@field</label>
+                            <input class="form-control" value="@FieldValue(section.Provider, field)" @onchange="args => SetField(section.Provider, field, args.Value?.ToString())" />
+                        </div>
+                    }
+                }
+            </div>
+        </section>
+    }
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+    [Inject]
+    private IEnumerable<IUserProfileProvider> Providers { get; set; }
+
+    [Inject]
+    private IMembershipService MembershipService { get; set; }
+
+    private List<ProfileSection> sections = [];
+    private string message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string userId = WorkContext.CurrentUser?.Id;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+
+        foreach (var provider in Providers.OrderBy(x => x.Order))
+        {
+            var instance = (IUserProfileProvider)Activator.CreateInstance(provider.GetType());
+            await instance.PopulateFieldsAsync(userId);
+            sections.Add(new ProfileSection(instance, Type.GetType(instance.EditorTemplatePath, throwOnError: false)));
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        string userId = WorkContext.CurrentUser?.Id;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+
+        var values = new Dictionary<string, string>();
+        foreach (var section in sections)
+        {
+            foreach (string field in section.Provider.GetFieldNames())
+            {
+                values[field] = FieldValue(section.Provider, field);
+            }
+        }
+
+        await MembershipService.UpdateProfileAsync(userId, values);
+        message = "Your profile has been saved.";
+    }
+
+    private static string FieldValue(IUserProfileProvider provider, string field)
+    {
+        object raw = provider.GetType().GetProperty(field)?.GetValue(provider);
+        return raw switch
+        {
+            null => string.Empty,
+            bool value => value.ToString(),
+            _ => raw.ToString()
+        };
+    }
+
+    private static void SetField(IUserProfileProvider provider, string field, string value)
+    {
+        var property = provider.GetType().GetProperty(field);
+        if (property == null)
+        {
+            return;
+        }
+
+        if (property.PropertyType == typeof(bool))
+        {
+            property.SetValue(provider, bool.TryParse(value, out bool parsed) && parsed);
+            return;
+        }
+
+        property.SetValue(provider, value);
+    }
+
+    private sealed record ProfileSection(IUserProfileProvider Provider, Type EditorType);
+}

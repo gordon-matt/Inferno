@@ -12,7 +12,8 @@ public class TenantMap : InfernoEntityTypeConfiguration<Tenant>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
         builder.Property(x => x.Url).IsRequired().HasMaxLength(255).IsUnicode(true);
-        //builder.Property(x => x.SecureUrl).HasMaxLength(255).IsUnicode(true);
+        builder.Property(x => x.SslEnabled).IsRequired();
+        builder.Property(x => x.SecureUrl).HasMaxLength(255).IsUnicode(true);
         builder.Property(x => x.Hosts).HasMaxLength(1024).IsUnicode(true);
     }
 }

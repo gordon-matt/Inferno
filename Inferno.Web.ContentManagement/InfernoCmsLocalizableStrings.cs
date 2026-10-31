@@ -44,6 +44,7 @@ public static class InfernoCmsLocalizableStrings
         public const string ManageContentBlocks = "Inferno.Web.ContentManagement/ContentBlocks.ManageContentBlocks";
         public const string ManageZones = "Inferno.Web.ContentManagement/ContentBlocks.ManageZones";
         public const string Title = "Inferno.Web.ContentManagement/ContentBlocks.Title";
+        public const string EntityTypeContentBlocks = "Inferno.Web.ContentManagement/ContentBlocks.EntityTypeContentBlocks";
         public const string Zones = "Inferno.Web.ContentManagement/ContentBlocks.Zones";
 
         #region Blog
@@ -264,6 +265,12 @@ public static class InfernoCmsLocalizableStrings
         public const string Subscribers = "Inferno.Web.ContentManagement/Newsletters.Subscribers";
         public const string SuccessfullySignedUp = "Inferno.Web.ContentManagement/Newsletters.SuccessfullySignedUp";
         public const string Title = "Inferno.Web.ContentManagement/Newsletters.Title";
+    }
+
+    public static class Messaging
+    {
+        public const string MessageTemplates = "Inferno.Web.ContentManagement/Messaging.MessageTemplates";
+        public const string QueuedEmails = "Inferno.Web.ContentManagement/Messaging.QueuedEmails";
     }
 
     public static class Pages

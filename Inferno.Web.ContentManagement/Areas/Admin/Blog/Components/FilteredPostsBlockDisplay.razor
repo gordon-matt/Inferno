@@ -1,30 +1,60 @@
-﻿@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
+﻿@using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@using Microsoft.EntityFrameworkCore
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockDisplay<FilteredPostsBlock>
+@inject IBlogPostService PostService
+@inject IWorkContext WorkContext
 
-@inject IBlogCategoryService categoryService
-@inject IBlogTagService tagService
-
-@if (Model.FilterType == FilterType.Category && Model.CategoryId.HasValue)
+@if (posts.Count > 0)
 {
-    int id = Model.CategoryId.Value;
-    var category = categoryService.FindOne(id);
-}
-else if (Model.FilterType == FilterType.Tag && Model.TagId.HasValue)
-{
-    int id = Model.TagId.Value;
-    var tag = tagService.FindOne(id);
-}
-else
-{
+    <ul class="list-unstyled">
+        @foreach (var post in posts)
+        {
+            <li class="mb-2">
+                @if (post.UseExternalLink)
+                {
+                    <a href="@post.ExternalLink" target="_blank" rel="noopener noreferrer">@post.Headline</a>
+                }
+                else
+                {
+                    <a href="/blog/@post.Slug">@post.Headline</a>
+                }
+            </li>
+        }
+    </ul>
 }
 
 @code {
-    protected override async Task OnInitializedAsync()
+    private List<BlogPost> posts = [];
+
+    protected override void OnParametersSet()
     {
-        await base.OnInitializedAsync();
+        posts = [];
+        if (WorkContext.CurrentTenant == null)
+        {
+            return;
+        }
+
+        int tenantId = WorkContext.CurrentTenant.Id;
+        using var connection = PostService.OpenConnection();
+        IQueryable<BlogPost> query = connection.Query(x => x.TenantId == tenantId);
+
+        if (Model.FilterType == FilterType.Category && Model.CategoryId.HasValue)
+        {
+            int categoryId = Model.CategoryId.Value;
+            query = query.Where(x => x.CategoryId == categoryId);
+        }
+        else if (Model.FilterType == FilterType.Tag && Model.TagId.HasValue)
+        {
+            int tagId = Model.TagId.Value;
+            query = query.Include(x => x.Tags).Where(x => x.Tags.Any(y => y.TagId == tagId));
+        }
+
+        posts = query.OrderByDescending(x => x.DateCreatedUtc).Take(20).ToList();
     }
 }

@@ -68,22 +68,37 @@ public class GenericDataService<TEntity> : IGenericDataService<TEntity> where TE
 
     #region Find
 
-    // TODO: Caching.
+    public virtual IPagedCollection<TEntity> Find(SearchOptions<TEntity> options)
+    {
+        if (options?.Query != null)
+        {
+            return repository.Find(options);
+        }
 
-    public virtual IPagedCollection<TEntity> Find(SearchOptions<TEntity> options) =>
-        repository.Find(options);
+        return CacheManager.Get(CacheKey, () => repository.Find(options ?? new SearchOptions<TEntity>()));
+    }
 
     public virtual IPagedCollection<TResult> Find<TResult>(SearchOptions<TEntity> options, Expression<Func<TEntity, TResult>> projection) =>
         repository.Find(options, projection);
 
-    public virtual Task<IPagedCollection<TEntity>> FindAsync(SearchOptions<TEntity> options) =>
-        repository.FindAsync(options);
+    public virtual Task<IPagedCollection<TEntity>> FindAsync(SearchOptions<TEntity> options)
+    {
+        if (options?.Query != null)
+        {
+            return repository.FindAsync(options);
+        }
+
+        return Task.FromResult(CacheManager.Get(CacheKey, () => repository.Find(options ?? new SearchOptions<TEntity>())));
+    }
 
     public virtual Task<IPagedCollection<TResult>> FindAsync<TResult>(SearchOptions<TEntity> options, Expression<Func<TEntity, TResult>> projection) =>
         repository.FindAsync(options, projection);
 
-    public virtual TEntity FindOne(params object[] keyValues) =>
-        repository.FindOne(keyValues);
+    public virtual TEntity FindOne(params object[] keyValues)
+    {
+        string key = string.Format(CacheKeyFiltered, string.Join("-", keyValues.Select(x => x ?? "null")));
+        return CacheManager.Get(key, () => repository.FindOne(keyValues));
+    }
 
     public virtual TEntity FindOne(SearchOptions<TEntity> options) =>
         repository.FindOne(options);
@@ -91,8 +106,11 @@ public class GenericDataService<TEntity> : IGenericDataService<TEntity> where TE
     public virtual TResult FindOne<TResult>(SearchOptions<TEntity> options, Expression<Func<TEntity, TResult>> projection) =>
         repository.FindOne(options, projection);
 
-    public virtual Task<TEntity> FindOneAsync(params object[] keyValues) =>
-        repository.FindOneAsync(keyValues);
+    public virtual Task<TEntity> FindOneAsync(params object[] keyValues)
+    {
+        string key = string.Format(CacheKeyFiltered, string.Join("-", keyValues.Select(x => x ?? "null")));
+        return Task.FromResult(CacheManager.Get(key, () => repository.FindOne(keyValues)));
+    }
 
     public virtual Task<TEntity> FindOneAsync(SearchOptions<TEntity> options) =>
         repository.FindOneAsync(options);
@@ -160,15 +178,40 @@ public class GenericDataService<TEntity> : IGenericDataService<TEntity> where TE
         return rowsAffected;
     }
 
-    public virtual async Task<int> DeleteAllAsync() => await repository.DeleteAllAsync();
+    public virtual async Task<int> DeleteAllAsync()
+    {
+        int rowsAffected = await repository.DeleteAllAsync();
+        ClearCache();
+        return rowsAffected;
+    }
 
-    public virtual async Task<int> DeleteAsync(TEntity entity) => await repository.DeleteAsync(entity);
+    public virtual async Task<int> DeleteAsync(TEntity entity)
+    {
+        int rowsAffected = await repository.DeleteAsync(entity);
+        ClearCache();
+        return rowsAffected;
+    }
 
-    public virtual async Task<int> DeleteAsync(IEnumerable<TEntity> entities) => await repository.DeleteAsync(entities);
+    public virtual async Task<int> DeleteAsync(IEnumerable<TEntity> entities)
+    {
+        int rowsAffected = await repository.DeleteAsync(entities);
+        ClearCache();
+        return rowsAffected;
+    }
 
-    public virtual async Task<int> DeleteAsync(Expression<Func<TEntity, bool>> filterExpression) => await repository.DeleteAsync(filterExpression);
+    public virtual async Task<int> DeleteAsync(Expression<Func<TEntity, bool>> filterExpression)
+    {
+        int rowsAffected = await repository.DeleteAsync(filterExpression);
+        ClearCache();
+        return rowsAffected;
+    }
 
-    public virtual async Task<int> DeleteAsync(IQueryable<TEntity> query) => await repository.DeleteAsync(query);
+    public virtual async Task<int> DeleteAsync(IQueryable<TEntity> query)
+    {
+        int rowsAffected = await repository.DeleteAsync(query);
+        ClearCache();
+        return rowsAffected;
+    }
 
     #endregion Delete
 

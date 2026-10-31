@@ -1,9 +1,12 @@
 ﻿using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
 using Inferno.Helpers;
+using Inferno.Localization;
+using Inferno.Localization.Entities;
 using Inferno.Security;
 using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Tenants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -14,14 +17,17 @@ namespace Inferno.Web.Areas.Tenants.Controllers.Api;
 public class TenantApiController : BaseODataController<Tenant, int>
 {
     private readonly IMembershipService membershipService;
+    private readonly ITenantDataCleaner tenantDataCleaner;
 
     public TenantApiController(
         IAuthorizationService authorizationService,
         IRepository<Tenant> repository,
-        IMembershipService membershipService)
+        IMembershipService membershipService,
+        ITenantDataCleaner tenantDataCleaner)
         : base(authorizationService, repository)
     {
         this.membershipService = membershipService;
+        this.tenantDataCleaner = tenantDataCleaner;
     }
 
     public override Task<IActionResult> Get(ODataQueryOptions<Tenant> options, CancellationToken cancellationToken) => base.Get(options, cancellationToken);
@@ -32,30 +38,52 @@ public class TenantApiController : BaseODataController<Tenant, int>
         int tenantId = entity.Id; // EF should have populated the ID in base.Post()
         await membershipService.EnsureAdminRoleForTenantAsync(tenantId);
 
-        //TOOD: Create tenant media folder:
         var mediaFolder = new DirectoryInfo(CommonHelper.MapPath("~/Media/Uploads/Tenant_" + tenantId));
         if (!mediaFolder.Exists)
         {
             mediaFolder.Create();
         }
 
+        await InsertLanguagePacksAsync(tenantId);
+
         return result;
     }
 
     public override async Task<IActionResult> Delete(int key, CancellationToken cancellationToken)
     {
-        var result = await base.Delete(key, cancellationToken);
+        await tenantDataCleaner.CleanAsync(key);
+        return await base.Delete(key, cancellationToken);
+    }
 
-        //TODO: Remove everything associated with the tenant.
+    private static async Task InsertLanguagePacksAsync(int tenantId)
+    {
+        var repository = Dependo.DependoResolver.Instance.Resolve<IRepository<LocalizableString>>();
+        if (await repository.CountAsync(x => x.TenantId == tenantId) > 0)
+        {
+            return;
+        }
 
-        // TODO: Add some checkbox on admin page... only delete files if user checks that box.
-        //var mediaFolder = new DirectoryInfo(webHelper.MapPath("~/Media/Uploads/Tenant_" + key));
-        //if (mediaFolder.Exists)
-        //{
-        //    mediaFolder.Delete();
-        //}
+        var languagePacks = Dependo.DependoResolver.Instance.ResolveAll<ILanguagePack>();
+        var toInsert = new List<LocalizableString>();
+        foreach (var languagePack in languagePacks)
+        {
+            foreach (var localizedString in languagePack.LocalizedStrings)
+            {
+                toInsert.Add(new LocalizableString
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    CultureCode = languagePack.CultureCode,
+                    TextKey = localizedString.Key,
+                    TextValue = localizedString.Value
+                });
+            }
+        }
 
-        return result;
+        if (toInsert.Count > 0)
+        {
+            await repository.InsertAsync(toInsert);
+        }
     }
 
     protected override int GetId(Tenant entity) => entity.Id;

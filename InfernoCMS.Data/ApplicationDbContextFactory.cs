@@ -13,6 +13,8 @@ public class ApplicationDbContextFactory : IDbContextFactory
         this.configuration = configuration;
     }
 
+    public string AppSettingsConnectionString => configuration.GetConnectionString("DefaultConnection");
+
     private DbContextOptions<ApplicationDbContext> Options
     {
         get

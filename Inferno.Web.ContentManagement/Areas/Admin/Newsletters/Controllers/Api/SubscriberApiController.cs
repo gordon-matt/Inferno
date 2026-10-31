@@ -1,5 +1,7 @@
 using Inferno.Security.Membership;
+using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Events;
 using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Models;
+using Inferno.Web.Events;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -15,15 +17,18 @@ public class SubscriberApiController : ODataController
     private readonly IMembershipService membershipService;
     private readonly IWorkContext workContext;
     private readonly IAuthorizationService authorizationService;
+    private readonly IEventPublisher eventPublisher;
 
     public SubscriberApiController(
         IMembershipService membershipService,
         IWorkContext workContext,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        IEventPublisher eventPublisher)
     {
         this.membershipService = membershipService;
         this.workContext = workContext;
         this.authorizationService = authorizationService;
+        this.eventPublisher = eventPublisher;
     }
 
     public virtual async Task<IActionResult> Get(ODataQueryOptions<Subscriber> options)
@@ -112,6 +117,8 @@ public class SubscriberApiController : ODataController
             key,
             NewsletterUserProfileProvider.Fields.SubscribeToNewsletters,
             bool.FalseString);
+
+        eventPublisher.Publish(new NewsletterUnsubscribedEvent(entity));
 
         return NoContent();
     }

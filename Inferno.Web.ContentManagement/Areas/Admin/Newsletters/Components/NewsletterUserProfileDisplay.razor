@@ -1,0 +1,11 @@
+<p class="mb-0">
+    @if (Model.SubscribeToNewsletters)
+    {
+        <span>@T[InfernoCmsLocalizableStrings.UserProfile.Newsletter.SubscribeToNewsletters]</span>
+    }
+</p>
+
+@code {
+    [Parameter]
+    public Inferno.Web.ContentManagement.Areas.Admin.Newsletters.NewsletterUserProfileProvider Model { get; set; }
+}

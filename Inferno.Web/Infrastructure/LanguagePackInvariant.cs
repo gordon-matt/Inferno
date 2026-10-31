@@ -227,7 +227,19 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Settings.Site.Tabs.Themes, "Themes" },
 
         { InfernoWebLocalizableStrings.Tenants.ManageTenants, "Manage Tenants" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.DisplayName, "Display Name" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.EnableSsl, "Enable SSL" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.Host, "Host" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.MaxTries, "Max Tries" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.MessagesPerBatch, "Messages Per Batch" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.Password, "Password" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.Port, "Port" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.UseDefaultCredentials, "Use Default Credentials" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.Username, "Username" },
+
         { InfernoWebLocalizableStrings.Tenants.Model.Hosts, "Hosts" },
+        { InfernoWebLocalizableStrings.Tenants.Model.SecureUrl, "Secure URL" },
+        { InfernoWebLocalizableStrings.Tenants.Model.SslEnabled, "SSL Enabled" },
         { InfernoWebLocalizableStrings.Tenants.Model.Url, "URL" },
         { InfernoWebLocalizableStrings.Tenants.Title, "Tenants" },
 

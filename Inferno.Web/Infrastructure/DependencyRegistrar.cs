@@ -38,6 +38,7 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
     {
         //var settings = DataSettingsManager.LoadSettings();
         //builder.RegisterInstance(settings);
+        builder.RegisterInstance(DataSettingsManager.LoadSettings());
 
         builder.Register<IRouterAssemblyMarker, RouterAssemblyMarker>(ServiceLifetime.Singleton);
 
@@ -51,8 +52,7 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         // Work Context, Themes, Routing, etc
         builder.Register<IWorkContext, WorkContext>(ServiceLifetime.Scoped);
         builder.Register<IThemeProvider, ThemeProvider>(ServiceLifetime.Scoped);
-
-        //builder.Register<IThemeContext, ThemeContext>(ServiceLifetime.Scoped);
+        builder.Register<IThemeContext, ThemeContext>(ServiceLifetime.Scoped);
         //builder.Register<IEmbeddedResourceResolver, EmbeddedResourceResolver>(ServiceLifetime.Singleton);
         //builder.Register<IRoutePublisher, RoutePublisher>(ServiceLifetime.Singleton);
 
@@ -68,6 +68,17 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.Register<ISettingService, DefaultSettingService>(ServiceLifetime.Transient);
         builder.Register<ISettings, SiteSettings>(ServiceLifetime.Scoped);
         builder.Register<ISettings, MembershipSettings>(ServiceLifetime.Scoped);
+        builder.Register<ISettings, Messaging.Configuration.SmtpSettings>(ServiceLifetime.Scoped);
+
+        builder.Register<Events.IEventPublisher, Events.EventPublisher>(ServiceLifetime.Scoped);
+        builder.Register<Events.ISubscriptionService, Events.SubscriptionService>(ServiceLifetime.Scoped);
+        builder.Register<Messaging.Services.IEmailSender, Messaging.Services.DefaultEmailSender>(ServiceLifetime.Scoped);
+        builder.Register<Messaging.ITokenizer, Messaging.Tokenizer>(ServiceLifetime.Singleton);
+        builder.Register<Messaging.Services.IMessageTemplateService, Messaging.Services.MessageTemplateService>(ServiceLifetime.Transient);
+        builder.Register<Messaging.Services.IMessageTemplateVersionService, Messaging.Services.MessageTemplateVersionService>(ServiceLifetime.Transient);
+        builder.Register<Messaging.Services.IMessageService, Messaging.Services.MessageService>(ServiceLifetime.Transient);
+        builder.Register<Messaging.IQueuedMessageProvider, Messaging.Services.MessageService>(ServiceLifetime.Transient);
+        builder.Register<Tasks.ITask, Messaging.ProcessQueuedMailTask>(ServiceLifetime.Singleton);
 
         // Navigation
         builder.Register<INavigationManager, NavigationManager>(ServiceLifetime.Transient);
@@ -76,7 +87,10 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         // Work Context State Providers
         builder.Register<IWorkContextStateProvider, CurrentUserStateProvider>(ServiceLifetime.Transient);
         builder.Register<IWorkContextStateProvider, CurrentThemeStateProvider>(ServiceLifetime.Transient);
-        //builder.Register<IWorkContextStateProvider, CurrentCultureCodeStateProvider>(ServiceLifetime.Transient);
+        builder.Register<IWorkContextStateProvider, Localization.CurrentCultureCodeStateProvider>(ServiceLifetime.Transient);
+
+        builder.Register<Localization.IWebCultureManager, Localization.WebCultureManager>(ServiceLifetime.Scoped);
+        builder.Register<Localization.Services.ICultureSelector, Localization.Services.CookieCultureSelector>(ServiceLifetime.Singleton);
 
         // Localization
         builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Transient);

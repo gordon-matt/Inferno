@@ -1,0 +1,199 @@
+@page "/admin/messaging/templates"
+@using Inferno.Web.Messaging.Entities
+@using Inferno.Web.Messaging.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+
+<h1>@T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates]</h1>
+
+@if (!allowed)
+{
+    <div class="alert alert-warning" role="alert">You do not have access to message templates.</div>
+}
+else if (editing == null)
+{
+    <RadzenButton Click="BeginCreate" class="mb-3">@T[InfernoWebLocalizableStrings.General.Create]</RadzenButton>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Enabled</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var template in templates)
+            {
+                <tr>
+                    <td>@template.Name</td>
+                    <td>@(template.Enabled ? "Yes" : "No")</td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-secondary btn-sm" @onclick="() => BeginEdit(template)">Edit</button>
+                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteAsync(template)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <EditForm Model="editing" OnValidSubmit="SaveAsync">
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input class="form-control" @bind="editing.Name" />
+        </div>
+        <div class="form-check mb-3">
+            <label class="form-check-label">
+                <input class="form-check-input me-2" type="checkbox" @bind="editing.Enabled" />
+                Enabled
+            </label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Subject</label>
+            <input class="form-control" @bind="subject" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">HTML body</label>
+            <textarea class="form-control" rows="12" @bind="body"></textarea>
+            <div class="form-text">Tokens such as [UserName] and [Email] are replaced when the message is queued. The body is stored as HTML.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">@T[InfernoWebLocalizableStrings.General.Save]</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+    </EditForm>
+}
+
+@code {
+    [Inject]
+    private IMessageTemplateService TemplateService { get; set; }
+
+    [Inject]
+    private IMessageTemplateVersionService VersionService { get; set; }
+
+    [Inject]
+    private IAuthorizationService AuthorizationService { get; set; }
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    private bool allowed;
+    private bool canWrite;
+    private List<MessageTemplate> templates = [];
+    private MessageTemplate editing;
+    private string subject = string.Empty;
+    private string body = string.Empty;
+    private int? versionId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        allowed = (await AuthorizationService.AuthorizeAsync(state.User, CmsConstants.Policies.MessagingRead)).Succeeded;
+        canWrite = (await AuthorizationService.AuthorizeAsync(state.User, CmsConstants.Policies.MessagingWrite)).Succeeded;
+        if (allowed)
+        {
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        int tenantId = WorkContext.CurrentTenant.Id;
+        templates = (await TemplateService.FindAsync(new Extenso.Data.Entity.SearchOptions<MessageTemplate>
+        {
+            Query = x => x.TenantId == tenantId
+        })).OrderBy(x => x.Name).ToList();
+    }
+
+    private void BeginCreate()
+    {
+        if (!canWrite)
+        {
+            return;
+        }
+
+        editing = new MessageTemplate
+        {
+            TenantId = WorkContext.CurrentTenant.Id,
+            Editor = "Html",
+            Enabled = true
+        };
+        subject = string.Empty;
+        body = string.Empty;
+        versionId = null;
+    }
+
+    private void BeginEdit(MessageTemplate template)
+    {
+        editing = template;
+        var version = VersionService.FindOne(template.Id, WorkContext.CurrentCultureCode);
+        subject = version?.Subject ?? string.Empty;
+        body = version?.Data ?? string.Empty;
+        versionId = version?.Id;
+    }
+
+    private async Task SaveAsync()
+    {
+        if (!canWrite || WorkContext.CurrentTenant == null)
+        {
+            return;
+        }
+
+        editing.Editor = string.IsNullOrWhiteSpace(editing.Editor) ? "Html" : editing.Editor;
+        editing.TenantId = WorkContext.CurrentTenant.Id;
+
+        if (editing.Id == 0)
+        {
+            editing = await TemplateService.InsertAsync(editing);
+        }
+        else
+        {
+            editing = await TemplateService.UpdateAsync(editing);
+        }
+
+        if (versionId.HasValue)
+        {
+            var version = await VersionService.FindOneAsync(versionId.Value);
+            version.Subject = subject ?? string.Empty;
+            version.Data = body ?? string.Empty;
+            version.DateModifiedUtc = DateTime.UtcNow;
+            await VersionService.UpdateAsync(version);
+        }
+        else
+        {
+            await VersionService.InsertAsync(new MessageTemplateVersion
+            {
+                MessageTemplateId = editing.Id,
+                CultureCode = null,
+                Subject = subject ?? string.Empty,
+                Data = body ?? string.Empty,
+                DateCreatedUtc = DateTime.UtcNow,
+                DateModifiedUtc = DateTime.UtcNow
+            });
+        }
+
+        editing = null;
+        await LoadAsync();
+    }
+
+    private async Task DeleteAsync(MessageTemplate template)
+    {
+        if (!canWrite)
+        {
+            return;
+        }
+
+        var versions = await VersionService.FindAsync(new Extenso.Data.Entity.SearchOptions<MessageTemplateVersion>
+        {
+            Query = x => x.MessageTemplateId == template.Id
+        });
+        if (versions.Any())
+        {
+            await VersionService.DeleteAsync(versions);
+        }
+
+        await TemplateService.DeleteAsync(template);
+        await LoadAsync();
+    }
+
+    private void Cancel() => editing = null;
+}

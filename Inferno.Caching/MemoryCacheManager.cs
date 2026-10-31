@@ -117,10 +117,12 @@ public class MemoryCacheManager : ICacheManager, IDisposable
     /// </summary>
     public virtual void Clear()
     {
-        foreach (string key in keys)
+        foreach (string key in keys.ToArray())
         {
-            Remove(key);
+            cache.Remove(key);
         }
+
+        keys.Clear();
     }
 
     #region IDisposable Implementation

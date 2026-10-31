@@ -39,5 +39,8 @@ public static class CmsAuthorizationOptionsExtensions
 
         options.AddPermission(CmsConstants.Policies.SitemapRead, "SitemapRead");
         options.AddPermission(CmsConstants.Policies.SitemapWrite, "SitemapWrite");
+
+        options.AddPermission(CmsConstants.Policies.MessagingRead, "MessagingRead");
+        options.AddPermission(CmsConstants.Policies.MessagingWrite, "MessagingWrite");
     }
 }

@@ -1,0 +1,32 @@
+@using Inferno.Web.ContentManagement.Components
+@using Microsoft.AspNetCore.Components.Authorization
+
+@if (items.Count > 0)
+{
+    <div class="list-group mb-3">
+        @foreach (var item in items)
+        {
+            <a class="list-group-item list-group-item-action" href="@item.Url">@item.Text</a>
+        }
+    </div>
+}
+
+@code {
+    [Inject]
+    private CmsMenuBuilder MenuBuilder { get; set; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    private List<Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities.MenuItem> items = [];
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        string slug = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Trim('/');
+        items = (await MenuBuilder.BuildSubMenuAsync(state.User, slug)).ToList();
+    }
+}

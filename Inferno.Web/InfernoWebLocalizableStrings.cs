@@ -287,6 +287,19 @@ public static class InfernoWebLocalizableStrings
             public const string Name = "Inferno.Web/Settings.Model.Name";
         }
 
+        public static class Smtp
+        {
+            public const string DisplayName = "Inferno.Web/Settings.Smtp.DisplayName";
+            public const string Host = "Inferno.Web/Settings.Smtp.Host";
+            public const string Port = "Inferno.Web/Settings.Smtp.Port";
+            public const string EnableSsl = "Inferno.Web/Settings.Smtp.EnableSsl";
+            public const string UseDefaultCredentials = "Inferno.Web/Settings.Smtp.UseDefaultCredentials";
+            public const string Username = "Inferno.Web/Settings.Smtp.Username";
+            public const string Password = "Inferno.Web/Settings.Smtp.Password";
+            public const string MaxTries = "Inferno.Web/Settings.Smtp.MaxTries";
+            public const string MessagesPerBatch = "Inferno.Web/Settings.Smtp.MessagesPerBatch";
+        }
+
         public static class Site
         {
             public static class Tabs
@@ -318,6 +331,8 @@ public static class InfernoWebLocalizableStrings
         public static class Model
         {
             public const string Url = "Inferno.Web/Tenants.Model.Url";
+            public const string SecureUrl = "Inferno.Web/Tenants.Model.SecureUrl";
+            public const string SslEnabled = "Inferno.Web/Tenants.Model.SslEnabled";
             public const string Hosts = "Inferno.Web/Tenants.Model.Hosts";
         }
     }

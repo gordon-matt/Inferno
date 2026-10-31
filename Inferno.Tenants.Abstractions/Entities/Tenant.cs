@@ -8,10 +8,9 @@ public class Tenant : BaseEntity<int>
 
     public string Url { get; set; }
 
-    // TODO: Support SSL
-    //public bool SslEnabled { get; set; }
+    public bool SslEnabled { get; set; }
 
-    //public string SecureUrl { get; set; }
+    public string SecureUrl { get; set; }
 
     public string Hosts { get; set; }
 }

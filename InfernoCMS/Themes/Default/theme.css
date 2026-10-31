@@ -1,0 +1,8 @@
+body {
+    font-family: "Segoe UI", sans-serif;
+}
+
+.tag-cloud a {
+    display: inline-block;
+    margin: 0.15rem 0.35rem;
+}

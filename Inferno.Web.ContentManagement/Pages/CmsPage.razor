@@ -1,0 +1,108 @@
+@page "/{slug}"
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Components
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services
+@using Microsoft.AspNetCore.Components.Authorization
+
+@if (!ready)
+{
+    <p>Loading...</p>
+}
+else if (notFound)
+{
+    <PageTitle>Not found</PageTitle>
+    <div class="alert alert-secondary" role="alert">Sorry, there's nothing at this address.</div>
+}
+else if (!allowed)
+{
+    <div class="alert alert-warning" role="alert">You do not have access to this page.</div>
+}
+else
+{
+    <StandardPageView Page="standardPage" />
+}
+
+@code {
+    private static readonly HashSet<string> Reserved = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "admin", "account", "identity", "installation", "odata", "api", "swagger", "blog"
+    };
+
+    [Parameter]
+    public string Slug { get; set; }
+
+    [Inject]
+    private IPageContentService PageContentService { get; set; }
+
+    [Inject]
+    private IPageTypeService PageTypeService { get; set; }
+
+    [Inject]
+    private IWorkContext WorkContext { get; set; }
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    private bool ready;
+    private bool notFound;
+    private bool allowed = true;
+    private StandardPage standardPage;
+
+    protected override void OnInitialized()
+    {
+        WorkContext.SetState<Guid?>("CurrentPageId", null);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ready = false;
+        notFound = false;
+        allowed = true;
+        standardPage = null;
+        WorkContext.SetState<Guid?>("CurrentPageId", null);
+
+        if (string.IsNullOrWhiteSpace(Slug) || Reserved.Contains(Slug) || Slug.Contains('/'))
+        {
+            notFound = true;
+            ready = true;
+            return;
+        }
+
+        var version = await PageContentService.FindPublishedAsync(
+            WorkContext.CurrentTenant.Id,
+            Slug,
+            WorkContext.CurrentCultureCode);
+
+        if (version == null)
+        {
+            notFound = true;
+            ready = true;
+            return;
+        }
+
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!await PageSecurityHelper.CheckUserHasAccessToPage(version.Page, state.User))
+        {
+            allowed = false;
+            ready = true;
+            return;
+        }
+
+        WorkContext.SetState("CurrentPageId", (Guid?)version.PageId);
+
+        var pageType = await PageTypeService.FindOneAsync(version.Page.PageTypeId);
+        var infernoPageType = pageType == null ? null : PageTypeService.GetInfernoPageType(pageType.Name);
+        if (infernoPageType is not StandardPage page)
+        {
+            notFound = true;
+            ready = true;
+            return;
+        }
+
+        page.InstanceName = version.Title;
+        page.InstanceParentId = version.Page.ParentId;
+        page.InitializeInstance(version);
+        standardPage = page;
+        ready = true;
+    }
+}

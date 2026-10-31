@@ -1,0 +1,13 @@
+@using Inferno.Web.Mvc.Themes
+
+<div class="row mb-3">
+    <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.UserProfile.Theme.PreferredTheme]</label>
+    <div class="col-md-9">
+        <input class="form-control" @bind="Model.PreferredTheme" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ThemeUserProfileProvider Model { get; set; }
+}

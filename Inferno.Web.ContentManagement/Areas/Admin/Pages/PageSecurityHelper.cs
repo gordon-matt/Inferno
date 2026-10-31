@@ -24,7 +24,7 @@ public static class PageSecurityHelper
                 .Where(x => x != null)
                 .ToList();
 
-            bool authorized = roleNames.Any(user.IsInRole);
+            bool authorized = user?.Identity?.IsAuthenticated == true && roleNames.Any(user.IsInRole);
             if (!authorized)
             {
                 return false;
@@ -47,12 +47,19 @@ public static class PageSecurityHelper
 
             if (!string.IsNullOrEmpty(selectedRoles))
             {
+                if (user?.Identity?.IsAuthenticated != true || string.IsNullOrEmpty(user.Identity.Name))
+                {
+                    return false;
+                }
+
                 var membershipService = DependoResolver.Instance.Resolve<IMembershipService>();
 
-                string[] roleIds = selectedRoles.Split(',');
-                var roles = await membershipService.GetRolesByIdsAsync(roleIds);
-
                 var infernoUser = await membershipService.GetUserByNameAsync(page.TenantId, user.Identity.Name);
+                if (infernoUser == null)
+                {
+                    return false;
+                }
+
                 var userRoles = await membershipService.GetRolesForUserAsync(infernoUser.Id);
                 var userRoleIds = userRoles.Select(x => x.Id);
 

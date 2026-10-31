@@ -13,7 +13,7 @@ public class DependencyRegistrar : IDependencyRegistrar
 
     public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
-        builder.Register<IDbContextFactory, ApplicationDbContextFactory>(ServiceLifetime.Singleton);
+        builder.Register<IDbContextFactory, InfernoCMS.Services.DataSettingsDbContextFactory>(ServiceLifetime.Singleton);
         builder.RegisterGeneric(typeof(IRepository<>), typeof(EntityFrameworkRepository<>), ServiceLifetime.Scoped);
 
         // Radzen
@@ -27,6 +27,7 @@ public class DependencyRegistrar : IDependencyRegistrar
 
         // Services
         builder.Register<IMembershipService, MembershipService>(ServiceLifetime.Transient);
+        builder.Register<Inferno.Web.Tenants.ITenantDataCleaner, InfernoCMS.Services.TenantDataCleaner>(ServiceLifetime.Scoped);
         builder.Register<ITokenService, TokenService>(ServiceLifetime.Scoped);
 
         // Localization

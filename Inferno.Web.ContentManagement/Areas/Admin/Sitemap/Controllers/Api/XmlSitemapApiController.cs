@@ -6,6 +6,7 @@ using Extenso.Collections;
 using Extenso.Data.Entity;
 using Inferno.Helpers;
 using Inferno.Localization.Services;
+using Inferno.Tenants;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Entities;
@@ -196,7 +197,9 @@ public class XmlSitemapApiController : GenericTenantODataController<SitemapConfi
                 .ToListAsync();
         }
 
-        string siteUrl = new Uri(Request.GetDisplayUrl()).GetLeftPart(UriPartial.Authority);
+        string requestBaseUrl = new Uri(Request.GetDisplayUrl()).GetLeftPart(UriPartial.Authority);
+        var tenant = DependoResolver.Instance.Resolve<IWorkContext>().CurrentTenant;
+        string siteUrl = tenant.GetPublicBaseUrl(requestBaseUrl);
 
         // For each Page
         foreach (var item in config)

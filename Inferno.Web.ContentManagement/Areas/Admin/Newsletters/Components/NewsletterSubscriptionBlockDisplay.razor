@@ -1,0 +1,39 @@
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@using Inferno.Web.ContentManagement.Areas.Admin.Newsletters
+@using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.ContentBlocks
+@using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Services
+@inherits ContentBlockDisplay<NewsletterSubscriptionBlock>
+@inject INewsletterService NewsletterService
+@inject IWorkContext WorkContext
+
+<form class="card mb-3" @onsubmit="SubscribeAsync" @onsubmit:preventDefault="true">
+    <div class="card-body">
+        <label class="form-label">@T[InfernoCmsLocalizableStrings.ContentBlocks.NewsletterSubscriptionBlock.SignUpLabel]</label>
+        <input class="form-control mb-2" @bind="email" placeholder="@T[InfernoCmsLocalizableStrings.ContentBlocks.NewsletterSubscriptionBlock.EmailPlaceholder]" />
+        <input class="form-control mb-2" @bind="name" placeholder="@T[InfernoCmsLocalizableStrings.ContentBlocks.NewsletterSubscriptionBlock.NamePlaceholder]" />
+        <button type="submit" class="btn btn-primary">@T[InfernoWebLocalizableStrings.General.Submit]</button>
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert @(success ? "alert-success" : "alert-danger") mt-3 mb-0" role="alert">@message</div>
+        }
+    </div>
+</form>
+
+@code {
+    private string email = string.Empty;
+    private string name = string.Empty;
+    private string message;
+    private bool success;
+
+    private async Task SubscribeAsync()
+    {
+        var result = await NewsletterService.SubscribeAsync(email, name, WorkContext.CurrentUser);
+        success = result.Succeeded;
+        message = result.Message;
+        if (success)
+        {
+            email = string.Empty;
+            name = string.Empty;
+        }
+    }
+}

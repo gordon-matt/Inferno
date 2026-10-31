@@ -1,0 +1,161 @@
+@page "/blog/{Slug}"
+@using Inferno.Security.Membership
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+
+@if (!allowed)
+{
+    <div class="alert alert-warning" role="alert">You do not have access to the blog.</div>
+}
+else if (post == null)
+{
+    <div class="alert alert-secondary" role="alert">That post could not be found.</div>
+}
+else
+{
+    <PageTitle>@post.Headline</PageTitle>
+    <HeadContent>
+        @if (!string.IsNullOrWhiteSpace(post.MetaDescription))
+        {
+            <meta name="description" content="@post.MetaDescription" />
+        }
+    </HeadContent>
+    <article>
+        <h1>@post.Headline</h1>
+        <p class="text-muted">@string.Format(T[InfernoCmsLocalizableStrings.Blog.PostedByXOnX].Value, author, post.DateCreatedUtc.ToString("yyyy-MM-dd HH:mm"))</p>
+        @if (post.Tags?.Count > 0)
+        {
+            <p>
+                @foreach (var postTag in post.Tags)
+                {
+                    if (tags.TryGetValue(postTag.TagId, out var tag))
+                    {
+                        <a class="badge text-bg-secondary text-decoration-none me-1" href="/blog/tag/@tag.UrlSlug">@tag.Name</a>
+                    }
+                }
+            </p>
+        }
+        @if (post.UseExternalLink)
+        {
+            <p><a href="@post.ExternalLink" target="_blank" rel="noopener noreferrer">@post.ExternalLink</a></p>
+        }
+        @((MarkupString)(post.FullDescription ?? post.ShortDescription))
+        <p class="mt-4">
+            @if (!string.IsNullOrEmpty(previousSlug))
+            {
+                <a class="me-3" href="/blog/@previousSlug">Previous</a>
+            }
+            @if (!string.IsNullOrEmpty(nextSlug))
+            {
+                <a href="/blog/@nextSlug">Next</a>
+            }
+        </p>
+    </article>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; }
+
+    [Inject]
+    private BlogSettings BlogSettings { get; set; }
+
+    [Inject]
+    private IBlogPostService PostService { get; set; }
+
+    [Inject]
+    private IBlogTagService TagService { get; set; }
+
+    [Inject]
+    private IMembershipService MembershipService { get; set; }
+
+    [Inject]
+    private IWorkContext WorkContext { get; set; }
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    private bool allowed = true;
+    private BlogPost post;
+    private string author = "Unknown";
+    private string previousSlug;
+    private string nextSlug;
+    private Dictionary<int, BlogTag> tags = [];
+
+    protected override void OnInitialized()
+    {
+        WorkContext.SetState<Guid?>("CurrentPageId", null);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        allowed = await PageSecurityHelper.CheckUserHasAccessToBlog(state.User);
+        if (!allowed)
+        {
+            return;
+        }
+
+        int tenantId = WorkContext.CurrentTenant.Id;
+        using (var connection = TagService.OpenConnection())
+        {
+            tags = connection.Query(x => x.TenantId == tenantId).ToDictionary(x => x.Id);
+        }
+
+        DateTime? previousDate = null;
+        DateTime? nextDate = null;
+        using (var connection = PostService.OpenConnection())
+        {
+            post = await connection.Query(x => x.TenantId == tenantId && x.Slug == Slug)
+                .Include(x => x.Category)
+                .Include(x => x.Tags)
+                .FirstOrDefaultAsync();
+
+            if (post == null)
+            {
+                return;
+            }
+
+            if (await connection.Query(x => x.TenantId == tenantId && x.DateCreatedUtc < post.DateCreatedUtc).AnyAsync())
+            {
+                previousDate = await connection.Query(x => x.TenantId == tenantId && x.DateCreatedUtc < post.DateCreatedUtc)
+                    .MaxAsync(x => (DateTime?)x.DateCreatedUtc);
+            }
+
+            if (await connection.Query(x => x.TenantId == tenantId && x.DateCreatedUtc > post.DateCreatedUtc).AnyAsync())
+            {
+                nextDate = await connection.Query(x => x.TenantId == tenantId && x.DateCreatedUtc > post.DateCreatedUtc)
+                    .MinAsync(x => (DateTime?)x.DateCreatedUtc);
+            }
+        }
+
+        if (previousDate.HasValue)
+        {
+            previousSlug = PostService.FindOne(new Extenso.Data.Entity.SearchOptions<BlogPost>
+            {
+                Query = x => x.TenantId == tenantId && x.DateCreatedUtc == previousDate
+            })?.Slug;
+        }
+
+        if (nextDate.HasValue)
+        {
+            nextSlug = PostService.FindOne(new Extenso.Data.Entity.SearchOptions<BlogPost>
+            {
+                Query = x => x.TenantId == tenantId && x.DateCreatedUtc == nextDate
+            })?.Slug;
+        }
+
+        if (!string.IsNullOrEmpty(post.UserId))
+        {
+            var user = await MembershipService.GetUserByIdAsync(post.UserId);
+            author = user?.UserName ?? "Unknown";
+        }
+
+        WorkContext.Breadcrumbs.Clear();
+        WorkContext.Breadcrumbs.Add(post.Headline);
+    }
+}

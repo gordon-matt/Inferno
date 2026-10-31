@@ -46,10 +46,15 @@ public class CmsNavigationProvider : INavigationProvider
                 .Permission(CmsConstants.Policies.BlogRead));
         });
 
-        // Content Blocks — the page lives at /admin/blocks/content-blocks (see ContentBlocks.razor)
+        // Content Blocks
         builder.Add(T[InfernoCmsLocalizableStrings.ContentBlocks.Title].Value, "5", item => item
             .Url("/admin/blocks/content-blocks")
             .Icon("fas fa-square")
+            .Permission(CmsConstants.Policies.ContentBlocksRead));
+
+        builder.Add(T[InfernoCmsLocalizableStrings.ContentBlocks.EntityTypeContentBlocks].Value, "5", item => item
+            .Url("/admin/blocks/entity-type-content-blocks")
+            .Icon("fas fa-th-large")
             .Permission(CmsConstants.Policies.ContentBlocksRead));
 
         // Media
@@ -75,6 +80,16 @@ public class CmsNavigationProvider : INavigationProvider
             .Url("/admin/newsletters/subscribers")
             .Icon("fas fa-users")
             .Permission(CmsConstants.Policies.NewsletterRead));
+
+        builder.Add(T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates].Value, "5", item => item
+            .Url("/admin/messaging/templates")
+            .Icon("fas fa-envelope")
+            .Permission(CmsConstants.Policies.MessagingRead));
+
+        builder.Add(T[InfernoCmsLocalizableStrings.Messaging.QueuedEmails].Value, "5", item => item
+            .Url("/admin/messaging/queued-emails")
+            .Icon("fas fa-inbox")
+            .Permission(CmsConstants.Policies.MessagingRead));
 
         // XML Sitemap
         builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item

@@ -75,6 +75,9 @@ public static partial class CmsConstants
 
         public const string SitemapRead = "Sitemap: Read";
         public const string SitemapWrite = "Sitemap: Write";
+
+        public const string MessagingRead = "Messaging: Read";
+        public const string MessagingWrite = "Messaging: Write";
     }
 
     public static class ODataRoutes

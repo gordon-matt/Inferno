@@ -1,0 +1,66 @@
+@using Inferno.Web.Messaging.Configuration
+@inherits Inferno.Web.Components.SettingsEditor<SmtpSettings>
+
+<div class="row">
+    <div class="col-12">
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.DisplayName]</label>
+            <div class="col-md-9">
+                <RadzenTextBox @bind-Value="Model.DisplayName" Style="width:100%" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.Host]</label>
+            <div class="col-md-9">
+                <RadzenTextBox @bind-Value="Model.Host" Style="width:100%" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.Port]</label>
+            <div class="col-md-9">
+                <RadzenNumeric @bind-Value="Model.Port" Style="width:100%" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3"></label>
+            <div class="col-md-9">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input me-2" type="checkbox" @bind="Model.EnableSsl" />
+                        @T[InfernoWebLocalizableStrings.Settings.Smtp.EnableSsl]
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input me-2" type="checkbox" @bind="Model.UseDefaultCredentials" />
+                        @T[InfernoWebLocalizableStrings.Settings.Smtp.UseDefaultCredentials]
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.Username]</label>
+            <div class="col-md-9">
+                <RadzenTextBox @bind-Value="Model.Username" Style="width:100%" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.Password]</label>
+            <div class="col-md-9">
+                <input class="form-control" type="password" @bind="Model.Password" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.MaxTries]</label>
+            <div class="col-md-9">
+                <RadzenNumeric @bind-Value="Model.MaxTries" Style="width:100%" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.MessagesPerBatch]</label>
+            <div class="col-md-9">
+                <RadzenNumeric @bind-Value="Model.MessagesPerBatch" Style="width:100%" />
+            </div>
+        </div>
+    </div>
+</div>

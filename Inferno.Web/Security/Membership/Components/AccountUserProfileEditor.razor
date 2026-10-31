@@ -1,0 +1,29 @@
+@using Inferno.Web.Security.Membership
+
+<div class="row mb-3">
+    <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.UserProfile.Account.FamilyName]</label>
+    <div class="col-md-9">
+        <input class="form-control" @bind="Model.FamilyName" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.UserProfile.Account.GivenNames]</label>
+    <div class="col-md-9">
+        <input class="form-control" @bind="Model.GivenNames" />
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-9 offset-md-3">
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input me-2" type="checkbox" @bind="Model.ShowFamilyNameFirst" />
+                @T[InfernoWebLocalizableStrings.UserProfile.Account.ShowFamilyNameFirst]
+            </label>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public AccountUserProfileProvider Model { get; set; }
+}

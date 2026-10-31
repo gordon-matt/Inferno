@@ -1,0 +1,11 @@
+<div class="form-check">
+    <label class="form-check-label">
+        <input class="form-check-input me-2" type="checkbox" @bind="Model.SubscribeToNewsletters" />
+        @T[InfernoCmsLocalizableStrings.UserProfile.Newsletter.SubscribeToNewsletters]
+    </label>
+</div>
+
+@code {
+    [Parameter]
+    public Inferno.Web.ContentManagement.Areas.Admin.Newsletters.NewsletterUserProfileProvider Model { get; set; }
+}

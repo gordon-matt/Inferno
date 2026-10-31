@@ -1,0 +1,75 @@
+@page "/admin/messaging/queued-emails"
+@using Inferno.Web.Messaging.Entities
+@using Inferno.Web.Messaging.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+
+<h1>@T[InfernoCmsLocalizableStrings.Messaging.QueuedEmails]</h1>
+
+@if (!allowed)
+{
+    <div class="alert alert-warning" role="alert">You do not have access to the mail queue.</div>
+}
+else if (emails.Count == 0)
+{
+    <p>The queue is empty.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>To</th>
+                <th>Subject</th>
+                <th>Created</th>
+                <th>Tries</th>
+                <th>Sent</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var email in emails)
+            {
+                <tr>
+                    <td>@email.ToAddress</td>
+                    <td>@email.Subject</td>
+                    <td>@email.CreatedOnUtc.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@email.SentTries</td>
+                    <td>@(email.SentOnUtc?.ToString("yyyy-MM-dd HH:mm") ?? "Queued")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Inject]
+    private IMessageService MessageService { get; set; }
+
+    [Inject]
+    private IAuthorizationService AuthorizationService { get; set; }
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    private bool allowed;
+    private List<QueuedEmail> emails = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        allowed = (await AuthorizationService.AuthorizeAsync(state.User, CmsConstants.Policies.MessagingRead)).Succeeded;
+        if (!allowed || WorkContext.CurrentTenant == null)
+        {
+            return;
+        }
+
+        int tenantId = WorkContext.CurrentTenant.Id;
+        emails = (await MessageService.FindAsync(new Extenso.Data.Entity.SearchOptions<QueuedEmail>
+        {
+            Query = x => x.TenantId == tenantId
+        }))
+            .OrderByDescending(x => x.CreatedOnUtc)
+            .Take(100)
+            .ToList();
+    }
+}

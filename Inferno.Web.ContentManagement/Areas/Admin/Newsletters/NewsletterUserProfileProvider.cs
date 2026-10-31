@@ -21,7 +21,7 @@ public class NewsletterUserProfileProvider : IUserProfileProvider
 
     public string DisplayTemplatePath => "Inferno.Web.ContentManagement.Views.Shared.DisplayTemplates.NewsletterUserProfileProvider";
 
-    public string EditorTemplatePath => "Inferno.Web.ContentManagement.Views.Shared.EditorTemplates.NewsletterUserProfileProvider";
+    public string EditorTemplatePath => typeof(Components.NewsletterUserProfileEditor).AssemblyQualifiedName;
 
     public int Order => 9999;
 

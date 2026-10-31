@@ -16,6 +16,8 @@ public partial class ContentBlocks
 
     private Type EditorType { get; set; }
 
+    private DynamicComponent BlockEditor { get; set; }
+
     private IEnumerable<IdNamePair<string>> BlockTypesSelectList { get; set; }
 
     private IEnumerable<IdNamePair<Guid>> ZonesSelectList { get; set; }
@@ -68,13 +70,10 @@ public partial class ContentBlocks
     {
         if (!ShowCreateMode)
         {
-            if (!typeof(IContentBlockEditor).IsAssignableFrom(EditorType))
+            if (BlockEditor?.Instance is IContentBlockEditor editor)
             {
-                return;
+                Model.BlockValues = editor.Save();
             }
-
-            var editor = (IContentBlockEditor)Activator.CreateInstance(EditorType);
-            Model.BlockValues = editor?.Save();
         }
 
         await base.OnValidSumbitAsync();

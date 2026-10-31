@@ -21,7 +21,7 @@ public class ThemeUserProfileProvider : IUserProfileProvider
 
     public string DisplayTemplatePath => "Inferno.Web.Views.Shared.DisplayTemplates.ThemeUserProfileProvider";
 
-    public string EditorTemplatePath => "Inferno.Web.Views.Shared.EditorTemplates.ThemeUserProfileProvider";
+    public string EditorTemplatePath => typeof(Components.ThemeUserProfileEditor).AssemblyQualifiedName;
 
     public int Order => 9999;
 
