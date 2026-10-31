@@ -36,9 +36,10 @@ public class AdminNavigationProvider : INavigationProvider
     }
 
     private void BuildMembershipMenu(NavigationItemBuilder builder) => builder
-            .Url("/admin/membership/users/index")
-            .Icon("fas fa-users")
-            .Permission(InfernoWebPolicies.MembershipManage);
+        .Url("/admin/membership")
+        .Icon("fas fa-users")
+        .IsExternal()
+        .Permission(InfernoWebPolicies.MembershipManage);
 
     private void BuildConfigurationMenu(NavigationItemBuilder builder)
     {

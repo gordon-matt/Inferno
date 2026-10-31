@@ -25,7 +25,7 @@ public abstract class InfernoUserStore<TUser, TRole, TContext>
     #region Properties
 
     protected DbSet<TRole> Roles => Context.Set<TRole>();
-    protected int TenantId => WorkContext.CurrentTenant.Id;
+    protected int TenantId => CurrentTenantId.Resolve();
     protected DbSet<IdentityUserClaim<string>> UserClaims => Context.Set<IdentityUserClaim<string>>();
     protected DbSet<IdentityUserLogin<string>> UserLogins => Context.Set<IdentityUserLogin<string>>();
     protected DbSet<IdentityUserRole<string>> UserRoles => Context.Set<IdentityUserRole<string>>();
@@ -35,6 +35,22 @@ public abstract class InfernoUserStore<TUser, TRole, TContext>
     protected IWorkContext WorkContext => workContext ??= DependoResolver.Instance.Resolve<IWorkContext>();
 
     #endregion Properties
+
+    public override IQueryable<TUser> Users
+    {
+        get
+        {
+            int tenantId = TenantId;
+            return base.Users.Where(user => user.TenantId == tenantId || user.TenantId == null);
+        }
+    }
+
+    public override Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        user.TenantId ??= TenantId;
+        return base.CreateAsync(user, cancellationToken);
+    }
 
     public override async Task AddToRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken = default)
     {

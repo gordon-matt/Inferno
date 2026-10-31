@@ -1,7 +1,5 @@
 ﻿using System.Security.Claims;
-using Dependo;
 using Inferno.Identity.Entities;
-using Inferno.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,15 +15,23 @@ public abstract class InfernoRoleStore<TRole, TContext> : RoleStore<TRole, TCont
     {
     }
 
-    #region Private Properties
+    private int TenantId => CurrentTenantId.Resolve();
 
-    private IWorkContext WorkContext => field ??= DependoResolver.Instance.Resolve<IWorkContext>();
+    public override IQueryable<TRole> Roles
+    {
+        get
+        {
+            int tenantId = TenantId;
+            return base.Roles.Where(role => role.TenantId == tenantId || role.TenantId == null);
+        }
+    }
 
-    private int TenantId => WorkContext.CurrentTenant.Id;
-
-    #endregion Private Properties
-
-    public override async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken = default) => await base.CreateAsync(role, cancellationToken);
+    public override Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        role.TenantId ??= TenantId;
+        return base.CreateAsync(role, cancellationToken);
+    }
 
     protected override IdentityRoleClaim<string> CreateRoleClaim(TRole role, Claim claim) => new() { RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value };
 

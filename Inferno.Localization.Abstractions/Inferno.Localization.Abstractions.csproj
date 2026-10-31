@@ -4,8 +4,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dependo" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.6" />
+    <PackageReference Include="Dependo" Version="1.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.14" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />

@@ -1,13 +1,13 @@
 ﻿using Dependo;
 using Extenso.Collections;
 using Extenso.Data.Entity;
+using Flatmate;
 using Inferno.Tenants;
 using Inferno.Tenants.Entities;
 using Inferno.Tenants.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using SaasKit.Multitenancy;
 
 namespace Inferno.Web.Tenants;
 
@@ -33,7 +33,7 @@ public class InfernoTenantResolver : MemoryCacheTenantResolver<Tenant>
 
     protected override IEnumerable<string> GetTenantIdentifiers(TenantContext<Tenant> context) => context.Tenant.Hosts.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-    protected override Task<TenantContext<Tenant>> ResolveAsync(HttpContext context)
+    protected override Task<TenantContext<Tenant>> ResolveFromStoreAsync(HttpContext context, CancellationToken cancellationToken)
     {
         TenantContext<Tenant> tenantContext = null;
 

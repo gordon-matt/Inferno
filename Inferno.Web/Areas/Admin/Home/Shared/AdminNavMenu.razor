@@ -1,8 +1,14 @@
 ﻿@using Inferno.Web.Navigation
+@implements IDisposable
 
 @inject INavigationManager navigationManager
+@inject Microsoft.AspNetCore.Components.NavigationManager router
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
+@if (openDropdown is not null)
+{
+    <div class="position-fixed top-0 start-0 bottom-0 end-0" style="z-index:1020" @onclick="CloseDropdown"></div>
+}
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-4" style="z-index:1031" @onclick="CloseDropdown">
     <a class="navbar-brand" href="/admin">
         <img src="img/logo.png" alt="Inferno CMS" width="100" />
     </a>
@@ -15,8 +21,8 @@
             {
                 if (menuItem.Items?.Any() == true)
                 {
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" @onclick="() => ToggleDropdown(menuItem)" @onclick:preventDefault>
+                    <li class="nav-item dropdown" @onclick:stopPropagation="true">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" @onclick="() => ToggleDropdown(menuItem)" @onclick:preventDefault aria-expanded="@(openDropdown == menuItem)">
                             @if (!string.IsNullOrEmpty(menuItem.IconName))
                             {
                                 <i class="@menuItem.IconName" aria-hidden="true"></i>
@@ -27,13 +33,26 @@
                             @foreach (var item in menuItem.Items)
                             {
                                 <li>
-                                    <NavLink class="dropdown-item" href="@item.Href">
-                                        @if (!string.IsNullOrEmpty(item.IconName))
-                                        {
-                                            <i class="@item.IconName" aria-hidden="true"></i>
-                                        }
-                                        @item.Text
-                                    </NavLink>
+                                    @if (item.IsExternal)
+                                    {
+                                        <a class="dropdown-item" href="@item.Href" target="_blank" rel="noopener noreferrer" @onclick="CloseMenus">
+                                            @if (!string.IsNullOrEmpty(item.IconName))
+                                            {
+                                                <i class="@item.IconName" aria-hidden="true"></i>
+                                            }
+                                            @item.Text
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <NavLink class="dropdown-item" href="@item.Href" @onclick="CloseMenus">
+                                            @if (!string.IsNullOrEmpty(item.IconName))
+                                            {
+                                                <i class="@item.IconName" aria-hidden="true"></i>
+                                            }
+                                            @item.Text
+                                        </NavLink>
+                                    }
                                 </li>
                             }
                         </ul>
@@ -42,13 +61,26 @@
                 else
                 {
                     <li class="nav-item">
-                        <NavLink class="nav-link" href="@menuItem.Href">
-                            @if (!string.IsNullOrEmpty(menuItem.IconName))
-                            {
-                                <i class="@menuItem.IconName" aria-hidden="true"></i>
-                            }
-                            @menuItem.Text
-                        </NavLink>
+                        @if (menuItem.IsExternal)
+                        {
+                            <a class="nav-link" href="@menuItem.Href" target="_blank" rel="noopener noreferrer" @onclick="CloseMenus">
+                                @if (!string.IsNullOrEmpty(menuItem.IconName))
+                                {
+                                    <i class="@menuItem.IconName" aria-hidden="true"></i>
+                                }
+                                @menuItem.Text
+                            </a>
+                        }
+                        else
+                        {
+                            <NavLink class="nav-link" href="@menuItem.Href" @onclick="CloseMenus">
+                                @if (!string.IsNullOrEmpty(menuItem.IconName))
+                                {
+                                    <i class="@menuItem.IconName" aria-hidden="true"></i>
+                                }
+                                @menuItem.Text
+                            </NavLink>
+                        }
                     </li>
                 }
             }
@@ -68,9 +100,27 @@
     {
         base.OnInitialized();
         menuItems = navigationManager.BuildMenu(InfernoWebConstants.Areas.Admin);
+        router.LocationChanged += OnLocationChanged;
     }
 
     private void ToggleMenu() => menuOpen = !menuOpen;
 
     private void ToggleDropdown(MenuItem item) => openDropdown = openDropdown == item ? null : item;
+
+    private void CloseDropdown() => openDropdown = null;
+
+    private void CloseMenus()
+    {
+        openDropdown = null;
+        menuOpen = false;
+    }
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs e) =>
+        InvokeAsync(() =>
+        {
+            CloseMenus();
+            StateHasChanged();
+        });
+
+    public void Dispose() => router.LocationChanged -= OnLocationChanged;
 }

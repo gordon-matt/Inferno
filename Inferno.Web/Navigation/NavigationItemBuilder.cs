@@ -41,6 +41,12 @@ public class NavigationItemBuilder : NavigationBuilder
         return this;
     }
 
+    public NavigationItemBuilder IsExternal(bool isExternal = true)
+    {
+        item.IsExternal = isExternal;
+        return this;
+    }
+
     public override IEnumerable<MenuItem> Build()
     {
         item.Items = base.Build();

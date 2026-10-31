@@ -6,12 +6,12 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dependo.Autofac" Version="1.2.1" />
-    <PackageReference Include="Extenso.AspNetCore.OData" Version="10.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
+    <PackageReference Include="Dependo.Autofac" Version="1.2.2" />
+    <PackageReference Include="Extenso.AspNetCore.OData" Version="10.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
     <PackageReference Include="OData.Swagger" Version="1.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.3.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Caching\Inferno.Caching.csproj" />

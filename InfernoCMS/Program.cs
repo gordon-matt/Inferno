@@ -1,8 +1,11 @@
 ﻿using Dependo.Autofac;
+using Inferno.Identity;
 using Inferno.Plugins;
 using Inferno.Tenants.Entities;
 using Inferno.Web.ContentManagement.Security;
+using IdentityNexus;
 using Inferno.Web.Infrastructure;
+using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
@@ -43,6 +46,16 @@ services.ConfigureApplicationCookie(options =>
 
 services.AddInfernoIdentity().AddDefaultUI();
 
+services.AddIdentityNexus<ApplicationUser, ApplicationRole>(options =>
+{
+    options.BasePath = "/admin/membership";
+    options.HomePath = "/admin";
+    options.LogoutPath = "/Identity/Account/LogOut";
+});
+
+services.ScopeUsersToTenant<ApplicationUser, int?>(user => user.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
+services.ScopeRolesToTenant<ApplicationRole, int?>(role => role.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
+
 services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddInfernoJwtBearer(configuration);
@@ -73,7 +86,8 @@ services.AddRouting(routeOptions =>
     routeOptions.LowercaseUrls = true;
 });
 
-services.AddMultitenancy<Tenant, InfernoTenantResolver>();
+services.AddFlatmate<Tenant, InfernoTenantResolver>();
+services.AddFlatmateCircuit<Tenant>();
 
 services.AddInfernoLocalization();
 
@@ -144,10 +158,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMultitenancy<Tenant>();
+app.UseFlatmate<Tenant>();
 
 app.UseInferno();
 
+app.MapIdentityNexus().RequireAuthorization(InfernoWebPolicies.MembershipManage);
 app.MapControllers();
 app.MapAreaControllerRoute("admin_route", "Admin", "Admin/{controller}/{action}/{id?}");
 app.UsePickstack();

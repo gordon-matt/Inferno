@@ -22,5 +22,7 @@ public class MenuItem
 
     public string IconName { get; set; }
 
+    public bool IsExternal { get; set; }
+
     public override string ToString() => Text;
 }

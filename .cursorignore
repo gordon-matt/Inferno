@@ -142,3 +142,5 @@ secrets.json
 *.env
 *.secret
 appsettings.*.json
+**/wwwroot/lib/
+uploads/

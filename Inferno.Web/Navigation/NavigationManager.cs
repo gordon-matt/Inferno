@@ -89,7 +89,8 @@ public class NavigationManager : INavigationManager
                 CssClass = item.CssClass,
                 IconName = item.IconName,
                 Url = item.Url,
-                Href = item.Href
+                Href = item.Href,
+                IsExternal = item.IsExternal
             };
         }
     }
@@ -128,6 +129,7 @@ public class NavigationManager : INavigationManager
             IconName = items.Select(x => x.IconName).FirstOrDefault(x => !string.IsNullOrEmpty(x)),
             Url = items.Select(x => x.Url).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)),
             Href = items.Select(x => x.Href).FirstOrDefault(x => !string.IsNullOrWhiteSpace(x)),
+            IsExternal = items.Any(x => x.IsExternal),
             Items = Merge(items.Select(x => x.Items)).ToArray(),
             Position = SelectBestPositionValue(items.Select(x => x.Position))
         };
