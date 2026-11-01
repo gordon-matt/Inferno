@@ -4,7 +4,6 @@ using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
 using Inferno.Localization;
 using Inferno.Localization.Entities;
-using Inferno.Logging.Entities;
 using Inferno.Plugins;
 using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
@@ -13,7 +12,6 @@ using Inferno.Web.Areas.Admin.Configuration.Services;
 using Inferno.Web.Areas.Admin.Configuration.Themes.Models;
 using Inferno.Web.Areas.Admin.Configuration.Themes.Services;
 using Inferno.Web.Areas.Admin.Localization.Services;
-using Inferno.Web.Areas.Admin.Log.Services;
 using Inferno.Web.Areas.Admin.Plugins.Models;
 using Inferno.Web.Areas.Admin.Plugins.Services;
 using Inferno.Web.Areas.Admin.ScheduledTasks.Services;
@@ -118,8 +116,6 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.Register<IRadzenODataService<LocalizableString, Guid>, LocalizableStringODataService>(ServiceLifetime.Singleton);
         builder.RegisterSelf<LocalizableStringODataService>(ServiceLifetime.Singleton);
 
-        builder.Register<IRadzenODataService<LogEntry, int>, LogODataService>(ServiceLifetime.Singleton);
-        builder.RegisterSelf<LogODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<ScheduledTask, int>, ScheduledTaskODataService>(ServiceLifetime.Singleton);
         builder.RegisterSelf<ScheduledTaskODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<EdmPluginDescriptor, string>, PluginODataService>(ServiceLifetime.Singleton);

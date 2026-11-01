@@ -38,7 +38,6 @@ public class AdminNavigationProvider : INavigationProvider
     private void BuildMembershipMenu(NavigationItemBuilder builder) => builder
         .Url("/admin/membership")
         .Icon("fas fa-users")
-        .IsExternal()
         .Permission(InfernoWebPolicies.MembershipManage);
 
     private void BuildConfigurationMenu(NavigationItemBuilder builder)
@@ -88,7 +87,7 @@ public class AdminNavigationProvider : INavigationProvider
 
         // Log
         builder.Add(T[InfernoWebLocalizableStrings.Log.Title], "5", item => item
-            .Url("/admin/log/index")
+            .Url("/logvue")
             .Icon("fas fa-exclamation-triangle")
             .Permission(InfernoWebPolicies.LogRead));
 

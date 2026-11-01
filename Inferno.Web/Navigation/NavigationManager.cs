@@ -32,7 +32,10 @@ public class NavigationManager : INavigationManager
     {
         var httpContext = httpContextAccessor.HttpContext;
         var sources = GetSources(menuName);
-        string url = UriHelper.BuildAbsolute(httpContext.Request.Scheme, httpContext.Request.Host);
+        // A Blazor circuit has no request. The links still resolve; nothing is marked selected.
+        string url = httpContext is null
+            ? string.Empty
+            : UriHelper.BuildAbsolute(httpContext.Request.Scheme, httpContext.Request.Host);
         return FinishMenu(Reduce(Merge(sources), workContext).ToArray(), url);
     }
 

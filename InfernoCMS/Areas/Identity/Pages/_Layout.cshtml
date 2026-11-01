@@ -1,0 +1,51 @@
+@using Microsoft.Extensions.Options
+@using Heroicsoft.NetForge.Components.Theming
+@inject IOptions<ForgeUiOptions> UiOptions
+@{
+    const string siteName = "Inferno CMS";
+    var ui = UiOptions.Value;
+    string? accentCss = ForgeAccentCss.Build(ui);
+    string defaultScheme = ui.DefaultColorScheme.Trim().ToLowerInvariant();
+}
+<!DOCTYPE html>
+<html lang="en" data-theme="@(defaultScheme == "dark" ? "dark" : "light")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @siteName</title>
+    <link rel="icon" type="image/png" href="~/favicon.png" />
+    <script src="~/_content/Heroicsoft.NetForge.Components/js/theme-init.js"
+            data-theme-key="@ui.ThemeStorageKey"
+            data-default-theme="@defaultScheme"></script>
+    <link rel="stylesheet" href="~/_content/Heroicsoft.NetForge.Components/css/nf.css" />
+    @if (accentCss is not null)
+    {
+        <style>@Html.Raw(accentCss)</style>
+    }
+    <style>
+        .nf-auth-card h3 { margin: 0.15rem 0 0.55rem; font-size: 1.05rem; }
+        .nf-auth-card p { margin: 0.35rem 0 0.75rem; }
+        .nf-auth-links { display: flex; flex-wrap: wrap; gap: 0.35rem 0.85rem; margin: 0.2rem 0 1rem; font-size: 0.85rem; }
+        .nf-auth-links a.active { font-weight: 650; }
+        .nf-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 1rem; }
+        .nf-callout { padding: 0.7rem 0.8rem; border-radius: 8px; background: var(--nf-warning-soft); margin: 0.4rem 0 0.9rem; font-size: 0.9rem; }
+        .nf-callout p { margin: 0.25rem 0; }
+        .nf-callout-danger { background: var(--nf-danger-soft); }
+        .nf-codes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 0.8rem; margin: 0.4rem 0 1rem; font-family: ui-monospace, monospace; }
+    </style>
+</head>
+<body>
+    <div class="nf-standalone">
+        <div class="nf-standalone-body">
+            <div class="nf-auth-card">
+                <a class="nf-brand-link" href="/admin">
+                    <img class="nf-brand-logo" src="~/img/logo.png" alt="@siteName" />
+                </a>
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

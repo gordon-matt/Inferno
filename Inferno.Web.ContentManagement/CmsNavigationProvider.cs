@@ -17,7 +17,11 @@ public class CmsNavigationProvider : INavigationProvider
 
     public string MenuName => InfernoWebConstants.Areas.Admin;
 
-    public void GetNavigation(NavigationBuilder builder) => builder.Add(T[InfernoCmsLocalizableStrings.Navigation.CMS].Value, "2", BuildCmsMenu);
+    public void GetNavigation(NavigationBuilder builder)
+    {
+        builder.Add(T[InfernoCmsLocalizableStrings.Navigation.CMS].Value, "2", BuildCmsMenu);
+        builder.Add(T[InfernoCmsLocalizableStrings.Messaging.Title].Value, "2", BuildMessagingMenu);
+    }
 
     #endregion INavigationProvider Members
 
@@ -81,6 +85,17 @@ public class CmsNavigationProvider : INavigationProvider
             .Icon("fas fa-users")
             .Permission(CmsConstants.Policies.NewsletterRead));
 
+        // XML Sitemap
+        builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item
+            .Url("/admin/sitemap/xml-sitemap")
+            .Icon("fas fa-map")
+            .Permission(CmsConstants.Policies.SitemapRead));
+    }
+
+    private void BuildMessagingMenu(NavigationItemBuilder builder)
+    {
+        builder.Icon("fas fa-envelope");
+
         builder.Add(T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates].Value, "5", item => item
             .Url("/admin/messaging/templates")
             .Icon("fas fa-envelope")
@@ -90,11 +105,5 @@ public class CmsNavigationProvider : INavigationProvider
             .Url("/admin/messaging/queued-emails")
             .Icon("fas fa-inbox")
             .Permission(CmsConstants.Policies.MessagingRead));
-
-        // XML Sitemap
-        builder.Add(T[InfernoCmsLocalizableStrings.Sitemap.XMLSitemap].Value, "5", item => item
-            .Url("/admin/sitemap/xml-sitemap")
-            .Icon("fas fa-map")
-            .Permission(CmsConstants.Policies.SitemapRead));
     }
 }

@@ -1,4 +1,4 @@
-﻿@page
+@page
 @using Microsoft.AspNetCore.Http.Features
 @model TwoFactorAuthenticationModel
 @{
@@ -16,56 +16,56 @@
         {
             if (Model.RecoveryCodesLeft == 0)
             {
-                <div class="alert alert-danger">
-                    <strong>You have no recovery codes left.</strong>
+                <div class="nf-callout nf-callout-danger">
+                    <p><strong>You have no recovery codes left.</strong></p>
                     <p>You must <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
                 </div>
             }
             else if (Model.RecoveryCodesLeft == 1)
             {
-                <div class="alert alert-danger">
-                    <strong>You have 1 recovery code left.</strong>
+                <div class="nf-callout nf-callout-danger">
+                    <p><strong>You have 1 recovery code left.</strong></p>
                     <p>You can <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
                 </div>
             }
             else if (Model.RecoveryCodesLeft <= 3)
             {
-                <div class="alert alert-warning">
-                    <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
+                <div class="nf-callout">
+                    <p><strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong></p>
                     <p>You should <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
                 </div>
             }
 
-            if (Model.IsMachineRemembered)
-            {
-                <form method="post" style="display: inline-block">
-                    <button type="submit" class="btn btn-primary">Forget this browser</button>
-                </form>
-            }
-            <a asp-page="./Disable2fa" class="btn btn-primary">Disable 2FA</a>
-            <a asp-page="./GenerateRecoveryCodes" class="btn btn-primary">Reset recovery codes</a>
+            <div class="nf-actions">
+                @if (Model.IsMachineRemembered)
+                {
+                    <form method="post">
+                        <button type="submit" class="nf-button">Forget this browser</button>
+                    </form>
+                }
+                <a asp-page="./Disable2fa" class="nf-button nf-button-danger">Disable 2FA</a>
+                <a asp-page="./GenerateRecoveryCodes" class="nf-button">Reset recovery codes</a>
+            </div>
         }
 
-        <h4>Authenticator app</h4>
-        @if (!Model.HasAuthenticator)
-        {
-            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Add authenticator app</a>
-        }
-        else
-        {
-            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Set up authenticator app</a>
-            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-primary">Reset authenticator app</a>
-        }
+        <h3>Authenticator app</h3>
+        <div class="nf-actions">
+            @if (!Model.HasAuthenticator)
+            {
+                <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="nf-button nf-button-primary">Add authenticator app</a>
+            }
+            else
+            {
+                <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="nf-button nf-button-primary">Set up authenticator app</a>
+                <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="nf-button nf-button-danger">Reset authenticator app</a>
+            }
+        </div>
     }
     else
     {
-        <div class="alert alert-danger">
-            <strong>Privacy and cookie policy have not been accepted.</strong>
+        <div class="nf-callout nf-callout-danger">
+            <p><strong>Privacy and cookie policy have not been accepted.</strong></p>
             <p>You must accept the policy before you can enable two factor authentication.</p>
         </div>
     }
-}
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
 }

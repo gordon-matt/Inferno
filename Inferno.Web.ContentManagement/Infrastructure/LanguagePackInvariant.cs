@@ -158,6 +158,7 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoCmsLocalizableStrings.Newsletters.Subscribers, "Subscribers" },
         { InfernoCmsLocalizableStrings.Newsletters.SuccessfullySignedUp, "You have successfully signed up for newsletters." },
         { InfernoCmsLocalizableStrings.Newsletters.Title, "Newsletters" },
+        { InfernoCmsLocalizableStrings.Messaging.Title, "Messaging" },
         { InfernoCmsLocalizableStrings.Messaging.MessageTemplates, "Message Templates" },
         { InfernoCmsLocalizableStrings.Messaging.QueuedEmails, "Queued Emails" },
         { InfernoCmsLocalizableStrings.Pages.CannotDeleteOnlyVersion, "Cannot delete the only version of a page. Create a new version first." },

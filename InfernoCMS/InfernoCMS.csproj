@@ -17,6 +17,11 @@
     <PackageReference Include="EPPlus" Version="8.7.2" />
     <PackageReference Include="Extenso.AspNetCore.Mvc" Version="10.2.0" />
     <PackageReference Include="Extenso.AspNetCore.OData" Version="10.2.0" />
+    <PackageReference Include="Flatmate" Version="1.0.0" />
+    <ProjectReference Include="..\..\..\Libraries\Heroicsoft.NetForge\Heroicsoft.NetForge.Components\Heroicsoft.NetForge.Components.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\LogVue\LogVue\LogVue.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\LogVue\LogVue.Data.Sql\LogVue.Data.Sql.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\IdentityNexus\IdentityNexus\IdentityNexus.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
@@ -36,8 +41,6 @@
     <PackageReference Include="Pickstack.RichTextEditor.TinyMce7" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\IdentityNexus\IdentityNexus\IdentityNexus.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Flatmate\Flatmate\Flatmate.csproj" />
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Caching\Inferno.Caching.csproj" />
     <ProjectReference Include="..\Inferno.Data.Abstractions\Inferno.Data.Abstractions.csproj" />

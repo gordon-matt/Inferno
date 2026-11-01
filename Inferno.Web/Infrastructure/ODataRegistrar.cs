@@ -1,6 +1,5 @@
 ﻿using Extenso.AspNetCore.OData;
 using Inferno.Localization.Entities;
-using Inferno.Logging.Entities;
 using Inferno.Security.Membership;
 using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
@@ -30,9 +29,6 @@ public class ODataRegistrar : IODataRegistrar
         builder.EntitySet<Language>(InfernoWebConstants.ODataRoutes.EntitySetNames.Language);
         builder.EntitySet<LocalizableString>(InfernoWebConstants.ODataRoutes.EntitySetNames.LocalizableString);
 
-        // Log
-        builder.EntitySet<LogEntry>(InfernoWebConstants.ODataRoutes.EntitySetNames.Log);
-
         //// Membership
         //builder.EntitySet<InfernoPermission>("PermissionApi");
         builder.EntitySet<InfernoRole>("RoleApi");
@@ -50,7 +46,6 @@ public class ODataRegistrar : IODataRegistrar
 
         RegisterLanguageODataActions(builder);
         RegisterLocalizableStringODataActions(builder);
-        RegisterLogODataActions(builder);
         RegisterMembershipODataActions(builder);
         RegisterPluginODataActions(builder);
         RegisterScheduledTaskODataActions(builder);
@@ -60,12 +55,6 @@ public class ODataRegistrar : IODataRegistrar
     }
 
     #endregion IODataRegistrar Members
-
-    private static void RegisterLogODataActions(ODataModelBuilder builder)
-    {
-        var clearAction = builder.EntityType<LogEntry>().Collection.Action("Clear");
-        clearAction.Returns<IActionResult>();
-    }
 
     private static void RegisterMembershipODataActions(ODataModelBuilder builder)
     {

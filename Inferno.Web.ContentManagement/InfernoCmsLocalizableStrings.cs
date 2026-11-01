@@ -269,6 +269,7 @@ public static class InfernoCmsLocalizableStrings
 
     public static class Messaging
     {
+        public const string Title = "Inferno.Web.ContentManagement/Messaging.Title";
         public const string MessageTemplates = "Inferno.Web.ContentManagement/Messaging.MessageTemplates";
         public const string QueuedEmails = "Inferno.Web.ContentManagement/Messaging.QueuedEmails";
     }

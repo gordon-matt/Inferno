@@ -1,17 +1,12 @@
 @inherits LayoutComponentBase
 
-<PageTitle>InfernoCMS</PageTitle>
+<PageTitle>Inferno CMS</PageTitle>
 
 <RadzenDialog />
 <RadzenNotification />
 <RadzenContextMenu />
 <RadzenTooltip />
 
-<div class="inferno-shell d-flex flex-column min-vh-100">
-    <header class="inferno-shell-header fixed-top">
-        <AdminNavMenu />
-    </header>
-    <main class="inferno-shell-content flex-grow-1 px-4" style="margin-top:70px">
-        @Body
-    </main>
-</div>
+<ShellLayout>
+    @Body
+</ShellLayout>

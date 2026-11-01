@@ -1,11 +1,20 @@
-﻿using Dependo.Autofac;
+﻿using Dependo;
+using Dependo.Autofac;
 using Flatmate;
 using Inferno.Identity;
 using Inferno.Plugins;
 using Inferno.Tenants.Entities;
 using Inferno.Tenants;
 using Inferno.Web.ContentManagement.Security;
+using Heroicsoft.NetForge.Abstractions.Auth;
+using Heroicsoft.NetForge.Abstractions.Navigation;
+using Heroicsoft.NetForge.Components;
+using Heroicsoft.NetForge.Components.Layout;
+using Heroicsoft.NetForge.Components.Navigation;
 using IdentityNexus;
+using Inferno.Web.Areas.Admin;
+using LogVue;
+using LogVue.Data.Sql;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Security;
 using Inferno.Web.Tenants;
@@ -17,6 +26,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using OfficeOpenXml;
@@ -56,12 +66,30 @@ else
 
 services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/account/login";
-    options.LogoutPath = "/account/log-off";
-    options.AccessDeniedPath = "/account/access-denied";
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 });
 
 services.AddInfernoIdentity().AddDefaultUI();
+services.AddSingleton<IAuthProviderService>(new AuthProviderService(AuthProvider.Identity, null));
+services.AddNetForgeComponents(ui => ui.ThemeStorageKey = "inferno.theme");
+services.AddLogVue(options => options.Title = "Inferno CMS");
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    services.AddLogVueSqlServer(connectionString);
+}
+services.Configure<ForgeShellOptions>(shell =>
+{
+    shell.Brand = "Inferno CMS";
+    shell.BrandHref = "/admin";
+    shell.LogoUrl = "img/logo.png";
+    shell.NavigationPlacement = ForgeNavigationPlacement.Topbar;
+    shell.UseSharedMenu = true;
+    shell.SharedMenuName = AdminMenuCatalog.MenuName;
+    shell.ShowVersion = false;
+    shell.UserMenuItems.Add(new ForgeNavItem { Title = "View site", Href = "/", Icon = "home" });
+});
 
 services.AddIdentityNexus<ApplicationUser, ApplicationRole>(options =>
 {
@@ -69,6 +97,9 @@ services.AddIdentityNexus<ApplicationUser, ApplicationRole>(options =>
     options.HomePath = "/admin";
     options.LogoutPath = "/Identity/Account/LogOut";
 });
+
+// After every AddNetForgeComponents call, which registers the static BuildMenu catalog.
+services.Replace(ServiceDescriptor.Scoped<INetForgeMenuCatalog, AdminMenuCatalog>());
 
 services.ScopeUsersToTenant<ApplicationUser, int?>(user => user.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
 services.ScopeRolesToTenant<ApplicationRole, int?>(role => role.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
@@ -115,7 +146,8 @@ services
 
 services.AddRazorPages().AddNewtonsoftJson();
 
-services.AddServerSideBlazor();
+services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
 services.AddResponseCompression(options =>
 {
@@ -156,6 +188,7 @@ if (!databaseInstalled)
             || path.StartsWithSegments("/img")
             || path.StartsWithSegments("/favicon.png")
             || path.StartsWithSegments("/_framework")
+            || path.StartsWithSegments("/_blazor")
             || path.StartsWithSegments("/_content"))
         {
             await next();
@@ -200,6 +233,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAntiforgery();
 
 app.UseFlatmate<Tenant>();
 
@@ -221,11 +255,23 @@ app.Use(async (context, next) =>
 app.UseInferno();
 
 app.MapIdentityNexus().RequireAuthorization(InfernoWebPolicies.MembershipManage);
+app.MapLogVue().RequireAuthorization(InfernoWebPolicies.LogRead);
 app.MapControllers();
 app.MapAreaControllerRoute("admin_route", "Admin", "Admin/{controller}/{action}/{id?}");
+app.MapRazorPages();
 app.UsePickstack();
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+// Endpoint routing only serves Blazor pages from assemblies it is told about.
+// The interactive router discovers the same marker assemblies while navigating.
+var routerAssemblies = DependoResolver.Instance
+    .ResolveAll<IRouterAssemblyMarker>()
+    .Select(marker => marker.GetType().Assembly)
+    .Where(assembly => assembly != typeof(InfernoCMS.App).Assembly)
+    .Distinct()
+    .ToArray();
+
+app.MapRazorComponents<InfernoCMS.App>()
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(routerAssemblies);
 
 #endregion Pipeline
 

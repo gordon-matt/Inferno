@@ -1,34 +1,92 @@
-﻿@using System.Reflection
-@using Dependo;
-@using Inferno.Web.Infrastructure
+﻿@using Heroicsoft.NetForge.Components.Theming
+@using Microsoft.Extensions.Options
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@inject IOptions<ForgeUiOptions> UiOptions
 
-<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="assemblies" OnNavigateAsync="OnNavigateAsync">
-        <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-        </Found>
-        <NotFound>
-            <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(ErrorLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-</CascadingAuthenticationState>
+<!DOCTYPE html>
+<html lang="@LanguageCode">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+
+    @if (IsRightToLeft)
+    {
+        <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    }
+    else
+    {
+        <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    }
+
+    <script src="_content/Heroicsoft.NetForge.Components/js/theme-init.js"
+            data-theme-key="@UiOptions.Value.ThemeStorageKey"
+            data-default-theme="light"></script>
+    <link rel="stylesheet" href="_content/Heroicsoft.NetForge.Components/css/nf.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="InfernoCMS.styles.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/v4-shims.min.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/standard-base.css" />
+    <HeadOutlet @rendermode="InteractiveServer" />
+</head>
+<body dir="@(IsRightToLeft ? "rtl" : null)">
+    <Routes @rendermode="InteractiveServer" />
+
+    <script src="lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="_content/Heroicsoft.NetForge.Components/js/nf.js"></script>
+    <script src="_framework/blazor.web.js"></script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+    <script>
+        window.inferno = window.inferno || {};
+        window.inferno.setCulture = function (culture) {
+            document.cookie = "CurrentCulture=" + encodeURIComponent(culture || "") + ";path=/;samesite=lax";
+            location.reload();
+        };
+        window.inferno.submitFormAjax = function (formId) {
+            var form = document.getElementById(formId);
+            if (!form || form.dataset.ajaxBound === "true") {
+                return;
+            }
+            form.dataset.ajaxBound = "true";
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+                fetch(form.action, {
+                    method: "POST",
+                    body: new FormData(form),
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                }).then(function (response) { return response.json(); })
+                    .then(function (result) {
+                        var title = document.getElementById(formId + "-title");
+                        var message = document.getElementById(formId + "-message");
+                        if (title) {
+                            title.textContent = result.success ? "Success" : "Error";
+                        }
+                        if (message) {
+                            message.textContent = result.message || "";
+                        }
+                        var modalElement = document.getElementById(formId + "-modal");
+                        if (modalElement && window.bootstrap) {
+                            bootstrap.Modal.getOrCreateInstance(modalElement).show();
+                        }
+                        if (result.success && result.redirectUrl) {
+                            window.setTimeout(function () { window.location = result.redirectUrl; }, 1500);
+                        }
+                    });
+            });
+        };
+    </script>
+</body>
+</html>
 
 @code {
-    private static List<Assembly> assemblies = new();
+    private string LanguageCode =>
+        string.IsNullOrWhiteSpace(WorkContext.CurrentCultureCode)
+            ? "en"
+            : WorkContext.CurrentCultureCode.LeftOf('-');
 
-    private async Task OnNavigateAsync(NavigationContext navigationContext)
-    {
-        if (assemblies.IsNullOrEmpty())
-        {
-            assemblies = DependoResolver.Instance.ResolveAll<IRouterAssemblyMarker>()
-                .Select(x => x.GetType().Assembly)
-                .ToList();
-        }
-
-        await Task.Yield();
-    }
+    private bool IsRightToLeft =>
+        System.Globalization.CultureInfo.CurrentCulture.TextInfo.IsRightToLeft;
 }

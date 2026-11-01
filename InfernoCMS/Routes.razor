@@ -1,0 +1,34 @@
+@using System.Reflection
+@using Dependo
+@using Inferno.Web.Infrastructure
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="assemblies" OnNavigateAsync="OnNavigateAsync">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(ErrorLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@code {
+    private static List<Assembly> assemblies = [];
+
+    private async Task OnNavigateAsync(NavigationContext navigationContext)
+    {
+        if (assemblies.IsNullOrEmpty())
+        {
+            assemblies = DependoResolver.Instance.ResolveAll<IRouterAssemblyMarker>()
+                .Select(x => x.GetType().Assembly)
+                .ToList();
+        }
+
+        await Task.Yield();
+    }
+}

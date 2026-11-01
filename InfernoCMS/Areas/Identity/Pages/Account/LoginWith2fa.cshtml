@@ -5,33 +5,25 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-<hr />
-<p>Your login is protected with an authenticator app. Enter your authenticator code below.</p>
-<div class="row">
-    <div class="col-md-4">
-        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
-            <input asp-for="RememberMe" type="hidden" />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.TwoFactorCode" class="form-control" autocomplete="off" />
-                <label asp-for="Input.TwoFactorCode" class="form-label"></label>
-                <span asp-validation-for="Input.TwoFactorCode" class="text-danger"></span>
-            </div>
-            <div class="checkbox mb-3">
-                <label asp-for="Input.RememberMachine" class="form-label">
-                    <input asp-for="Input.RememberMachine" />
-                    @Html.DisplayNameFor(m => m.Input.RememberMachine)
-                </label>
-            </div>
-            <div>
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-            </div>
-        </form>
+<p class="nf-hint">Enter the code from your authenticator app.</p>
+
+<form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+    <input asp-for="RememberMe" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="nf-validation" role="alert"></div>
+    <div class="nf-field">
+        <label asp-for="Input.TwoFactorCode"></label>
+        <input asp-for="Input.TwoFactorCode" class="nf-input" autocomplete="one-time-code" autofocus />
+        <span asp-validation-for="Input.TwoFactorCode" class="nf-validation"></span>
     </div>
-</div>
-<p>
-    Don't have access to your authenticator device? You can
-    <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
+    <label class="nf-check">
+        <input asp-for="Input.RememberMachine" />
+        <span>@Html.DisplayNameFor(m => m.Input.RememberMachine)</span>
+    </label>
+    <button type="submit" class="nf-button nf-button-primary nf-button-block">Sign in</button>
+</form>
+<p class="nf-hint">
+    No authenticator device?
+    <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">Use a recovery code</a>.
 </p>
 
 @section Scripts {
