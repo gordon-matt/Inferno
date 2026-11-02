@@ -55,17 +55,16 @@ builder.Host.UseServiceProviderFactory(new DependoAutofacServiceProviderFactory(
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+// Installed means the installation page has saved a connection. Until then there is no database.
 var installedSettings = Inferno.Web.Infrastructure.DataSettingsManager.LoadSettings();
-string configuredConnection = configuration.GetConnectionString("DefaultConnection");
-bool databaseInstalled = !string.IsNullOrWhiteSpace(installedSettings.ConnectionString)
-    || !string.IsNullOrWhiteSpace(configuredConnection);
-string connectionString = !string.IsNullOrWhiteSpace(installedSettings.ConnectionString)
-    ? installedSettings.ConnectionString
-    : configuredConnection;
+bool databaseInstalled = !string.IsNullOrWhiteSpace(installedSettings.ConnectionString);
+string connectionString = databaseInstalled ? installedSettings.ConnectionString : null;
 
-if (databaseInstalled)
+if (databaseInstalled || EF.IsDesignTime)
 {
-    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+    // The migration tools need a SQL Server model even before installation has saved a connection.
+    services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+        connectionString ?? "Server=.;Database=Inferno;Trusted_Connection=True;TrustServerCertificate=True"));
 }
 else
 {
@@ -85,6 +84,7 @@ services.AddInfernoIdentity().AddDefaultUI();
 services.AddSingleton<IAuthProviderService>(new AuthProviderService(AuthProvider.Identity, null));
 services.AddNetForgeComponents(ui => ui.ThemeStorageKey = "inferno.theme");
 services.AddLogVue(options => options.Title = "Inferno CMS");
+// The connection string comes from installation. Until then LogVue starts without a store.
 if (!string.IsNullOrWhiteSpace(connectionString))
 {
     services.AddLogVueSqlServer(connectionString);
@@ -204,7 +204,7 @@ services.AddPageKrafterFilePicker<PickstackFilePicker>();
 
 var app = builder.Build();
 
-if (databaseInstalled)
+if (databaseInstalled && !EF.IsDesignTime)
 {
     // Bring the database up to date on every start, so a new release never meets an old schema.
     // Installation applies the same migrations to a brand new database.

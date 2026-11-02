@@ -10,12 +10,10 @@ namespace InfernoCMS.Controllers;
 public class InstallationController : Controller
 {
     private readonly IWebHelper webHelper;
-    private readonly IConfiguration configuration;
 
-    public InstallationController(IWebHelper webHelper, IConfiguration configuration)
+    public InstallationController(IWebHelper webHelper)
     {
         this.webHelper = webHelper;
-        this.configuration = configuration;
     }
 
     [HttpGet("/installation")]
@@ -107,7 +105,6 @@ public class InstallationController : Controller
     private bool IsInstalled()
     {
         var settings = DataSettingsManager.LoadSettings();
-        return !string.IsNullOrWhiteSpace(settings.ConnectionString)
-            || !string.IsNullOrWhiteSpace(configuration.GetConnectionString("DefaultConnection"));
+        return !string.IsNullOrWhiteSpace(settings.ConnectionString);
     }
 }

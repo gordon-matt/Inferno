@@ -22,6 +22,25 @@
     <Project Path="Inferno/Inferno.csproj" />
   </Folder>
   <Folder Name="/Tests/" />
+  <Folder Name="/_Other/">
+    <Project Path="../../Libraries/Heroicsoft.NetForge/Heroicsoft.NetForge.Components/Heroicsoft.NetForge.Components.csproj" />
+    <Project Path="../../Libraries/IdentityNexus/IdentityNexus/IdentityNexus.csproj" />
+    <Project Path="../../Libraries/Localize.NET/Localize.Components/Localize.Components.csproj" />
+    <Project Path="../../Libraries/Localize.NET/Localize.Core/Localize.Core.csproj" />
+    <Project Path="../../Libraries/Localize.NET/Localize.Data.Sql/Localize.Data.Sql.csproj" />
+    <Project Path="../../Libraries/Localize.NET/Localize.Data/Localize.Data.csproj" />
+    <Project Path="../../Libraries/Localize.NET/Localize.Services/Localize.Services.csproj" />
+    <Project Path="../../Libraries/LogVue/LogVue.Data.Sql/LogVue.Data.Sql.csproj" />
+    <Project Path="../../Libraries/LogVue/LogVue.Data/LogVue.Data.csproj" />
+    <Project Path="../../Libraries/LogVue/LogVue.Services/LogVue.Services.csproj" />
+    <Project Path="../../Libraries/LogVue/LogVue/LogVue.csproj" />
+    <Project Path="../../Libraries/PageKrafter/PageKrafter.Components/PageKrafter.Components.csproj" />
+    <Project Path="../../Libraries/PageKrafter/PageKrafter.Core/PageKrafter.Core.csproj" />
+    <Project Path="../../Libraries/Pluginz/Pluginz.Components/Pluginz.Components.csproj" />
+    <Project Path="../../Libraries/Pluginz/Pluginz.Core/Pluginz.Core.csproj" />
+    <Project Path="../../Libraries/Pluginz/Pluginz.Services/Pluginz.Services.csproj" />
+    <Project Path="../../Libraries/Pluginz/Pluginz.Web/Pluginz.Web.csproj" />
+  </Folder>
   <Project Path="InfernoCMS.Api/InfernoCMS.Api.csproj" />
   <Project Path="InfernoCMS.Data/InfernoCMS.Data.csproj" />
   <Project Path="InfernoCMS.Identity/InfernoCMS.Identity.csproj" />

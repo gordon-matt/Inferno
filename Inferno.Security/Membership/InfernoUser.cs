@@ -12,5 +12,8 @@ public class InfernoUser : BaseEntity<string>
 
     public bool IsLockedOut { get; set; }
 
+    /// <summary>When true, the account can sign in without a confirmation email. The installation admin uses this.</summary>
+    public bool EmailConfirmed { get; set; }
+
     public override string ToString() => UserName;
 }

@@ -211,6 +211,7 @@ public abstract class IdentityMembershipService : IMembershipService
             TenantId = user.TenantId,
             UserName = userName,
             Email = user.Email,
+            EmailConfirmed = user.EmailConfirmed,
             LockoutEnabled = user.IsLockedOut
         };
 
@@ -220,6 +221,19 @@ public abstract class IdentityMembershipService : IMembershipService
         {
             string errorMessage = string.Join(Environment.NewLine, result.Errors.Select(x => x.Description));
             throw new InfernoException(errorMessage);
+        }
+
+        // The store stamps a missing tenant with the current one. A null tenant is the host
+        // account, so put that back after create.
+        if (user.TenantId == null && appUser.TenantId != null)
+        {
+            appUser.TenantId = null;
+            result = await userManager.UpdateAsync(appUser);
+            if (!result.Succeeded)
+            {
+                string errorMessage = string.Join(Environment.NewLine, result.Errors.Select(x => x.Description));
+                throw new InfernoException(errorMessage);
+            }
         }
     }
 
@@ -474,16 +488,29 @@ public abstract class IdentityMembershipService : IMembershipService
 
     public async Task InsertRoleAsync(InfernoRole role)
     {
-        var result = await roleManager.CreateAsync(new ApplicationRole
+        var entity = new ApplicationRole
         {
             TenantId = role.TenantId,
             Name = role.Name
-        });
+        };
+        var result = await roleManager.CreateAsync(entity);
 
         if (!result.Succeeded)
         {
             string errorMessage = string.Join(Environment.NewLine, result.Errors.Select(x => x.Description));
             throw new InfernoException(errorMessage);
+        }
+
+        // Same as users: null means a host role, and the store must not replace that with the current tenant.
+        if (role.TenantId == null && entity.TenantId != null)
+        {
+            entity.TenantId = null;
+            result = await roleManager.UpdateAsync(entity);
+            if (!result.Succeeded)
+            {
+                string errorMessage = string.Join(Environment.NewLine, result.Errors.Select(x => x.Description));
+                throw new InfernoException(errorMessage);
+            }
         }
     }
 
@@ -508,35 +535,31 @@ public abstract class IdentityMembershipService : IMembershipService
     public async Task<IEnumerable<InfernoUser>> GetUsersByRoleIdAsync(object roleId)
     {
         string rId = roleId.ToString();
-
-        // TODO: Include(x => x.Users) won't work. It should map to a junction table first (AspNetUserRoles) and then get the Users from that.
-        //      userManager.GetUsersInRoleAsync(role.Name) // <-- probably need a custom UserManager (to take TenantId into account) and use this to get the users
-        var role = await roleManager.Roles.Include(x => x.Users).FirstOrDefaultAsync(x => x.Id == rId);
-
-        var userIds = role.Users.Select(x => x.Id).ToList();
-        var users = await userManager.Users.Where(x => userIds.Contains(x.Id)).ToHashSetAsync();
-
-        return users.Select(x => new InfernoUser
-        {
-            Id = x.Id,
-            TenantId = x.TenantId,
-            UserName = x.UserName,
-            Email = x.Email,
-            IsLockedOut = x.LockoutEnabled
-        });
+        return await UsersInRoleAsync(context => context.Set<IdentityUserRole<string>>().Where(x => x.RoleId == rId));
     }
 
     public async Task<IEnumerable<InfernoUser>> GetUsersByRoleNameAsync(int? tenantId, string roleName)
     {
-        var role = tenantId.HasValue
-            ? await roleManager.Roles
-                .Include(x => x.Users)
-                .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.Name == roleName)
-            : await roleManager.Roles
-                .Include(x => x.Users)
-                .FirstOrDefaultAsync(x => x.TenantId == null && x.Name == roleName);
-        var userIds = role.Users.Select(x => x.Id).ToList();
-        var users = await userManager.Users.Where(x => userIds.Contains(x.Id)).ToHashSetAsync();
+        return await UsersInRoleAsync(context =>
+        {
+            var roles = context.Set<ApplicationRole>().Where(x => x.Name == roleName);
+            roles = tenantId.HasValue
+                ? roles.Where(x => x.TenantId == tenantId)
+                : roles.Where(x => x.TenantId == null);
+
+            return from role in roles
+                   join userRole in context.Set<IdentityUserRole<string>>() on role.Id equals userRole.RoleId
+                   select userRole;
+        });
+    }
+
+    private async Task<IEnumerable<InfernoUser>> UsersInRoleAsync(Func<DbContext, IQueryable<IdentityUserRole<string>>> userRoles)
+    {
+        using var context = contextFactory.GetContext();
+        var users = await (
+            from userRole in userRoles(context)
+            join user in context.Set<ApplicationUser>() on userRole.UserId equals user.Id
+            select user).ToListAsync();
 
         return users.Select(x => new InfernoUser
         {
@@ -735,6 +758,12 @@ public abstract class IdentityMembershipService : IMembershipService
     public async Task EnsureAdminRoleForTenantAsync(int? tenantId)
     {
         var administratorsRole = await GetRoleByNameAsync(tenantId, InfernoSecurityConstants.Roles.Administrators);
+        if (administratorsRole == null && tenantId != null)
+        {
+            // A host role (no tenant) is already visible to every tenant, and Identity rejects a second role of the same name.
+            administratorsRole = await GetRoleByNameAsync(null, InfernoSecurityConstants.Roles.Administrators);
+        }
+
         if (administratorsRole == null)
         {
             await InsertRoleAsync(new InfernoRole { TenantId = tenantId, Name = InfernoSecurityConstants.Roles.Administrators });

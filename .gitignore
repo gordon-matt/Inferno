@@ -287,3 +287,5 @@ InfernoCMS/keys
 
 !Inferno.Web/Areas/Admin/Log/
 !Inferno.Web/Areas/Admin/Log/Views/Log/
+
+InfernoSettings.xml

@@ -105,7 +105,8 @@ public class StartupTask : IStartupTask
                 {
                     TenantId = null,
                     UserName = dataSettings.AdminEmail,
-                    Email = dataSettings.AdminEmail
+                    Email = dataSettings.AdminEmail,
+                    EmailConfirmed = true
                 },
                 dataSettings.AdminPassword);
 
