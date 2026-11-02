@@ -301,7 +301,6 @@ public class PageVersionApiController : GenericTenantODataController<PageVersion
         current.CultureCode = versionToRestore.CultureCode;
         current.DateCreatedUtc = versionToRestore.DateCreatedUtc;
         current.DateModifiedUtc = versionToRestore.DateModifiedUtc;
-        current.Status = VersionStatus.Published;
         current.Title = versionToRestore.Title;
         current.Slug = versionToRestore.Slug;
         current.Fields = versionToRestore.Fields;

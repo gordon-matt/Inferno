@@ -8,31 +8,80 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Pages;
 public partial class Index
 {
     [Inject]
+    private IPageService PageService { get; set; }
+
+    [Inject]
     private IPageVersionService PageVersionService { get; set; }
 
     [Inject]
     private IPageAuthoringService Authoring { get; set; }
 
     [Inject]
+    private IWorkContext WorkContext { get; set; }
+
+    [Inject]
     private NavigationManager NavigationManager { get; set; }
 
-    /// <summary>The default-language version of each listed page, for the address and status columns.</summary>
+    [Inject]
+    private NotificationService NotificationService { get; set; }
+
+    [Inject]
+    private DialogService DialogService { get; set; }
+
+    private List<Page> pages = [];
+
+    /// <summary>The default-language version of each page, for the address and status columns.</summary>
     private Dictionary<Guid, PageVersion> currentVersions = [];
 
+    private Guid loadVersion = Guid.NewGuid();
     private bool showCreate;
     private bool creating;
     private string newName = string.Empty;
+    private Guid? newParentId;
+    private string newParentName;
     private string createError;
 
-    protected override async Task LoadGridAsync(LoadDataArgs args)
+    private string CreateHeading => newParentName is null
+        ? T[InfernoCmsLocalizableStrings.Pages.NewPage].Value
+        : T[InfernoCmsLocalizableStrings.Pages.NewSubPageUnder, newParentName].Value;
+
+    protected override void OnInitialized() => Load();
+
+    private void Load()
     {
-        await base.LoadGridAsync(args);
-        LoadCurrentVersions();
+        int tenantId = WorkContext.CurrentTenant.Id;
+
+        using (var connection = PageService.OpenConnection())
+        {
+            pages = connection.Query(page => page.TenantId == tenantId).ToList();
+        }
+
+        List<PageVersion> versions;
+        using (var connection = PageVersionService.OpenConnection())
+        {
+            versions = connection
+                .Query(version => version.TenantId == tenantId && version.CultureCode == null && version.Status != VersionStatus.Archived)
+                .ToList();
+        }
+
+        currentVersions = versions
+            .GroupBy(version => version.PageId)
+            .ToDictionary(
+                group => group.Key,
+                group => group
+                    .OrderByDescending(version => version.Status == VersionStatus.Published)
+                    .ThenByDescending(version => version.DateModifiedUtc)
+                    .First());
+
+        loadVersion = Guid.NewGuid();
     }
 
-    private void BeginCreate()
+    /// <summary>Starts a new page at the top level, or under <paramref name="parent"/>.</summary>
+    private void BeginCreate(Page parent)
     {
         newName = string.Empty;
+        newParentId = parent?.Id;
+        newParentName = parent?.Name;
         createError = null;
         showCreate = true;
     }
@@ -46,7 +95,7 @@ public partial class Index
 
         try
         {
-            var result = await Authoring.CreatePageAsync(newName);
+            var result = await Authoring.CreatePageAsync(newName, newParentId);
             if (!result.Succeeded)
             {
                 createError = T[result.ErrorKey].Value;
@@ -62,11 +111,9 @@ public partial class Index
         }
     }
 
-    private void EditPage(Guid pageId) => NavigationManager.NavigateTo($"/admin/pages/edit/{pageId}");
-
-    private async Task EditContentAsync(Guid pageId)
+    private async Task EditAsync(Page page)
     {
-        var result = await Authoring.EnsureFirstVersionAsync(pageId);
+        var result = await Authoring.EnsureFirstVersionAsync(page.Id);
         if (!result.Succeeded)
         {
             NotificationService.Notify(NotificationSeverity.Error, "Error", T[result.ErrorKey].Value);
@@ -76,33 +123,33 @@ public partial class Index
         NavigationManager.NavigateTo($"/admin/pages/design/{result.Version.Id}");
     }
 
-    private void LoadCurrentVersions()
+    private async Task DeleteAsync(Page page)
     {
-        var pageIds = (Records ?? []).Select(page => page.Id).ToList();
-        if (pageIds.Count == 0)
+        bool hasSubPages = pages.Any(candidate => candidate.ParentId == page.Id);
+        string question = hasSubPages
+            ? T[InfernoCmsLocalizableStrings.Pages.DeleteConfirmWithSubPages].Value
+            : T[InfernoCmsLocalizableStrings.Pages.DeleteConfirm].Value;
+
+        if (await DialogService.Confirm(question, page.Name) != true)
         {
-            currentVersions = [];
             return;
         }
 
-        List<PageVersion> versions;
-        using (var connection = PageVersionService.OpenConnection())
+        try
         {
-            versions = connection
-                .Query(version => pageIds.Contains(version.PageId) && version.CultureCode == null && version.Status != VersionStatus.Archived)
-                .ToList();
+            var result = await Authoring.DeletePageAsync(page.Id);
+            if (!result.Succeeded)
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Error", T[result.ErrorKey].Value);
+                return;
+            }
+
+            Load();
+            NotificationService.Notify(NotificationSeverity.Info, "Info", T[InfernoCmsLocalizableStrings.Pages.Deleted].Value);
         }
-
-        currentVersions = versions
-            .GroupBy(version => version.PageId)
-            .ToDictionary(
-                group => group.Key,
-                group => group
-                    .OrderByDescending(version => version.Status == VersionStatus.Published)
-                    .ThenByDescending(version => version.DateModifiedUtc)
-                    .First());
+        catch
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", T[InfernoCmsLocalizableStrings.Pages.ErrorSaveFailed].Value);
+        }
     }
-
-    private PageVersion CurrentVersionOf(Guid pageId) =>
-        currentVersions.GetValueOrDefault(pageId);
 }

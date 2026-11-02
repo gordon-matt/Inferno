@@ -1,6 +1,6 @@
 @page "/admin/pages/index"
-@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
-@inherits RadzenDataPage<Page, Guid>
+@attribute [Authorize(Policy = CmsConstants.Policies.PagesRead)]
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Components
 
 <h1>@T[InfernoCmsLocalizableStrings.Pages.ManagePages]</h1>
 <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.PagesIntro]</p>
@@ -8,7 +8,7 @@
 @if (showCreate)
 {
     <div class="card mb-3">
-        <div class="card-header">@T[InfernoCmsLocalizableStrings.Pages.NewPage]</div>
+        <div class="card-header">@CreateHeading</div>
         <div class="card-body">
             <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.NewPageIntro]</p>
             <div class="row g-3 align-items-end">
@@ -33,76 +33,12 @@
 else
 {
     <div class="mb-3">
-        <RadzenButton Click="BeginCreate" Icon="add" Text="@T[InfernoCmsLocalizableStrings.Pages.NewPage]" />
+        <RadzenButton Click="@(() => BeginCreate(null))" Icon="add" Text="@T[InfernoCmsLocalizableStrings.Pages.NewPage]" />
     </div>
 }
 
-<RadzenDataGrid @ref="DataGrid"
-                TItem="Page"
-                IsLoading="@IsLoading"
-                LoadData="@LoadGridAsync"
-                Data="Records"
-                Count="@RecordCount"
-                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                FilterMode="FilterMode.Advanced"
-                AllowSorting="true"
-                AllowFiltering="true"
-                AllowPaging="true"
-                PageSize="10"
-                ColumnWidth="200px">
-    <Columns>
-        <RadzenDataGridColumn TItem="Page" Property="Name" Title="@T[InfernoCmsLocalizableStrings.Pages.PageModel.Name]">
-            <Template Context="record">
-                <a href="@($"/admin/pages/edit/{record.Id}")" class="fw-semibold text-decoration-none" @onclick:preventDefault @onclick="@(() => EditPage(record.Id))">@record.Name</a>
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Page" Title="@T[InfernoCmsLocalizableStrings.Pages.Address]" Filterable="false" Sortable="false">
-            <Template Context="record">
-                @{
-                    var current = CurrentVersionOf(record.Id);
-                }
-                @if (current is not null)
-                {
-                    <span class="text-muted">/@current.Slug</span>
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Page" Title="@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Status]" Filterable="false" Sortable="false" Width="130px">
-            <Template Context="record">
-                @{
-                    var current = CurrentVersionOf(record.Id);
-                }
-                @if (!record.IsEnabled)
-                {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Light" Text="@T[InfernoCmsLocalizableStrings.Pages.SwitchedOff].Value" />
-                }
-                else if (current?.Status == VersionStatus.Published)
-                {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Success" Text="@T[InfernoCmsLocalizableStrings.Pages.Published].Value" />
-                }
-                else
-                {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Warning" Text="@T[InfernoCmsLocalizableStrings.Pages.Draft].Value" />
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Page" Title="@T[InfernoCmsLocalizableStrings.Pages.LastEdited]" Filterable="false" Sortable="false" Width="160px">
-            <Template Context="record">
-                @{
-                    var current = CurrentVersionOf(record.Id);
-                }
-                @if (current is not null)
-                {
-                    @current.DateModifiedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Page" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="260px">
-            <Template Context="record">
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="web" Size="ButtonSize.Small" Text="@T[InfernoCmsLocalizableStrings.Pages.EditContent]" Click="@(args => EditContentAsync(record.Id))" @onclick:stopPropagation="true" />
-                <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="settings" Size="ButtonSize.Medium" Click="@(args => EditPage(record.Id))" @onclick:stopPropagation="true" Title="@T[InfernoWebLocalizableStrings.General.Edit]" />
-                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record.Id))" @onclick:stopPropagation="true" Title="@T[InfernoWebLocalizableStrings.General.Delete]" />
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
+@if (pages.Count > 0)
+{
+    @* Keyed on the loaded data, so the nested grids are rebuilt after a page is added, moved or deleted. *@
+    <PageGridLevel @key="loadVersion" Pages="pages" Versions="currentVersions" ParentId="null" OnEdit="EditAsync" OnAddSubPage="BeginCreate" OnDelete="DeleteAsync" />
+}

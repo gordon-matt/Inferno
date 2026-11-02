@@ -1,4 +1,5 @@
 @page "/admin/pages/design/{VersionId:guid}"
+@attribute [Authorize(Policy = CmsConstants.Policies.PagesRead)]
 @using PageKrafter.Components
 
 <HeadContent>
@@ -15,28 +16,36 @@
 else
 {
     <div class="d-flex justify-content-between align-items-center mb-2">
-        <div>
-            <h1 class="h4 mb-0">
-                @Heading
-                @if (published)
+        <div class="d-flex align-items-center">
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Text" Icon="arrow_back" Title="@T[InfernoCmsLocalizableStrings.Pages.Title]" Click="GoBack" class="me-2" />
+            <div>
+                <h1 class="h4 mb-0">
+                    @Heading
+                    @if (published)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success" Text="@T[InfernoCmsLocalizableStrings.Pages.Published].Value" class="ms-2" />
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Warning" Text="@T[InfernoCmsLocalizableStrings.Pages.Draft].Value" class="ms-2" />
+                    }
+                    @if (!string.IsNullOrEmpty(cultureCode))
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@cultureCode" class="ms-1" />
+                    }
+                </h1>
+                @if (savedAt is not null)
                 {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Success" Text="@T[InfernoCmsLocalizableStrings.Pages.Published].Value" class="ms-2" />
+                    <span class="text-success">@savedAt</span>
                 }
-                else
-                {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Warning" Text="@T[InfernoCmsLocalizableStrings.Pages.Draft].Value" class="ms-2" />
-                }
-                @if (!string.IsNullOrEmpty(cultureCode))
-                {
-                    <RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@cultureCode" class="ms-1" />
-                }
-            </h1>
-            @if (savedAt is not null)
-            {
-                <span class="text-success">@savedAt</span>
-            }
+            </div>
         </div>
-        <div>
+        <div class="d-flex align-items-center">
+            @if (cultures.Count > 1)
+            {
+                <RadzenDropDown TValue="string" Value="CultureValue" ValueChanged="ChangeCultureAsync" Data="cultures" TextProperty="Name" ValueProperty="Value" Style="min-width:200px" class="me-2" Name="Language" AriaLabel="@T[InfernoCmsLocalizableStrings.Pages.Language].Value" />
+            }
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="history" Text="@T[InfernoCmsLocalizableStrings.Pages.History]" Click="OpenHistory" class="me-2" />
             @if (published)
             {
                 <RadzenButton ButtonStyle="ButtonStyle.Light" Text="@T[InfernoCmsLocalizableStrings.Pages.SwitchToDraft]" Click="@(() => SetPublishedAsync(false))" IsBusy="publishing" />
@@ -45,9 +54,114 @@ else
             {
                 <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="publish" Text="@T[InfernoCmsLocalizableStrings.Pages.Publish]" Click="@(() => SetPublishedAsync(true))" IsBusy="publishing" />
             }
-            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="settings" Text="@T[InfernoCmsLocalizableStrings.Pages.Page]" Click="GoBack" class="ms-2" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="settings" Text="@T[InfernoWebLocalizableStrings.General.Details]" Click="OpenDetails" class="ms-2" />
         </div>
     </div>
 
-    <PageKrafterEditor @bind-Value="documentJson" OnSave="SaveAsync" Height="calc(100vh - 180px)" />
+    <PickstackScripts />
+    <PageKrafterEditor @key="editorKey" @bind-Value="documentJson" OnSave="SaveAsync" Height="calc(100vh - 180px)" />
+
+    @if (showDetails)
+    {
+        <Drawer Title="@T[InfernoWebLocalizableStrings.General.Details].Value" Open="true" Scrim="true" OnClose="CloseDetails" Width="30rem">
+            <Actions>
+                <button type="submit" form="page-details-form" class="nf-button nf-button-primary" disabled="@savingDetails">@T[InfernoWebLocalizableStrings.General.Save]</button>
+            </Actions>
+            <ChildContent>
+                <EditForm id="page-details-form" Model="details" OnSubmit="SaveDetailsAsync">
+                    @if (detailsError is not null)
+                    {
+                        <p class="nf-validation">@detailsError</p>
+                    }
+
+                    <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.VisitorDetailsIntro]</p>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Title].Value" For="details-title">
+                        <InputText id="details-title" class="nf-input" @bind-Value="details.Title" />
+                    </Field>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Pages.Address].Value" For="details-slug">
+                        <InputText id="details-slug" class="nf-input" @bind-Value="details.Slug" placeholder="about-us" />
+                    </Field>
+
+                    <hr />
+                    <strong class="d-block mb-2">@T[InfernoCmsLocalizableStrings.Pages.SearchEngines]</strong>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Pages.MetaTitle].Value" For="details-meta-title">
+                        <InputText id="details-meta-title" class="nf-input" @bind-Value="details.MetaTitle" />
+                    </Field>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Pages.MetaKeywords].Value" For="details-meta-keywords">
+                        <InputText id="details-meta-keywords" class="nf-input" @bind-Value="details.MetaKeywords" />
+                    </Field>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Pages.MetaDescription].Value" For="details-meta-description">
+                        <InputTextArea id="details-meta-description" class="nf-textarea" @bind-Value="details.MetaDescription" rows="3" />
+                    </Field>
+
+                    <hr />
+                    <strong class="d-block mb-2">@T[InfernoCmsLocalizableStrings.Pages.Page]</strong>
+                    <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.SettingsIntro]</p>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Pages.PageModel.Name].Value" For="details-name">
+                        <InputText id="details-name" class="nf-input" @bind-Value="page.Name" />
+                    </Field>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Pages.ParentPage].Value" For="details-parent">
+                        <select id="details-parent" class="nf-select" style="width:100%" @bind="ParentValue">
+                            <option value="">@T[InfernoCmsLocalizableStrings.Pages.TopLevel]</option>
+                            @foreach (var option in parentOptions)
+                            {
+                                <option value="@option.Page.Id">@(new string('\u00A0', option.Depth * 3))@option.Page.Name</option>
+                            }
+                        </select>
+                    </Field>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Pages.PageModel.Order].Value" For="details-order">
+                        <InputNumber id="details-order" class="nf-input" @bind-Value="page.Order" />
+                    </Field>
+                    <label class="nf-check">
+                        <InputCheckbox @bind-Value="page.IsEnabled" />
+                        <span>@T[InfernoCmsLocalizableStrings.Pages.PageModel.IsEnabled]</span>
+                    </label>
+                    <label class="nf-check">
+                        <InputCheckbox @bind-Value="page.ShowOnMenus" />
+                        <span>@T[InfernoCmsLocalizableStrings.Pages.PageModel.ShowOnMenus]</span>
+                    </label>
+
+                    @if (availableRoles.Count > 0)
+                    {
+                        <hr />
+                        <strong class="d-block mb-2">@T[InfernoCmsLocalizableStrings.Pages.WhoCanSee]</strong>
+                        <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.WhoCanSeeHelp]</p>
+                        @foreach (var role in availableRoles)
+                        {
+                            <label class="nf-check">
+                                <input type="checkbox" checked="@selectedRoleIds.Contains(role.Id)" @onchange="@(args => ToggleRole(role.Id, args.Value is true))" />
+                                <span>@role.Name</span>
+                            </label>
+                        }
+                    }
+                </EditForm>
+            </ChildContent>
+        </Drawer>
+    }
+
+    @if (showHistory)
+    {
+        <Drawer Title="@T[InfernoCmsLocalizableStrings.Pages.History].Value" Open="true" Scrim="true" OnClose="CloseHistory" Width="30rem">
+            <ChildContent>
+                <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.HistoryIntro]</p>
+                @if (history.Count == 0)
+                {
+                    <p>@T[InfernoCmsLocalizableStrings.Pages.HistoryEmpty]</p>
+                }
+                else
+                {
+                    @foreach (var saved in history)
+                    {
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div class="me-2">
+                                <div class="fw-semibold">@saved.DateModifiedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</div>
+                                <div class="text-muted small">@saved.Title &middot; /@saved.Slug</div>
+                            </div>
+                            <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="restore" Size="ButtonSize.Small" Text="@T[InfernoCmsLocalizableStrings.Pages.Restore]" Click="@(() => RestoreAsync(saved))" IsBusy="restoring" />
+                        </div>
+                    }
+                }
+            </ChildContent>
+        </Drawer>
+    }
 }

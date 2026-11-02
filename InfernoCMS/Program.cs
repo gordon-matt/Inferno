@@ -198,10 +198,25 @@ services.ConfigureInferno(configuration);
 
 services.AddPageKrafter();
 services.AddPageKrafterBlock<PageContentZoneBlock>();
+services.AddPageKrafterFilePicker<PickstackFilePicker>();
 
 #endregion Services
 
 var app = builder.Build();
+
+if (databaseInstalled)
+{
+    // Bring the database up to date on every start, so a new release never meets an old schema.
+    // Installation applies the same migrations to a brand new database.
+    using var migrationScope = app.Services.CreateScope();
+    var database = migrationScope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database;
+    var pendingMigrations = database.GetPendingMigrations().ToList();
+    if (pendingMigrations.Count > 0)
+    {
+        app.Logger.LogInformation("Applying {Count} database migration(s): {Migrations}", pendingMigrations.Count, string.Join(", ", pendingMigrations));
+        database.Migrate();
+    }
+}
 
 if (!databaseInstalled)
 {

@@ -17,4 +17,7 @@
   <ItemGroup>
     <PackageReference Include="Pickstack" Version="1.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Inferno.Tests" />
+  </ItemGroup>
 </Project>

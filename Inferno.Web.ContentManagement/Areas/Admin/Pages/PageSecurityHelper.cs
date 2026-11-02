@@ -10,6 +10,34 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages;
 
 public static class PageSecurityHelper
 {
+    /// <summary>The roles a page is limited to, from <see cref="Page.AccessRestrictions"/>. Empty means everyone.</summary>
+    public static IReadOnlyList<string> GetRoleIds(string accessRestrictions)
+    {
+        if (string.IsNullOrWhiteSpace(accessRestrictions))
+        {
+            return [];
+        }
+
+        try
+        {
+            string roles = (string)JObject.Parse(accessRestrictions)["Roles"];
+            return string.IsNullOrEmpty(roles) ? [] : roles.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        }
+        catch (Newtonsoft.Json.JsonException)
+        {
+            return [];
+        }
+    }
+
+    /// <summary>The value to store in <see cref="Page.AccessRestrictions"/>. Null when the page is open to everyone.</summary>
+    public static string CreateAccessRestrictions(IEnumerable<string> roleIds)
+    {
+        var ids = roleIds.Where(id => !string.IsNullOrEmpty(id)).ToList();
+        return ids.Count == 0
+            ? null
+            : new JObject { ["Roles"] = string.Join(',', ids) }.ToString(Newtonsoft.Json.Formatting.None);
+    }
+
     public static async Task<bool> CheckUserHasAccessToBlog(IPrincipal user)
     {
         var blogSettings = DependoResolver.Instance.Resolve<BlogSettings>();

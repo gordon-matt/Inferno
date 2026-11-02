@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Media;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -38,15 +39,27 @@ public sealed class PageVersionDetails
 
 /// <summary>
 /// Creates pages and saves their content. Versions are never created by hand: a page starts with one,
-/// and whenever a published version is changed the previous state is kept automatically as history.
+/// and every time its title, address or content is saved the previous state is kept automatically as a save point.
 /// </summary>
 public interface IPageAuthoringService
 {
-    /// <summary>Creates a page together with its first (draft) version in the default language.</summary>
-    Task<PageAuthoringResult> CreatePageAsync(string name);
+    /// <summary>Creates a page together with its first (draft) version in the default language. A page with a parent becomes a sub-page.</summary>
+    Task<PageAuthoringResult> CreatePageAsync(string name, Guid? parentId = null);
 
-    /// <summary>Saves the page's own settings: name, order, and whether it is switched on and shown on menus.</summary>
+    /// <summary>
+    /// Saves the page's own settings: name, order, where it sits in the page tree, whether it is switched on
+    /// and shown on menus, and which roles may see it.
+    /// </summary>
     Task<PageAuthoringResult> SavePageAsync(Page page);
+
+    /// <summary>Deletes a page with its versions and content blocks. Its sub-pages move up to its parent.</summary>
+    Task<PageAuthoringResult> DeletePageAsync(Guid pageId);
+
+    /// <summary>
+    /// Puts a save point's title, address and content back into the version being edited. The state it replaces
+    /// is kept as a new save point, so a restore can itself be undone.
+    /// </summary>
+    Task<PageAuthoringResult> RestoreVersionAsync(Guid archivedVersionId);
 
     /// <summary>
     /// The default-language version of a page, created from the page name if the page has none yet
@@ -75,14 +88,9 @@ public interface IPageAuthoringService
 
 public class PageAuthoringService : IPageAuthoringService
 {
-    /// <summary>
-    /// A published page changed again within this time of its last change counts as the same editing
-    /// session, so it does not push another entry into history.
-    /// </summary>
-    internal static readonly TimeSpan SessionWindow = TimeSpan.FromMinutes(30);
-
     private readonly IPageService pageService;
     private readonly IPageVersionService versionService;
+    private readonly IContentBlockService contentBlockService;
     private readonly IWorkContext workContext;
     private readonly IAuthorizationService authorizationService;
     private readonly AuthenticationStateProvider authenticationStateProvider;
@@ -91,6 +99,7 @@ public class PageAuthoringService : IPageAuthoringService
     public PageAuthoringService(
         IPageService pageService,
         IPageVersionService versionService,
+        IContentBlockService contentBlockService,
         IWorkContext workContext,
         IAuthorizationService authorizationService,
         AuthenticationStateProvider authenticationStateProvider,
@@ -98,6 +107,7 @@ public class PageAuthoringService : IPageAuthoringService
     {
         this.pageService = pageService;
         this.versionService = versionService;
+        this.contentBlockService = contentBlockService;
         this.workContext = workContext;
         this.authorizationService = authorizationService;
         this.authenticationStateProvider = authenticationStateProvider;
@@ -106,7 +116,7 @@ public class PageAuthoringService : IPageAuthoringService
 
     #region IPageAuthoringService Members
 
-    public async Task<PageAuthoringResult> CreatePageAsync(string name)
+    public async Task<PageAuthoringResult> CreatePageAsync(string name, Guid? parentId = null)
     {
         if (!await CanWriteAsync())
         {
@@ -121,11 +131,22 @@ public class PageAuthoringService : IPageAuthoringService
 
         int tenantId = workContext.CurrentTenant.Id;
 
+        var tenantPages = ListTenantPages(tenantId);
+        if (!PageHierarchy.CanBeParent(tenantPages, Guid.Empty, parentId))
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorParentInvalid);
+        }
+
+        // New pages go to the end of their level.
+        int nextOrder = PageHierarchy.ChildrenOf(tenantPages, parentId).Select(sibling => sibling.Order).DefaultIfEmpty(-1).Max() + 1;
+
         var page = new Page
         {
             Id = Guid.NewGuid(),
             TenantId = tenantId,
+            ParentId = parentId,
             Name = name,
+            Order = nextOrder,
             IsEnabled = true,
             ShowOnMenus = true,
         };
@@ -167,13 +188,85 @@ public class PageAuthoringService : IPageAuthoringService
             return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotAllowed);
         }
 
+        if (!PageHierarchy.CanBeParent(ListTenantPages(current.TenantId), current.Id, page.ParentId))
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorParentInvalid);
+        }
+
         current.Name = name;
         current.Order = page.Order;
+        current.ParentId = page.ParentId;
         current.IsEnabled = page.IsEnabled;
         current.ShowOnMenus = page.ShowOnMenus;
+        current.AccessRestrictions = NullIfEmpty(page.AccessRestrictions);
         await pageService.UpdateAsync(current);
 
         return PageAuthoringResult.Success();
+    }
+
+    public async Task<PageAuthoringResult> DeletePageAsync(Guid pageId)
+    {
+        if (!await CanWriteAsync())
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotAllowed);
+        }
+
+        var page = await pageService.FindOneAsync(pageId);
+        if (page is null)
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotFound);
+        }
+
+        if (page.TenantId != workContext.CurrentTenant.Id)
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotAllowed);
+        }
+
+        // Nothing links sub-pages to their parent in the database, so move them up first or they would be orphaned.
+        foreach (var child in ListTenantPages(page.TenantId).Where(candidate => candidate.ParentId == pageId))
+        {
+            child.ParentId = page.ParentId;
+            await pageService.UpdateAsync(child);
+        }
+
+        contentBlockService.Delete(block => block.PageId == pageId);
+        await pageService.DeleteAsync(page);
+
+        return PageAuthoringResult.Success();
+    }
+
+    public async Task<PageAuthoringResult> RestoreVersionAsync(Guid archivedVersionId)
+    {
+        var saved = await versionService.FindOneAsync(archivedVersionId);
+        if (saved is null || saved.Status != VersionStatus.Archived)
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotFound);
+        }
+
+        if (saved.TenantId != workContext.CurrentTenant.Id)
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotAllowed);
+        }
+
+        var current = await FindCurrentVersionAsync(saved.PageId, saved.CultureCode);
+        if (current is null)
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotFound);
+        }
+
+        return await ApplyAsync(current.Id, edited =>
+        {
+            edited.Title = saved.Title;
+            edited.Fields = saved.Fields;
+
+            // The address may have been taken by another page since the save point was made.
+            if (!SlugInUse(saved.TenantId, saved.CultureCode, saved.Slug, saved.PageId))
+            {
+                edited.Slug = saved.Slug;
+            }
+
+            return null;
+        });
     }
 
     public async Task<PageAuthoringResult> EnsureFirstVersionAsync(Guid pageId)
@@ -351,7 +444,7 @@ public class PageAuthoringService : IPageAuthoringService
 
     /// <summary>
     /// Loads the version, lets <paramref name="mutate"/> change a copy of it, and saves if anything changed.
-    /// When a published version changes, its previous state is first kept as an archived save point.
+    /// When its title, address or content change, the previous state is first kept as an archived save point.
     /// </summary>
     /// <param name="mutate">Changes the copy. Returns an error key to refuse the change, or null.</param>
     private async Task<PageAuthoringResult> ApplyAsync(Guid versionId, Func<PageVersion, string> mutate)
@@ -404,9 +497,7 @@ public class PageAuthoringService : IPageAuthoringService
             return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorSlugInUse);
         }
 
-        bool archive =
-            current.Status == VersionStatus.Published &&
-            DateTime.UtcNow - current.DateModifiedUtc > SessionWindow;
+        bool archive = ShouldKeepSavePoint(current, edited);
 
         if (archive)
         {
@@ -434,13 +525,29 @@ public class PageAuthoringService : IPageAuthoringService
 
         if (archive)
         {
-            // Only after the update, so the current version is the newest and is never the one pruned.
             PruneHistory(current.PageId, current.CultureCode);
         }
 
         return PageAuthoringResult.Success(current);
     }
 
+    /// <summary>
+    /// Whether replacing <paramref name="current"/> with <paramref name="edited"/> should keep the earlier state as a
+    /// save point. Every save that changes what the page says does, whether the page is a draft or published and
+    /// however soon after the last save it comes. Switching between draft and published changes nothing a visitor
+    /// reads, and a page that has never held anything has nothing worth restoring.
+    /// </summary>
+    internal static bool ShouldKeepSavePoint(PageVersion current, PageVersion edited)
+    {
+        bool contentChanged =
+            edited.Title != current.Title ||
+            edited.Slug != current.Slug ||
+            edited.Fields != current.Fields;
+
+        return contentChanged && !string.IsNullOrWhiteSpace(current.Fields);
+    }
+
+    /// <summary>Keeps the newest save points, up to the configured number, and removes the rest. The version being edited is never touched.</summary>
     private void PruneHistory(Guid pageId, string cultureCode)
     {
         int keep = Math.Max(1, (int)settings.NumberOfPageVersionsToKeep);
@@ -449,7 +556,7 @@ public class PageAuthoringService : IPageAuthoringService
         using (var connection = versionService.OpenConnection())
         {
             idsToKeep = connection
-                .Query(version => version.PageId == pageId && version.CultureCode == cultureCode)
+                .Query(version => version.PageId == pageId && version.CultureCode == cultureCode && version.Status == VersionStatus.Archived)
                 .OrderByDescending(version => version.DateModifiedUtc)
                 .Take(keep)
                 .Select(version => version.Id)
@@ -459,7 +566,14 @@ public class PageAuthoringService : IPageAuthoringService
         versionService.Delete(version =>
             version.PageId == pageId &&
             version.CultureCode == cultureCode &&
+            version.Status == VersionStatus.Archived &&
             !idsToKeep.Contains(version.Id));
+    }
+
+    private List<Page> ListTenantPages(int? tenantId)
+    {
+        using var connection = pageService.OpenConnection();
+        return connection.Query(page => page.TenantId == tenantId).ToList();
     }
 
     private async Task<bool> CanWriteAsync()

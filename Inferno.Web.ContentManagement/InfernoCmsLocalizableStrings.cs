@@ -324,6 +324,18 @@ public static class InfernoCmsLocalizableStrings
         public const string MetaTitle = "Inferno.Web.ContentManagement/Pages.MetaTitle";
         public const string MetaKeywords = "Inferno.Web.ContentManagement/Pages.MetaKeywords";
         public const string MetaDescription = "Inferno.Web.ContentManagement/Pages.MetaDescription";
+        public const string AddSubPage = "Inferno.Web.ContentManagement/Pages.AddSubPage";
+        public const string NewSubPageUnder = "Inferno.Web.ContentManagement/Pages.NewSubPageUnder";
+        public const string ParentPage = "Inferno.Web.ContentManagement/Pages.ParentPage";
+        public const string TopLevel = "Inferno.Web.ContentManagement/Pages.TopLevel";
+        public const string SearchEngines = "Inferno.Web.ContentManagement/Pages.SearchEngines";
+        public const string WhoCanSee = "Inferno.Web.ContentManagement/Pages.WhoCanSee";
+        public const string WhoCanSeeHelp = "Inferno.Web.ContentManagement/Pages.WhoCanSeeHelp";
+        public const string DeleteConfirm = "Inferno.Web.ContentManagement/Pages.DeleteConfirm";
+        public const string DeleteConfirmWithSubPages = "Inferno.Web.ContentManagement/Pages.DeleteConfirmWithSubPages";
+        public const string Deleted = "Inferno.Web.ContentManagement/Pages.Deleted";
+        public const string SubPages = "Inferno.Web.ContentManagement/Pages.SubPages";
+        public const string ErrorParentInvalid = "Inferno.Web.ContentManagement/Pages.ErrorParentInvalid";
 
         public const string ErrorNotAllowed = "Inferno.Web.ContentManagement/Pages.ErrorNotAllowed";
         public const string ErrorNotFound = "Inferno.Web.ContentManagement/Pages.ErrorNotFound";
