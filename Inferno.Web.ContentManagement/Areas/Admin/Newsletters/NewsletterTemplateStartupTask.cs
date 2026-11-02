@@ -3,6 +3,7 @@ using Extenso.Data.Entity;
 using Inferno.Tenants.Entities;
 using Inferno.Tenants.Services;
 using Inferno.Web.Infrastructure;
+using Inferno.Web.ContentManagement.Areas.Admin.Messaging;
 using Inferno.Web.Messaging.Entities;
 using Inferno.Web.Messaging.Services;
 
@@ -35,7 +36,7 @@ public class NewsletterTemplateStartupTask : IStartupTask
                 tenant.Id,
                 NewsletterEmailConsumer.SubscribedTemplate,
                 "Thank you for subscribing",
-                "<p>Thank you, [UserName]. You are signed up at [Email].</p>");
+                MessageTemplateDocuments.Email("<p>Thank you, [UserName]. You are signed up at [Email].</p>"));
 
             await EnsureAsync(
                 templateService,
@@ -43,7 +44,7 @@ public class NewsletterTemplateStartupTask : IStartupTask
                 tenant.Id,
                 NewsletterEmailConsumer.UnsubscribedTemplate,
                 "You have unsubscribed",
-                "<p>[UserName], you have been removed from the mailing list.</p>");
+                MessageTemplateDocuments.Email("<p>[UserName], you have been removed from the mailing list.</p>"));
         }
     }
 
@@ -65,7 +66,7 @@ public class NewsletterTemplateStartupTask : IStartupTask
         {
             TenantId = tenantId,
             Name = name,
-            Editor = "Html",
+            Editor = "PageKrafter",
             Enabled = true
         });
 

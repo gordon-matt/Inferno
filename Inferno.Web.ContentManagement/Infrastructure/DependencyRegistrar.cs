@@ -21,7 +21,9 @@ using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services;
+using Inferno.Web.ContentManagement.Areas.Admin.Messaging;
 using Inferno.Web.Infrastructure;
+using Inferno.Web.Messaging;
 using Inferno.Web.Navigation;
 using Inferno.Web.OData;
 using Microsoft.Extensions.Configuration;
@@ -145,7 +147,7 @@ public class DependencyRegistrar : IDependencyRegistrar
         // Indexing
         //builder.Register<IIndexingContentProvider, BlogIndexingContentProvider>(ServiceLifetime.Transient); // TODO
 
-        //builder.Register<IMessageTemplatesProvider, NewsletterMessageTemplates>(ServiceLifetime.Transient);
+        builder.Register<IMessageTemplateRenderer, PageKrafterMessageTemplateRenderer>(ServiceLifetime.Transient);
     }
 
     public int Order => 1;

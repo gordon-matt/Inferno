@@ -27,18 +27,21 @@ public class MessageService : GenericDataService<QueuedEmail>, IMessageService, 
     private readonly IMessageTemplateService messageTemplateService;
     private readonly IMessageTemplateVersionService messageTemplateVersionService;
     private readonly ITokenizer tokenizer;
+    private readonly IEnumerable<IMessageTemplateRenderer> templateRenderers;
 
     public MessageService(
         ICacheManager cacheManager,
         IRepository<QueuedEmail> queuedEmailRepository,
         IMessageTemplateService messageTemplateService,
         IMessageTemplateVersionService messageTemplateVersionService,
-        ITokenizer tokenizer)
+        ITokenizer tokenizer,
+        IEnumerable<IMessageTemplateRenderer> templateRenderers)
         : base(cacheManager, queuedEmailRepository)
     {
         this.messageTemplateService = messageTemplateService;
         this.messageTemplateVersionService = messageTemplateVersionService;
         this.tokenizer = tokenizer;
+        this.templateRenderers = templateRenderers;
     }
 
     public Guid SendEmailMessage(int tenantId, string subject, string body, string toEmailAddress, string toName = null)
@@ -96,7 +99,18 @@ public class MessageService : GenericDataService<QueuedEmail>, IMessageService, 
         }
 
         string subject = tokenizer.Replace(version.Subject, tokens, htmlEncode: false);
-        string body = tokenizer.Replace(version.Data, tokens, htmlEncode: true);
+        string bodySource = version.Data ?? string.Empty;
+        foreach (var renderer in templateRenderers)
+        {
+            string rendered = renderer.ToHtml(bodySource, version.Subject);
+            if (rendered != null)
+            {
+                bodySource = rendered;
+                break;
+            }
+        }
+
+        string body = tokenizer.Replace(bodySource, tokens, htmlEncode: true);
         return SendEmailMessage(tenantId, subject, body, toEmailAddress, toName);
     }
 

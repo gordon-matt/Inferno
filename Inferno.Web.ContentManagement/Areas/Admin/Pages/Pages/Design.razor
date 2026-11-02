@@ -157,7 +157,10 @@ else
                                 <div class="fw-semibold">@saved.DateModifiedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</div>
                                 <div class="text-muted small">@saved.Title &middot; /@saved.Slug</div>
                             </div>
-                            <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="restore" Size="ButtonSize.Small" Text="@T[InfernoCmsLocalizableStrings.Pages.Restore]" Click="@(() => RestoreAsync(saved))" IsBusy="restoring" />
+                            <div class="d-flex gap-2 flex-shrink-0">
+                                <a class="btn btn-sm btn-outline-secondary" href="/admin/pages/preview/@saved.Id" target="_blank" rel="noopener noreferrer" data-enhance-nav="false">@T[InfernoCmsLocalizableStrings.Pages.Preview]</a>
+                                <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="restore" Size="ButtonSize.Small" Text="@T[InfernoCmsLocalizableStrings.Pages.Restore]" Click="@(() => RestoreAsync(saved))" IsBusy="restoring" />
+                            </div>
                         </div>
                     }
                 }

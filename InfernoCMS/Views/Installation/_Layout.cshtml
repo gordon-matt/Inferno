@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/united/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" />
+    <style>
+        body {
+            background: url("/img/installation-background.jpg") repeat-y;
+            background-size: 100%;
+        }
+
+        .install-logo {
+            background-color: #fff;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .install-logo img {
+            max-width: 280px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4" style="max-width: 960px">
+        <div class="install-logo">
+            <img src="~/img/Logo_Dark.png" alt="Inferno CMS" />
+        </div>
+        @RenderBody()
+    </div>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

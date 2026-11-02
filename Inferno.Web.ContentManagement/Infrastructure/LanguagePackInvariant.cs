@@ -232,6 +232,8 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoCmsLocalizableStrings.Pages.PageVersionModel.Slug, "URL Slug" },
         { InfernoCmsLocalizableStrings.Pages.PageVersionModel.Status, "Status" },
         { InfernoCmsLocalizableStrings.Pages.PageVersionModel.Title, "Title" },
+        { InfernoCmsLocalizableStrings.Pages.Preview, "Preview" },
+        { InfernoCmsLocalizableStrings.Pages.PreviewNotice, "This is a saved version from {0}. It is not the live page." },
         { InfernoCmsLocalizableStrings.Pages.Restore, "Restore" },
         { InfernoCmsLocalizableStrings.Pages.RestoreVersion, "Restore Version" },
         { InfernoCmsLocalizableStrings.Pages.SelectPageToBeginEdit, "Select a page to begin editing." },

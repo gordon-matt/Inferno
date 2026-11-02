@@ -284,6 +284,8 @@ public static class InfernoCmsLocalizableStrings
         public const string PageHistoryRestoreConfirm = "Inferno.Web.ContentManagement/Pages.PageHistoryRestoreConfirm";
         public const string PageHistoryRestoreError = "Inferno.Web.ContentManagement/Pages.PageHistoryRestoreError";
         public const string PageHistoryRestoreSuccess = "Inferno.Web.ContentManagement/Pages.PageHistoryRestoreSuccess";
+        public const string Preview = "Inferno.Web.ContentManagement/Pages.Preview";
+        public const string PreviewNotice = "Inferno.Web.ContentManagement/Pages.PreviewNotice";
         public const string Restore = "Inferno.Web.ContentManagement/Pages.Restore";
         public const string RestoreVersion = "Inferno.Web.ContentManagement/Pages.RestoreVersion";
         public const string SelectPageToBeginEdit = "Inferno.Web.ContentManagement/Pages.SelectPageToBeginEdit";

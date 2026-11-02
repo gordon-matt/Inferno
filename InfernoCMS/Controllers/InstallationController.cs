@@ -36,9 +36,29 @@ public class InstallationController : Controller
             return Redirect("/");
         }
 
-        if (string.IsNullOrWhiteSpace(model.ConnectionString))
+        if (model.EnterConnectionString)
         {
-            ModelState.AddModelError(nameof(model.ConnectionString), "A connection string is required.");
+            if (string.IsNullOrWhiteSpace(model.ConnectionString))
+            {
+                ModelState.AddModelError(nameof(model.ConnectionString), "A connection string is required.");
+            }
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(model.DatabaseServer))
+            {
+                ModelState.AddModelError(nameof(model.DatabaseServer), "The database server is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.DatabaseName))
+            {
+                ModelState.AddModelError(nameof(model.DatabaseName), "The database name is required.");
+            }
+
+            if (!model.UseWindowsAuthentication && string.IsNullOrWhiteSpace(model.DatabaseUsername))
+            {
+                ModelState.AddModelError(nameof(model.DatabaseUsername), "The database username is required.");
+            }
         }
 
         if (string.IsNullOrWhiteSpace(model.AdminEmail) || !model.AdminEmail.Contains('@'))
@@ -46,9 +66,9 @@ public class InstallationController : Controller
             ModelState.AddModelError(nameof(model.AdminEmail), "Enter the administrator email address.");
         }
 
-        if (string.IsNullOrWhiteSpace(model.AdminPassword) || model.AdminPassword.Length < 6)
+        if (string.IsNullOrWhiteSpace(model.AdminPassword) || !IsStrongPassword(model.AdminPassword))
         {
-            ModelState.AddModelError(nameof(model.AdminPassword), "The password must be at least 6 characters.");
+            ModelState.AddModelError(nameof(model.AdminPassword), "The password must be at least 8 characters and include an uppercase letter, a lowercase letter and a number.");
         }
 
         if (!string.Equals(model.AdminPassword, model.ConfirmPassword, StringComparison.Ordinal))
@@ -61,10 +81,12 @@ public class InstallationController : Controller
             return View(model);
         }
 
+        string connectionString = model.BuildConnectionString();
+
         try
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseSqlServer(model.ConnectionString)
+                .UseSqlServer(connectionString)
                 .Options;
             await using var context = new ApplicationDbContext(options);
             await context.Database.MigrateAsync();
@@ -72,7 +94,7 @@ public class InstallationController : Controller
             var settings = new DataSettings
             {
                 ProviderName = "SqlServer",
-                ConnectionString = model.ConnectionString,
+                ConnectionString = connectionString,
                 AdminEmail = model.AdminEmail,
                 AdminPassword = model.AdminPassword,
                 DefaultLanguage = string.IsNullOrWhiteSpace(model.DefaultLanguage) ? "en-US" : model.DefaultLanguage,
@@ -101,6 +123,13 @@ public class InstallationController : Controller
 
         return View("Complete");
     }
+
+    private static bool IsStrongPassword(string password) =>
+        !string.IsNullOrWhiteSpace(password)
+        && password.Length >= 8
+        && password.Any(char.IsUpper)
+        && password.Any(char.IsLower)
+        && password.Any(char.IsDigit);
 
     private bool IsInstalled()
     {

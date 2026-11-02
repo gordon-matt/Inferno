@@ -1,8 +1,11 @@
 @page "/admin/messaging/templates"
+@using Inferno.Web.ContentManagement.Areas.Admin.Messaging
 @using Inferno.Web.Messaging.Entities
 @using Inferno.Web.Messaging.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using PageKrafter.Components
+@using PageKrafter.Documents
 
 <h1>@T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates]</h1>
 
@@ -38,6 +41,9 @@ else if (editing == null)
 }
 else
 {
+    <HeadContent>
+        <link rel="stylesheet" href="_content/PageKrafter.Components/pagekrafter.css" />
+    </HeadContent>
     <EditForm Model="editing" OnValidSubmit="SaveAsync">
         <div class="mb-3">
             <label class="form-label">Name</label>
@@ -54,9 +60,9 @@ else
             <input class="form-control" @bind="subject" />
         </div>
         <div class="mb-3">
-            <label class="form-label">HTML body</label>
-            <textarea class="form-control" rows="12" @bind="body"></textarea>
-            <div class="form-text">Tokens such as [UserName] and [Email] are replaced when the message is queued. The body is stored as HTML.</div>
+            <label class="form-label">Message</label>
+            <div class="form-text mb-2">Tokens such as [UserName] and [Email] are replaced when the message is queued.</div>
+            <PageKrafterEditor @key="editorKey" @bind-Value="body" Mode="DocumentMode.Email" Height="70vh" />
         </div>
         <button type="submit" class="btn btn-primary">@T[InfernoWebLocalizableStrings.General.Save]</button>
         <button type="button" class="btn btn-secondary" @onclick="Cancel">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
@@ -83,6 +89,7 @@ else
     private string subject = string.Empty;
     private string body = string.Empty;
     private int? versionId;
+    private Guid editorKey = Guid.NewGuid();
 
     protected override async Task OnInitializedAsync()
     {
@@ -114,12 +121,13 @@ else
         editing = new MessageTemplate
         {
             TenantId = WorkContext.CurrentTenant.Id,
-            Editor = "Html",
+            Editor = "PageKrafter",
             Enabled = true
         };
         subject = string.Empty;
-        body = string.Empty;
+        body = MessageTemplateDocuments.ForEditor(null);
         versionId = null;
+        editorKey = Guid.NewGuid();
     }
 
     private void BeginEdit(MessageTemplate template)
@@ -127,8 +135,9 @@ else
         editing = template;
         var version = VersionService.FindOne(template.Id, WorkContext.CurrentCultureCode);
         subject = version?.Subject ?? string.Empty;
-        body = version?.Data ?? string.Empty;
+        body = MessageTemplateDocuments.ForEditor(version?.Data);
         versionId = version?.Id;
+        editorKey = Guid.NewGuid();
     }
 
     private async Task SaveAsync()
@@ -138,7 +147,7 @@ else
             return;
         }
 
-        editing.Editor = string.IsNullOrWhiteSpace(editing.Editor) ? "Html" : editing.Editor;
+        editing.Editor = "PageKrafter";
         editing.TenantId = WorkContext.CurrentTenant.Id;
 
         if (editing.Id == 0)

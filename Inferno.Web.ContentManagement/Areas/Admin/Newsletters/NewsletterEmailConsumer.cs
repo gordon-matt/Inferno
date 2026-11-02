@@ -1,3 +1,4 @@
+using Inferno.Web.ContentManagement.Areas.Admin.Messaging;
 using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Events;
 using Inferno.Web.Events;
 using Inferno.Web.Messaging;
@@ -45,11 +46,11 @@ public class NewsletterEmailConsumer :
         int tenantId = workContext.CurrentTenant.Id;
         if (templateName == SubscribedTemplate)
         {
-            EnsureTemplate(tenantId, SubscribedTemplate, "Thank you for subscribing", "<p>Thank you, [UserName]. You are signed up at [Email].</p>");
+            EnsureTemplate(tenantId, SubscribedTemplate, "Thank you for subscribing", MessageTemplateDocuments.Email("<p>Thank you, [UserName]. You are signed up at [Email].</p>"));
         }
         else if (templateName == UnsubscribedTemplate)
         {
-            EnsureTemplate(tenantId, UnsubscribedTemplate, "You have unsubscribed", "<p>[UserName], you have been removed from the mailing list.</p>");
+            EnsureTemplate(tenantId, UnsubscribedTemplate, "You have unsubscribed", MessageTemplateDocuments.Email("<p>[UserName], you have been removed from the mailing list.</p>"));
         }
 
         messageService.SendEmailMessage(
@@ -73,7 +74,7 @@ public class NewsletterEmailConsumer :
         {
             TenantId = tenantId,
             Name = name,
-            Editor = "Html",
+            Editor = "PageKrafter",
             Enabled = true
         });
 

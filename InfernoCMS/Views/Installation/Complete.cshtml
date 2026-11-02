@@ -1,21 +1,12 @@
 @{
-    Layout = null;
+    Layout = "_Layout";
+    ViewBag.Title = "Installation complete";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Inferno CMS installed</title>
-    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
-</head>
-<body class="bg-light">
-    <main class="container py-5" style="max-width: 720px">
-        <div class="alert alert-success" role="alert">
-            <h1 class="h4">Installation complete</h1>
-            <p>The database has been created. The site is restarting so the administrator account can be created. Demo data, if you asked for it, is added during that restart.</p>
-            <p><a href="/">Continue</a></p>
-        </div>
-    </main>
-</body>
-</html>
+
+<div class="card">
+    <div class="card-header">Installation complete</div>
+    <div class="card-body">
+        <p>The database has been created. The site is restarting so the administrator account can be created. Demo data, if you asked for it, is added during that restart.</p>
+        <a class="btn btn-secondary" href="/">Continue</a>
+    </div>
+</div>

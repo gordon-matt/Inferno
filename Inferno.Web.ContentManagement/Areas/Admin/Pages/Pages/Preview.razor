@@ -1,0 +1,61 @@
+@page "/admin/pages/preview/{VersionId:guid}"
+@layout Inferno.Web.ContentManagement.Components.PublicLayout
+@attribute [Authorize(Policy = CmsConstants.Policies.PagesRead)]
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Components
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services
+
+@if (!ready)
+{
+    <p>Loading...</p>
+}
+else if (publishedPage == null)
+{
+    <PageTitle>Not found</PageTitle>
+    <div class="alert alert-secondary" role="alert">@T[InfernoCmsLocalizableStrings.Pages.PageNotFound]</div>
+}
+else
+{
+    <div class="alert alert-info" role="status">@T[InfernoCmsLocalizableStrings.Pages.PreviewNotice, savedAt]</div>
+    <StandardPageView Page="publishedPage" />
+}
+
+@code {
+    [Parameter]
+    public Guid VersionId { get; set; }
+
+    [Inject]
+    private IPageVersionService Versions { get; set; }
+
+    [Inject]
+    private IWorkContext WorkContext { get; set; }
+
+    private bool ready;
+    private string savedAt;
+    private PublishedPage publishedPage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ready = false;
+        publishedPage = null;
+
+        var version = await Versions.FindOneAsync(VersionId);
+        if (version == null || version.TenantId != WorkContext.CurrentTenant.Id)
+        {
+            ready = true;
+            return;
+        }
+
+        var fields = StandardPageContent.Parse(version.Fields);
+        savedAt = version.DateModifiedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+        publishedPage = new PublishedPage
+        {
+            Title = version.Title,
+            MetaTitle = fields.MetaTitle,
+            MetaKeywords = fields.MetaKeywords,
+            MetaDescription = fields.MetaDescription,
+            BodyContent = fields.BodyContent,
+        };
+        ready = true;
+    }
+}
