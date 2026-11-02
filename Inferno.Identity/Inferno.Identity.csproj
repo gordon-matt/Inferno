@@ -15,7 +15,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Core\Localize.Core.csproj" />
     <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
   </ItemGroup>

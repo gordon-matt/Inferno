@@ -1,5 +1,5 @@
-﻿using Dependo;
-using Inferno.Localization.ComponentModel;
+using Dependo;
+using Localize;
 using Inferno.Security.Membership;
 
 namespace Inferno.Web.Security.Membership;

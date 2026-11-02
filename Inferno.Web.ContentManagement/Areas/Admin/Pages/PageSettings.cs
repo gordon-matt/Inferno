@@ -1,4 +1,4 @@
-﻿using Inferno.Localization.ComponentModel;
+using Localize;
 using Inferno.Web.Configuration;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Components;
 

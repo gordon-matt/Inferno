@@ -18,6 +18,7 @@
     <PackageReference Include="Extenso.AspNetCore.Mvc" Version="10.2.0" />
     <PackageReference Include="Extenso.AspNetCore.OData" Version="10.2.0" />
     <PackageReference Include="Flatmate" Version="1.0.0" />
+    <PackageReference Include="Heroicsoft.NetForge.Results" Version="1.2.0" />
     <ProjectReference Include="..\..\..\Libraries\Heroicsoft.NetForge\Heroicsoft.NetForge.Components\Heroicsoft.NetForge.Components.csproj" />
     <ProjectReference Include="..\..\..\Libraries\LogVue\LogVue\LogVue.csproj" />
     <ProjectReference Include="..\..\..\Libraries\LogVue\LogVue.Data.Sql\LogVue.Data.Sql.csproj" />
@@ -46,8 +47,7 @@
     <ProjectReference Include="..\Inferno.Data.Abstractions\Inferno.Data.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
     <ProjectReference Include="..\Inferno.Identity\Inferno.Identity.csproj" />
-    <ProjectReference Include="..\Inferno.Localization.Abstractions\Inferno.Localization.Abstractions.csproj" />
-    <ProjectReference Include="..\Inferno.Localization\Inferno.Localization.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Components\Localize.Components.csproj" />
     <ProjectReference Include="..\Inferno.Logging.Abstractions\Inferno.Logging.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Logging\Inferno.Logging.csproj" />
     <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />

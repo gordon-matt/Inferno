@@ -3,6 +3,7 @@ using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
 using Inferno.Web.ContentManagement.Security;
 using Inferno.Web.Infrastructure;
+using Inferno.Web.Localization;
 using InfernoCMS.Api.Infrastructure;
 using InfernoCMS.Data;
 using InfernoCMS.Identity.Infrastructure;
@@ -28,7 +29,7 @@ services.AddDbContext<ApplicationDbContext>(options =>
 
 services.AddInfernoIdentity();
 
-services.AddInfernoLocalization();
+services.AddCmsLocalization(configuration.GetConnectionString("DefaultConnection"));
 
 services
     .AddControllers(options =>

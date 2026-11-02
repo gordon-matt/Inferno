@@ -1,4 +1,4 @@
-using Inferno.Localization.ComponentModel;
+using Localize;
 using Inferno.Web.Messaging.Components;
 
 namespace Inferno.Web.Messaging.Configuration;

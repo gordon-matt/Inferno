@@ -1,15 +1,14 @@
-﻿using Inferno.Localization;
-using Inferno.Web.Localization.Services;
+﻿using Inferno.Web.Localization.Services;
 using Microsoft.AspNetCore.Http;
 
 namespace Inferno.Web.Localization;
 
-public interface IWebCultureManager : ICultureManager
+public interface IWebCultureManager
 {
     string GetCurrentCulture(HttpContext httpContext);
 }
 
-public class WebCultureManager : DefaultCultureManager, IWebCultureManager
+public class WebCultureManager : IWebCultureManager
 {
     private readonly IEnumerable<ICultureSelector> cultureSelectors;
 

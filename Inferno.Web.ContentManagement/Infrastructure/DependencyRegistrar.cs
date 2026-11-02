@@ -1,6 +1,7 @@
 ﻿using Dependo;
 using Extenso.AspNetCore.OData;
-using Inferno.Localization;
+using Inferno.Web.ContentManagement.Localization;
+using Localize;
 using Inferno.Web.Configuration;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks;
@@ -84,6 +85,7 @@ public class DependencyRegistrar : IDependencyRegistrar
         #region Localization
 
         builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Singleton);
+        builder.RegisterSelf<ContentLocalization>(ServiceLifetime.Scoped);
 
         #endregion Localization
 

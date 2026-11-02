@@ -1,8 +1,8 @@
 ﻿using Dependo;
 using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
-using Inferno.Localization.Entities;
-using Inferno.Localization.Services;
+using Localize.Models;
+using Localize.Properties;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +16,15 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers.Ap
 [Authorize]
 public class ContentBlockApiController : BaseODataController<ContentBlock, Guid>
 {
-    private readonly Lazy<ILocalizablePropertyService> localizablePropertyService;
+    private readonly ILocalizablePropertyService localizableProperties;
 
     public ContentBlockApiController(
         IAuthorizationService authorizationService,
         IRepository<ContentBlock> repository,
-        Lazy<ILocalizablePropertyService> localizablePropertyService)
+        ILocalizablePropertyService localizableProperties)
         : base(authorizationService, repository)
     {
-        this.localizablePropertyService = localizablePropertyService;
+        this.localizableProperties = localizableProperties;
     }
 
     protected override Guid GetId(ContentBlock entity) => entity.Id;
@@ -116,18 +116,10 @@ public class ContentBlockApiController : BaseODataController<ContentBlock, Guid>
         string entityType = typeof(ContentBlock).FullName;
         string entityId = entity.Id.ToString();
 
-        var localizedRecord = await localizablePropertyService.Value.FindOneAsync(new SearchOptions<LocalizableProperty>
+        var localizedRecord = await localizableProperties.FindOneAsync(cultureCode, entityType, entityId, "BlockValues");
+        if (localizedRecord.IsSuccess && localizedRecord.Value.Value is not null)
         {
-            Query = x =>
-                x.CultureCode == cultureCode &&
-                x.EntityType == entityType &&
-                x.EntityId == entityId &&
-                x.Property == "BlockValues"
-        });
-
-        if (localizedRecord != null)
-        {
-            entity.BlockValues = localizedRecord.Value;
+            entity.BlockValues = localizedRecord.Value.Value;
         }
 
         return Ok(entity);
@@ -156,34 +148,16 @@ public class ContentBlockApiController : BaseODataController<ContentBlock, Guid>
         string entityType = typeof(ContentBlock).FullName;
         string entityId = entity.Id.ToString();
 
-        var localizedRecord = await localizablePropertyService.Value.FindOneAsync(new SearchOptions<LocalizableProperty>
+        var saved = await localizableProperties.SaveAsync(new LocalizablePropertyForm
         {
-            Query = x =>
-                x.CultureCode == cultureCode &&
-                x.EntityType == entityType &&
-                x.EntityId == entityId &&
-                x.Property == "BlockValues"
+            CultureCode = cultureCode,
+            EntityType = entityType,
+            EntityId = entityId,
+            Property = "BlockValues",
+            Value = entity.BlockValues,
         });
 
-        if (localizedRecord == null)
-        {
-            localizedRecord = new LocalizableProperty
-            {
-                CultureCode = cultureCode,
-                EntityType = entityType,
-                EntityId = entityId,
-                Property = "BlockValues",
-                Value = entity.BlockValues
-            };
-            await localizablePropertyService.Value.InsertAsync(localizedRecord);
-            return Ok();
-        }
-        else
-        {
-            localizedRecord.Value = entity.BlockValues;
-            await localizablePropertyService.Value.UpdateAsync(localizedRecord);
-            return Ok();
-        }
+        return saved.IsSuccess ? Ok() : BadRequest();
     }
 
     protected override string ReadPermission => CmsConstants.Policies.ContentBlocksRead;

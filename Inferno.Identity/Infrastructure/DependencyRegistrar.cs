@@ -1,5 +1,5 @@
 ﻿using Dependo;
-using Inferno.Localization;
+using Localize;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

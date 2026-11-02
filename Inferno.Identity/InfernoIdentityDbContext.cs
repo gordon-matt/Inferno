@@ -2,16 +2,12 @@
 using Inferno.Data.Entity;
 using Inferno.Helpers;
 using Inferno.Identity.Entities;
-using Inferno.Localization;
-using Inferno.Localization.Entities;
 using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Configuration.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using LanguageEntity = Inferno.Localization.Entities.Language;
-
 namespace Inferno.Identity;
 
 public abstract class InfernoIdentityDbContext<TUser, TRole>
@@ -28,14 +24,6 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
     }
 
     #endregion Constructors
-
-    public DbSet<LanguageEntity> Languages { get; set; }
-
-    public DbSet<LocalizableProperty> LocalizableProperties { get; set; }
-
-    public DbSet<LocalizableString> LocalizableStrings { get; set; }
-
-    //public DbSet<LogEntry> Log { get; set; }
 
     public DbSet<ScheduledTask> ScheduledTasks { get; set; }
 
@@ -78,8 +66,6 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
             mediaFolder.Create();
         }
 
-        InitializeLocalizableStrings();
-
         //var dataSettings = DependoResolver.Instance.Resolve<DataSettings>();
 
         //if (dataSettings.CreateSampleData)
@@ -95,30 +81,4 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
 
     #endregion ISupportSeed Members
 
-    private void InitializeLocalizableStrings()
-    {
-        // We need to create localizable strings for all tenants,
-        //  but at this point there will only be 1 tenant, because this is initialization for the DB.
-        //  TODO: When admin user creates a new tenant, we need to insert localized strings for it. Probably in TenantApiController somewhere...
-        int tenantId = Tenants.First().Id;
-        var languagePacks = DependoResolver.Instance.ResolveAll<ILanguagePack>();
-
-        var toInsert = new HashSet<LocalizableString>();
-        foreach (var languagePack in languagePacks)
-        {
-            foreach (var localizedString in languagePack.LocalizedStrings)
-            {
-                toInsert.Add(new LocalizableString
-                {
-                    Id = Guid.NewGuid(),
-                    TenantId = tenantId,
-                    CultureCode = languagePack.CultureCode,
-                    TextKey = localizedString.Key,
-                    TextValue = localizedString.Value
-                });
-            }
-        }
-        LocalizableStrings.AddRange(toInsert);
-        SaveChanges();
-    }
 }

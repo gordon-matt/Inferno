@@ -16,6 +16,9 @@ using Inferno.Web.Areas.Admin;
 using LogVue;
 using LogVue.Data.Sql;
 using Inferno.Web.Infrastructure;
+using Inferno.Web.Localization;
+using Localize.Components;
+using Localize.Components.Pages;
 using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
@@ -137,7 +140,7 @@ services.AddRouting(routeOptions =>
 services.AddFlatmate<Tenant, InfernoTenantResolver>();
 services.AddFlatmateCircuit<Tenant>();
 
-services.AddInfernoLocalization();
+services.AddCmsLocalization(databaseInstalled ? connectionString : null);
 
 services
     .AddControllersWithViews()
@@ -217,8 +220,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
-var requestLocalizationOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
-app.UseRequestLocalization(requestLocalizationOptions!.Value);
+app.UseLocalize();
 
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
@@ -256,6 +258,7 @@ app.UseInferno();
 
 app.MapIdentityNexus().RequireAuthorization(InfernoWebPolicies.MembershipManage);
 app.MapLogVue().RequireAuthorization(InfernoWebPolicies.LogRead);
+app.MapLocalize();
 app.MapControllers();
 app.MapAreaControllerRoute("admin_route", "Admin", "Admin/{controller}/{action}/{id?}");
 app.MapRazorPages();
@@ -266,6 +269,7 @@ var routerAssemblies = DependoResolver.Instance
     .ResolveAll<IRouterAssemblyMarker>()
     .Select(marker => marker.GetType().Assembly)
     .Where(assembly => assembly != typeof(InfernoCMS.App).Assembly)
+    .Append(typeof(Languages).Assembly)
     .Distinct()
     .ToArray();
 

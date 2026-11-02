@@ -1,10 +1,8 @@
 ﻿using Extenso.AspNetCore.OData;
-using Inferno.Localization.Entities;
 using Inferno.Security.Membership;
 using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin.Configuration.Themes.Models;
-using Inferno.Web.Areas.Admin.Localization.Models;
 using Inferno.Web.Areas.Admin.Plugins.Models;
 using Inferno.Web.Configuration.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +23,6 @@ public class ODataRegistrar : IODataRegistrar
         builder.EntitySet<Setting>("SettingsApi");
         builder.EntitySet<EdmThemeConfiguration>("ThemeApi");
 
-        // Localization
-        builder.EntitySet<Language>(InfernoWebConstants.ODataRoutes.EntitySetNames.Language);
-        builder.EntitySet<LocalizableString>(InfernoWebConstants.ODataRoutes.EntitySetNames.LocalizableString);
-
         //// Membership
         //builder.EntitySet<InfernoPermission>("PermissionApi");
         builder.EntitySet<InfernoRole>("RoleApi");
@@ -44,8 +38,6 @@ public class ODataRegistrar : IODataRegistrar
         // Tenants
         builder.EntitySet<Tenant>(InfernoWebConstants.ODataRoutes.EntitySetNames.Tenant);
 
-        RegisterLanguageODataActions(builder);
-        RegisterLocalizableStringODataActions(builder);
         RegisterMembershipODataActions(builder);
         RegisterPluginODataActions(builder);
         RegisterScheduledTaskODataActions(builder);
@@ -109,27 +101,5 @@ public class ODataRegistrar : IODataRegistrar
         var setThemeAction = builder.EntityType<EdmThemeConfiguration>().Collection.Action("SetTheme");
         setThemeAction.Parameter<string>("themeName");
         setThemeAction.Returns<IActionResult>();
-    }
-
-    private static void RegisterLanguageODataActions(ODataModelBuilder builder)
-    {
-        var resetLocalizableStringsAction = builder.EntityType<Language>().Collection.Action("ResetLocalizableStrings");
-        resetLocalizableStringsAction.Returns<IActionResult>();
-    }
-
-    private static void RegisterLocalizableStringODataActions(ODataModelBuilder builder)
-    {
-        var getComparitiveTableFunction = builder.EntityType<LocalizableString>().Collection.Function("GetComparitiveTable");
-        getComparitiveTableFunction.Parameter<string>("cultureCode");
-        getComparitiveTableFunction.Returns<IActionResult>();
-
-        var putComparitiveAction = builder.EntityType<LocalizableString>().Collection.Action("PutComparitive");
-        putComparitiveAction.Parameter<string>("cultureCode");
-        putComparitiveAction.Parameter<string>("key");
-        putComparitiveAction.Parameter<ComparitiveLocalizableString>("entity");
-
-        var deleteComparitiveAction = builder.EntityType<LocalizableString>().Collection.Action("DeleteComparitive");
-        deleteComparitiveAction.Parameter<string>("cultureCode");
-        deleteComparitiveAction.Parameter<string>("key");
     }
 }

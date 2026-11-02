@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Inferno.Localization.Services;
+using Localize.Languages;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Microsoft.AspNetCore.Components;
@@ -52,7 +52,7 @@ public partial class Versions
         await base.OnInitializedAsync();
 
         LoadPageContext();
-        LoadCultures();
+        await LoadCulturesAsync();
     }
 
     protected override string GetODataFilter(LoadDataArgs args)
@@ -152,17 +152,17 @@ public partial class Versions
         IsStandardPage = string.Equals(pageType?.Name, StandardPageName, StringComparison.Ordinal);
     }
 
-    private void LoadCultures()
+    private async Task LoadCulturesAsync()
     {
-        int tenantId = WorkContext.CurrentTenant?.Id ?? 0;
-        var languages = LanguageService
-            .GetActiveLanguages(tenantId)
-            .OrderBy(x => x.Name)
-            .Select(x => new CultureOption { Value = x.CultureCode, Name = $"{x.Name} ({x.CultureCode})" })
-            .ToList();
+        var listed = await LanguageService.ListEnabledAsync();
+        var languages = listed.IsSuccess
+            ? listed.Value
+                .OrderBy(x => x.Name)
+                .Select(x => new CultureOption { Value = x.CultureCode, Name = $"{x.Name} ({x.CultureCode})" })
+                .ToList()
+            : [];
 
         languages.Insert(0, new CultureOption { Value = null, Name = "(invariant)" });
-
         CultureSelectList = languages;
     }
 

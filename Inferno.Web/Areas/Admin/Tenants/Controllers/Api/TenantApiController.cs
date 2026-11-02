@@ -1,8 +1,6 @@
 ﻿using Extenso.AspNetCore.OData;
 using Extenso.Data.Entity;
 using Inferno.Helpers;
-using Inferno.Localization;
-using Inferno.Localization.Entities;
 using Inferno.Security;
 using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
@@ -44,8 +42,6 @@ public class TenantApiController : BaseODataController<Tenant, int>
             mediaFolder.Create();
         }
 
-        await InsertLanguagePacksAsync(tenantId);
-
         return result;
     }
 
@@ -53,37 +49,6 @@ public class TenantApiController : BaseODataController<Tenant, int>
     {
         await tenantDataCleaner.CleanAsync(key);
         return await base.Delete(key, cancellationToken);
-    }
-
-    private static async Task InsertLanguagePacksAsync(int tenantId)
-    {
-        var repository = Dependo.DependoResolver.Instance.Resolve<IRepository<LocalizableString>>();
-        if (await repository.CountAsync(x => x.TenantId == tenantId) > 0)
-        {
-            return;
-        }
-
-        var languagePacks = Dependo.DependoResolver.Instance.ResolveAll<ILanguagePack>();
-        var toInsert = new List<LocalizableString>();
-        foreach (var languagePack in languagePacks)
-        {
-            foreach (var localizedString in languagePack.LocalizedStrings)
-            {
-                toInsert.Add(new LocalizableString
-                {
-                    Id = Guid.NewGuid(),
-                    TenantId = tenantId,
-                    CultureCode = languagePack.CultureCode,
-                    TextKey = localizedString.Key,
-                    TextValue = localizedString.Value
-                });
-            }
-        }
-
-        if (toInsert.Count > 0)
-        {
-            await repository.InsertAsync(toInsert);
-        }
     }
 
     protected override int GetId(Tenant entity) => entity.Id;

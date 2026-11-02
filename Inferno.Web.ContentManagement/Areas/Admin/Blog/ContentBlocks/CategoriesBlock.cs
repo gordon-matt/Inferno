@@ -1,4 +1,4 @@
-﻿using Inferno.Localization.ComponentModel;
+using Localize;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 

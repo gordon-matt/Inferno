@@ -1,6 +1,5 @@
 ﻿@using Inferno.Web
-@using Inferno.Localization.Entities
-@using Inferno.Localization.Services
+@using Localize.Languages
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Localization
 @using Microsoft.AspNetCore.Components.Web
@@ -52,9 +51,9 @@ else
 }
 
 @code {
-    private List<Language> languages = [];
+    private List<LanguageChoice> languages = [];
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (WorkContext.CurrentTenant == null)
         {
@@ -62,16 +61,20 @@ else
             return;
         }
 
-        languages = LanguageService.GetActiveLanguages(WorkContext.CurrentTenant.Id).ToList();
+        var listed = await LanguageService.ListEnabledAsync();
+        languages = listed.IsSuccess
+            ? listed.Value.Select(language => new LanguageChoice(language.CultureCode, language.Name)).ToList()
+            : [];
+
         if (Model.IncludeInvariant)
         {
-            languages.Insert(0, new Language
-            {
-                CultureCode = null,
-                Name = string.IsNullOrWhiteSpace(Model.InvariantText) ? "[ Invariant ]" : Model.InvariantText
-            });
+            languages.Insert(0, new LanguageChoice(
+                null,
+                string.IsNullOrWhiteSpace(Model.InvariantText) ? "[ Invariant ]" : Model.InvariantText));
         }
     }
+
+    private sealed record LanguageChoice(string CultureCode, string Name);
 
     private Task OnSelectChanged(ChangeEventArgs args) => ChangeLanguage(args.Value?.ToString());
 

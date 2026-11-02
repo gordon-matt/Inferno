@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Inferno.Localization.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Localize;
 using Inferno.Web.Areas.Admin.Configuration.Components;
 
 namespace Inferno.Web.Configuration;

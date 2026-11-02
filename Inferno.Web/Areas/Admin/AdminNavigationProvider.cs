@@ -46,9 +46,9 @@ public class AdminNavigationProvider : INavigationProvider
 
         // Localization
         builder.Add(T[InfernoWebLocalizableStrings.Localization.Title], "5", item => item
-            .Url("/admin/localization/index")
+            .Url("/localize/languages")
             .Icon("fas fa-language")
-            .Permission(InfernoWebPolicies.LanguagesRead));
+            .Permission(InfernoWebPolicies.LanguagesWrite));
 
         //// Indexing — TODO: not yet ported from MantleCMS
         //builder.Add(T[InfernoWebLocalizableStrings.Indexing.Title], "5", item => item

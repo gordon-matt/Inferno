@@ -1,4 +1,4 @@
-﻿using Inferno.Localization;
+﻿using Localize;
 
 namespace Inferno.Identity.Infrastructure;
 

@@ -2,9 +2,8 @@
 using Extenso.Data.Entity;
 using Inferno.Caching;
 using Inferno.Data.Services;
-using Inferno.Localization.Entities;
-using Inferno.Localization.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
+using Inferno.Web.ContentManagement.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
@@ -19,19 +18,19 @@ public interface IContentBlockService : IGenericDataService<ContentBlock>
 public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlockService
 {
     private readonly Lazy<IRepository<Zone>> zoneRepository;
-    private readonly Lazy<ILocalizablePropertyService> localizablePropertyService;
+    private readonly ContentLocalization localization;
     private readonly IWorkContext workContext;
 
     public ContentBlockService(
         ICacheManager cacheManager,
         IRepository<ContentBlock> repository,
         Lazy<IRepository<Zone>> zoneRepository,
-        Lazy<ILocalizablePropertyService> localizablePropertyService,
+        ContentLocalization localization,
         IWorkContext workContext)
         : base(cacheManager, repository)
     {
         this.zoneRepository = zoneRepository;
-        this.localizablePropertyService = localizablePropertyService;
+        this.localization = localization;
         this.workContext = workContext;
     }
 
@@ -43,14 +42,7 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
         string entityType = typeof(ContentBlock).FullName;
         string entityId = entity.Id.ToString();
 
-        var localizedRecords = localizablePropertyService.Value.Find(new SearchOptions<LocalizableProperty>
-        {
-            Query = x =>
-                x.EntityType == entityType &&
-                x.EntityId == entityId
-        });
-
-        int rowsAffected = localizablePropertyService.Value.Delete(localizedRecords);
+        int rowsAffected = localization.DeleteFor(entityType, entityId);
         rowsAffected += base.Delete(entity);
 
         return rowsAffected;
@@ -173,14 +165,7 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
         string entityType = typeof(ContentBlock).FullName;
         var ids = records.Select(x => x.Id.ToString());
 
-        var localizedRecords = localizablePropertyService.Value.Find(new SearchOptions<LocalizableProperty>
-        {
-            Query = x =>
-                x.CultureCode == cultureCode &&
-                x.EntityType == entityType &&
-                ids.Contains(x.EntityId) &&
-                x.Property == "BlockValues"
-        });
+        var localizedRecords = localization.FindBlockValues(cultureCode, entityType, ids);
 
         var result = new List<IContentBlock>();
         foreach (var record in records)

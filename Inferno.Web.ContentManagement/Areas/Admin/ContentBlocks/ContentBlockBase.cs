@@ -1,5 +1,5 @@
-﻿using Extenso.Data.Entity;
-using Inferno.Localization.ComponentModel;
+using Extenso.Data.Entity;
+using Localize;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 

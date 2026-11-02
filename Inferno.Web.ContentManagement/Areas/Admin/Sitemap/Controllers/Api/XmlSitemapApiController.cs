@@ -5,7 +5,7 @@ using Extenso;
 using Extenso.Collections;
 using Extenso.Data.Entity;
 using Inferno.Helpers;
-using Inferno.Localization.Services;
+using Localize.Languages;
 using Inferno.Tenants;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
@@ -188,14 +188,13 @@ public class XmlSitemapApiController : GenericTenantODataController<SitemapConfi
 
         var urls = new HashSet<UrlElement>();
 
-        List<string> cultures = null;
-        using (var connection = languageService.Value.OpenConnection())
-        {
-            cultures = await connection
-                .Query(x => x.TenantId == tenantId)
-                .Select(x => x.CultureCode)
-                .ToListAsync();
-        }
+        var listed = await languageService.Value.ListAsync();
+        List<string> cultures = listed.IsSuccess
+            ? listed.Value
+                .Select(language => language.CultureCode)
+                .Where(culture => !string.IsNullOrEmpty(culture))
+                .ToList()
+            : [];
 
         string requestBaseUrl = new Uri(Request.GetDisplayUrl()).GetLeftPart(UriPartial.Authority);
         var tenant = DependoResolver.Instance.Resolve<IWorkContext>().CurrentTenant;

@@ -1,7 +1,6 @@
 #nullable disable
 
 using Inferno.Helpers;
-using Inferno.Localization.Entities;
 using Inferno.Logging.Entities;
 using Inferno.Web.Configuration.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
@@ -71,12 +70,6 @@ public class TenantDataCleaner : ITenantDataCleaner
             .Select(x => x.Id)
             .ToListAsync();
 
-        var localizableIds = blockIds.Concat(entityBlockIds).Select(x => x.ToString()).ToList();
-        if (localizableIds.Count > 0)
-        {
-            await dbContext.Set<LocalizableProperty>().Where(x => localizableIds.Contains(x.EntityId)).ExecuteDeleteAsync();
-        }
-
         if (blockIds.Count > 0)
         {
             await dbContext.Set<ContentBlock>().Where(x => blockIds.Contains(x.Id)).ExecuteDeleteAsync();
@@ -104,8 +97,7 @@ public class TenantDataCleaner : ITenantDataCleaner
         await dbContext.Set<MessageTemplate>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
         await dbContext.Set<QueuedEmail>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
         await dbContext.Set<Setting>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
-        await dbContext.Set<LocalizableString>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
-        await dbContext.Set<Language>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
+        await DeleteLocalizationAsync(tenantId);
         await dbContext.Set<LogEntry>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
         await dbContext.Set<UserProfileEntry>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
 
@@ -136,6 +128,25 @@ public class TenantDataCleaner : ITenantDataCleaner
         if (File.Exists(sitemapPath))
         {
             File.Delete(sitemapPath);
+        }
+    }
+
+    private async Task DeleteLocalizationAsync(int tenantId)
+    {
+        try
+        {
+            string scope = tenantId.ToString();
+            await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"DELETE FROM localize.LocalizableProperties WHERE ScopeId = {scope}");
+            await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"DELETE FROM localize.LocalizableStrings WHERE ScopeId = {scope}");
+            await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                $"DELETE FROM localize.Languages WHERE ScopeId = {scope}");
+        }
+        catch (Exception)
+        {
+            // The catalog tables are created by the localization library. A tenant deleted
+            // before that database exists has nothing to remove.
         }
     }
 }

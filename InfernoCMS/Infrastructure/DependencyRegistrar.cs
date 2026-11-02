@@ -1,5 +1,5 @@
 ﻿using Dependo;
-using Inferno.Localization;
+using Localize;
 using Inferno.Security.Membership;
 using Inferno.Web.Identity;
 using InfernoCMS.Identity.Services;
