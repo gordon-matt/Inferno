@@ -12,7 +12,6 @@
     <Project Path="Inferno.Identity/Inferno.Identity.csproj" />
     <Project Path="Inferno.Logging.Abstractions/Inferno.Logging.Abstractions.csproj" />
     <Project Path="Inferno.Logging/Inferno.Logging.csproj" />
-    <Project Path="Inferno.Plugins/Inferno.Plugins.csproj" />
     <Project Path="Inferno.Security/Inferno.Security.csproj" />
     <Project Path="Inferno.Tasks.Abstractions/Inferno.Tasks.Abstractions.csproj" />
     <Project Path="Inferno.Tasks/Inferno.Tasks.csproj" />

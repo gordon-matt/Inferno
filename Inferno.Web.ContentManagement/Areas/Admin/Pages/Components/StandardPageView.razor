@@ -5,7 +5,7 @@
 @if (Page != null)
 {
     <HeadContent>
-        <PageTitle>@(string.IsNullOrWhiteSpace(Page.MetaTitle) ? Page.InstanceName : Page.MetaTitle)</PageTitle>
+        <PageTitle>@(string.IsNullOrWhiteSpace(Page.MetaTitle) ? Page.Title : Page.MetaTitle)</PageTitle>
         @if (!string.IsNullOrWhiteSpace(Page.MetaDescription))
         {
             <meta name="description" content="@Page.MetaDescription" />
@@ -17,7 +17,7 @@
     </HeadContent>
 
     <article>
-        <h1>@Page.InstanceName</h1>
+        <h1>@Page.Title</h1>
         @foreach (var segment in segments)
         {
             if (segment.ZoneName == null)
@@ -36,7 +36,7 @@
     private static readonly Regex ZonePattern = new(@"\[\[ContentZone:(?<Zone>.*?)\]\]", RegexOptions.Compiled);
 
     [Parameter]
-    public StandardPage Page { get; set; }
+    public PublishedPage Page { get; set; }
 
     private List<Segment> segments = [];
 

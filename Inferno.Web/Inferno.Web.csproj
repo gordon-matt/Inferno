@@ -30,6 +30,7 @@
     <ProjectReference Include="..\Inferno.Tasks\Inferno.Tasks.csproj" />
     <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
-    <ProjectReference Include="..\Inferno.Plugins\Inferno.Plugins.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pluginz\Pluginz.Core\Pluginz.Core.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pluginz\Pluginz.Services\Pluginz.Services.csproj" />
   </ItemGroup>
 </Project>

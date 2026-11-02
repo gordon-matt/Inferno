@@ -1,10 +1,5 @@
 using Dependo;
-using Inferno.Helpers;
-using Inferno.Plugins;
-using Inferno.Plugins.Configuration;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Inferno.Web.Infrastructure;
 
@@ -40,47 +35,6 @@ public static class MvcBuilderExtensions
         {
             builder.AddApplicationPart(assembly);
         }
-
-        return builder;
-    }
-
-    /// <summary>
-    /// Discovers plugins under <c>~/Plugins</c>, shadow-copies their assemblies
-    /// per the supplied <see cref="InfernoPluginOptions"/>, and registers each
-    /// plugin assembly as an MVC <see cref="Microsoft.AspNetCore.Mvc.ApplicationParts.ApplicationPart"/>.
-    ///
-    /// Call this AFTER <see cref="AddInfernoApplicationParts"/> so the host's
-    /// own controllers are registered first - plugin parts are appended on top.
-    /// </summary>
-    /// <param name="builder">The MVC builder whose <c>PartManager</c> receives the plugin parts.</param>
-    /// <param name="configuration">Used to bind the <c>InfernoPluginOptions</c> section.</param>
-    public static IMvcBuilder AddInfernoPlugins(
-        this IMvcBuilder builder,
-        IConfiguration configuration,
-        IHostEnvironment hostEnvironment)
-    {
-        ArgumentNullException.ThrowIfNull(builder);
-        ArgumentNullException.ThrowIfNull(configuration);
-        ArgumentNullException.ThrowIfNull(hostEnvironment);
-
-        // PluginManager resolves "~/Plugins" via CommonHelper.MapPath, which
-        // depends on CommonHelper.BaseDirectory being set. Default to the
-        // host's content root - matches the way MantleCMS bootstraps plugins.
-        if (string.IsNullOrEmpty(CommonHelper.BaseDirectory))
-        {
-            CommonHelper.BaseDirectory = hostEnvironment.ContentRootPath;
-        }
-
-        var options = new InfernoPluginOptions();
-        configuration.GetSection(nameof(InfernoPluginOptions)).Bind(options);
-
-        builder.Services.Configure<InfernoPluginOptions>(
-            configuration.GetSection(nameof(InfernoPluginOptions)));
-
-        // ApplicationPartManager.Initialize must run BEFORE the host is built
-        // so that controllers / razor parts contributed by plugins are visible
-        // to MVC's ActionDescriptorCollectionProvider.
-        PluginManager.Initialize(builder.PartManager, options);
 
         return builder;
     }

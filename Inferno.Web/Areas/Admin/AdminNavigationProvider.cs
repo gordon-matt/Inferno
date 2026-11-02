@@ -58,7 +58,7 @@ public class AdminNavigationProvider : INavigationProvider
 
         // Plugins
         builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "5", item => item
-            .Url("/admin/plugins")
+            .Url("/pluginz")
             .Icon("fas fa-puzzle-piece")
             .Permission(InfernoWebPolicies.PluginsRead));
 

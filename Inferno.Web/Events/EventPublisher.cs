@@ -1,22 +1,25 @@
 using Dependo;
-using Inferno.Plugins;
 using Microsoft.Extensions.Logging;
+using Pluginz.Registry;
 
 namespace Inferno.Web.Events;
 
 public class EventPublisher : IEventPublisher
 {
     private readonly ISubscriptionService subscriptionService;
+    private readonly IPluginRegistry plugins;
 
-    public EventPublisher(ISubscriptionService subscriptionService)
+    public EventPublisher(ISubscriptionService subscriptionService, IPluginRegistry plugins)
     {
         this.subscriptionService = subscriptionService;
+        this.plugins = plugins;
     }
 
     public virtual void Publish<T>(T eventMessage)
     {
+        // A subscriber that ships inside a plugin runs only while that plugin is active. Host subscribers always run.
         var subscribers = subscriptionService.GetSubscriptions<T>()
-            .Where(subscriber => PluginManager.FindPlugin(subscriber.GetType())?.Installed ?? true)
+            .Where(subscriber => plugins.FindByType(subscriber.GetType()) is not { IsActive: false })
             .ToList();
 
         foreach (var subscriber in subscribers)

@@ -2,6 +2,8 @@
 @using Dependo
 @using Inferno.Web.Infrastructure
 @using Localize.Components.Pages
+@using Pluginz.Components.Pages
+@using Pluginz.Web
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="assemblies" OnNavigateAsync="OnNavigateAsync">
@@ -28,6 +30,8 @@
             assemblies = DependoResolver.Instance.ResolveAll<IRouterAssemblyMarker>()
                 .Select(x => x.GetType().Assembly)
                 .Append(typeof(Languages).Assembly)
+                .Append(typeof(Plugins).Assembly)
+                .Concat(DependoResolver.Instance.Resolve<IPluginWebAssemblies>().Assemblies)
                 .Distinct()
                 .ToList();
         }

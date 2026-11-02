@@ -10,11 +10,3 @@ public class PageODataService : RadzenODataService<Page, Guid>
     {
     }
 }
-
-public class PageTypeODataService : RadzenODataService<PageType, Guid>
-{
-    public PageTypeODataService()
-        : base($"{CmsConstants.ODataRoutes.Prefix}/{CmsConstants.ODataRoutes.EntitySetNames.PageType}")
-    {
-    }
-}

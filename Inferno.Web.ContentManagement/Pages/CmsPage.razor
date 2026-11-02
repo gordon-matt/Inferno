@@ -19,7 +19,7 @@ else if (!allowed)
 }
 else
 {
-    <StandardPageView Page="standardPage" />
+    <StandardPageView Page="publishedPage" />
 }
 
 @code {
@@ -35,9 +35,6 @@ else
     private IPageContentService PageContentService { get; set; }
 
     [Inject]
-    private IPageTypeService PageTypeService { get; set; }
-
-    [Inject]
     private IWorkContext WorkContext { get; set; }
 
     [Inject]
@@ -46,7 +43,7 @@ else
     private bool ready;
     private bool notFound;
     private bool allowed = true;
-    private StandardPage standardPage;
+    private PublishedPage publishedPage;
 
     protected override void OnInitialized()
     {
@@ -58,7 +55,7 @@ else
         ready = false;
         notFound = false;
         allowed = true;
-        standardPage = null;
+        publishedPage = null;
         WorkContext.SetState<Guid?>("CurrentPageId", null);
 
         if (string.IsNullOrWhiteSpace(Slug) || Reserved.Contains(Slug) || Slug.Contains('/'))
@@ -90,19 +87,15 @@ else
 
         WorkContext.SetState("CurrentPageId", (Guid?)version.PageId);
 
-        var pageType = await PageTypeService.FindOneAsync(version.Page.PageTypeId);
-        var infernoPageType = pageType == null ? null : PageTypeService.GetInfernoPageType(pageType.Name);
-        if (infernoPageType is not StandardPage page)
+        var fields = StandardPageContent.Parse(version.Fields);
+        publishedPage = new PublishedPage
         {
-            notFound = true;
-            ready = true;
-            return;
-        }
-
-        page.InstanceName = version.Title;
-        page.InstanceParentId = version.Page.ParentId;
-        page.InitializeInstance(version);
-        standardPage = page;
+            Title = version.Title,
+            MetaTitle = fields.MetaTitle,
+            MetaKeywords = fields.MetaKeywords,
+            MetaDescription = fields.MetaDescription,
+            BodyContent = fields.BodyContent,
+        };
         ready = true;
     }
 }

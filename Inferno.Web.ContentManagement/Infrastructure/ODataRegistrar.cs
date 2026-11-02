@@ -38,7 +38,6 @@ public class ODataRegistrar : IODataRegistrar
 
         // Pages
         builder.EntitySet<Page>(CmsConstants.ODataRoutes.EntitySetNames.Page);
-        builder.EntitySet<PageType>(CmsConstants.ODataRoutes.EntitySetNames.PageType);
         builder.EntitySet<PageVersion>(CmsConstants.ODataRoutes.EntitySetNames.PageVersion);
         builder.EntitySet<PageTreeItem>(CmsConstants.ODataRoutes.EntitySetNames.PageTree);
 

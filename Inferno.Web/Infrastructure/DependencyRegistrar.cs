@@ -3,15 +3,12 @@ using Dependo;
 using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
 using Localize;
-using Inferno.Plugins;
 using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
 using Inferno.Web.Areas.Admin.Configuration.Services;
 using Inferno.Web.Areas.Admin.Configuration.Themes.Models;
 using Inferno.Web.Areas.Admin.Configuration.Themes.Services;
-using Inferno.Web.Areas.Admin.Plugins.Models;
-using Inferno.Web.Areas.Admin.Plugins.Services;
 using Inferno.Web.Areas.Admin.ScheduledTasks.Services;
 using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
@@ -41,9 +38,6 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         // Helpers
         builder.Register<IWebHelper, WebHelper>(ServiceLifetime.Scoped);
         //builder.Register<IDateTimeHelper, DateTimeHelper>(ServiceLifetime.Scoped);
-
-        // Plugins
-        builder.Register<IPluginFinder, PluginFinder>(ServiceLifetime.Scoped);
 
         // Work Context, Themes, Routing, etc
         builder.Register<IWorkContext, WorkContext>(ServiceLifetime.Scoped);
@@ -111,9 +105,6 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
         builder.Register<IRadzenODataService<ScheduledTask, int>, ScheduledTaskODataService>(ServiceLifetime.Singleton);
         builder.RegisterSelf<ScheduledTaskODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<EdmPluginDescriptor, string>, PluginODataService>(ServiceLifetime.Singleton);
-        builder.RegisterSelf<PluginODataService>(ServiceLifetime.Singleton);
-
         builder.Register<IRadzenODataService<Setting, Guid>, SettingODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<Tenant, int>, TenantODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<EdmThemeConfiguration, Guid>, ThemeODataService>(ServiceLifetime.Singleton);

@@ -9,8 +9,6 @@ public class Page : TenantEntity<Guid>
 {
     public Guid? ParentId { get; set; }
 
-    public Guid PageTypeId { get; set; }
-
     public string Name { get; set; }
 
     public bool IsEnabled { get; set; }
@@ -34,7 +32,6 @@ public class PageMap : InfernoEntityTypeConfiguration<Page>
     {
         builder.ToTable(CmsConstants.Tables.Pages, InfernoSchema);
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.PageTypeId).IsRequired();
         builder.Property(x => x.Name).IsRequired().HasMaxLength(255).IsUnicode(true);
         builder.Property(x => x.IsEnabled).IsRequired();
         builder.Property(x => x.Order).IsRequired();

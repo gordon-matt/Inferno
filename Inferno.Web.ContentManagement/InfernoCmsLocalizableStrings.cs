@@ -293,13 +293,52 @@ public static class InfernoCmsLocalizableStrings
         public const string Versions = "Inferno.Web.ContentManagement/Pages.Versions";
 
         public const string CannotDeleteOnlyVersion = "Inferno.Web.ContentManagement/Pages.CannotDeleteOnlyVersion";
+        public const string Design = "Inferno.Web.ContentManagement/Pages.Design";
+        public const string DesignContent = "Inferno.Web.ContentManagement/Pages.DesignContent";
+        public const string PagesIntro = "Inferno.Web.ContentManagement/Pages.PagesIntro";
+        public const string SettingsIntro = "Inferno.Web.ContentManagement/Pages.SettingsIntro";
+        public const string Publish = "Inferno.Web.ContentManagement/Pages.Publish";
+        public const string SwitchToDraft = "Inferno.Web.ContentManagement/Pages.SwitchToDraft";
+        public const string SwitchedOff = "Inferno.Web.ContentManagement/Pages.SwitchedOff";
+        public const string EditContent = "Inferno.Web.ContentManagement/Pages.EditContent";
+        public const string CreateAndDesign = "Inferno.Web.ContentManagement/Pages.CreateAndDesign";
+        public const string NewPage = "Inferno.Web.ContentManagement/Pages.NewPage";
+        public const string NewPageIntro = "Inferno.Web.ContentManagement/Pages.NewPageIntro";
+        public const string Address = "Inferno.Web.ContentManagement/Pages.Address";
+        public const string LastEdited = "Inferno.Web.ContentManagement/Pages.LastEdited";
+        public const string Language = "Inferno.Web.ContentManagement/Pages.Language";
+        public const string DefaultLanguage = "Inferno.Web.ContentManagement/Pages.DefaultLanguage";
+        public const string Published = "Inferno.Web.ContentManagement/Pages.Published";
+        public const string Draft = "Inferno.Web.ContentManagement/Pages.Draft";
+        public const string NoContentYet = "Inferno.Web.ContentManagement/Pages.NoContentYet";
+        public const string PublishedHelp = "Inferno.Web.ContentManagement/Pages.PublishedHelp";
+        public const string VisitorDetails = "Inferno.Web.ContentManagement/Pages.VisitorDetails";
+        public const string VisitorDetailsIntro = "Inferno.Web.ContentManagement/Pages.VisitorDetailsIntro";
+        public const string HistoryIntro = "Inferno.Web.ContentManagement/Pages.HistoryIntro";
+        public const string HistoryEmpty = "Inferno.Web.ContentManagement/Pages.HistoryEmpty";
+        public const string NoTranslationYet = "Inferno.Web.ContentManagement/Pages.NoTranslationYet";
+        public const string CreateTranslation = "Inferno.Web.ContentManagement/Pages.CreateTranslation";
+        public const string SaveChanges = "Inferno.Web.ContentManagement/Pages.SaveChanges";
+        public const string Saved = "Inferno.Web.ContentManagement/Pages.Saved";
+        public const string PageNotFound = "Inferno.Web.ContentManagement/Pages.PageNotFound";
+        public const string MetaTitle = "Inferno.Web.ContentManagement/Pages.MetaTitle";
+        public const string MetaKeywords = "Inferno.Web.ContentManagement/Pages.MetaKeywords";
+        public const string MetaDescription = "Inferno.Web.ContentManagement/Pages.MetaDescription";
+
+        public const string ErrorNotAllowed = "Inferno.Web.ContentManagement/Pages.ErrorNotAllowed";
+        public const string ErrorNotFound = "Inferno.Web.ContentManagement/Pages.ErrorNotFound";
+        public const string ErrorNameRequired = "Inferno.Web.ContentManagement/Pages.ErrorNameRequired";
+        public const string ErrorTitleRequired = "Inferno.Web.ContentManagement/Pages.ErrorTitleRequired";
+        public const string ErrorSlugRequired = "Inferno.Web.ContentManagement/Pages.ErrorSlugRequired";
+        public const string ErrorSlugInUse = "Inferno.Web.ContentManagement/Pages.ErrorSlugInUse";
+        public const string ErrorTranslationExists = "Inferno.Web.ContentManagement/Pages.ErrorTranslationExists";
+        public const string ErrorSaveFailed = "Inferno.Web.ContentManagement/Pages.ErrorSaveFailed";
 
         public static class PageModel
         {
             public const string IsEnabled = "Inferno.Web.ContentManagement/Pages.PageModel.IsEnabled";
             public const string Name = "Inferno.Web.ContentManagement/Pages.PageModel.Name";
             public const string Order = "Inferno.Web.ContentManagement/Pages.PageModel.Order";
-            public const string PageTypeId = "Inferno.Web.ContentManagement/Pages.PageModel.PageTypeId";
             public const string Roles = "Inferno.Web.ContentManagement/Pages.PageModel.Roles";
             public const string ShowOnMenus = "Inferno.Web.ContentManagement/Pages.PageModel.ShowOnMenus";
         }
@@ -313,27 +352,6 @@ public static class InfernoCmsLocalizableStrings
             public const string Slug = "Inferno.Web.ContentManagement/Pages.PageVersionModel.Slug";
             public const string Status = "Inferno.Web.ContentManagement/Pages.PageVersionModel.Status";
             public const string Title = "Inferno.Web.ContentManagement/Pages.PageVersionModel.Title";
-        }
-
-        public static class PageTypeModel
-        {
-            public const string DisplayTemplatePath = "Inferno.Web.ContentManagement/Pages.PageTypeModel.DisplayTemplatePath";
-            public const string EditorTemplatePath = "Inferno.Web.ContentManagement/Pages.PageTypeModel.EditorTemplatePath";
-            public const string LayoutPath = "Inferno.Web.ContentManagement/Pages.PageTypeModel.LayoutPath";
-            public const string Name = "Inferno.Web.ContentManagement/Pages.PageTypeModel.Name";
-        }
-
-        public static class PageTypes
-        {
-            public const string Title = "Inferno.Web.ContentManagement/Pages.PageTypes.Title";
-
-            public static class StandardPage
-            {
-                public const string BodyContent = "Inferno.Web.ContentManagement/Pages.PageTypes.StandardPage.BodyContent";
-                public const string MetaDescription = "Inferno.Web.ContentManagement/Pages.PageTypes.StandardPage.MetaDescription";
-                public const string MetaKeywords = "Inferno.Web.ContentManagement/Pages.PageTypes.StandardPage.MetaKeywords";
-                public const string MetaTitle = "Inferno.Web.ContentManagement/Pages.PageTypes.StandardPage.MetaTitle";
-            }
         }
     }
 

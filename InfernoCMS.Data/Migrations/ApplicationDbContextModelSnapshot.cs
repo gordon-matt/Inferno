@@ -669,9 +669,6 @@ namespace InfernoCMS.Data.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("PageTypeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uniqueidentifier");
 
@@ -684,28 +681,6 @@ namespace InfernoCMS.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pages", "inferno");
-                });
-
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities.PageType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("LayoutPath")
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PageTypes", "inferno");
                 });
 
             modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities.PageVersion", b =>

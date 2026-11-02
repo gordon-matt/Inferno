@@ -7,6 +7,11 @@ public static partial class MediaHelper
     // TinyMCE does not add a "/" at the start of a URL and as such, the relative URLs will sometimes not work
     public static string EnsureCorrectUrls(string html)
     {
+        if (string.IsNullOrEmpty(html))
+        {
+            return html;
+        }
+
         string returnHtml = html;
 
         var matches = ImgTagRegex().Matches(html);

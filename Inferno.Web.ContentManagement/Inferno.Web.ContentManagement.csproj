@@ -12,6 +12,7 @@
     <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Core\Localize.Core.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Data\Localize.Data.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Services\Localize.Services.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\PageKrafter\PageKrafter.Components\PageKrafter.Components.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Pickstack" Version="1.0.1" />

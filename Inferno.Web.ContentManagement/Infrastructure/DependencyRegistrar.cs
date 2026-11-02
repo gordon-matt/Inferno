@@ -62,11 +62,10 @@ public class DependencyRegistrar : IDependencyRegistrar
 
         // Pages
         builder.Register<IPageService, PageService>(ServiceLifetime.Transient);
-        builder.Register<IPageTypeService, PageTypeService>(ServiceLifetime.Transient);
         builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
         builder.Register<IPageContentService, PageContentService>(ServiceLifetime.Transient);
+        builder.Register<IPageAuthoringService, PageAuthoringService>(ServiceLifetime.Scoped);
         builder.Register<IRadzenODataService<Page, Guid>, PageODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<PageType, Guid>, PageTypeODataService>(ServiceLifetime.Singleton);
         builder.Register<IRadzenODataService<PageVersion, Guid>, PageVersionODataService>(ServiceLifetime.Singleton);
         builder.Register<IPageVersionODataService, PageVersionODataService>(ServiceLifetime.Singleton);
 
@@ -144,7 +143,6 @@ public class DependencyRegistrar : IDependencyRegistrar
         builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
 
         // Indexing
-        //builder.Register<IIndexingContentProvider, PagesIndexingContentProvider>(ServiceLifetime.Transient); // TODO
         //builder.Register<IIndexingContentProvider, BlogIndexingContentProvider>(ServiceLifetime.Transient); // TODO
 
         //builder.Register<IMessageTemplatesProvider, NewsletterMessageTemplates>(ServiceLifetime.Transient);

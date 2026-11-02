@@ -1,68 +1,108 @@
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Microsoft.AspNetCore.Components;
+using Radzen;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Pages;
 
 public partial class Index
 {
     [Inject]
-    private IPageTypeService PageTypeService { get; set; }
+    private IPageVersionService PageVersionService { get; set; }
+
+    [Inject]
+    private IPageAuthoringService Authoring { get; set; }
 
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
-    private void NavigateToVersions(Guid pageId) =>
-        NavigationManager.NavigateTo($"/admin/pages/versions/{pageId}");
+    /// <summary>The default-language version of each listed page, for the address and status columns.</summary>
+    private Dictionary<Guid, PageVersion> currentVersions = [];
 
-    private IEnumerable<PageType> PageTypesSelectList { get; set; } = Enumerable.Empty<PageType>();
+    private bool showCreate;
+    private bool creating;
+    private string newName = string.Empty;
+    private string createError;
 
-    private bool ShowCreateMode { get; set; }
-
-    protected override async Task OnInitializedAsync()
+    protected override async Task LoadGridAsync(LoadDataArgs args)
     {
-        await base.OnInitializedAsync();
-        LoadPageTypes();
+        await base.LoadGridAsync(args);
+        LoadCurrentVersions();
     }
 
-    protected override void Create()
+    private void BeginCreate()
     {
-        Model = new Page
+        newName = string.Empty;
+        createError = null;
+        showCreate = true;
+    }
+
+    private void CancelCreate() => showCreate = false;
+
+    private async Task CreateAsync()
+    {
+        creating = true;
+        createError = null;
+
+        try
         {
-            IsEnabled = true,
-            ShowOnMenus = true,
-            PageTypeId = PageTypesSelectList.FirstOrDefault()?.Id ?? Guid.Empty
-        };
-        ShowEditMode = false;
-        ShowCreateMode = true;
+            var result = await Authoring.CreatePageAsync(newName);
+            if (!result.Succeeded)
+            {
+                createError = T[result.ErrorKey].Value;
+                return;
+            }
+
+            showCreate = false;
+            NavigationManager.NavigateTo($"/admin/pages/design/{result.Version.Id}");
+        }
+        finally
+        {
+            creating = false;
+        }
     }
 
-    protected override async Task EditAsync(Guid id)
+    private void EditPage(Guid pageId) => NavigationManager.NavigateTo($"/admin/pages/edit/{pageId}");
+
+    private async Task EditContentAsync(Guid pageId)
     {
-        ShowCreateMode = false;
-        await base.EditAsync(id);
+        var result = await Authoring.EnsureFirstVersionAsync(pageId);
+        if (!result.Succeeded)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", T[result.ErrorKey].Value);
+            return;
+        }
+
+        NavigationManager.NavigateTo($"/admin/pages/design/{result.Version.Id}");
     }
 
-    protected override async Task OnValidSumbitAsync()
+    private void LoadCurrentVersions()
     {
-        await base.OnValidSumbitAsync();
-        ShowCreateMode = false;
+        var pageIds = (Records ?? []).Select(page => page.Id).ToList();
+        if (pageIds.Count == 0)
+        {
+            currentVersions = [];
+            return;
+        }
+
+        List<PageVersion> versions;
+        using (var connection = PageVersionService.OpenConnection())
+        {
+            versions = connection
+                .Query(version => pageIds.Contains(version.PageId) && version.CultureCode == null && version.Status != VersionStatus.Archived)
+                .ToList();
+        }
+
+        currentVersions = versions
+            .GroupBy(version => version.PageId)
+            .ToDictionary(
+                group => group.Key,
+                group => group
+                    .OrderByDescending(version => version.Status == VersionStatus.Published)
+                    .ThenByDescending(version => version.DateModifiedUtc)
+                    .First());
     }
 
-    protected override void Cancel()
-    {
-        base.Cancel();
-        ShowCreateMode = false;
-    }
-
-    private void LoadPageTypes()
-    {
-        using var connection = PageTypeService.OpenConnection();
-        PageTypesSelectList = connection.Query()
-            .OrderBy(x => x.Name)
-            .ToList();
-    }
-
-    private string GetPageTypeName(Guid pageTypeId) =>
-        PageTypesSelectList.FirstOrDefault(x => x.Id == pageTypeId)?.Name ?? string.Empty;
+    private PageVersion CurrentVersionOf(Guid pageId) =>
+        currentVersions.GetValueOrDefault(pageId);
 }

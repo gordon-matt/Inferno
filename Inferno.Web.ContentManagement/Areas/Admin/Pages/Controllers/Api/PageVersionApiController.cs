@@ -144,6 +144,11 @@ public class PageVersionApiController : GenericTenantODataController<PageVersion
 
     public override async Task<IActionResult> Post([FromBody] PageVersion entity, CancellationToken cancellationToken)
     {
+        if (entity is null || !ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         entity.DateCreatedUtc = DateTime.UtcNow;
         entity.DateModifiedUtc = DateTime.UtcNow;
         entity.Fields = MediaHelper.EnsureCorrectUrls(entity.Fields);

@@ -39,7 +39,6 @@ public static partial class CmsConstants
         internal const string MessageTemplates = "MessageTemplates";
         internal const string Pages = "Pages";
         internal const string PageVersions = "PageVersions";
-        internal const string PageTypes = "PageTypes";
         internal const string SitemapConfig = "SitemapConfig";
         internal const string QueuedEmails = "QueuedEmails";
         internal const string QueuedSMS = "QueuedSMS";
@@ -70,8 +69,6 @@ public static partial class CmsConstants
         public const string PageHistoryWrite = "Page History: Write";
         public const string PagesRead = "Pages: Read";
         public const string PagesWrite = "Pages: Write";
-        public const string PageTypesRead = "Page Types: Read";
-        public const string PageTypesWrite = "Page Types: Write";
 
         public const string SitemapRead = "Sitemap: Read";
         public const string SitemapWrite = "Sitemap: Write";
@@ -96,7 +93,6 @@ public static partial class CmsConstants
             public const string MenuItem = "MenuItemApi";
             public const string Page = "PageApi";
             public const string PageTree = "PageTreeApi";
-            public const string PageType = "PageTypeApi";
             public const string PageVersion = "PageVersionApi";
             public const string Subscriber = "SubscriberApi";
             public const string XmlSitemap = "XmlSitemapApi";

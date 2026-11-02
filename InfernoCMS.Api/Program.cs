@@ -3,6 +3,9 @@ using Dependo.Autofac;
 using Extenso.AspNetCore.OData;
 using Inferno.Web.ContentManagement.Security;
 using Inferno.Web.Infrastructure;
+using Inferno.Web.Plugins;
+using Inferno.Web.Security;
+using Pluginz;
 using Inferno.Web.Localization;
 using InfernoCMS.Api.Infrastructure;
 using InfernoCMS.Data;
@@ -31,6 +34,14 @@ services.AddInfernoIdentity();
 
 services.AddCmsLocalization(configuration.GetConnectionString("DefaultConnection"));
 
+builder.AddPluginz<InfernoPluginScope>(options =>
+{
+    options.RequireAuthentication = true;
+    options.ReadPolicy = InfernoWebPolicies.PluginsRead;
+    options.ManagePolicy = InfernoWebPolicies.PluginsManage;
+});
+services.AddPluginzWeb();
+
 services
     .AddControllers(options =>
         // Strip the inherited Stream action from every OData controller. Extenso
@@ -42,7 +53,7 @@ services
     // pattern. This replaces explicit AddApplicationPart calls and makes new
     // referenced (or plugin) assemblies just-work as long as they ship a marker.
     .AddInfernoApplicationParts()
-    .AddInfernoPlugins(configuration, builder.Environment)
+    .AddPluginzParts()
     .AddOData((options, serviceProvider) =>
     {
         options.Select().Expand().Filter().OrderBy().SetMaxTop(null).Count();
@@ -161,6 +172,7 @@ app.UseODataRouteDebug();
 // Add OData /$query middleware
 app.UseODataQueryRequest();
 
+app.UsePluginz();
 app.UseRouting();
 
 app.UseRateLimiter();
@@ -169,6 +181,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapPluginz();
 
 #endregion Pipeline
 

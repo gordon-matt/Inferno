@@ -34,8 +34,6 @@ public static class CmsAuthorizationOptionsExtensions
         options.AddPermission(CmsConstants.Policies.PageHistoryWrite, "PageHistoryWrite");
         options.AddPermission(CmsConstants.Policies.PagesRead, "PagesRead");
         options.AddPermission(CmsConstants.Policies.PagesWrite, "PagesWrite");
-        options.AddPermission(CmsConstants.Policies.PageTypesRead, "PageTypesRead");
-        options.AddPermission(CmsConstants.Policies.PageTypesWrite, "PageTypesWrite");
 
         options.AddPermission(CmsConstants.Policies.SitemapRead, "SitemapRead");
         options.AddPermission(CmsConstants.Policies.SitemapWrite, "SitemapWrite");

@@ -2,7 +2,6 @@
 using Dependo.Autofac;
 using Flatmate;
 using Inferno.Identity;
-using Inferno.Plugins;
 using Inferno.Tenants.Entities;
 using Inferno.Tenants;
 using Inferno.Web.ContentManagement.Security;
@@ -19,6 +18,11 @@ using Inferno.Web.Infrastructure;
 using Inferno.Web.Localization;
 using Localize.Components;
 using Localize.Components.Pages;
+using Pluginz;
+using Pluginz.Components;
+using Pluginz.Components.Pages;
+using Pluginz.Web;
+using Inferno.Web.Plugins;
 using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
@@ -33,9 +37,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using OfficeOpenXml;
+using PageKrafter;
+using PageKrafter.Components;
 using Pickstack;
 using Pickstack.FileManager.WebFilez;
 using Pickstack.RichTextEditor.TinyMce7;
+using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 
 ExcelPackage.License.SetNonCommercialOrganization("Inferno");
 
@@ -86,7 +93,9 @@ services.Configure<ForgeShellOptions>(shell =>
 {
     shell.Brand = "Inferno CMS";
     shell.BrandHref = "/admin";
-    shell.LogoUrl = "img/logo.png";
+    // Logo_Dark is the dark artwork for the light theme. Logo_Light is the pale artwork for the dark theme.
+    shell.LogoUrl = "img/Logo_Dark.png";
+    shell.LogoDarkUrl = "img/Logo_Light.png";
     shell.NavigationPlacement = ForgeNavigationPlacement.Topbar;
     shell.UseSharedMenu = true;
     shell.SharedMenuName = AdminMenuCatalog.MenuName;
@@ -142,10 +151,21 @@ services.AddFlatmateCircuit<Tenant>();
 
 services.AddCmsLocalization(databaseInstalled ? connectionString : null);
 
+// Plugins load here, before the container is built, because only now can they still add services.
+builder.AddPluginz<InfernoPluginScope>(options =>
+{
+    options.RequireAuthentication = true;
+    options.ReadPolicy = InfernoWebPolicies.PluginsRead;
+    options.ManagePolicy = InfernoWebPolicies.PluginsManage;
+});
+services.AddPluginzWeb();
+services.AddPluginzNuGet(nuget => nuget.TagFilter = "inferno-cms");
+services.AddPluginzComponents();
+
 services
     .AddControllersWithViews()
     .AddInfernoApplicationParts()
-    .AddInfernoPlugins(configuration, builder.Environment);
+    .AddPluginzParts();
 
 services.AddRazorPages().AddNewtonsoftJson();
 
@@ -175,6 +195,9 @@ services.AddHttpContextAccessor();
 services.AddHttpClient();
 
 services.ConfigureInferno(configuration);
+
+services.AddPageKrafter();
+services.AddPageKrafterBlock<PageContentZoneBlock>();
 
 #endregion Services
 
@@ -228,7 +251,7 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Themes")),
     RequestPath = "/Themes"
 });
-app.UseInfernoPlugins();
+app.UsePluginz();
 app.UseDefaultFiles();
 
 app.UseRouting();
@@ -260,6 +283,9 @@ app.MapIdentityNexus().RequireAuthorization(InfernoWebPolicies.MembershipManage)
 app.MapLogVue().RequireAuthorization(InfernoWebPolicies.LogRead);
 app.MapLocalize();
 app.MapControllers();
+app.MapPluginz();
+app.MapGet("/admin/plugins", () => Results.Redirect("/pluginz"));
+app.MapGet("/admin/plugins/index", () => Results.Redirect("/pluginz"));
 app.MapAreaControllerRoute("admin_route", "Admin", "Admin/{controller}/{action}/{id?}");
 app.MapRazorPages();
 app.UsePickstack();
@@ -270,6 +296,8 @@ var routerAssemblies = DependoResolver.Instance
     .Select(marker => marker.GetType().Assembly)
     .Where(assembly => assembly != typeof(InfernoCMS.App).Assembly)
     .Append(typeof(Languages).Assembly)
+    .Append(typeof(Plugins).Assembly)
+    .Concat(app.Services.GetRequiredService<IPluginWebAssemblies>().Assemblies)
     .Distinct()
     .ToArray();
 

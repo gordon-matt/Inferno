@@ -1,0 +1,146 @@
+@page "/admin/pages/edit/{PageId:guid}"
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
+
+<PageTitle>@PageName</PageTitle>
+
+@if (page is null)
+{
+    <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.PageNotFound]</p>
+    <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="arrow_back" Text="@T[InfernoWebLocalizableStrings.General.Back]" Click="GoBack" />
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">@PageName</h1>
+        <div>
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="arrow_back" Text="@T[InfernoWebLocalizableStrings.General.Back]" Click="GoBack" />
+            @if (version is not null)
+            {
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="web" Text="@T[InfernoCmsLocalizableStrings.Pages.EditContent]" Click="EditContent" class="ms-2" />
+            }
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">@T[InfernoCmsLocalizableStrings.Pages.Page]</div>
+        <div class="card-body">
+            <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.SettingsIntro]</p>
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label">@T[InfernoCmsLocalizableStrings.Pages.PageModel.Name]</label>
+                    <RadzenTextBox @bind-Value="page.Name" Style="width:100%" Name="Name" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">@T[InfernoCmsLocalizableStrings.Pages.PageModel.Order]</label>
+                    <RadzenNumeric @bind-Value="page.Order" Style="width:100%" Name="Order" />
+                </div>
+                <div class="col-12">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" @bind="page.IsEnabled" id="settings-enabled" />
+                        <label class="form-check-label" for="settings-enabled">@T[InfernoCmsLocalizableStrings.Pages.PageModel.IsEnabled]</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" @bind="page.ShowOnMenus" id="settings-menus" />
+                        <label class="form-check-label" for="settings-menus">@T[InfernoCmsLocalizableStrings.Pages.PageModel.ShowOnMenus]</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>@T[InfernoCmsLocalizableStrings.Pages.VisitorDetails]</span>
+            <div class="d-flex align-items-center">
+                <label class="me-2 mb-0">@T[InfernoCmsLocalizableStrings.Pages.Language]</label>
+                <RadzenDropDown TValue="string" Value="culture" ValueChanged="ChangeCultureAsync" Data="cultures" TextProperty="Name" ValueProperty="Value" Style="min-width:220px" Name="Language" />
+            </div>
+        </div>
+        <div class="card-body">
+            @if (version is null)
+            {
+                <div class="alert alert-light border mb-0">
+                    @T[InfernoCmsLocalizableStrings.Pages.NoTranslationYet]
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="@T[InfernoCmsLocalizableStrings.Pages.CreateTranslation]" Click="CreateTranslationAsync" class="ms-2" />
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.VisitorDetailsIntro]</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Title]</label>
+                        <RadzenTextBox @bind-Value="details.Title" Style="width:100%" Name="Title" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">@T[InfernoCmsLocalizableStrings.Pages.Address]</label>
+                        <div class="input-group">
+                            <span class="input-group-text">/</span>
+                            <input class="form-control" @bind="details.Slug" @bind:event="oninput" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" @bind="details.Published" id="version-published" />
+                            <label class="form-check-label" for="version-published">@T[InfernoCmsLocalizableStrings.Pages.Published]</label>
+                            <div class="form-text">@T[InfernoCmsLocalizableStrings.Pages.PublishedHelp]</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">@T[InfernoCmsLocalizableStrings.Pages.MetaTitle]</label>
+                        <RadzenTextBox @bind-Value="details.MetaTitle" Style="width:100%" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">@T[InfernoCmsLocalizableStrings.Pages.MetaKeywords]</label>
+                        <RadzenTextBox @bind-Value="details.MetaKeywords" Style="width:100%" />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">@T[InfernoCmsLocalizableStrings.Pages.MetaDescription]</label>
+                        <RadzenTextArea @bind-Value="details.MetaDescription" Rows="2" Style="width:100%" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mb-4 text-end">
+        <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="save" Text="@T[InfernoCmsLocalizableStrings.Pages.SaveChanges]" Click="SaveAsync" IsBusy="saving" />
+    </div>
+
+    @if (version is not null)
+    {
+        <div class="card mb-4">
+            <div class="card-header">@T[InfernoCmsLocalizableStrings.Pages.History]</div>
+            <div class="card-body">
+                <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.HistoryIntro]</p>
+                @if (history.Count == 0)
+                {
+                    <p class="mb-0">@T[InfernoCmsLocalizableStrings.Pages.HistoryEmpty]</p>
+                }
+                else
+                {
+                    <RadzenDataGrid TItem="PageVersion" Data="history" AllowSorting="false" AllowPaging="false">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="PageVersion" Title="@T[InfernoCmsLocalizableStrings.Pages.LastEdited]" Width="180px">
+                                <Template Context="record">
+                                    @record.DateModifiedUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="PageVersion" Property="Title" Title="@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Title]" />
+                            <RadzenDataGridColumn TItem="PageVersion" Title="@T[InfernoCmsLocalizableStrings.Pages.Address]">
+                                <Template Context="record">
+                                    <span class="text-muted">/@record.Slug</span>
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="PageVersion" Context="record" TextAlign="TextAlign.Right" Width="140px">
+                                <Template Context="record">
+                                    <RadzenButton ButtonStyle="ButtonStyle.Info" Icon="restore" Size="ButtonSize.Small" Text="@T[InfernoCmsLocalizableStrings.Pages.Restore]" Click="@(() => RestoreAsync(record))" />
+                                </Template>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                }
+            </div>
+        </div>
+    }
+}

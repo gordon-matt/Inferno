@@ -3,7 +3,6 @@ using Inferno.Security.Membership;
 using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin.Configuration.Themes.Models;
-using Inferno.Web.Areas.Admin.Plugins.Models;
 using Inferno.Web.Configuration.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData;
@@ -29,9 +28,6 @@ public class ODataRegistrar : IODataRegistrar
         builder.EntitySet<InfernoUser>("UserApi");
         ////builder.EntitySet<PublicUserInfo>("PublicUserApi");
 
-        // Plugins
-        builder.EntitySet<EdmPluginDescriptor>("PluginApi");
-
         // Scheduled Tasks
         builder.EntitySet<ScheduledTask>(InfernoWebConstants.ODataRoutes.EntitySetNames.ScheduledTask);
 
@@ -39,7 +35,6 @@ public class ODataRegistrar : IODataRegistrar
         builder.EntitySet<Tenant>(InfernoWebConstants.ODataRoutes.EntitySetNames.Tenant);
 
         RegisterMembershipODataActions(builder);
-        RegisterPluginODataActions(builder);
         RegisterScheduledTaskODataActions(builder);
         RegisterThemeODataActions(builder);
 
@@ -76,17 +71,6 @@ public class ODataRegistrar : IODataRegistrar
         //var getPermissionsForRoleFunction = builder.EntityType<InfernoPermission>().Collection.Function("GetPermissionsForRole");
         //getPermissionsForRoleFunction.Parameter<string>("roleId");
         //getPermissionsForRoleFunction.Returns<IActionResult>();
-    }
-
-    private static void RegisterPluginODataActions(ODataModelBuilder builder)
-    {
-        var installAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Install");
-        installAction.Parameter<string>("systemName");
-        installAction.Returns<IActionResult>();
-
-        var uninstallAction = builder.EntityType<EdmPluginDescriptor>().Collection.Action("Uninstall");
-        uninstallAction.Parameter<string>("systemName");
-        uninstallAction.Returns<IActionResult>();
     }
 
     private static void RegisterScheduledTaskODataActions(ODataModelBuilder builder)

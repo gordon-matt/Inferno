@@ -1,6 +1,6 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=gordon_matt%40live%2ecom&lc=AU&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
-![Inferno CMS](https://github.com/gordon-matt/Inferno/raw/master/InfernoCMS/wwwroot/img/logo.png)
+![Inferno CMS](https://github.com/gordon-matt/Inferno/raw/master/InfernoCMS/wwwroot/img/Logo_Dark.png)
 
 ## Intro
 Inferno is intended to be a multi-purpose framework and CMS similar to [KoreCMS](https://github.com/gordon-matt/KoreCMS), but built with Blazor.
