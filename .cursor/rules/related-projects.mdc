@@ -11,6 +11,7 @@ Shared coding conventions live in Blueprint/.cursor/rules/conventions.mdc (absol
 
 | Name | How it's consumed | Package ID and version | Source location |
 | --- | --- | --- | --- |
+| BlogKrafter | ProjectReference | n/a | `D:\Source\GitHub\Libraries\BlogKrafter` (`..\..\Libraries\BlogKrafter`) |
 | Dependo | NuGet PackageReference | Dependo 1.2.0 | `D:\Source\GitHub\Libraries\Dependo` (`..\..\Libraries\Dependo`) |
 | Dependo.Autofac | NuGet PackageReference | Dependo.Autofac 1.2.1 | `D:\Source\GitHub\Libraries\Dependo` (`..\..\Libraries\Dependo`) |
 | Extenso.AspNetCore.Mvc | NuGet PackageReference | Extenso.AspNetCore.Mvc 10.0.1 | `D:\Source\GitHub\Libraries\Extenso` (`..\..\Libraries\Extenso`) |

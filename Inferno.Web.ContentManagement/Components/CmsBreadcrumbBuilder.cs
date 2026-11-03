@@ -1,29 +1,29 @@
-using Inferno.Web.ContentManagement.Areas.Admin.Blog;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.Navigation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Inferno.Web.ContentManagement.Components;
 
 public class CmsBreadcrumbBuilder
 {
-    private readonly BlogSettings blogSettings;
     private readonly IPageService pageService;
     private readonly IPageVersionService pageVersionService;
     private readonly IWorkContext workContext;
+    private readonly IStringLocalizer localizer;
 
     public CmsBreadcrumbBuilder(
-        BlogSettings blogSettings,
         IPageService pageService,
         IPageVersionService pageVersionService,
-        IWorkContext workContext)
+        IWorkContext workContext,
+        IStringLocalizer localizer)
     {
-        this.blogSettings = blogSettings;
         this.pageService = pageService;
         this.pageVersionService = pageVersionService;
         this.workContext = workContext;
+        this.localizer = localizer;
     }
 
     public async Task<IReadOnlyList<Breadcrumb>> BuildAsync(string path, System.Security.Principal.IPrincipal user)
@@ -36,7 +36,7 @@ public class CmsBreadcrumbBuilder
         {
             breadcrumbs.Add(new Breadcrumb
             {
-                Text = blogSettings.PageTitle,
+                Text = localizer[InfernoCmsLocalizableStrings.Blog.Title],
                 Url = slug.Equals("blog", StringComparison.OrdinalIgnoreCase) ? null : "/blog"
             });
 

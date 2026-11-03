@@ -1,12 +1,14 @@
+using System.Globalization;
 using System.Net;
+using BlogKrafter;
+using BlogKrafter.Data.Entities;
 using Dependo;
 using Extenso;
 using Extenso.Data.Entity;
 using Inferno.Security.Membership;
 using Inferno.Tenants.Services;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
+using Microsoft.Extensions.DependencyInjection;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
@@ -24,6 +26,7 @@ namespace Inferno.Web.ContentManagement.Infrastructure;
 /// <summary>
 /// Runs once, after installation, when the installer ticked "Seed demo data". The administrator account
 /// is created by an earlier startup task, so this one can attach the sample blog post to that account.
+/// The post is stored by the blog engine, in that engine's own tables.
 /// </summary>
 public class DemoDataStartupTask : IStartupTask
 {
@@ -44,9 +47,10 @@ public class DemoDataStartupTask : IStartupTask
         var blocks = DependoResolver.Instance.Resolve<IContentBlockService>();
         var menus = DependoResolver.Instance.Resolve<IMenuService>();
         var menuItems = DependoResolver.Instance.Resolve<IMenuItemService>();
-        var categories = DependoResolver.Instance.Resolve<IBlogCategoryService>();
-        var posts = DependoResolver.Instance.Resolve<IBlogPostService>();
         var membership = DependoResolver.Instance.Resolve<IMembershipService>();
+        using var blogScope = DependoResolver.Instance.Resolve<IServiceProvider>().CreateScope();
+        var blogCategories = blogScope.ServiceProvider.GetRequiredService<IRepository<BlogCategory>>();
+        var blogPosts = blogScope.ServiceProvider.GetRequiredService<IRepository<BlogPost>>();
 
         var admin = string.IsNullOrWhiteSpace(dataSettings.AdminEmail)
             ? null
@@ -60,7 +64,7 @@ public class DemoDataStartupTask : IStartupTask
 
         foreach (int tenantId in tenantIds)
         {
-            await SeedTenantAsync(tenantId, admin?.Id, pages, versions, zones, blocks, menus, menuItems, categories, posts);
+            await SeedTenantAsync(tenantId, admin?.Id, pages, versions, zones, blocks, menus, menuItems, blogCategories, blogPosts);
         }
 
         dataSettings.CreateSampleData = false;
@@ -76,8 +80,8 @@ public class DemoDataStartupTask : IStartupTask
         IContentBlockService blocks,
         IMenuService menus,
         IMenuItemService menuItems,
-        IBlogCategoryService categories,
-        IBlogPostService posts)
+        IRepository<BlogCategory> categories,
+        IRepository<BlogPost> posts)
     {
         using (var connection = pages.OpenConnection())
         {
@@ -107,26 +111,35 @@ public class DemoDataStartupTask : IStartupTask
             Item(menu.Id, "Contact", "/contact", 2),
         ]);
 
+        string tenantKey = tenantId.ToString(CultureInfo.InvariantCulture);
         var category = await categories.InsertAsync(new BlogCategory
         {
-            TenantId = tenantId,
+            TenantId = tenantKey,
             Name = "News",
-            UrlSlug = "news",
+            Slug = "news",
         });
 
         var now = DateTime.UtcNow;
+        const string body = "<p>This post was created with the demo data. Edit it or delete it whenever you like.</p>";
         await posts.InsertAsync(new BlogPost
         {
-            Id = Guid.NewGuid(),
-            TenantId = tenantId,
-            UserId = string.IsNullOrEmpty(adminUserId) ? "demo" : adminUserId,
-            CategoryId = category.Id,
-            DateCreatedUtc = now,
-            Headline = "Hello from Inferno",
+            TenantId = tenantKey,
+            Title = "Hello from Inferno",
             Slug = "hello-from-inferno",
-            ShortDescription = "A sample post, so the blog has something to show.",
-            FullDescription = "<p>This post was created with the demo data. Edit it or delete it whenever you like.</p>",
-            UseExternalLink = false,
+            Summary = "A sample post, so the blog has something to show.",
+            Excerpt = "A sample post, so the blog has something to show.",
+            ContentFormat = ContentFormat.Html,
+            Content = body,
+            ContentHtml = body,
+            Status = PostStatus.Published,
+            PublishedAt = now,
+            CommentsEnabled = true,
+            ReadingTimeMinutes = 1,
+            AuthorUserId = string.IsNullOrEmpty(adminUserId) ? "demo" : adminUserId,
+            AuthorName = "Administrator",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CategoryId = category.Id,
         });
     }
 

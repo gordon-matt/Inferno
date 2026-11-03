@@ -1,9 +1,11 @@
 #nullable disable
 
+using System.Globalization;
+using BlogKrafter.Data;
+using BlogKrafter.Data.Entities;
 using Inferno.Helpers;
 using Inferno.Logging.Entities;
 using Inferno.Web.Configuration.Entities;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
@@ -14,32 +16,24 @@ using InfernoCMS.Data;
 using InfernoCMS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace InfernoCMS.Services;
 
 public class TenantDataCleaner : ITenantDataCleaner
 {
     private readonly ApplicationDbContext dbContext;
+    private readonly IServiceProvider services;
 
-    public TenantDataCleaner(ApplicationDbContext dbContext)
+    public TenantDataCleaner(ApplicationDbContext dbContext, IServiceProvider services)
     {
         this.dbContext = dbContext;
+        this.services = services;
     }
 
     public async Task CleanAsync(int tenantId)
     {
-        var postIds = await dbContext.Set<BlogPost>()
-            .Where(x => x.TenantId == tenantId)
-            .Select(x => x.Id)
-            .ToListAsync();
-        if (postIds.Count > 0)
-        {
-            await dbContext.Set<BlogPostTag>().Where(x => postIds.Contains(x.PostId)).ExecuteDeleteAsync();
-        }
-
-        await dbContext.Set<BlogPost>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
-        await dbContext.Set<BlogCategory>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
-        await dbContext.Set<BlogTag>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
+        await CleanBlogAsync(tenantId);
 
         var menuIds = await dbContext.Set<Menu>()
             .Where(x => x.TenantId == tenantId)
@@ -148,5 +142,26 @@ public class TenantDataCleaner : ITenantDataCleaner
             // The catalog tables are created by the localization library. A tenant deleted
             // before that database exists has nothing to remove.
         }
+    }
+
+    /// <summary>
+    /// The blog keeps its own tables. Links and old addresses go before the posts they point at.
+    /// </summary>
+    private async Task CleanBlogAsync(int tenantId)
+    {
+        var factory = services.GetService<IBlogKrafterDbContextFactory>();
+        if (factory == null)
+        {
+            return;
+        }
+
+        string tenantKey = tenantId.ToString(CultureInfo.InvariantCulture);
+        await using var blog = factory.GetContext();
+        var postIds = blog.Set<BlogPost>().Where(post => post.TenantId == tenantKey).Select(post => post.Id);
+        await blog.Set<BlogPostTag>().Where(link => postIds.Contains(link.PostId)).ExecuteDeleteAsync();
+        await blog.Set<BlogSlugRedirect>().Where(redirect => redirect.TenantId == tenantKey).ExecuteDeleteAsync();
+        await blog.Set<BlogPost>().Where(post => post.TenantId == tenantKey).ExecuteDeleteAsync();
+        await blog.Set<BlogCategory>().Where(category => category.TenantId == tenantKey).ExecuteDeleteAsync();
+        await blog.Set<BlogTag>().Where(tag => tag.TenantId == tenantKey).ExecuteDeleteAsync();
     }
 }

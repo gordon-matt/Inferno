@@ -3,10 +3,7 @@ using Extenso.AspNetCore.OData;
 using Inferno.Web.ContentManagement.Localization;
 using Localize;
 using Inferno.Web.Configuration;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog;
 using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
@@ -43,15 +40,6 @@ public class DependencyRegistrar : IDependencyRegistrar
         //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
 
         #region Services
-
-        // Blog
-        builder.Register<IBlogCategoryService, BlogCategoryService>(ServiceLifetime.Transient);
-        builder.Register<IBlogPostService, BlogPostService>(ServiceLifetime.Transient);
-        builder.Register<IBlogTagService, BlogTagService>(ServiceLifetime.Transient);
-        builder.Register<IBlogPostTagService, BlogPostTagService>(ServiceLifetime.Transient);
-        builder.Register<IRadzenODataService<BlogCategory, int>, BlogCategoryODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<BlogTag, int>, BlogTagODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<BlogPost, Guid>, BlogPostODataService>(ServiceLifetime.Singleton);
 
         // Menus
         builder.Register<IMenuService, MenuService>(ServiceLifetime.Transient);
@@ -105,7 +93,6 @@ public class DependencyRegistrar : IDependencyRegistrar
 
         #region Configuration
 
-        builder.Register<ISettings, BlogSettings>(ServiceLifetime.Scoped);
         builder.Register<ISettings, PageSettings>(ServiceLifetime.Scoped);
 
         #endregion Configuration

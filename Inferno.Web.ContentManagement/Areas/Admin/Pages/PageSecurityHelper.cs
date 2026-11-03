@@ -2,7 +2,6 @@
 using Dependo;
 using Extenso.Collections;
 using Inferno.Security.Membership;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Newtonsoft.Json.Linq;
 
@@ -36,29 +35,6 @@ public static class PageSecurityHelper
         return ids.Count == 0
             ? null
             : new JObject { ["Roles"] = string.Join(',', ids) }.ToString(Newtonsoft.Json.Formatting.None);
-    }
-
-    public static async Task<bool> CheckUserHasAccessToBlog(IPrincipal user)
-    {
-        var blogSettings = DependoResolver.Instance.Resolve<BlogSettings>();
-
-        if (!blogSettings.RoleIds.IsNullOrEmpty())
-        {
-            var membershipService = DependoResolver.Instance.Resolve<IMembershipService>();
-            var roles = await membershipService.GetRolesByIdsAsync(blogSettings.RoleIds);
-
-            var roleNames = roles
-                .Select(x => x.Name)
-                .Where(x => x != null)
-                .ToList();
-
-            bool authorized = user?.Identity?.IsAuthenticated == true && roleNames.Any(user.IsInRole);
-            if (!authorized)
-            {
-                return false;
-            }
-        }
-        return true;
     }
 
     public static async Task<bool> CheckUserHasAccessToPage(Page page, IPrincipal user)

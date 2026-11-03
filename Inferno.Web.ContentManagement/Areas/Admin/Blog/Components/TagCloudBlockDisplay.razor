@@ -1,11 +1,9 @@
-﻿@using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
+﻿@using BlogKrafter.Posts
+@using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockDisplay<TagCloudBlock>
-@inject IBlogPostTagService PostTagService
-@inject IBlogTagService TagService
-@inject IWorkContext WorkContext
+
+@inject IBlogReader Reader
 
 <div class="card mb-3">
     <div class="card-header">@T[InfernoCmsLocalizableStrings.Blog.Tags]</div>
@@ -20,52 +18,32 @@
 @code {
     private List<CloudWord> words = [];
 
-    protected override void OnParametersSet()
+    protected override async Task OnInitializedAsync()
     {
         words = [];
-        if (WorkContext.CurrentTenant == null)
+        var tags = await Reader.GetTagsAsync();
+        if (!tags.IsSuccess || tags.Value.Count == 0)
         {
             return;
         }
 
-        List<int> tagIds;
-        using (var connection = PostTagService.OpenConnection())
-        {
-            tagIds = connection.Query().Select(x => x.TagId).ToList();
-        }
-
-        var counts = tagIds.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
-
-        Dictionary<int, BlogTag> tags;
-        using (var connection = TagService.OpenConnection())
-        {
-            int tenantId = WorkContext.CurrentTenant.Id;
-            tags = connection.Query(x => x.TenantId == tenantId).ToDictionary(x => x.Id);
-        }
-
-        if (counts.Count == 0)
-        {
-            return;
-        }
-
-        int min = counts.Values.Min();
-        int max = counts.Values.Max();
+        int min = tags.Value.Min(tag => tag.PostCount);
+        int max = tags.Value.Max(tag => tag.PostCount);
         int steps = Model.Steps <= 0 ? 10 : Model.Steps;
 
-        foreach (var pair in counts.OrderBy(x => tags.TryGetValue(x.Key, out var tag) ? tag.Name : string.Empty))
+        foreach (var tag in tags.Value.OrderBy(tag => tag.Name))
         {
-            if (!tags.TryGetValue(pair.Key, out var tag))
-            {
-                continue;
-            }
-
             int weight = max == min
                 ? steps
-                : 1 + (int)Math.Round((pair.Value - min) / (double)(max - min) * (steps - 1));
+                : 1 + (int)Math.Round((tag.PostCount - min) / (double)(max - min) * (steps - 1));
             string css = string.IsNullOrWhiteSpace(Model.ClassPattern)
                 ? null
                 : Model.ClassPattern.Replace("{n}", weight.ToString(), StringComparison.Ordinal);
-            words.Add(new CloudWord(tag.Name, tag.UrlSlug, css, (0.8 + (weight / (double)steps)).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "rem"));
+            words.Add(new CloudWord(
+                tag.Name,
+                tag.Slug,
+                css,
+                (0.8 + (weight / (double)steps)).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "rem"));
         }
     }
 

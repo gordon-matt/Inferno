@@ -1,5 +1,4 @@
 ﻿using Extenso.AspNetCore.OData;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Models;
@@ -20,12 +19,6 @@ public class ODataRegistrar : IODataRegistrar
     public void Register(ODataOptions options)
     {
         ODataModelBuilder builder = new ODataConventionModelBuilder();
-
-        // Blog
-        builder.EntitySet<BlogCategory>(CmsConstants.ODataRoutes.EntitySetNames.BlogCategory);
-        builder.EntitySet<BlogPost>(CmsConstants.ODataRoutes.EntitySetNames.BlogPost);
-        builder.EntitySet<BlogPostTag>(CmsConstants.ODataRoutes.EntitySetNames.BlogPostTag).EntityType.HasKey(x => new { x.PostId, x.TagId });
-        builder.EntitySet<BlogTag>(CmsConstants.ODataRoutes.EntitySetNames.BlogTag);
 
         // Content Blocks
         builder.EntitySet<ContentBlock>(CmsConstants.ODataRoutes.EntitySetNames.ContentBlock);

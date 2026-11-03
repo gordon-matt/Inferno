@@ -195,149 +195,6 @@ namespace InfernoCMS.Data.Migrations
                     b.ToTable("Settings", "inferno");
                 });
 
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("TenantId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UrlSlug")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BlogCategories", "inferno");
-                });
-
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogPost", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateCreatedUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExternalLink")
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("FullDescription")
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Headline")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("MetaDescription")
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("MetaKeywords")
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ShortDescription")
-                        .IsRequired()
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("TeaserImageUrl")
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("TenantId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("UseExternalLink")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("BlogPosts", "inferno");
-                });
-
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogPostTag", b =>
-                {
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PostId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("BlogPostTags", "inferno");
-                });
-
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("TenantId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UrlSlug")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BlogTags", "inferno");
-                });
-
             modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities.ContentBlock", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1026,36 +883,6 @@ namespace InfernoCMS.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogPost", b =>
-                {
-                    b.HasOne("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogCategory", "Category")
-                        .WithMany("Posts")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogPostTag", b =>
-                {
-                    b.HasOne("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogPost", "Post")
-                        .WithMany("Tags")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogTag", "Tag")
-                        .WithMany("Posts")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("Tag");
-                });
-
             modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities.PageVersion", b =>
                 {
                     b.HasOne("Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities.Page", "Page")
@@ -1134,21 +961,6 @@ namespace InfernoCMS.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogCategory", b =>
-                {
-                    b.Navigation("Posts");
-                });
-
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogPost", b =>
-                {
-                    b.Navigation("Tags");
-                });
-
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities.BlogTag", b =>
-                {
-                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities.Page", b =>

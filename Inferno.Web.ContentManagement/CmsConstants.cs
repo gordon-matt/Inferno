@@ -15,7 +15,6 @@ public static partial class CmsConstants
     public static class Areas
     {
         public const string Blocks = "Admin/Blocks";
-        public const string Blog = "Admin/Blog";
         public const string Localization = "Admin/Localization";
         public const string Media = "Admin/Media";
         public const string Messaging = "Admin/Messaging";
@@ -27,10 +26,6 @@ public static partial class CmsConstants
 
     internal static class Tables
     {
-        internal const string BlogPosts = "BlogPosts";
-        internal const string BlogPostTags = "BlogPostTags";
-        internal const string BlogCategories = "BlogCategories";
-        internal const string BlogTags = "BlogTags";
         internal const string ContentBlocks = "ContentBlocks";
         internal const string EntityTypeContentBlocks = "EntityTypeContentBlocks";
         internal const string HistoricPages = "HistoricPages";
@@ -83,10 +78,6 @@ public static partial class CmsConstants
 
         public static class EntitySetNames
         {
-            public const string BlogCategory = "BlogCategoryApi";
-            public const string BlogPost = "BlogPostApi";
-            public const string BlogPostTag = "BlogPostTagApi";
-            public const string BlogTag = "BlogTagApi";
             public const string ContentBlock = "ContentBlockApi";
             public const string EntityTypeContentBlock = "EntityTypeContentBlockApi";
             public const string Menu = "MenuApi";

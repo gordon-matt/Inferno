@@ -14,6 +14,9 @@ public static class CmsAuthorizationOptionsExtensions
     {
         options.AddPermission(CmsConstants.Policies.BlogRead, "BlogRead");
         options.AddPermission(CmsConstants.Policies.BlogWrite, "BlogWrite");
+        // BlogKrafter names its editor policy BlogKrafter.Manage. Defining it here makes the Blog write
+        // permission satisfy it, and stops BlogKrafter from adding a role-based policy of the same name.
+        options.AddPermission("BlogKrafter.Manage", "BlogWrite");
 
         options.AddPermission(CmsConstants.Policies.ContentBlocksRead, "ContentBlocksRead");
         options.AddPermission(CmsConstants.Policies.ContentBlocksWrite, "ContentBlocksWrite");

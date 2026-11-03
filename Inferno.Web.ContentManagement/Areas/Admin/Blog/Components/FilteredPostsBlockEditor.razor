@@ -1,11 +1,8 @@
-@using Extenso.Data.Entity
-@using Inferno.Models;
-@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using BlogKrafter.Models
+@using BlogKrafter.Taxonomy
+@using Inferno.Models
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services;
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockEditor<FilteredPostsBlock>
 
 @inject IBlogCategoryService CategoryService
@@ -16,7 +13,7 @@
         <div class="row mb-3">
             <label class="col-form-label col-md-3" for="FilterType">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.FilterType]</label>
             <div class="col-md-9">
-                <RadzenDropDown Data=@availableFilterTypes TValue="IdNamePair<byte>" TextProperty="Name" ValueProperty="Id" />
+                <RadzenDropDown @bind-Value="FilterTypeValue" Data="@availableFilterTypes" TValue="byte" TextProperty="Name" ValueProperty="Id" Style="width:100%" />
             </div>
         </div>
     </div>
@@ -27,7 +24,7 @@
         <div class="row mb-3">
             <label class="col-form-label col-md-3" for="CategoryId">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.CategoryId]</label>
             <div class="col-md-9">
-                <RadzenDropDown Data=@availableCategories TValue="BlogCategory" TextProperty="Name" ValueProperty="Id" />
+                <RadzenDropDown @bind-Value="Model.CategoryId" Data="@availableCategories" TValue="int?" TextProperty="Name" ValueProperty="Id" AllowClear="true" Style="width:100%" />
             </div>
         </div>
     </div>
@@ -38,28 +35,34 @@
         <div class="row mb-3">
             <label class="col-form-label col-md-3" for="TagId">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.TagId]</label>
             <div class="col-md-9">
-                <RadzenDropDown Data=@availableTags TValue="BlogTag" TextProperty="Name" ValueProperty="Id" />
+                <RadzenDropDown @bind-Value="Model.TagId" Data="@availableTags" TValue="int?" TextProperty="Name" ValueProperty="Id" AllowClear="true" Style="width:100%" />
             </div>
         </div>
     </div>
 </div>
 
 @code {
-    private IEnumerable<IdNamePair<byte>> availableFilterTypes;
-    private IEnumerable<BlogCategory> availableCategories;
-    private IEnumerable<BlogTag> availableTags;
+    private IEnumerable<IdNamePair<byte>> availableFilterTypes = [];
+    private IReadOnlyList<CategoryDto> availableCategories = [];
+    private IReadOnlyList<TagDto> availableTags = [];
+
+    private byte FilterTypeValue
+    {
+        get => (byte)Model.FilterType;
+        set => Model.FilterType = (FilterType)value;
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        availableFilterTypes = Extenso.EnumExtensions.GetValues<FilterType>().Select(x => new IdNamePair<byte> { Id = (byte)x, Name = x.ToString() });
-        availableCategories = await CategoryService.FindAsync(new SearchOptions<BlogCategory>
-        {
-            Query = x => true
-        });
-        availableTags = await TagService.FindAsync(new SearchOptions<BlogTag>
-        {
-            Query = x => true
-        });
+        availableFilterTypes = Extenso.EnumExtensions.GetValues<FilterType>()
+            .Select(value => new IdNamePair<byte> { Id = (byte)value, Name = value.ToString() });
+
+        var categories = await CategoryService.ListAsync();
+        availableCategories = categories.IsSuccess ? categories.Value : [];
+
+        var tags = await TagService.ListAsync();
+        availableTags = tags.IsSuccess ? tags.Value : [];
+
         await base.OnInitializedAsync();
     }
 }

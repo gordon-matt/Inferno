@@ -7,6 +7,7 @@ using Inferno.Web.Plugins;
 using Inferno.Web.Security;
 using Pluginz;
 using Inferno.Web.Localization;
+using BlogKrafter.Data.Sql;
 using InfernoCMS.Api.Infrastructure;
 using InfernoCMS.Data;
 using InfernoCMS.Identity.Infrastructure;
@@ -27,8 +28,13 @@ builder.Host.UseServiceProviderFactory(new DependoAutofacServiceProviderFactory(
 var services = builder.Services;
 var configuration = builder.Configuration;
 
+string connectionString = configuration.GetConnectionString("DefaultConnection");
 services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    services.AddBlogKrafterSqlServer(connectionString);
+}
 
 services.AddInfernoIdentity();
 

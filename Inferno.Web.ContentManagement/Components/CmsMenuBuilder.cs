@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using Inferno.Web;
-using Inferno.Web.ContentManagement.Areas.Admin.Blog;
 using Microsoft.EntityFrameworkCore;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
@@ -14,20 +13,17 @@ public class CmsMenuBuilder
 {
     private readonly IPageVersionService pageVersionService;
     private readonly IEnumerable<IAutoMenuProvider> menuProviders;
-    private readonly BlogSettings blogSettings;
     private readonly IWorkContext workContext;
     private readonly IStringLocalizer localizer;
 
     public CmsMenuBuilder(
         IPageVersionService pageVersionService,
         IEnumerable<IAutoMenuProvider> menuProviders,
-        BlogSettings blogSettings,
         IWorkContext workContext,
         IStringLocalizer localizer)
     {
         this.pageVersionService = pageVersionService;
         this.menuProviders = menuProviders;
-        this.blogSettings = blogSettings;
         this.workContext = workContext;
         this.localizer = localizer;
     }
@@ -73,17 +69,7 @@ public class CmsMenuBuilder
             });
         }
 
-        if (blogSettings.ShowOnMenus && await PageSecurityHelper.CheckUserHasAccessToBlog(user))
-        {
-            menuItems.Add(new MenuItem
-            {
-                Id = Guid.NewGuid(),
-                Text = blogSettings.PageTitle,
-                Url = "/blog",
-                Enabled = true,
-                Position = blogSettings.MenuPosition
-            });
-        }
+        menuItems.Add(BlogLink());
 
         foreach (var provider in menuProviders)
         {
@@ -104,17 +90,7 @@ public class CmsMenuBuilder
 
         if (string.IsNullOrEmpty(currentUrlSlug))
         {
-            if (blogSettings.ShowOnMenus && await PageSecurityHelper.CheckUserHasAccessToBlog(user))
-            {
-                menuItems.Add(new MenuItem
-                {
-                    Id = Guid.NewGuid(),
-                    Text = blogSettings.PageTitle,
-                    Url = "/blog",
-                    Enabled = true,
-                    Position = blogSettings.MenuPosition
-                });
-            }
+            menuItems.Add(BlogLink());
 
             foreach (var provider in menuProviders)
             {
@@ -193,4 +169,13 @@ public class CmsMenuBuilder
             .ThenBy(x => x.Text)
             .ToList();
     }
+
+    private MenuItem BlogLink() => new()
+    {
+        Id = Guid.NewGuid(),
+        Text = localizer[InfernoCmsLocalizableStrings.Blog.Title],
+        Url = "/blog",
+        Enabled = true,
+        Position = 0
+    };
 }

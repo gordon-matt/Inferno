@@ -1,32 +1,31 @@
-﻿using Dependo;
+﻿using BlogKrafter;
+using BlogKrafter.Data.Sql;
+using BlogKrafter.Tenancy;
+using Dependo;
 using Dependo.Autofac;
-using Flatmate;
-using Inferno.Identity;
-using Inferno.Tenants.Entities;
-using Inferno.Tenants;
-using Inferno.Web.ContentManagement.Security;
 using Heroicsoft.NetForge.Abstractions.Auth;
 using Heroicsoft.NetForge.Abstractions.Navigation;
 using Heroicsoft.NetForge.Components;
 using Heroicsoft.NetForge.Components.Layout;
 using Heroicsoft.NetForge.Components.Navigation;
 using IdentityNexus;
+using Inferno.Identity;
+using Inferno.Tenants;
+using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
-using LogVue;
-using LogVue.Data.Sql;
+using Inferno.Web.ContentManagement.Areas.Admin.Pages;
+using Inferno.Web.ContentManagement.Security;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Localization;
-using Localize.Components;
-using Localize.Components.Pages;
-using Pluginz;
-using Pluginz.Components;
-using Pluginz.Components.Pages;
-using Pluginz.Web;
 using Inferno.Web.Plugins;
 using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
+using Localize.Components;
+using Localize.Components.Pages;
+using LogVue;
+using LogVue.Data.Sql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -35,14 +34,16 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using PageKrafter;
 using PageKrafter.Components;
 using Pickstack;
 using Pickstack.FileManager.WebFilez;
 using Pickstack.RichTextEditor.TinyMce7;
-using Inferno.Web.ContentManagement.Areas.Admin.Pages;
+using Pluginz;
+using Pluginz.Components;
+using Pluginz.Components.Pages;
+using Pluginz.Web;
 
 ExcelPackage.License.SetNonCommercialOrganization("Inferno");
 
@@ -200,6 +201,20 @@ services.AddPageKrafter();
 services.AddPageKrafterBlock<PageContentZoneBlock>();
 services.AddPageKrafterFilePicker<PickstackFilePicker>();
 
+// The blog is its own database. Until installation has saved a connection there is nothing to migrate.
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    services.AddScoped<IBlogTenantProvider, InfernoCMS.Infrastructure.InfernoBlogTenantProvider>();
+    services.AddScoped<BlogKrafter.Infrastructure.IBlogFileRootProvider, InfernoCMS.Infrastructure.InfernoBlogFileRootProvider>();
+    services.AddBlogKrafter(blog =>
+    {
+        blog.Title = "Blog";
+        blog.PublicLayout = typeof(InfernoCMS.Shared.MainLayout);
+        blog.AdminLayout = typeof(Inferno.Web.Areas.Admin.Home.Shared.AdminLayout);
+    });
+    services.AddBlogKrafterSqlServer(connectionString);
+}
+
 #endregion Services
 
 var app = builder.Build();
@@ -216,6 +231,9 @@ if (databaseInstalled && !EF.IsDesignTime)
         app.Logger.LogInformation("Applying {Count} database migration(s): {Migrations}", pendingMigrations.Count, string.Join(", ", pendingMigrations));
         database.Migrate();
     }
+
+    using var blog = migrationScope.ServiceProvider.GetRequiredService<BlogKrafter.Data.IBlogKrafterDbContextFactory>().GetContext();
+    blog.Database.Migrate();
 }
 
 if (!databaseInstalled)
@@ -294,6 +312,11 @@ app.Use(async (context, next) =>
 
 app.UseInferno();
 
+if (databaseInstalled)
+{
+    app.MapBlogKrafter();
+}
+
 app.MapIdentityNexus().RequireAuthorization(InfernoWebPolicies.MembershipManage);
 app.MapLogVue().RequireAuthorization(InfernoWebPolicies.LogRead);
 app.MapLocalize();
@@ -312,6 +335,7 @@ var routerAssemblies = DependoResolver.Instance
     .Where(assembly => assembly != typeof(InfernoCMS.App).Assembly)
     .Append(typeof(Languages).Assembly)
     .Append(typeof(Plugins).Assembly)
+    .Concat(databaseInstalled ? [typeof(BlogKrafterComponents).Assembly] : [])
     .Concat(app.Services.GetRequiredService<IPluginWebAssemblies>().Assemblies)
     .Distinct()
     .ToArray();

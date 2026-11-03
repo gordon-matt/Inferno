@@ -32,22 +32,22 @@ public class CmsNavigationProvider : INavigationProvider
         // Blog
         builder.Add(T[InfernoCmsLocalizableStrings.Blog.Title].Value, "5", blog =>
         {
-            blog.Icon("fas fa-paperclip").Permission(CmsConstants.Policies.BlogRead);
+            blog.Icon("fas fa-paperclip").Permission(CmsConstants.Policies.BlogWrite);
 
             blog.Add(T[InfernoCmsLocalizableStrings.Blog.Posts].Value, "1", item => item
                 .Url("/admin/blog/posts")
                 .Icon("fas fa-file")
-                .Permission(CmsConstants.Policies.BlogRead));
+                .Permission(CmsConstants.Policies.BlogWrite));
 
             blog.Add(T[InfernoCmsLocalizableStrings.Blog.Categories].Value, "2", item => item
                 .Url("/admin/blog/categories")
                 .Icon("fas fa-folder")
-                .Permission(CmsConstants.Policies.BlogRead));
+                .Permission(CmsConstants.Policies.BlogWrite));
 
             blog.Add(T[InfernoCmsLocalizableStrings.Blog.Tags].Value, "3", item => item
                 .Url("/admin/blog/tags")
                 .Icon("fas fa-tag")
-                .Permission(CmsConstants.Policies.BlogRead));
+                .Permission(CmsConstants.Policies.BlogWrite));
         });
 
         // Content Blocks

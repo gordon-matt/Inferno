@@ -1,12 +1,10 @@
-@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using BlogKrafter.Models
+@using BlogKrafter.Posts
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockDisplay<CategoriesBlock>
 
-@inject IBlogCategoryService Service
+@inject IBlogReader Reader
 
 <div class="row">
     <div class="col-12 mb-3">
@@ -15,9 +13,7 @@
                 <ul class="mb-0">
                     @foreach (var entry in entries)
                     {
-                        <li>
-                            <a href="/blog/category/@entry.UrlSlug">@entry.Name</a>
-                        </li>
+                        <li><a href="/blog/category/@entry.Slug">@entry.Name</a></li>
                     }
                 </ul>
             </div>
@@ -26,27 +22,21 @@
 </div>
 
 @code {
-    private List<BlogCategory> entries = null;
+    private IReadOnlyList<CategoryDto> entries = [];
 
     protected override async Task OnInitializedAsync()
     {
-        using (var connection = Service.OpenConnection())
+        var categories = await Reader.GetCategoriesAsync();
+        if (!categories.IsSuccess)
         {
-            if (Model.NumberOfCategories > 0)
-            {
-                entries = connection.Query()
-                    .OrderBy(x => x.Name)
-                    .Take(Model.NumberOfCategories)
-                    .ToList();
-            }
-            else
-            {
-                entries = connection.Query()
-                    .OrderBy(x => x.Name)
-                    .ToList();
-            }
+            entries = [];
+            await base.OnInitializedAsync();
+            return;
         }
 
+        entries = Model.NumberOfCategories > 0
+            ? categories.Value.Take(Model.NumberOfCategories).ToList()
+            : categories.Value;
         await base.OnInitializedAsync();
     }
 }

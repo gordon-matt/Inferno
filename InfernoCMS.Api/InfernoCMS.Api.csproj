@@ -22,6 +22,7 @@
     <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
     <ProjectReference Include="..\InfernoCMS.Identity\InfernoCMS.Identity.csproj" />
     <ProjectReference Include="..\InfernoCMS.Services\InfernoCMS.Services.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\BlogKrafter\BlogKrafter.Data.Sql\BlogKrafter.Data.Sql.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Pluginz\Pluginz.Web\Pluginz.Web.csproj" />
   </ItemGroup>
 </Project>

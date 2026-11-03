@@ -1,12 +1,9 @@
-@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog
+@using BlogKrafter.Posts
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Entities;
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog.Services
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockDisplay<LastNPostsBlock>
 
-@inject IBlogPostService Service
+@inject IBlogReader Reader
 
 <div class="row">
     <div class="col-12 mb-3">
@@ -15,16 +12,7 @@
                 <ul class="mb-0">
                     @foreach (var entry in entries)
                     {
-                        <li>
-                            @if (entry.UseExternalLink)
-                            {
-                                <a href="@entry.ExternalLink" target="_blank">@entry.Headline</a>
-                            }
-                            else
-                            {
-                                <a href="/blog/@entry.Slug">@entry.Headline</a>
-                            }
-                        </li>
+                        <li><a href="/blog/@entry.Slug">@entry.Title</a></li>
                     }
                 </ul>
             </div>
@@ -33,18 +21,12 @@
 </div>
 
 @code {
-    private List<BlogPost> entries = null;
+    private IReadOnlyList<BlogKrafter.Models.PostSummaryDto> entries = [];
 
     protected override async Task OnInitializedAsync()
     {
-        using (var connection = Service.OpenConnection())
-        {
-            entries = connection.Query()
-                .OrderByDescending(x => x.DateCreatedUtc)
-                .Take(Model.NumberOfEntries)
-                .ToList();
-        }
-
+        var recent = await Reader.GetRecentPostsAsync(Model.NumberOfEntries);
+        entries = recent.IsSuccess ? recent.Value : [];
         await base.OnInitializedAsync();
     }
 }

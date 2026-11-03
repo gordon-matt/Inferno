@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using PageKrafter.Components
 @using PageKrafter.Documents
+@using Pickstack
 
 <h1>@T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates]</h1>
 
@@ -62,6 +63,7 @@ else
         <div class="mb-3">
             <label class="form-label">Message</label>
             <div class="form-text mb-2">Tokens such as [UserName] and [Email] are replaced when the message is queued.</div>
+            <PickstackScripts />
             <PageKrafterEditor @key="editorKey" @bind-Value="body" Mode="DocumentMode.Email" Height="70vh" />
         </div>
         <button type="submit" class="btn btn-primary">@T[InfernoWebLocalizableStrings.General.Save]</button>

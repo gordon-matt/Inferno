@@ -1,8 +1,6 @@
 // Bridges PageKrafter's file picker to Pickstack, whichever file manager the site registered with it.
 // Pickstack's runtime is loaded by <PickstackScripts />, so wait for it rather than assuming it is ready.
 
-let pending = null;
-
 function whenReady(timeoutMs) {
     return new Promise((resolve, reject) => {
         const started = Date.now();
@@ -19,28 +17,27 @@ function whenReady(timeoutMs) {
     });
 }
 
-// Resolves with { url, name } for the chosen file. Pickstack gives no signal when its dialog is closed without
-// a choice, so a request that was left open is ended (as "no choice") when the next one starts.
+// Resolves with { url, name } for the chosen file, or null when the dialog is dismissed without one.
 export async function pick(request) {
     const files = await whenReady(5000);
 
-    if (pending) {
-        pending(null);
-        pending = null;
-    }
-
     return new Promise(resolve => {
-        pending = resolve;
+        let settled = false;
+        const finish = file => {
+            if (settled) {
+                return;
+            }
+
+            settled = true;
+            resolve(file && file.url ? { url: file.url, name: file.name || null } : null);
+        };
+
         files.open({
             type: request.type,
             root: request.root || "",
             title: request.title || "",
-            callback: file => {
-                if (pending === resolve) {
-                    pending = null;
-                }
-                resolve(file && file.url ? { url: file.url, name: file.name || null } : null);
-            },
+            callback: finish,
+            onClose: () => finish(null),
         });
     });
 }

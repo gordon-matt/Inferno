@@ -1,6 +1,7 @@
 @using System.Reflection
 @using Dependo
 @using Inferno.Web.Infrastructure
+@using BlogKrafter
 @using Localize.Components.Pages
 @using Pluginz.Components.Pages
 @using Pluginz.Web
@@ -31,6 +32,7 @@
                 .Select(x => x.GetType().Assembly)
                 .Append(typeof(Languages).Assembly)
                 .Append(typeof(Plugins).Assembly)
+                .Concat(DataSettingsHelper.IsDatabaseInstalled ? [typeof(BlogKrafterComponents).Assembly] : [])
                 .Concat(DependoResolver.Instance.Resolve<IPluginWebAssemblies>().Assemblies)
                 .Distinct()
                 .ToList();
