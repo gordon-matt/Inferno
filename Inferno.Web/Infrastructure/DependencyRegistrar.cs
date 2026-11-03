@@ -1,22 +1,12 @@
-﻿using Autofac;
+using Autofac;
 using Dependo;
 using Dependo.Autofac;
-using Extenso.AspNetCore.OData;
 using Localize;
-using Inferno.Tasks.Entities;
-using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
-using Inferno.Web.Areas.Admin.Configuration.Services;
-using Inferno.Web.Areas.Admin.Configuration.Themes.Models;
-using Inferno.Web.Areas.Admin.Configuration.Themes.Services;
-using Inferno.Web.Areas.Admin.ScheduledTasks.Services;
-using Inferno.Web.Areas.Tenants.Services;
 using Inferno.Web.Configuration;
-using Inferno.Web.Configuration.Entities;
 using Inferno.Web.Configuration.Services;
 using Inferno.Web.Mvc.Themes;
 using Inferno.Web.Navigation;
-using Inferno.Web.OData;
 using Inferno.Web.Security.Membership;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -98,17 +88,14 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         //// Rendering
         //builder.Register<IRazorViewRenderService, MantleRazorViewRenderService>(ServiceLifetime.Transient);
 
-        builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
+        // Admin screens
+        builder.Register<Areas.Admin.Tenants.Services.ITenantAdminService, Areas.Admin.Tenants.Services.TenantAdminService>(ServiceLifetime.Scoped);
+        builder.Register<Areas.Admin.ScheduledTasks.Services.IScheduledTaskAdminService, Areas.Admin.ScheduledTasks.Services.ScheduledTaskAdminService>(ServiceLifetime.Scoped);
+        builder.Register<Areas.Admin.Configuration.Services.ISettingsAdminService, Areas.Admin.Configuration.Services.SettingsAdminService>(ServiceLifetime.Scoped);
+        builder.Register<Areas.Admin.Configuration.Themes.Services.IThemeAdminService, Areas.Admin.Configuration.Themes.Services.ThemeAdminService>(ServiceLifetime.Scoped);
 
         //// Embedded File Provider
         //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
-
-        builder.Register<IRadzenODataService<ScheduledTask, int>, ScheduledTaskODataService>(ServiceLifetime.Singleton);
-        builder.RegisterSelf<ScheduledTaskODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<Setting, Guid>, SettingODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<Tenant, int>, TenantODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<EdmThemeConfiguration, Guid>, ThemeODataService>(ServiceLifetime.Singleton);
-        builder.RegisterSelf<ThemeODataService>(ServiceLifetime.Singleton);
     }
 
     public void Register(ContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration) =>

@@ -3,15 +3,15 @@ using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Localize.Languages;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using PageKrafter.Documents;
 using PageKrafter.Rendering;
-using Radzen;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Pages;
 
 public partial class Design
 {
-    /// <summary>The language dropdown cannot hold null, so the default language is the empty string.</summary>
+    /// <summary>The language select cannot hold null, so the default language is the empty string.</summary>
     private const string DefaultCulture = "";
 
     private Guid loadedVersionId;
@@ -27,9 +27,14 @@ public partial class Design
     private bool savingDetails;
     private bool restoring;
     private string detailsError;
+    private string detailsTab = "visitors";
     private Guid pageId;
     private string cultureCode;
     private Page page = new();
+
+    /// <summary>What the Details drawer edits, so cancelling leaves <see cref="page"/> untouched.</summary>
+    private Page pageEdit = new();
+
     private PageVersionDetails details = new();
     private IReadOnlyList<PageVersion> history = [];
     private IReadOnlyList<CultureOption> cultures = [];
@@ -41,11 +46,11 @@ public partial class Design
 
     private string CultureValue => cultureCode ?? DefaultCulture;
 
-    /// <summary>The parent dropdown holds text, so the top level is the empty string.</summary>
+    /// <summary>The parent select holds text, so the top level is the empty string.</summary>
     private string ParentValue
     {
-        get => page.ParentId?.ToString() ?? string.Empty;
-        set => page.ParentId = Guid.TryParse(value, out var id) ? id : null;
+        get => pageEdit.ParentId?.ToString() ?? string.Empty;
+        set => pageEdit.ParentId = Guid.TryParse(value, out var id) ? id : null;
     }
 
     [Parameter]
@@ -67,19 +72,13 @@ public partial class Design
     private IMembershipService MembershipService { get; set; }
 
     [Inject]
-    private IWorkContext WorkContext { get; set; }
-
-    [Inject]
     private PageRenderer Renderer { get; set; }
 
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
     [Inject]
-    private NotificationService Notifications { get; set; }
-
-    [Inject]
-    private DialogService DialogService { get; set; }
+    private ILogger<Design> Logger { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -105,7 +104,7 @@ public partial class Design
             version = connection.Query(candidate => candidate.Id == VersionId).FirstOrDefault();
         }
 
-        if (version is null || version.Status == VersionStatus.Archived || version.TenantId != WorkContext.CurrentTenant.Id)
+        if (version is null || version.Status == VersionStatus.Archived || version.TenantId != TenantId)
         {
             message = T[InfernoCmsLocalizableStrings.Pages.ErrorNotFound].Value;
             return;
@@ -135,7 +134,7 @@ public partial class Design
             .ToList();
 
         await LoadCulturesAsync();
-        await LoadRolesAsync();
+        availableRoles = (await MembershipService.GetAllRolesAsync(TenantId)).ToList();
         await LoadDetailsAsync(version);
 
         documentJson = StandardPageContent.ForEditor(StandardPageContent.Parse(version.Fields));
@@ -149,18 +148,12 @@ public partial class Design
         var languages = listed.IsSuccess
             ? listed.Value
                 .OrderBy(language => language.Name)
-                .Select(language => new CultureOption { Value = language.CultureCode, Name = $"{language.Name} ({language.CultureCode})" })
+                .Select(language => new CultureOption(language.CultureCode, $"{language.Name} ({language.CultureCode})"))
                 .ToList()
             : [];
 
-        languages.Insert(0, new CultureOption { Value = DefaultCulture, Name = T[InfernoCmsLocalizableStrings.Pages.DefaultLanguage].Value });
+        languages.Insert(0, new CultureOption(DefaultCulture, T[InfernoCmsLocalizableStrings.Pages.DefaultLanguage].Value));
         cultures = languages;
-    }
-
-    private async Task LoadRolesAsync()
-    {
-        availableRoles = (await MembershipService.GetAllRolesAsync(WorkContext.CurrentTenant.Id)).ToList();
-        selectedRoleIds = PageSecurityHelper.GetRoleIds(page.AccessRestrictions).ToHashSet();
     }
 
     /// <summary>Loads what the Details drawer edits, and the save points that can be restored.</summary>
@@ -186,15 +179,14 @@ public partial class Design
         string html = await Renderer.RenderAsync(document);
         var result = await Authoring.SaveContentAsync(VersionId, PageKrafterJson.Serialize(document), html);
 
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            savedAt = $"{T[InfernoCmsLocalizableStrings.Pages.Saved].Value} {DateTime.Now:HH:mm:ss}";
-            await RefreshHistoryAsync();
+            Toasts.Error(T[result.ErrorKey]);
+            return;
         }
-        else
-        {
-            Notifications.Notify(NotificationSeverity.Error, "Error", T[result.ErrorKey].Value);
-        }
+
+        savedAt = $"{T[InfernoCmsLocalizableStrings.Pages.Saved].Value} {DateTime.Now:HH:mm:ss}";
+        await RefreshHistoryAsync();
     }
 
     private async Task RefreshHistoryAsync() =>
@@ -203,19 +195,17 @@ public partial class Design
     private async Task SetPublishedAsync(bool publish)
     {
         publishing = true;
-
         try
         {
             var result = await Authoring.SetPublishedAsync(VersionId, publish);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                published = publish;
-                details.Published = publish;
+                Toasts.Error(T[result.ErrorKey]);
+                return;
             }
-            else
-            {
-                Notifications.Notify(NotificationSeverity.Error, "Error", T[result.ErrorKey].Value);
-            }
+
+            published = publish;
+            details.Published = publish;
         }
         finally
         {
@@ -225,7 +215,20 @@ public partial class Design
 
     private void OpenDetails()
     {
+        pageEdit = new Page
+        {
+            Id = page.Id,
+            TenantId = page.TenantId,
+            ParentId = page.ParentId,
+            Name = page.Name,
+            IsEnabled = page.IsEnabled,
+            Order = page.Order,
+            ShowOnMenus = page.ShowOnMenus,
+            AccessRestrictions = page.AccessRestrictions,
+        };
+        selectedRoleIds = PageSecurityHelper.GetRoleIds(page.AccessRestrictions).ToHashSet();
         detailsError = null;
+        detailsTab = "visitors";
         showDetails = true;
     }
 
@@ -247,32 +250,35 @@ public partial class Design
     {
         savingDetails = true;
         detailsError = null;
-
         try
         {
-            page.AccessRestrictions = PageSecurityHelper.CreateAccessRestrictions(selectedRoleIds);
-            var pageResult = await Authoring.SavePageAsync(page);
+            pageEdit.AccessRestrictions = PageSecurityHelper.CreateAccessRestrictions(selectedRoleIds);
+            var pageResult = await Authoring.SavePageAsync(pageEdit);
             if (!pageResult.Succeeded)
             {
                 detailsError = T[pageResult.ErrorKey].Value;
+                detailsTab = "page";
                 return;
             }
 
+            page = pageEdit;
             details.Published = published;
             var detailsResult = await Authoring.SaveDetailsAsync(details);
             if (!detailsResult.Succeeded)
             {
                 detailsError = T[detailsResult.ErrorKey].Value;
+                detailsTab = "visitors";
                 return;
             }
 
             Heading = string.IsNullOrWhiteSpace(details.Title) ? page.Name : details.Title.Trim();
             await RefreshHistoryAsync();
             showDetails = false;
-            Notifications.Notify(NotificationSeverity.Success, "Success", T[InfernoCmsLocalizableStrings.Pages.Saved].Value);
+            Toasts.Success(T[InfernoCmsLocalizableStrings.Pages.Saved]);
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to save details for page {PageId}", pageId);
             detailsError = T[InfernoCmsLocalizableStrings.Pages.ErrorSaveFailed].Value;
         }
         finally
@@ -281,7 +287,7 @@ public partial class Design
         }
     }
 
-    private async Task OpenHistory()
+    private async Task OpenHistoryAsync()
     {
         await RefreshHistoryAsync();
         showHistory = true;
@@ -291,30 +297,35 @@ public partial class Design
 
     private async Task RestoreAsync(PageVersion saved)
     {
-        restoring = true;
+        bool confirmed = await Dialogs.ConfirmAsync(
+            T[InfernoCmsLocalizableStrings.Pages.RestoreVersion],
+            T[InfernoCmsLocalizableStrings.Pages.PageHistoryRestoreConfirm],
+            T[InfernoCmsLocalizableStrings.Pages.Restore]);
 
+        if (!confirmed)
+        {
+            return;
+        }
+
+        restoring = true;
         try
         {
-            if (await DialogService.Confirm(T[InfernoCmsLocalizableStrings.Pages.PageHistoryRestoreConfirm].Value) != true)
-            {
-                return;
-            }
-
             var result = await Authoring.RestoreVersionAsync(saved.Id);
             if (!result.Succeeded)
             {
-                Notifications.Notify(NotificationSeverity.Error, "Error", T[result.ErrorKey].Value);
+                Toasts.Error(T[result.ErrorKey]);
                 return;
             }
 
             showHistory = false;
             savedAt = null;
             await LoadAsync();
-            Notifications.Notify(NotificationSeverity.Info, "Info", T[InfernoCmsLocalizableStrings.Pages.PageHistoryRestoreSuccess].Value);
+            Toasts.Success(T[InfernoCmsLocalizableStrings.Pages.PageHistoryRestoreSuccess]);
         }
-        catch
+        catch (Exception ex)
         {
-            Notifications.Notify(NotificationSeverity.Error, "Error", T[InfernoCmsLocalizableStrings.Pages.PageHistoryRestoreError].Value);
+            Logger.LogError(ex, "Failed to restore page version {VersionId}", saved.Id);
+            Toasts.Error(T[InfernoCmsLocalizableStrings.Pages.PageHistoryRestoreError]);
         }
         finally
         {
@@ -341,7 +352,7 @@ public partial class Design
                 var created = await Authoring.CreateTranslationAsync(pageId, culture);
                 if (!created.Succeeded)
                 {
-                    Notifications.Notify(NotificationSeverity.Error, "Error", T[created.ErrorKey].Value);
+                    Toasts.Error(T[created.ErrorKey]);
                     return;
                 }
 
@@ -355,12 +366,5 @@ public partial class Design
         }
     }
 
-    private void GoBack() => NavigationManager.NavigateTo("/admin/pages/index");
-
-    private sealed class CultureOption
-    {
-        public string Value { get; set; }
-
-        public string Name { get; set; }
-    }
+    private sealed record CultureOption(string Value, string Name);
 }

@@ -1,44 +1,149 @@
 @page "/admin/pages/index"
 @attribute [Authorize(Policy = CmsConstants.Policies.PagesRead)]
-@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Components
+@inherits AdminPage
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
 
-<h1>@T[InfernoCmsLocalizableStrings.Pages.ManagePages]</h1>
-<p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.PagesIntro]</p>
+<PageTitle>@T[InfernoCmsLocalizableStrings.Pages.Title]</PageTitle>
 
-@if (showCreate)
+<PageHeader Title="@T[InfernoCmsLocalizableStrings.Pages.Title]" Icon="file-earmark-text" Description="@T[InfernoCmsLocalizableStrings.Pages.PagesIntro]">
+    <Actions>
+        @if (pages.Count > 0)
+        {
+            <button type="button" class="nf-button" @onclick="() => tree?.ExpandAll()">@T[InfernoCmsLocalizableStrings.Menus.ExpandAll]</button>
+            <button type="button" class="nf-button" @onclick="() => tree?.CollapseAll()">@T[InfernoCmsLocalizableStrings.Menus.CollapseAll]</button>
+        }
+        @if (canWrite)
+        {
+            <button type="button" class="nf-button nf-button-primary" @onclick="() => BeginCreate(null)">
+                <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.Pages.NewPage]
+            </button>
+        }
+    </Actions>
+</PageHeader>
+
+<div class="nf-toolbar">
+    <SearchField Value="@search" ValueChanged="SearchChanged" Placeholder="@T[InfernoWebLocalizableStrings.Admin.SearchPlaceholder]" />
+</div>
+
+@if (!loaded)
 {
-    <div class="card mb-3">
-        <div class="card-header">@CreateHeading</div>
-        <div class="card-body">
-            <p class="text-muted">@T[InfernoCmsLocalizableStrings.Pages.NewPageIntro]</p>
-            <div class="row g-3 align-items-end">
-                <div class="col-md-8">
-                    <label class="form-label">@T[InfernoCmsLocalizableStrings.Pages.PageModel.Name]</label>
-                    <RadzenTextBox @bind-Value="newName" Style="width:100%" Name="NewName" />
-                </div>
-                <div class="col-md-4 text-end">
-                    <RadzenButton ButtonStyle="ButtonStyle.Light" Click="CancelCreate" Text="@T[InfernoWebLocalizableStrings.General.Cancel]" Disabled="creating" />
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="web" Click="CreateAsync" IsBusy="creating" Text="@T[InfernoCmsLocalizableStrings.Pages.CreateAndDesign]" />
-                </div>
-                @if (createError is not null)
-                {
-                    <div class="col-12">
-                        <div class="text-danger">@createError</div>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+}
+else if (pages.Count == 0)
+{
+    <EmptyState Icon="file-earmark-text" Title="@T[InfernoCmsLocalizableStrings.Pages.EmptyTitle]" Description="@T[InfernoCmsLocalizableStrings.Pages.NewPageIntro]">
+        @if (canWrite)
+        {
+            <button type="button" class="nf-button nf-button-primary" @onclick="() => BeginCreate(null)">
+                <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.Pages.NewPage]
+            </button>
+        }
+    </EmptyState>
+}
+else if (!string.IsNullOrWhiteSpace(search) && roots.Count == 0)
+{
+    <EmptyState Icon="search" Title="@T[InfernoWebLocalizableStrings.Admin.NoMatchesTitle]" Description="@T[InfernoWebLocalizableStrings.Admin.NoMatchesDescription]" />
 }
 else
 {
-    <div class="mb-3">
-        <RadzenButton Click="@(() => BeginCreate(null))" Icon="add" Text="@T[InfernoCmsLocalizableStrings.Pages.NewPage]" />
-    </div>
+    <TreeTable @ref="tree" TItem="Page" Items="roots" ChildrenOf="ChildrenOf" KeyOf="node => node.Id">
+        <Header>
+            <tr>
+                <th>@T[InfernoCmsLocalizableStrings.Pages.PageModel.Name]</th>
+                <th>@T[InfernoCmsLocalizableStrings.Pages.Address]</th>
+                <th>@T[InfernoCmsLocalizableStrings.Pages.PageVersionModel.Status]</th>
+                <th class="nf-cell-nowrap">@T[InfernoCmsLocalizableStrings.Pages.LastEdited]</th>
+                <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
+            </tr>
+        </Header>
+        <RowTemplate Context="row">
+            @{
+                var item = row.Item;
+                var version = currentVersions.GetValueOrDefault(item.Id);
+            }
+            <tr @key="item.Id">
+                <td>
+                    <TreeToggle Row="row">
+                        <button type="button" class="nf-link-button nf-row-title" @onclick="() => EditAsync(item)">@item.Name</button>
+                        @if (!item.ShowOnMenus)
+                        {
+                            <span class="nf-badge nf-badge-muted" title="@T[InfernoCmsLocalizableStrings.Pages.PageModel.ShowOnMenus]">@T[InfernoCmsLocalizableStrings.Pages.HiddenFromMenus]</span>
+                        }
+                    </TreeToggle>
+                </td>
+                <td class="nf-muted inferno-code nf-truncate">@(version is null ? "—" : $"/{version.Slug}")</td>
+                <td>
+                    @if (!item.IsEnabled)
+                    {
+                        <span class="nf-badge nf-badge-muted">@T[InfernoCmsLocalizableStrings.Pages.SwitchedOff]</span>
+                    }
+                    else if (version?.Status == VersionStatus.Published)
+                    {
+                        <span class="nf-badge nf-badge-success">@T[InfernoCmsLocalizableStrings.Pages.Published]</span>
+                    }
+                    else
+                    {
+                        <span class="nf-badge nf-badge-warning">@T[InfernoCmsLocalizableStrings.Pages.Draft]</span>
+                    }
+                </td>
+                <td class="nf-muted nf-cell-nowrap">@version?.DateModifiedUtc.ToLocalTime().ToString("g")</td>
+                <td class="nf-cell-actions">
+                    <div class="nf-row-actions">
+                        <button type="button" class="nf-icon-button" title="@T[InfernoCmsLocalizableStrings.Pages.Design]" @onclick="() => EditAsync(item)">
+                            <Icon Name="edit" Size="16" />
+                        </button>
+                        <ActionMenu Label="@T[InfernoWebLocalizableStrings.General.Actions]">
+                            @if (version is not null && version.Status == VersionStatus.Published && item.IsEnabled)
+                            {
+                                <ActionMenuItem Icon="external" Text="@T[InfernoCmsLocalizableStrings.Pages.ViewOnSite]" Href="@($"/{version.Slug}")" Target="_blank" />
+                            }
+                            @if (version is not null)
+                            {
+                                <ActionMenuItem Icon="eye" Text="@T[InfernoCmsLocalizableStrings.Pages.Preview]" Href="@($"/admin/pages/preview/{version.Id}")" Target="_blank" />
+                            }
+                            @if (canWrite)
+                            {
+                                <ActionMenuItem Icon="plus" Text="@T[InfernoCmsLocalizableStrings.Pages.AddSubPage]" OnClick="() => BeginCreate(item)" />
+                                <ActionMenuDivider />
+                                <ActionMenuItem Icon="trash" Text="@T[InfernoWebLocalizableStrings.General.Delete]" Danger="true" OnClick="() => DeleteAsync(item)" />
+                            }
+                        </ActionMenu>
+                    </div>
+                </td>
+            </tr>
+        </RowTemplate>
+    </TreeTable>
 }
 
-@if (pages.Count > 0)
-{
-    @* Keyed on the loaded data, so the nested grids are rebuilt after a page is added, moved or deleted. *@
-    <PageGridLevel @key="loadVersion" Pages="pages" Versions="currentVersions" ParentId="null" OnEdit="EditAsync" OnAddSubPage="BeginCreate" OnDelete="DeleteAsync" />
-}
+<Drawer Open="creating" Scrim="true" Width="min(440px, 100vw)" OnClose="CancelCreate" Title="@CreateHeading">
+    <ChildContent>
+        @if (creating)
+        {
+            <p class="nf-muted">@T[InfernoCmsLocalizableStrings.Pages.NewPageIntro]</p>
+            <EditForm id="page-create-form" Model="newPage" OnValidSubmit="CreateAsync">
+                <Field Label="@T[InfernoCmsLocalizableStrings.Pages.PageModel.Name]" For="page-name">
+                    <InputText id="page-name" class="nf-input" @bind-Value="newPage.Name" autofocus />
+                    @if (createError is not null)
+                    {
+                        <span class="nf-validation">@createError</span>
+                    }
+                </Field>
+                <Field Label="@T[InfernoCmsLocalizableStrings.Pages.ParentPage]" For="page-parent">
+                    <select id="page-parent" class="nf-select nf-select-block" value="@(newPage.ParentId?.ToString() ?? string.Empty)" @onchange="ParentChanged">
+                        <option value="">@T[InfernoCmsLocalizableStrings.Pages.TopLevel]</option>
+                        @foreach (var (option, depth) in parentOptions)
+                        {
+                            <option value="@option.Id">@(new string('\u00A0', depth * 4))@option.Name</option>
+                        }
+                    </select>
+                </Field>
+            </EditForm>
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="CancelCreate" disabled="@saving">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+        <button type="submit" form="page-create-form" class="nf-button nf-button-primary" disabled="@saving">
+            <Icon Name="edit" Size="16" /> @T[InfernoCmsLocalizableStrings.Pages.CreateAndDesign]
+        </button>
+    </Footer>
+</Drawer>

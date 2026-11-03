@@ -1,16 +1,7 @@
-@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.Blog
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockEditor<LastNPostsBlock>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="NumberOfEntries">@T[InfernoCmsLocalizableStrings.ContentBlocks.LastNPostsBlock.NumberOfEntries]</label>
-            <div class="col-md-9">
-                <RadzenNumeric @bind-Value="Model.NumberOfEntries" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
+<Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.LastNPostsBlock.NumberOfEntries]" For="last-posts-count">
+    <InputNumber id="last-posts-count" class="nf-input" min="1" max="255" @bind-Value="NumberOfEntries" />
+</Field>

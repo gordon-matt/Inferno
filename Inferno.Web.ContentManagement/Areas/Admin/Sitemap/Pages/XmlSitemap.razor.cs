@@ -1,35 +1,46 @@
+using System.Globalization;
+using Heroicsoft.NetForge.Results;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Models;
-using Radzen;
-using Radzen.Blazor;
+using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Pages;
 
 public partial class XmlSitemap
 {
-    private RadzenDataGrid<SitemapConfigModel> DataGrid { get; set; }
+    private IReadOnlyList<SitemapConfigModel> entries;
+    private string search;
+    private bool canWrite;
+    private bool generating;
 
-    private IEnumerable<SitemapConfigModel> Records { get; set; } = Enumerable.Empty<SitemapConfigModel>();
+    [Inject]
+    private ISitemapAdminService SitemapAdminService { get; set; }
 
-    private bool IsLoading { get; set; }
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
 
-    private IEnumerable<ChangeFrequencyOption> ChangeFrequencies { get; set; }
+    private IEnumerable<SitemapConfigModel> Visible =>
+        string.IsNullOrWhiteSpace(search)
+            ? entries
+            : entries.Where(entry => entry.Location?.Contains(search.Trim(), StringComparison.OrdinalIgnoreCase) == true);
 
     protected override async Task OnInitializedAsync()
     {
-        BuildChangeFrequencyOptions();
-        await LoadAsync();
+        canWrite = await HasPolicyAsync(CmsConstants.Policies.SitemapWrite);
+
+        var result = await SitemapAdminService.ListAsync(TenantId);
+        if (!result.IsSuccess)
+        {
+            Toasts.ShowFailure(result);
+            entries = [];
+            return;
+        }
+
+        entries = result.Value;
     }
 
-    private void BuildChangeFrequencyOptions() => ChangeFrequencies = Enum.GetValues<ChangeFrequency>()
-            .Select(value => new ChangeFrequencyOption
-            {
-                Value = value,
-                Name = T[GetChangeFrequencyLocalizationKey(value)].Value
-            })
-            .ToList();
-
-    private static string GetChangeFrequencyLocalizationKey(ChangeFrequency frequency) => frequency switch
+    private static string FrequencyKey(ChangeFrequency frequency) => frequency switch
     {
         ChangeFrequency.Always => InfernoCmsLocalizableStrings.Sitemap.Model.ChangeFrequencies.Always,
         ChangeFrequency.Hourly => InfernoCmsLocalizableStrings.Sitemap.Model.ChangeFrequencies.Hourly,
@@ -37,75 +48,72 @@ public partial class XmlSitemap
         ChangeFrequency.Weekly => InfernoCmsLocalizableStrings.Sitemap.Model.ChangeFrequencies.Weekly,
         ChangeFrequency.Monthly => InfernoCmsLocalizableStrings.Sitemap.Model.ChangeFrequencies.Monthly,
         ChangeFrequency.Yearly => InfernoCmsLocalizableStrings.Sitemap.Model.ChangeFrequencies.Yearly,
-        ChangeFrequency.Never => InfernoCmsLocalizableStrings.Sitemap.Model.ChangeFrequencies.Never,
-        _ => frequency.ToString()
+        _ => InfernoCmsLocalizableStrings.Sitemap.Model.ChangeFrequencies.Never
     };
 
-    private async Task LoadAsync()
+    private async Task ChangeFrequencyChangedAsync(SitemapConfigModel entry, ChangeEventArgs args)
     {
-        IsLoading = true;
-        var response = await SitemapService.GetConfigAsync();
-        if (response.Succeeded)
+        if (Enum.TryParse<ChangeFrequency>(args.Value?.ToString(), out var frequency))
         {
-            Records = response.Data?.Value?.ToList() ?? Enumerable.Empty<SitemapConfigModel>();
-        }
-        else
-        {
-            Records = Enumerable.Empty<SitemapConfigModel>();
-            NotificationService.Notify(NotificationSeverity.Error, "Error", "Unable to load sitemap configuration.");
-        }
-        IsLoading = false;
-    }
-
-    private async Task OnChangeFrequencyChangedAsync(SitemapConfigModel record, ChangeFrequency newValue)
-    {
-        record.ChangeFrequency = newValue;
-        await SaveRecordAsync(record);
-    }
-
-    private async Task OnPriorityChangedAsync(SitemapConfigModel record, float? newValue)
-    {
-        record.Priority = newValue ?? 0f;
-        await SaveRecordAsync(record);
-    }
-
-    private async Task SaveRecordAsync(SitemapConfigModel record)
-    {
-        var response = await SitemapService.SetConfigAsync(record.Id, record.ChangeFrequency, record.Priority);
-        if (!response.Succeeded)
-        {
-            NotificationService.Notify(NotificationSeverity.Error, "Error", "Unable to save configuration.");
+            await SaveAsync(entry, frequency, entry.Priority);
         }
     }
 
-    private async Task GenerateAsync()
+    private async Task PriorityChangedAsync(SitemapConfigModel entry, ChangeEventArgs args)
     {
-        if (await DialogService.Confirm(T[InfernoCmsLocalizableStrings.Sitemap.ConfirmGenerateFile].Value) != true)
+        if (float.TryParse(args.Value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out float priority))
+        {
+            await SaveAsync(entry, entry.ChangeFrequency, priority);
+        }
+    }
+
+    // Each change is saved as it is made, so there is no save button to forget.
+    private async Task SaveAsync(SitemapConfigModel entry, ChangeFrequency frequency, float priority)
+    {
+        if (!await EnsurePolicyAsync(CmsConstants.Policies.SitemapWrite))
         {
             return;
         }
 
-        var response = await SitemapService.GenerateAsync();
-        if (response.Succeeded)
+        var result = await SitemapAdminService.UpdateAsync(TenantId, entry.Id, frequency, priority);
+        if (!result.IsSuccess)
         {
-            NotificationService.Notify(
-                NotificationSeverity.Success,
-                "Success",
-                T[InfernoCmsLocalizableStrings.Sitemap.GenerateFileSuccess].Value);
+            Toasts.ShowFailure(result);
+            return;
         }
-        else
-        {
-            NotificationService.Notify(
-                NotificationSeverity.Error,
-                "Error",
-                T[InfernoCmsLocalizableStrings.Sitemap.GenerateFileError].Value);
-        }
+
+        entry.ChangeFrequency = frequency;
+        entry.Priority = (float)Math.Round(priority, 1);
     }
 
-    private sealed class ChangeFrequencyOption
+    private async Task GenerateAsync()
     {
-        public ChangeFrequency Value { get; set; }
+        bool confirmed = await Dialogs.ConfirmAsync(
+            T[InfernoCmsLocalizableStrings.Sitemap.GenerateFile],
+            T[InfernoCmsLocalizableStrings.Sitemap.ConfirmGenerateFile],
+            T[InfernoCmsLocalizableStrings.Sitemap.GenerateFile]);
 
-        public string Name { get; set; }
+        if (!confirmed || !await EnsurePolicyAsync(CmsConstants.Policies.SitemapWrite))
+        {
+            return;
+        }
+
+        generating = true;
+        try
+        {
+            string requestBaseUrl = new Uri(NavigationManager.BaseUri).GetLeftPart(UriPartial.Authority);
+            var result = await SitemapAdminService.GenerateAsync(TenantId, requestBaseUrl);
+            if (!result.IsSuccess)
+            {
+                Toasts.Error(T[InfernoCmsLocalizableStrings.Sitemap.GenerateFileError]);
+                return;
+            }
+
+            Toasts.Success(T[InfernoCmsLocalizableStrings.Sitemap.GenerateFileSuccess]);
+        }
+        finally
+        {
+            generating = false;
+        }
     }
 }

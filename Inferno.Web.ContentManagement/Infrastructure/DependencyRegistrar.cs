@@ -1,5 +1,4 @@
-﻿using Dependo;
-using Extenso.AspNetCore.OData;
+using Dependo;
 using Inferno.Web.ContentManagement.Localization;
 using Localize;
 using Inferno.Web.Configuration;
@@ -13,6 +12,7 @@ using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Newsletters;
 using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Models;
+using Inferno.Web.ContentManagement.Areas.Admin.Messaging.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
@@ -22,7 +22,6 @@ using Inferno.Web.ContentManagement.Areas.Admin.Messaging;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Messaging;
 using Inferno.Web.Navigation;
-using Inferno.Web.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -44,30 +43,22 @@ public class DependencyRegistrar : IDependencyRegistrar
         // Menus
         builder.Register<IMenuService, MenuService>(ServiceLifetime.Transient);
         builder.Register<IMenuItemService, MenuItemService>(ServiceLifetime.Transient);
-        builder.Register<IRadzenODataService<Menu, Guid>, MenuODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities.MenuItem, Guid>, MenuItemODataService>(ServiceLifetime.Singleton);
-
-        // Sitemap
-        builder.Register<ISitemapODataService, SitemapODataService>(ServiceLifetime.Singleton);
+        builder.Register<IMenuAdminService, MenuAdminService>(ServiceLifetime.Transient);
 
         // Pages
         builder.Register<IPageService, PageService>(ServiceLifetime.Transient);
         builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
         builder.Register<IPageContentService, PageContentService>(ServiceLifetime.Transient);
         builder.Register<IPageAuthoringService, PageAuthoringService>(ServiceLifetime.Scoped);
-        builder.Register<IRadzenODataService<Page, Guid>, PageODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<PageVersion, Guid>, PageVersionODataService>(ServiceLifetime.Singleton);
-        builder.Register<IPageVersionODataService, PageVersionODataService>(ServiceLifetime.Singleton);
 
         // Content Blocks
         builder.Register<IEntityTypeContentBlockService, EntityTypeContentBlockService>(ServiceLifetime.Transient);
         builder.Register<IContentBlockService, ContentBlockService>(ServiceLifetime.Transient);
         builder.Register<IZoneService, ZoneService>(ServiceLifetime.Transient);
-        builder.Register<IRadzenODataService<ContentBlock, Guid>, ContentBlockODataService>(ServiceLifetime.Singleton);
-        builder.Register<IRadzenODataService<EntityTypeContentBlock, Guid>, EntityTypeContentBlockODataService>(ServiceLifetime.Singleton);
+        builder.Register<IContentBlockAdminService, ContentBlockAdminService>(ServiceLifetime.Transient);
 
-        // Newsletters
-        builder.Register<IRadzenODataService<Subscriber, string>, SubscriberODataService>(ServiceLifetime.Singleton);
+        // Sitemap
+        builder.Register<ISitemapAdminService, SitemapAdminService>(ServiceLifetime.Transient);
 
         #endregion Services
 
@@ -122,14 +113,17 @@ public class DependencyRegistrar : IDependencyRegistrar
         builder.Register<Components.CmsMenuBuilder, Components.CmsMenuBuilder>(ServiceLifetime.Transient);
         builder.Register<Components.CmsBreadcrumbBuilder, Components.CmsBreadcrumbBuilder>(ServiceLifetime.Transient);
         builder.Register<Areas.Admin.Newsletters.Services.INewsletterService, Areas.Admin.Newsletters.Services.NewsletterService>(ServiceLifetime.Transient);
+        builder.Register<ISubscriberAdminService, SubscriberAdminService>(ServiceLifetime.Transient);
+
+        // Messaging
+        builder.Register<IMessageTemplateAdminService, MessageTemplateAdminService>(ServiceLifetime.Transient);
+        builder.Register<IQueuedEmailAdminService, QueuedEmailAdminService>(ServiceLifetime.Transient);
         builder.Register<Events.IConsumer<Areas.Admin.Newsletters.Events.NewsletterSubscribedEvent>, Areas.Admin.Newsletters.NewsletterEmailConsumer>(ServiceLifetime.Transient);
         builder.Register<Events.IConsumer<Areas.Admin.Newsletters.Events.NewsletterUnsubscribedEvent>, Areas.Admin.Newsletters.NewsletterEmailConsumer>(ServiceLifetime.Transient);
         builder.Register<Areas.Admin.ContentBlocks.Services.IFormBlockSubmissionService, Areas.Admin.ContentBlocks.Services.FormBlockSubmissionService>(ServiceLifetime.Transient);
 
         #endregion Other: Content Blocks
 
-        // Other
-        builder.Register<IODataRegistrar, ODataRegistrar>(ServiceLifetime.Singleton);
 
         // Indexing
         //builder.Register<IIndexingContentProvider, BlogIndexingContentProvider>(ServiceLifetime.Transient); // TODO

@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace Inferno.Web.ContentManagement;
 
@@ -72,22 +72,4 @@ public static partial class CmsConstants
         public const string MessagingWrite = "Messaging: Write";
     }
 
-    public static class ODataRoutes
-    {
-        public const string Prefix = "inferno/cms";
-
-        public static class EntitySetNames
-        {
-            public const string ContentBlock = "ContentBlockApi";
-            public const string EntityTypeContentBlock = "EntityTypeContentBlockApi";
-            public const string Menu = "MenuApi";
-            public const string MenuItem = "MenuItemApi";
-            public const string Page = "PageApi";
-            public const string PageTree = "PageTreeApi";
-            public const string PageVersion = "PageVersionApi";
-            public const string Subscriber = "SubscriberApi";
-            public const string XmlSitemap = "XmlSitemapApi";
-            public const string Zone = "ZoneApi";
-        }
-    }
 }

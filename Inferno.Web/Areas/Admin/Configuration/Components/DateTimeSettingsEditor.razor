@@ -1,24 +1,13 @@
 @using Inferno.Web.Configuration
 @inherits SettingsEditor<DateTimeSettings>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Name">@T[InfernoWebLocalizableStrings.Settings.DateTime.DefaultTimeZoneId]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.DefaultTimeZoneId" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Name"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.AllowUsersToSetTimeZone" />@T[InfernoWebLocalizableStrings.Settings.DateTime.AllowUsersToSetTimeZone]</label></div>
-                @*<RadzenCheckBox @bind-Value="Model.AllowUsersToSetTimeZone" Style="width:100%" /> @T[InfernoWebLocalizableStrings.Settings.DateTime.AllowUsersToSetTimeZone]*@
-            </div>
-        </div>
-    </div>
-</div>
+<Field Label="@T[InfernoWebLocalizableStrings.Settings.DateTime.DefaultTimeZoneId]" For="datetime-zone">
+    <select id="datetime-zone" class="nf-select nf-select-block" @bind="Model.DefaultTimeZoneId">
+        <option value="">@T[InfernoWebLocalizableStrings.General.SelectOption]</option>
+        @foreach (var zone in TimeZoneInfo.GetSystemTimeZones())
+        {
+            <option value="@zone.Id">@zone.DisplayName</option>
+        }
+    </select>
+</Field>
+<Switch @bind-Value="Model.AllowUsersToSetTimeZone" Label="@T[InfernoWebLocalizableStrings.Settings.DateTime.AllowUsersToSetTimeZone]" />

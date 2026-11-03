@@ -27,6 +27,9 @@
     <Project Path="../../Libraries/BlogKrafter/BlogKrafter.Data/BlogKrafter.Data.csproj" />
     <Project Path="../../Libraries/BlogKrafter/BlogKrafter.Services/BlogKrafter.Services.csproj" />
     <Project Path="../../Libraries/BlogKrafter/BlogKrafter/BlogKrafter.csproj" />
+    <Project Path="../../Libraries/Heroicsoft.NetForge/Heroicsoft.NetForge.Abstractions/Heroicsoft.NetForge.Abstractions.csproj" />
+    <Project Path="../../Libraries/Heroicsoft.NetForge/Heroicsoft.NetForge.Components/Heroicsoft.NetForge.Components.csproj" />
+    <Project Path="../../Libraries/Heroicsoft.NetForge/Heroicsoft.NetForge.Results/Heroicsoft.NetForge.Results.csproj" />
     <Project Path="../../Libraries/Localize.NET/Localize.Components/Localize.Components.csproj" />
     <Project Path="../../Libraries/Localize.NET/Localize.Core/Localize.Core.csproj" />
     <Project Path="../../Libraries/Localize.NET/Localize.Data.Sql/Localize.Data.Sql.csproj" />
@@ -39,7 +42,6 @@
     <Project Path="../../Libraries/Pluginz/Pluginz.Services/Pluginz.Services.csproj" />
     <Project Path="../../Libraries/Pluginz/Pluginz.Web/Pluginz.Web.csproj" />
   </Folder>
-  <Project Path="InfernoCMS.Api/InfernoCMS.Api.csproj" />
   <Project Path="InfernoCMS.Data/InfernoCMS.Data.csproj" />
   <Project Path="InfernoCMS.Identity/InfernoCMS.Identity.csproj" />
   <Project Path="InfernoCMS.Services/InfernoCMS.Services.csproj" />

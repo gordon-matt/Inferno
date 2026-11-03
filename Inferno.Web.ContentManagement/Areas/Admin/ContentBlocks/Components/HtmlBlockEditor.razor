@@ -1,25 +1,12 @@
-@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockEditor<HtmlBlock>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="BodyContent">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.BodyContent]</label>
-            <div class="col-md-9">
-                <RadzenTextArea @bind-Value="Model.BodyContent" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Script">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.Script]</label>
-            <div class="col-md-9">
-                <RadzenTextArea @bind-Value="Model.Script" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
+<Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.BodyContent]" For="html-body">
+    <InputTextArea id="html-body" class="nf-textarea nf-textarea-code" rows="14" @bind-Value="Model.BodyContent" />
+    <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.HelpText.BodyContent]</span>
+</Field>
+
+<Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.Script]" For="html-script">
+    <InputTextArea id="html-script" class="nf-textarea nf-textarea-code" rows="6" @bind-Value="Model.Script" />
+    <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.HelpText.Script]</span>
+</Field>

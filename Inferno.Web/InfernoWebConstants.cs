@@ -1,4 +1,4 @@
-﻿namespace Inferno.Web;
+namespace Inferno.Web;
 
 public class InfernoWebConstants
 {
@@ -30,23 +30,6 @@ public class InfernoWebConstants
         /// {0}: Tenant ID
         /// </summary>
         public const string SettingsKeysPatternFormat = "Inferno.Web.CacheKeys.Settings.Tenant_{0}_.*";
-    }
-
-    public static class ODataRoutes
-    {
-        public const string Prefix = "inferno/web";
-
-        public static class EntitySetNames
-        {
-            public const string Language = "LanguageApi";
-            public const string LocalizableString = "LocalizableStringApi";
-            public const string Log = "LogApi";
-            public const string MembershipUser = "UserApi";
-            public const string MembershipRole = "RoleApi";
-            public const string ScheduledTask = "ScheduledTaskApi";
-            public const string Settings = "SettingsApi";
-            public const string Tenant = "TenantApi";
-        }
     }
 
     public static class StateProviders

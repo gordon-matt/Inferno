@@ -1,4 +1,6 @@
-﻿using Inferno.Models;
+﻿using Ardalis.Result;
+using Heroicsoft.NetForge.Results;
+using Inferno.Web.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
@@ -8,81 +10,168 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Pages;
 
 public partial class ContentBlocks
 {
-    [Inject]
-    private IEnumerable<IContentBlock> BlockTypes { get; set; }
+    private IReadOnlyList<ContentBlock> blocks;
+    private IReadOnlyList<BlockTypeOption> blockTypes = [];
+    private IReadOnlyList<ZoneOption> zones = [];
+    private string search;
+    private Guid? zoneFilter;
+    private bool canWrite;
+
+    private ContentBlock editing;
+    private bool isNew;
+    private string activeTab = "details";
+    private Type editorType;
+    private DynamicComponent blockEditor;
+    private IReadOnlyDictionary<string, string> errors;
+    private bool saving;
 
     [Inject]
-    private IZoneService ZoneService { get; set; }
-
-    private Type EditorType { get; set; }
-
-    private DynamicComponent BlockEditor { get; set; }
-
-    private IEnumerable<IdNamePair<string>> BlockTypesSelectList { get; set; }
-
-    private IEnumerable<IdNamePair<Guid>> ZonesSelectList { get; set; }
-
-    private bool ShowCreateMode { get; set; }
-
-    protected override void Create()
-    {
-        Model = new ContentBlock();
-        ShowEditMode = false;
-        ShowCreateMode = true;
-    }
-
-    protected override async Task EditAsync(Guid id)
-    {
-        ShowCreateMode = false;
-        await base.EditAsync(id);
-        EditorType = BlockTypes.FirstOrDefault(x => x.GetType().FullName == Model.BlockType)?.EditorType;
-    }
+    private IContentBlockAdminService ContentBlockAdminService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
+        canWrite = await HasPolicyAsync(CmsConstants.Policies.ContentBlocksWrite);
+        blockTypes = ContentBlockAdminService.GetBlockTypes();
 
-        BlockTypesSelectList = BlockTypes
-            .Select(x => new
-            {
-                x.Name,
-                Type = x.GetType().FullName
-            })
-            .OrderBy(x => x.Name)
-            .Select(x => new IdNamePair<string>
-            {
-                Id = x.Type,
-                Name = x.Name,
-            });
+        var zoneResult = await ContentBlockAdminService.ListZonesAsync(TenantId);
+        zones = zoneResult.IsSuccess ? zoneResult.Value : [];
 
-        using var connection = ZoneService.OpenConnection();
-        ZonesSelectList = connection.Query()
-            .OrderBy(x => x.Name)
-            .ToList()
-            .Select(x => new IdNamePair<Guid>
-            {
-                Id = x.Id,
-                Name = x.Name,
-            });
+        await LoadAsync();
     }
 
-    protected override async Task OnValidSumbitAsync()
+    private string ZoneName(Guid zoneId) => zones.FirstOrDefault(zone => zone.Id == zoneId)?.Name ?? "—";
+
+    private async Task LoadAsync()
     {
-        if (!ShowCreateMode)
+        var result = await ContentBlockAdminService.ListAsync(TenantId, search, zoneFilter);
+        if (!result.IsSuccess)
         {
-            if (BlockEditor?.Instance is IContentBlockEditor editor)
-            {
-                Model.BlockValues = editor.Save();
-            }
+            Toasts.ShowFailure(result);
+            blocks = [];
+            return;
         }
 
-        await base.OnValidSumbitAsync();
-        ShowCreateMode = false;
+        blocks = result.Value;
     }
 
-    protected override void Cancel()
+    private async Task SearchChangedAsync(string value)
     {
-        base.Cancel();
-        ShowCreateMode = false;
+        search = value;
+        await LoadAsync();
+    }
+
+    private async Task ZoneFilterChangedAsync(ChangeEventArgs args)
+    {
+        zoneFilter = Guid.TryParse(args.Value?.ToString(), out var zoneId) ? zoneId : null;
+        await LoadAsync();
+    }
+
+    private void Create()
+    {
+        errors = null;
+        isNew = true;
+        editorType = null;
+        editing = new ContentBlock { IsEnabled = true, ZoneId = zoneFilter ?? Guid.Empty };
+    }
+
+    private void Edit(ContentBlock block, string tab = "details")
+    {
+        errors = null;
+        isNew = false;
+        activeTab = tab;
+        editorType = blockTypes.FirstOrDefault(option => option.TypeName == block.BlockType)?.EditorType;
+
+        // Edit a copy, so cancelling leaves the cached block as it was.
+        editing = new ContentBlock
+        {
+            Id = block.Id,
+            Title = block.Title,
+            BlockName = block.BlockName,
+            BlockType = block.BlockType,
+            ZoneId = block.ZoneId,
+            Order = block.Order,
+            IsEnabled = block.IsEnabled,
+            BlockValues = block.BlockValues,
+            CustomTemplatePath = block.CustomTemplatePath,
+            PageId = block.PageId
+        };
+    }
+
+    private void Close()
+    {
+        editing = null;
+        blockEditor = null;
+    }
+
+    private async Task SaveAsync()
+    {
+        if (saving || !await EnsurePolicyAsync(CmsConstants.Policies.ContentBlocksWrite))
+        {
+            return;
+        }
+
+        if (blockEditor?.Instance is IContentBlockEditor editor)
+        {
+            editing.BlockValues = editor.Save();
+        }
+
+        saving = true;
+        try
+        {
+            var result = await ContentBlockAdminService.SaveAsync(TenantId, editing);
+            if (result.Status == ResultStatus.Invalid)
+            {
+                errors = ErrorText.From(result);
+                activeTab = "details";
+                return;
+            }
+
+            if (!result.IsSuccess)
+            {
+                Toasts.ShowFailure(result);
+                return;
+            }
+
+            Toasts.Success(T[InfernoWebLocalizableStrings.Admin.Saved]);
+            await LoadAsync();
+
+            if (isNew)
+            {
+                // A new block starts with default settings, so carry straight on to them.
+                blockEditor = null;
+                Edit(result.Value, "settings");
+                return;
+            }
+
+            Close();
+        }
+        finally
+        {
+            saving = false;
+        }
+    }
+
+    private async Task DeleteAsync(ContentBlock block)
+    {
+        bool confirmed = await Dialogs.ConfirmAsync(
+            T[InfernoWebLocalizableStrings.Admin.DeleteTitleFormat, block.Title],
+            T[InfernoWebLocalizableStrings.Admin.DeleteWarning],
+            T[InfernoWebLocalizableStrings.General.Delete],
+            isDestructive: true);
+
+        if (!confirmed || !await EnsurePolicyAsync(CmsConstants.Policies.ContentBlocksWrite))
+        {
+            return;
+        }
+
+        var result = await ContentBlockAdminService.DeleteAsync(TenantId, block.Id);
+        if (!result.IsSuccess)
+        {
+            Toasts.ShowFailure(result);
+            return;
+        }
+
+        Toasts.Success(T[InfernoWebLocalizableStrings.Admin.Deleted]);
+        await LoadAsync();
     }
 }

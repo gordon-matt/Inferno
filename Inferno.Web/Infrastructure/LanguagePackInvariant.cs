@@ -1,4 +1,4 @@
-﻿using Localize;
+using Localize;
 
 namespace Inferno.Web.Infrastructure;
 
@@ -10,7 +10,21 @@ public class LanguagePackInvariant : ILanguagePack
 
     public IDictionary<string, string> LocalizedStrings => new Dictionary<string, string>
     {
+        { InfernoWebLocalizableStrings.Admin.Deleted, "Deleted." },
+        { InfernoWebLocalizableStrings.Admin.DeleteTitleFormat, "Delete {0}?" },
+        { InfernoWebLocalizableStrings.Admin.DeleteWarning, "This cannot be undone." },
+        { InfernoWebLocalizableStrings.Admin.LoadError, "The list could not be loaded." },
+        { InfernoWebLocalizableStrings.Admin.Never, "Never" },
+        { InfernoWebLocalizableStrings.Admin.NoMatchesDescription, "Try a different search." },
+        { InfernoWebLocalizableStrings.Admin.NoMatchesTitle, "Nothing matches" },
+        { InfernoWebLocalizableStrings.Admin.NoPermission, "You do not have permission to do that." },
+        { InfernoWebLocalizableStrings.Admin.Off, "Off" },
+        { InfernoWebLocalizableStrings.Admin.On, "On" },
+        { InfernoWebLocalizableStrings.Admin.Saved, "Saved." },
+        { InfernoWebLocalizableStrings.Admin.SearchPlaceholder, "Search…" },
+
         { InfernoWebLocalizableStrings.Dashboard.Administration, "Administration" },
+        { InfernoWebLocalizableStrings.Dashboard.Content, "Content" },
         { InfernoWebLocalizableStrings.Dashboard.Frontend, "Frontend" },
         { InfernoWebLocalizableStrings.Dashboard.Title, "Dashboard" },
         { InfernoWebLocalizableStrings.Dashboard.Welcome, "Welcome to the Inferno CMS administration area." },
@@ -18,6 +32,8 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Dashboard.Cards.BlogSubtitle, "Posts & categories" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.ContentBlocks, "Content Blocks" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.ContentBlocksSubtitle, "Reusable content" },
+        { InfernoWebLocalizableStrings.Dashboard.Cards.Media, "Media" },
+        { InfernoWebLocalizableStrings.Dashboard.Cards.MediaSubtitle, "Files & images" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.MembershipSubtitle, "Manage users & roles" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.Menus, "Menus" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.MenusSubtitle, "Navigation menus" },
@@ -26,14 +42,7 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Dashboard.Cards.ScheduledTasksSubtitle, "Background jobs" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.SettingsSubtitle, "Site configuration" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.TenantsSubtitle, "Multi-site setup" },
-        { InfernoWebLocalizableStrings.Dashboard.About.Title, "About Inferno CMS" },
-        { InfernoWebLocalizableStrings.Dashboard.About.Description, "Inferno is a multi-purpose framework and CMS for creating any type of website. It includes a plugin system, theme engine, file manager, membership management, localization, blog, menus, scheduled tasks, and more." },
-        { InfernoWebLocalizableStrings.Dashboard.About.Extensible, "Extensible" },
-        { InfernoWebLocalizableStrings.Dashboard.About.ExtensibleSubtitle, "Plugin architecture" },
-        { InfernoWebLocalizableStrings.Dashboard.About.MultiTenant, "Multi-tenant" },
-        { InfernoWebLocalizableStrings.Dashboard.About.MultiTenantSubtitle, "Multiple sites" },
-        { InfernoWebLocalizableStrings.Dashboard.About.Themeable, "Themeable" },
-        { InfernoWebLocalizableStrings.Dashboard.About.ThemeableSubtitle, "Theme engine" },
+        { InfernoWebLocalizableStrings.Dashboard.Cards.ThemesSubtitle, "Look & feel" },
 
         { InfernoWebLocalizableStrings.General.Actions, "Actions" },
         { InfernoWebLocalizableStrings.General.Add, "Add" },
@@ -192,6 +201,12 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Plugins.Model.FriendlyName, "Friendly Name" },
         { InfernoWebLocalizableStrings.Plugins.Model.LimitedToTenants, "Limited to Tenants" },
 
+        { InfernoWebLocalizableStrings.ScheduledTasks.Description, "Background jobs that run on a schedule. Change how often they run, or run one now." },
+        { InfernoWebLocalizableStrings.ScheduledTasks.EmptyTitle, "No scheduled tasks" },
+        { InfernoWebLocalizableStrings.ScheduledTasks.EveryFormat, "Every {0}" },
+        { InfernoWebLocalizableStrings.ScheduledTasks.LastRun, "Last run" },
+        { InfernoWebLocalizableStrings.ScheduledTasks.SecondsHint, "How often the task runs, in seconds." },
+        { InfernoWebLocalizableStrings.ScheduledTasks.StopOnErrorHint, "Switch the task off after a run fails." },
         { InfernoWebLocalizableStrings.ScheduledTasks.ExecutedTaskError, "There was an error when executing the task." },
         { InfernoWebLocalizableStrings.ScheduledTasks.ExecutedTaskSuccess, "Successfully executed task." },
         { InfernoWebLocalizableStrings.ScheduledTasks.ManageScheduledTasks, "Manage Scheduled Tasks" },
@@ -226,7 +241,20 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Settings.Site.Tabs.SEO, "SEO" },
         { InfernoWebLocalizableStrings.Settings.Site.Tabs.Themes, "Themes" },
 
+        { InfernoWebLocalizableStrings.Settings.Description, "Configuration for this site. Pick a group to edit it." },
+        { InfernoWebLocalizableStrings.Settings.EmptyTitle, "No settings" },
+        { InfernoWebLocalizableStrings.Settings.NoEditor, "This group has nothing to edit." },
+        { InfernoWebLocalizableStrings.Tenants.DeleteWarning, "Every page, menu, setting and user of this tenant is removed. This cannot be undone." },
+        { InfernoWebLocalizableStrings.Tenants.Description, "Each tenant is a separate site with its own content, users and settings." },
+        { InfernoWebLocalizableStrings.Tenants.EmptyTitle, "No tenants yet" },
+        { InfernoWebLocalizableStrings.Tenants.ExportCsv, "Export to CSV" },
+        { InfernoWebLocalizableStrings.Tenants.ExportExcel, "Export to Excel" },
+        { InfernoWebLocalizableStrings.Tenants.HostsHint, "Comma-separated host names that resolve to this tenant." },
+        { InfernoWebLocalizableStrings.Tenants.NewTenant, "New tenant" },
         { InfernoWebLocalizableStrings.Tenants.ManageTenants, "Manage Tenants" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.Tabs.Credentials, "Sign-in" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.Tabs.Queue, "Queue" },
+        { InfernoWebLocalizableStrings.Settings.Smtp.Tabs.Server, "Server" },
         { InfernoWebLocalizableStrings.Settings.Smtp.DisplayName, "Display Name" },
         { InfernoWebLocalizableStrings.Settings.Smtp.EnableSsl, "Enable SSL" },
         { InfernoWebLocalizableStrings.Settings.Smtp.Host, "Host" },
@@ -243,6 +271,10 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Tenants.Model.Url, "URL" },
         { InfernoWebLocalizableStrings.Tenants.Title, "Tenants" },
 
+        { InfernoWebLocalizableStrings.Themes.Current, "Current" },
+        { InfernoWebLocalizableStrings.Themes.Description, "Choose how the public site looks." },
+        { InfernoWebLocalizableStrings.Themes.EmptyTitle, "No themes are installed" },
+        { InfernoWebLocalizableStrings.Themes.SetDefaultSuccessFormat, "{0} is now the site theme." },
         { InfernoWebLocalizableStrings.Themes.Model.IsDefaultTheme, "Default Theme" },
         { InfernoWebLocalizableStrings.Themes.Model.PreviewImageUrl, "Preview" },
         { InfernoWebLocalizableStrings.Themes.Model.SupportRtl, "Supports RTL" },

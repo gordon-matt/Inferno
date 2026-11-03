@@ -1,4 +1,4 @@
-﻿@using Heroicsoft.NetForge.Components.Theming
+@using Heroicsoft.NetForge.Components.Theming
 @using Microsoft.Extensions.Options
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @inject IOptions<ForgeUiOptions> UiOptions
@@ -23,13 +23,13 @@
             data-theme-key="@UiOptions.Value.ThemeStorageKey"
             data-default-theme="light"></script>
     <link rel="stylesheet" href="_content/Heroicsoft.NetForge.Components/css/nf.css" />
+    <link rel="stylesheet" href="_content/Inferno.Web/css/inferno-admin.css" />
     <link rel="stylesheet" href="css/site.css" />
     <link rel="stylesheet" href="InfernoCMS.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/v4-shims.min.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
-    <link rel="stylesheet" href="css/radzen-netforge.css" />
     <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 <body dir="@(IsRightToLeft ? "rtl" : null)">
@@ -38,7 +38,6 @@
     <script src="lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="_content/Heroicsoft.NetForge.Components/js/nf.js"></script>
     <script src="_framework/blazor.web.js"></script>
-    <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
     <script>
         window.inferno = window.inferno || {};
         window.inferno.setCulture = function (culture) {

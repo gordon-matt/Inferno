@@ -1,37 +1,34 @@
-﻿using Extenso.Data.Entity;
-using Inferno.Security;
+﻿using Inferno.Security;
 using Inferno.Tenants.Entities;
+using Inferno.Web.Areas.Admin.Tenants.Services;
 using Inferno.Web.Models;
 using Inferno.Web.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inferno.Web.Areas.Tenants.Controllers;
 
+/// <summary>File downloads for the tenants screen, which a Blazor circuit cannot stream to the browser.</summary>
 [Area(InfernoWebConstants.Areas.Tenants)]
 [Authorize(Policy = StandardPolicies.FullAccess)]
 [Route("admin/tenants")]
-public class TenantController : ExportController<Tenant>
+public class TenantController(ITenantAdminService tenantAdminService) : ExportController<Tenant>
 {
-    private readonly IRepository<Tenant> repository;
-
-    public TenantController(IRepository<Tenant> repository)
-    {
-        this.repository = repository;
-    }
-
     [HttpGet("export/csv")]
-    public FileResult ExportToCsv() => Export(DownloadFileFormat.Delimited);
+    public Task<IActionResult> ExportToCsv(string search) => ExportAsync(search, DownloadFileFormat.Delimited);
 
     [HttpGet("export/excel")]
-    public FileResult ExportToExcel() => Export(DownloadFileFormat.XLSX);
+    public Task<IActionResult> ExportToExcel(string search) => ExportAsync(search, DownloadFileFormat.XLSX);
 
-    private FileResult Export(DownloadFileFormat fileFormat)
+    private async Task<IActionResult> ExportAsync(string search, DownloadFileFormat fileFormat)
     {
-        using var connection = repository.OpenConnection();
-        return Download(ApplyQuery(connection.Query(), Request.Query), new DownloadOptions
+        var result = await tenantAdminService.ListAsync(search);
+        if (!result.IsSuccess)
         {
-            FileFormat = fileFormat
-        });
+            return Problem(statusCode: StatusCodes.Status500InternalServerError);
+        }
+
+        return Download(result.Value.AsQueryable(), new DownloadOptions { FileFormat = fileFormat });
     }
 }

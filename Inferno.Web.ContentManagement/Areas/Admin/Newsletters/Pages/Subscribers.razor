@@ -1,32 +1,69 @@
 @page "/admin/newsletters/subscribers"
-@inherits RadzenDataPage<Subscriber, string>
+@attribute [Authorize(Policy = CmsConstants.Policies.NewsletterRead)]
+@inherits AdminPage
 
-<h1>@T[InfernoCmsLocalizableStrings.Newsletters.Subscribers]</h1>
+<PageTitle>@T[InfernoCmsLocalizableStrings.Newsletters.Subscribers]</PageTitle>
 
-<div class="row">
-    <div class="col-12">
-        <RadzenDataGrid @ref="DataGrid"
-                        TItem="Subscriber"
-                        IsLoading="@IsLoading"
-                        LoadData="@LoadGridAsync"
-                        Data="Records"
-                        Count="@RecordCount"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        FilterMode="FilterMode.Advanced"
-                        AllowSorting="true"
-                        AllowFiltering="true"
-                        AllowPaging="true"
-                        PageSize="20"
-                        ColumnWidth="200px">
-            <Columns>
-                <RadzenDataGridColumn TItem="Subscriber" Property="Name" Title="@T[InfernoWebLocalizableStrings.General.Name]" />
-                <RadzenDataGridColumn TItem="Subscriber" Property="Email" Title="Email" />
-                <RadzenDataGridColumn TItem="Subscriber" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="80px">
-                    <Template Context="record">
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(() => DeleteAsync(record.Id))" @onclick:stopPropagation="true" Title="@T[InfernoWebLocalizableStrings.General.Delete]" />
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    </div>
+<PageHeader Title="@T[InfernoCmsLocalizableStrings.Newsletters.Subscribers]" Icon="mail" Description="@T[InfernoCmsLocalizableStrings.Newsletters.Description]">
+    <Actions>
+        @if (subscribers?.Count > 0)
+        {
+            <a class="nf-button" href="@ExportUrl" download="">
+                <Icon Name="download" Size="16" /> @T[InfernoCmsLocalizableStrings.Newsletters.ExportToCSV]
+            </a>
+        }
+    </Actions>
+</PageHeader>
+
+<div class="nf-toolbar">
+    <SearchField Value="@search" ValueChanged="SearchChangedAsync" Placeholder="@T[InfernoWebLocalizableStrings.Admin.SearchPlaceholder]" />
+    @if (subscribers is not null)
+    {
+        <span class="nf-muted">@T[InfernoCmsLocalizableStrings.Newsletters.CountFormat, subscribers.Count]</span>
+    }
 </div>
+
+@if (subscribers is null)
+{
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+}
+else if (subscribers.Count == 0)
+{
+    @if (string.IsNullOrWhiteSpace(search))
+    {
+        <EmptyState Icon="mail" Title="@T[InfernoCmsLocalizableStrings.Newsletters.EmptyTitle]" Description="@T[InfernoCmsLocalizableStrings.Newsletters.EmptyDescription]" />
+    }
+    else
+    {
+        <EmptyState Icon="search" Title="@T[InfernoWebLocalizableStrings.Admin.NoMatchesTitle]" Description="@T[InfernoWebLocalizableStrings.Admin.NoMatchesDescription]" />
+    }
+}
+else
+{
+    <Table>
+        <thead>
+            <tr>
+                <th>@T[InfernoWebLocalizableStrings.General.Name]</th>
+                <th>@T[InfernoCmsLocalizableStrings.ContentBlocks.NewsletterSubscriptionBlock.Email]</th>
+                <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subscriber in subscribers)
+            {
+                <tr @key="subscriber.Id">
+                    <td class="nf-row-title">@subscriber.Name</td>
+                    <td><a href="mailto:@subscriber.Email">@subscriber.Email</a></td>
+                    <td class="nf-cell-actions">
+                        @if (canWrite)
+                        {
+                            <button type="button" class="nf-icon-button nf-danger-hover" title="@T[InfernoCmsLocalizableStrings.Newsletters.Unsubscribe]" @onclick="() => UnsubscribeAsync(subscriber)">
+                                <Icon Name="x" Size="16" />
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </Table>
+}

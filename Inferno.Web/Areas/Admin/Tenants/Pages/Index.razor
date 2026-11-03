@@ -1,124 +1,132 @@
 @page "/admin/tenants/index"
-@inherits RadzenDataPage<Tenant, int>
+@attribute [Authorize(Policy = StandardPolicies.FullAccess)]
+@inherits AdminPage
 
-<h1>Tenants</h1>
+<PageTitle>@T[InfernoWebLocalizableStrings.Tenants.Title]</PageTitle>
 
-<div class="row" hidden="@(ShowEditMode == true)">
-    <div class="col-12 mb-3">
-        <RadzenButton Click="Create">
-            <i class="fas fa-plus-circle" aria-hidden="true"></i>
-            @T[InfernoWebLocalizableStrings.General.Create]
-        </RadzenButton>
-        <RadzenButton Text="Excel" Click="@(args => Export("excel"))">
-            Export to Excel
-        </RadzenButton>
-        <RadzenButton Text="CSV" Click="@(args => Export("csv"))">
-            Export to CSV
-        </RadzenButton>
-    </div>
+<PageHeader Title="@T[InfernoWebLocalizableStrings.Tenants.Title]" Icon="globe" Description="@T[InfernoWebLocalizableStrings.Tenants.Description]">
+    <Actions>
+        <ActionMenu Label="@T[InfernoWebLocalizableStrings.General.Export]" TriggerClass="nf-button">
+            <Trigger><Icon Name="download" Size="16" /> @T[InfernoWebLocalizableStrings.General.Export]</Trigger>
+            <ChildContent>
+                <ActionMenuItem Icon="file-earmark-text" Text="@T[InfernoWebLocalizableStrings.Tenants.ExportCsv]" Href="@ExportUrl("csv")" download="" />
+                <ActionMenuItem Icon="grid" Text="@T[InfernoWebLocalizableStrings.Tenants.ExportExcel]" Href="@ExportUrl("excel")" download="" />
+            </ChildContent>
+        </ActionMenu>
+        <button type="button" class="nf-button nf-button-primary" @onclick="Create">
+            <Icon Name="plus" Size="16" /> @T[InfernoWebLocalizableStrings.Tenants.NewTenant]
+        </button>
+    </Actions>
+</PageHeader>
 
-    <div class="col-12">
-        <RadzenDataGrid @ref="DataGrid"
-                        TItem="Tenant"
-                        IsLoading="@IsLoading"
-                        LoadData="@LoadGridAsync"
-                        Data="Records"
-                        Count="@RecordCount"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        FilterMode="FilterMode.Advanced"
-                        AllowSorting="true"
-                        AllowFiltering="true"
-                        AllowPaging="true"
-                        PageSize="10"
-                        ColumnWidth="200px">
-            <Columns>
-                <RadzenDataGridColumn TItem="Tenant" Property="Name" Title="Name" />
-                <RadzenDataGridColumn TItem="Tenant" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
-                    <Template Context="record">
-                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    </div>
+<div class="nf-toolbar">
+    <SearchField Value="@search" ValueChanged="SearchChangedAsync" Placeholder="@T[InfernoWebLocalizableStrings.Admin.SearchPlaceholder]" />
 </div>
 
-<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header text-white bg-primary">Details</div>
-            <div class="card-body">
-                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Name">@T[InfernoWebLocalizableStrings.General.Name]</label>
-                                <div class="col-md-9">
-                                    <RadzenTextBox @bind-Value="Model.Name" Style="width:100%" />
-                                </div>
-                            </div>
+@if (listing is null)
+{
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+}
+else if (listing.TotalCount == 0)
+{
+    @if (string.IsNullOrWhiteSpace(search))
+    {
+        <EmptyState Icon="globe" Title="@T[InfernoWebLocalizableStrings.Tenants.EmptyTitle]">
+            <button type="button" class="nf-button nf-button-primary" @onclick="Create">
+                <Icon Name="plus" Size="16" /> @T[InfernoWebLocalizableStrings.Tenants.NewTenant]
+            </button>
+        </EmptyState>
+    }
+    else
+    {
+        <EmptyState Icon="search" Title="@T[InfernoWebLocalizableStrings.Admin.NoMatchesTitle]" Description="@T[InfernoWebLocalizableStrings.Admin.NoMatchesDescription]" />
+    }
+}
+else
+{
+    <Table>
+        <thead>
+            <tr>
+                <SortHeader Field="Name" Sort="sort" SortChanged="SortChangedAsync">@T[InfernoWebLocalizableStrings.General.Name]</SortHeader>
+                <SortHeader Field="Url" Sort="sort" SortChanged="SortChangedAsync">@T[InfernoWebLocalizableStrings.Tenants.Model.Url]</SortHeader>
+                <th>@T[InfernoWebLocalizableStrings.Tenants.Model.Hosts]</th>
+                <th>@T[InfernoWebLocalizableStrings.Tenants.Model.SslEnabled]</th>
+                <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tenant in listing.Items)
+            {
+                <tr @key="tenant.Id">
+                    <td>
+                        <button type="button" class="nf-link-button nf-row-title" @onclick="() => Edit(tenant)">@tenant.Name</button>
+                        @if (tenant.Id == TenantId)
+                        {
+                            <span class="nf-badge nf-badge-accent">@T[InfernoWebLocalizableStrings.Themes.Current]</span>
+                        }
+                    </td>
+                    <td class="nf-muted">@tenant.Url</td>
+                    <td class="nf-muted nf-truncate">@tenant.Hosts</td>
+                    <td>
+                        @if (tenant.SslEnabled)
+                        {
+                            <span class="nf-badge nf-badge-success">@T[InfernoWebLocalizableStrings.Admin.On]</span>
+                        }
+                        else
+                        {
+                            <span class="nf-badge nf-badge-muted">@T[InfernoWebLocalizableStrings.Admin.Off]</span>
+                        }
+                    </td>
+                    <td class="nf-cell-actions">
+                        <div class="nf-row-actions">
+                            <button type="button" class="nf-icon-button" title="@T[InfernoWebLocalizableStrings.General.Edit]" @onclick="() => Edit(tenant)">
+                                <Icon Name="edit" Size="16" />
+                            </button>
+                            <button type="button" class="nf-icon-button nf-danger-hover" title="@T[InfernoWebLocalizableStrings.General.Delete]" disabled="@(tenant.Id == TenantId)" @onclick="() => DeleteAsync(tenant)">
+                                <Icon Name="trash" Size="16" />
+                            </button>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Url">@T[InfernoWebLocalizableStrings.Tenants.Model.Url]</label>
-                                <div class="col-md-9">
-                                    <RadzenTextBox @bind-Value="Model.Url" Style="width:100%" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Hosts">@T[InfernoWebLocalizableStrings.Tenants.Model.Hosts]</label>
-                                <div class="col-md-9">
-                                    <RadzenTextBox @bind-Value="Model.Hosts" Style="width:100%" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <div class="col-md-9 offset-md-3">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="form-check-input me-2" type="checkbox" @bind="Model.SslEnabled" />
-                                            @T[InfernoWebLocalizableStrings.Tenants.Model.SslEnabled]
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="SecureUrl">@T[InfernoWebLocalizableStrings.Tenants.Model.SecureUrl]</label>
-                                <div class="col-md-9">
-                                    <RadzenTextBox @bind-Value="Model.SecureUrl" Style="width:100%" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3 float-end">
-                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
-                                    @T[InfernoWebLocalizableStrings.General.Cancel]
-                                </RadzenButton>
-                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
-                                </RadzenButton>
-                            </div>
-                        </div>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-</div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </Table>
+
+    <Pager PageNumber="pageNumber" PageSize="pageSize" TotalCount="listing.TotalCount" PageNumberChanged="PageChangedAsync" PageSizeChanged="PageSizeChangedAsync" />
+}
+
+<Drawer Open="editing is not null" Scrim="true" Width="min(480px, 100vw)" OnClose="Close"
+        Title="@(editing?.Id == 0 ? T[InfernoWebLocalizableStrings.Tenants.NewTenant].Value : T[InfernoWebLocalizableStrings.General.EditFormat, editing?.Name ?? string.Empty].Value)">
+    <ChildContent>
+        @if (editing is not null)
+        {
+            <EditForm id="tenant-form" Model="editing" OnValidSubmit="SaveAsync">
+                <Field Label="@T[InfernoWebLocalizableStrings.General.Name]" For="tenant-name">
+                    <InputText id="tenant-name" class="nf-input" @bind-Value="editing.Name" autofocus />
+                    <ErrorText Errors="errors" Key="Name" />
+                </Field>
+                <Field Label="@T[InfernoWebLocalizableStrings.Tenants.Model.Url]" For="tenant-url">
+                    <InputText id="tenant-url" class="nf-input" @bind-Value="editing.Url" placeholder="http://example.com" />
+                    <ErrorText Errors="errors" Key="Url" />
+                </Field>
+                <Field Label="@T[InfernoWebLocalizableStrings.Tenants.Model.Hosts]" For="tenant-hosts">
+                    <InputText id="tenant-hosts" class="nf-input" @bind-Value="editing.Hosts" placeholder="example.com, www.example.com" />
+                    <span class="nf-hint">@T[InfernoWebLocalizableStrings.Tenants.HostsHint]</span>
+                </Field>
+                <Switch @bind-Value="editing.SslEnabled" Label="@T[InfernoWebLocalizableStrings.Tenants.Model.SslEnabled]" />
+                @if (editing.SslEnabled)
+                {
+                    <Field Label="@T[InfernoWebLocalizableStrings.Tenants.Model.SecureUrl]" For="tenant-secure-url">
+                        <InputText id="tenant-secure-url" class="nf-input" @bind-Value="editing.SecureUrl" placeholder="https://example.com" />
+                    </Field>
+                }
+            </EditForm>
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+        <button type="submit" form="tenant-form" class="nf-button nf-button-primary" disabled="@saving">
+            <Icon Name="save" Size="16" /> @T[InfernoWebLocalizableStrings.General.Save]
+        </button>
+    </Footer>
+</Drawer>

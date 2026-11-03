@@ -1,103 +1,128 @@
 @page "/admin/scheduled-tasks/index"
-@inherits RadzenDataPage<ScheduledTask, int>
+@attribute [Authorize(Policy = InfernoWebPolicies.ScheduledTasksRead)]
+@inherits AdminPage
 
-<h1>@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]</h1>
+<PageTitle>@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]</PageTitle>
 
-<div class="row" hidden="@(ShowEditMode == true)">
-    <div class="col-12">
-        <RadzenDataGrid @ref="DataGrid"
-                        TItem="ScheduledTask"
-                        IsLoading="@IsLoading"
-                        LoadData="@LoadGridAsync"
-                        Data="Records"
-                        Count="@RecordCount"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        FilterMode="FilterMode.Advanced"
-                        AllowSorting="true"
-                        AllowFiltering="true"
-                        AllowPaging="true"
-                        PageSize="20"
-                        ColumnWidth="160px">
-            <Columns>
-                <RadzenDataGridColumn TItem="ScheduledTask" Property="Name" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Name]" />
-                <RadzenDataGridColumn TItem="ScheduledTask" Property="Seconds" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Seconds]" Width="120px" />
-                <RadzenDataGridColumn TItem="ScheduledTask" Property="Enabled" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Enabled]" Width="100px" />
-                <RadzenDataGridColumn TItem="ScheduledTask" Property="StopOnError" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.StopOnError]" Width="120px" />
-                <RadzenDataGridColumn TItem="ScheduledTask" Property="LastStartUtc" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastStartUtc]" FormatString="{0:yyyy-MM-dd HH:mm:ss}" />
-                <RadzenDataGridColumn TItem="ScheduledTask" Property="LastEndUtc" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastEndUtc]" FormatString="{0:yyyy-MM-dd HH:mm:ss}" />
-                <RadzenDataGridColumn TItem="ScheduledTask" Property="LastSuccessUtc" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastSuccessUtc]" FormatString="{0:yyyy-MM-dd HH:mm:ss}" />
-                <RadzenDataGridColumn TItem="ScheduledTask" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="160px">
-                    <Template Context="record">
-                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true" />
-                        <RadzenButton ButtonStyle="ButtonStyle.Primary" Icon="play_arrow" Size="ButtonSize.Medium" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.RunNow]" Click="@(args => RunNowAsync(record.Id))" @onclick:stopPropagation="true" />
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
+<PageHeader Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]" Icon="clock" Description="@T[InfernoWebLocalizableStrings.ScheduledTasks.Description]" />
+
+@if (tasks is null)
+{
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+}
+else if (tasks.Count == 0)
+{
+    <EmptyState Icon="clock" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.EmptyTitle]" />
+}
+else
+{
+    <div class="nf-toolbar">
+        <SearchField Value="@search" ValueChanged="value => search = value" Placeholder="@T[InfernoWebLocalizableStrings.Admin.SearchPlaceholder]" />
     </div>
-</div>
 
-<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</div>
-            <div class="card-body">
-                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Name">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Name]</label>
-                                <div class="col-md-9">
-                                    <p class="form-control-plaintext">@Model.Name</p>
+    @if (!VisibleTasks.Any())
+    {
+        <EmptyState Icon="search" Title="@T[InfernoWebLocalizableStrings.Admin.NoMatchesTitle]" Description="@T[InfernoWebLocalizableStrings.Admin.NoMatchesDescription]" />
+    }
+    else
+    {
+        <Table>
+            <thead>
+                <tr>
+                    <th>@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Name]</th>
+                    <th>@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Seconds]</th>
+                    <th>@T[InfernoWebLocalizableStrings.General.Status]</th>
+                    <th>@T[InfernoWebLocalizableStrings.ScheduledTasks.LastRun]</th>
+                    <th>@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastSuccessUtc]</th>
+                    <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in VisibleTasks)
+                {
+                    <tr @key="task.Id">
+                        <td>
+                            @if (canWrite)
+                            {
+                                <button type="button" class="nf-link-button nf-row-title" @onclick="() => Edit(task)">@task.Name</button>
+                            }
+                            else
+                            {
+                                <span class="nf-row-title">@task.Name</span>
+                            }
+                        </td>
+                        <td class="nf-cell-nowrap">@T[InfernoWebLocalizableStrings.ScheduledTasks.EveryFormat, FormatInterval(task.Seconds)]</td>
+                        <td>
+                            @if (running.Contains(task.Id))
+                            {
+                                <span class="nf-badge nf-badge-info">@T[InfernoWebLocalizableStrings.General.PleaseWait]</span>
+                            }
+                            else if (task.Enabled)
+                            {
+                                <span class="nf-badge nf-badge-success">@T[InfernoWebLocalizableStrings.General.Enabled]</span>
+                            }
+                            else
+                            {
+                                <span class="nf-badge nf-badge-muted">@T[InfernoWebLocalizableStrings.Admin.Off]</span>
+                            }
+                            @if (LastRunFailed(task))
+                            {
+                                <span class="nf-badge nf-badge-danger">@T[InfernoWebLocalizableStrings.General.Error]</span>
+                            }
+                        </td>
+                        <td class="nf-muted nf-cell-nowrap">@FormatTime(task.LastStartUtc)</td>
+                        <td class="nf-muted nf-cell-nowrap">@FormatTime(task.LastSuccessUtc)</td>
+                        <td class="nf-cell-actions">
+                            @if (canWrite)
+                            {
+                                <div class="nf-row-actions">
+                                    <button type="button" class="nf-button nf-button-sm" disabled="@running.Contains(task.Id)" @onclick="() => RunNowAsync(task)">
+                                        <Icon Name="play" Size="14" /> @T[InfernoWebLocalizableStrings.ScheduledTasks.RunNow]
+                                    </button>
+                                    <button type="button" class="nf-icon-button" title="@T[InfernoWebLocalizableStrings.General.Edit]" @onclick="() => Edit(task)">
+                                        <Icon Name="edit" Size="16" />
+                                    </button>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Seconds">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Seconds]</label>
-                                <div class="col-md-9">
-                                    <RadzenNumeric TValue="int" @bind-Value="Model.Seconds" Min="1" Style="width:100%" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Enabled">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Enabled]</label>
-                                <div class="col-md-9">
-                                    <RadzenCheckBox TValue="bool" @bind-Value="Model.Enabled" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="StopOnError">@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.StopOnError]</label>
-                                <div class="col-md-9">
-                                    <RadzenCheckBox TValue="bool" @bind-Value="Model.StopOnError" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3 float-end">
-                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
-                                    @T[InfernoWebLocalizableStrings.General.Cancel]
-                                </RadzenButton>
-                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
-                                </RadzenButton>
-                            </div>
-                        </div>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-</div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </Table>
+    }
+}
+
+<Drawer Open="editing is not null" Scrim="true" Width="min(440px, 100vw)" OnClose="Close" Title="@editing?.Name">
+    <ChildContent>
+        @if (editing is not null)
+        {
+            <EditForm id="task-form" Model="form" OnValidSubmit="SaveAsync">
+                <Field Label="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Seconds]" For="task-seconds">
+                    <InputNumber id="task-seconds" class="nf-input" min="1" @bind-Value="form.Seconds" />
+                    <span class="nf-hint">@T[InfernoWebLocalizableStrings.ScheduledTasks.SecondsHint] @T[InfernoWebLocalizableStrings.ScheduledTasks.EveryFormat, FormatInterval(form.Seconds)]</span>
+                    <ErrorText Errors="errors" Key="Seconds" />
+                </Field>
+                <Switch @bind-Value="form.Enabled" Label="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.Enabled]" />
+                <Switch @bind-Value="form.StopOnError" Label="@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.StopOnError]" Description="@T[InfernoWebLocalizableStrings.ScheduledTasks.StopOnErrorHint]" />
+            </EditForm>
+
+            <ul class="nf-meta-list">
+                <li><span>@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastStartUtc]</span><span>@FormatTime(editing.LastStartUtc)</span></li>
+                <li><span>@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastEndUtc]</span><span>@FormatTime(editing.LastEndUtc)</span></li>
+                <li><span>@T[InfernoWebLocalizableStrings.ScheduledTasks.Model.LastSuccessUtc]</span><span>@FormatTime(editing.LastSuccessUtc)</span></li>
+            </ul>
+        }
+    </ChildContent>
+    <Footer>
+        @if (editing is not null)
+        {
+            <button type="button" class="nf-button nf-drawer-foot-start" disabled="@running.Contains(editing.Id)" @onclick="() => RunNowAsync(editing)">
+                <Icon Name="play" Size="16" /> @T[InfernoWebLocalizableStrings.ScheduledTasks.RunNow]
+            </button>
+        }
+        <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+        <button type="submit" form="task-form" class="nf-button nf-button-primary">
+            <Icon Name="save" Size="16" /> @T[InfernoWebLocalizableStrings.General.Save]
+        </button>
+    </Footer>
+</Drawer>

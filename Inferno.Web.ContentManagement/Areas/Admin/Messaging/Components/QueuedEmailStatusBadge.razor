@@ -1,0 +1,12 @@
+@if (Email.SentOnUtc is not null)
+{
+    <span class="nf-badge nf-badge-success">@T[InfernoCmsLocalizableStrings.Messaging.Sent]</span>
+}
+else if (Email.SentTries > 0)
+{
+    <span class="nf-badge nf-badge-warning" title="@T[InfernoCmsLocalizableStrings.Messaging.TriesFormat, Email.SentTries]">@T[InfernoCmsLocalizableStrings.Messaging.Retrying]</span>
+}
+else
+{
+    <span class="nf-badge nf-badge-info">@T[InfernoCmsLocalizableStrings.Messaging.Waiting]</span>
+}

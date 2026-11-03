@@ -1,188 +1,149 @@
 @page "/admin/blocks/content-blocks"
-@inherits RadzenDataPage<ContentBlock, Guid>
+@attribute [Authorize(Policy = CmsConstants.Policies.ContentBlocksRead)]
+@inherits AdminPage
 
-<h1>Content Blocks</h1>
+<PageTitle>@T[InfernoCmsLocalizableStrings.ContentBlocks.Title]</PageTitle>
 
-<div class="row" hidden="@(ShowEditMode == true || ShowCreateMode == true)">
-    <div class="col-12 mb-3">
-        <RadzenButton Click="Create">
-            <i class="fas fa-plus-circle" aria-hidden="true"></i>
-            @T[InfernoWebLocalizableStrings.General.Create]
-        </RadzenButton>
-    </div>
+<PageHeader Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.Title]" Icon="grid" Description="@T[InfernoCmsLocalizableStrings.ContentBlocks.Description]">
+    <Actions>
+        <a class="nf-button" href="/admin/blocks/entity-type-content-blocks">@T[InfernoCmsLocalizableStrings.ContentBlocks.EntityTypeContentBlocks]</a>
+        @if (canWrite)
+        {
+            <button type="button" class="nf-button nf-button-primary" @onclick="Create">
+                <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.ContentBlocks.NewBlock]
+            </button>
+        }
+    </Actions>
+</PageHeader>
 
-    <div class="col-12">
-        <RadzenDataGrid @ref="DataGrid"
-                        TItem="ContentBlock"
-                        IsLoading="@IsLoading"
-                        LoadData="@LoadGridAsync"
-                        Data="Records"
-                        Count="@RecordCount"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        FilterMode="FilterMode.Advanced"
-                        AllowSorting="true"
-                        AllowFiltering="true"
-                        AllowPaging="true"
-                        PageSize="10"
-                        ColumnWidth="200px">
-            <Columns>
-                <RadzenDataGridColumn TItem="ContentBlock" Property="Title" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]" />
-                <RadzenDataGridColumn TItem="ContentBlock" Property="BlockName" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.BlockType]" />
-                <RadzenDataGridColumn TItem="ContentBlock" Property="Order" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]" />
-                <RadzenDataGridColumn TItem="ContentBlock" Property="IsEnabled" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.IsEnabled]" />
-                <RadzenDataGridColumn TItem="ContentBlock" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
-                    <Template Context="record">
-                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(args => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    </div>
+<div class="nf-toolbar">
+    <SearchField Value="@search" ValueChanged="SearchChangedAsync" Placeholder="@T[InfernoWebLocalizableStrings.Admin.SearchPlaceholder]" />
+    <select class="nf-select" aria-label="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]" value="@(zoneFilter?.ToString() ?? string.Empty)" @onchange="ZoneFilterChangedAsync">
+        <option value="">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllZones]</option>
+        @foreach (var zone in zones)
+        {
+            <option value="@zone.Id">@zone.Name</option>
+        }
+    </select>
 </div>
 
-<div class="row" id="create-form-section" hidden="@(ShowCreateMode == false)">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header text-white bg-primary">Details</div>
-            <div class="card-body">
-                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Title">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]</label>
-                                <div class="col-md-9">
-                                    <RadzenTextBox @bind-Value="Model.Title" Style="width:100%" Name="Create_Title" />
-                                </div>
+@if (blocks is null)
+{
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+}
+else if (blocks.Count == 0)
+{
+    @if (string.IsNullOrWhiteSpace(search) && zoneFilter is null)
+    {
+        <EmptyState Icon="grid" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.EmptyTitle]" Description="@T[InfernoCmsLocalizableStrings.ContentBlocks.EmptyDescription]">
+            @if (canWrite)
+            {
+                <button type="button" class="nf-button nf-button-primary" @onclick="Create">
+                    <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.ContentBlocks.NewBlock]
+                </button>
+            }
+        </EmptyState>
+    }
+    else
+    {
+        <EmptyState Icon="search" Title="@T[InfernoWebLocalizableStrings.Admin.NoMatchesTitle]" Description="@T[InfernoWebLocalizableStrings.Admin.NoMatchesDescription]" />
+    }
+}
+else
+{
+    <Table>
+        <thead>
+            <tr>
+                <th>@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]</th>
+                <th>@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.BlockType]</th>
+                <th>@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]</th>
+                <th class="nf-cell-number">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]</th>
+                <th>@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.IsEnabled]</th>
+                <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var block in blocks)
+            {
+                <tr @key="block.Id">
+                    <td>
+                        @if (canWrite)
+                        {
+                            <button type="button" class="nf-link-button nf-row-title" @onclick="() => Edit(block)">@block.Title</button>
+                        }
+                        else
+                        {
+                            <span class="nf-row-title">@block.Title</span>
+                        }
+                    </td>
+                    <td class="nf-muted">@block.BlockName</td>
+                    <td><span class="nf-badge nf-badge-muted">@ZoneName(block.ZoneId)</span></td>
+                    <td class="nf-cell-number">@block.Order</td>
+                    <td>
+                        @if (block.IsEnabled)
+                        {
+                            <span class="nf-badge nf-badge-success">@T[InfernoWebLocalizableStrings.Admin.On]</span>
+                        }
+                        else
+                        {
+                            <span class="nf-badge nf-badge-muted">@T[InfernoWebLocalizableStrings.Admin.Off]</span>
+                        }
+                    </td>
+                    <td class="nf-cell-actions">
+                        @if (canWrite)
+                        {
+                            <div class="nf-row-actions">
+                                <button type="button" class="nf-icon-button" title="@T[InfernoWebLocalizableStrings.General.Edit]" @onclick="() => Edit(block)">
+                                    <Icon Name="edit" Size="16" />
+                                </button>
+                                <button type="button" class="nf-icon-button nf-danger-hover" title="@T[InfernoWebLocalizableStrings.General.Delete]" @onclick="() => DeleteAsync(block)">
+                                    <Icon Name="trash" Size="16" />
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="BlockType">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.BlockType]</label>
-                                <div class="col-md-9">
-                                    <RadzenDropDown @bind-Value="Model.BlockType" Data="BlockTypesSelectList" TextProperty="Name" ValueProperty="Id" Name="Create_BlockType" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Order">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]</label>
-                                <div class="col-md-9">
-                                    <RadzenNumeric @bind-Value="Model.Order" Style="width:100%" Name="Create_Order" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="ZoneId">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]</label>
-                                <div class="col-md-9">
-                                    <RadzenDropDown @bind-Value="Model.ZoneId" Data="ZonesSelectList" TextProperty="Name" ValueProperty="Id" Name="Create_ZoneId" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3 float-end">
-                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
-                                    @T[InfernoWebLocalizableStrings.General.Cancel]
-                                </RadzenButton>
-                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
-                                </RadzenButton>
-                            </div>
-                        </div>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-</div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </Table>
+}
 
-<div class="row" id="edit-form-section" hidden="@(ShowEditMode == false)">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header text-white bg-primary">Details</div>
-            <div class="card-body">
-                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Title">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]</label>
-                                <div class="col-md-9">
-                                    <RadzenTextBox @bind-Value="Model.Title" Style="width:100%" ReadOnly="true" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="CustomTemplatePath">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.CustomTemplatePath]</label>
-                                <div class="col-md-9">
-                                    <RadzenTextBox @bind-Value="Model.CustomTemplatePath" Style="width:100%" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="Order">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]</label>
-                                <div class="col-md-9">
-                                    <RadzenNumeric @bind-Value="Model.Order" Style="width:100%" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="ZoneId">@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]</label>
-                                <div class="col-md-9">
-                                    <RadzenDropDown @bind-Value="Model.ZoneId" Data="ZonesSelectList" TextProperty="Name" ValueProperty="Id" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-3" for="IsEnabled"></label>
-                                <div class="col-md-9">
-                                    <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.IsEnabled" />@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.IsEnabled]</label></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @if (EditorType is not null)
-                    {
-                        <div id="block-details">
-                            <DynamicComponent @ref="BlockEditor" Type="EditorType" Parameters="@(new Dictionary<string, object> { { "Data", Model } })" />
-                        </div>
-                    }
-                    <hr />
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3 float-end">
-                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
-                                    @T[InfernoWebLocalizableStrings.General.Cancel]
-                                </RadzenButton>
-                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
-                                </RadzenButton>
-                            </div>
-                        </div>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-</div>
+<Drawer Open="editing is not null" Scrim="true" Width="min(720px, 100vw)" OnClose="Close"
+        Title="@(isNew ? T[InfernoCmsLocalizableStrings.ContentBlocks.NewBlock].Value : T[InfernoWebLocalizableStrings.General.EditFormat, editing?.Title ?? string.Empty].Value)">
+    <ChildContent>
+        @if (editing is not null)
+        {
+            <EditForm id="content-block-form" Model="editing" OnValidSubmit="SaveAsync">
+                @if (isNew)
+                {
+                    <ContentBlockFields Block="editing" IsNew="true" BlockTypes="blockTypes" Zones="zones" Errors="errors" />
+                    <p class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.SettingsAfterCreate]</p>
+                }
+                else
+                {
+                    <TabSet @bind-ActiveTab="activeTab" KeepPanelsMounted="true">
+                        <Tab Id="details" Title="@T[InfernoWebLocalizableStrings.General.Details]" Icon="edit">
+                            <ContentBlockFields Block="editing" BlockTypes="blockTypes" Zones="zones" Errors="errors" />
+                        </Tab>
+                        <Tab Id="settings" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.BlockSettings]" Icon="sliders">
+                            @if (editorType is not null)
+                            {
+                                <DynamicComponent @ref="blockEditor" Type="editorType" Parameters="@(new Dictionary<string, object> { ["Data"] = editing })" />
+                            }
+                            else
+                            {
+                                <EmptyState Icon="sliders" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.NoSettings]" />
+                            }
+                        </Tab>
+                    </TabSet>
+                }
+            </EditForm>
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+        <button type="submit" form="content-block-form" class="nf-button nf-button-primary" disabled="@saving">
+            <Icon Name="save" Size="16" /> @(isNew ? T[InfernoCmsLocalizableStrings.ContentBlocks.CreateAndConfigure] : T[InfernoWebLocalizableStrings.General.Save])
+        </button>
+    </Footer>
+</Drawer>

@@ -1,34 +1,64 @@
+using Heroicsoft.NetForge.Results;
 using Inferno.Web.Areas.Admin.Configuration.Themes.Services;
+using Inferno.Web.Security;
 using Microsoft.AspNetCore.Components;
-using Radzen;
 
 namespace Inferno.Web.Areas.Admin.Configuration.Themes.Pages;
 
 public partial class Index
 {
+    private IReadOnlyList<ThemeSummary> themes;
+    private bool canWrite;
+    private bool busy;
+
+    /// <summary>Themes whose manifest names a preview image that failed to load; these show the placeholder instead.</summary>
+    private readonly HashSet<string> brokenPreviews = [];
+
     [Inject]
-    private ThemeODataService ThemeODataService { get; set; }
+    private IThemeAdminService ThemeAdminService { get; set; }
 
-    protected override string GetODataFilter(LoadDataArgs args) => args.Filter;
-
-    protected async Task SetThemeAsync(string themeName)
+    protected override async Task OnInitializedAsync()
     {
-        var response = await ThemeODataService.SetThemeAsync(themeName);
-        if (response.Succeeded)
-        {
-            NotificationService.Notify(
-                NotificationSeverity.Success,
-                "Success",
-                T[InfernoWebLocalizableStrings.Themes.SetDesktopThemeSuccess]);
+        canWrite = await HasPolicyAsync(InfernoWebPolicies.ThemesWrite);
+        await LoadAsync();
+    }
 
-            await DataGrid.Reload();
-        }
-        else
+    private async Task LoadAsync()
+    {
+        var result = await ThemeAdminService.ListAsync(TenantId);
+        if (!result.IsSuccess)
         {
-            NotificationService.Notify(
-                NotificationSeverity.Error,
-                "Error",
-                T[InfernoWebLocalizableStrings.Themes.SetDesktopThemeError]);
+            Toasts.ShowFailure(result);
+            themes = [];
+            return;
+        }
+
+        themes = result.Value;
+    }
+
+    private async Task SetDefaultAsync(ThemeSummary theme)
+    {
+        if (busy || !await EnsurePolicyAsync(InfernoWebPolicies.ThemesWrite))
+        {
+            return;
+        }
+
+        busy = true;
+        try
+        {
+            var result = await ThemeAdminService.SetDefaultAsync(TenantId, theme.Name);
+            if (!result.IsSuccess)
+            {
+                Toasts.ShowFailure(result);
+                return;
+            }
+
+            Toasts.Success(T[InfernoWebLocalizableStrings.Themes.SetDefaultSuccessFormat, theme.Title]);
+            await LoadAsync();
+        }
+        finally
+        {
+            busy = false;
         }
     }
 }

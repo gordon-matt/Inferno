@@ -1,0 +1,4 @@
+@if (Errors is not null && Errors.TryGetValue(Key, out string message))
+{
+    <span class="nf-validation">@message</span>
+}

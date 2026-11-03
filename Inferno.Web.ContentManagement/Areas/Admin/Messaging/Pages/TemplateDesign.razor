@@ -1,0 +1,55 @@
+@page "/admin/messaging/templates/{TemplateId:int}"
+@attribute [Authorize(Policy = CmsConstants.Policies.MessagingRead)]
+@inherits AdminPage
+@using PageKrafter.Components
+@using PageKrafter.Documents
+@using Pickstack
+
+<HeadContent>
+    <link rel="stylesheet" href="_content/PageKrafter.Components/pagekrafter.css" />
+</HeadContent>
+
+<PageTitle>@T[InfernoCmsLocalizableStrings.Messaging.DesignMessage] — @template?.Name</PageTitle>
+
+<nav class="nf-breadcrumbs" aria-label="Breadcrumb"><a href="/admin/messaging/templates">@T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates]</a><span aria-hidden="true">/</span><span aria-current="page">@template?.Name</span></nav>
+
+@if (template is null)
+{
+    <EmptyState Icon="mail" Title="@(message ?? T[InfernoWebLocalizableStrings.General.Loading].Value)">
+        <a class="nf-button" href="/admin/messaging/templates"><Icon Name="arrow-left" Size="16" /> @T[InfernoWebLocalizableStrings.General.Back]</a>
+    </EmptyState>
+}
+else
+{
+    <div class="inferno-design-bar">
+        <div class="inferno-design-title">
+            <h1>@template.Name</h1>
+            @if (template.Enabled)
+            {
+                <span class="nf-badge nf-badge-success">@T[InfernoWebLocalizableStrings.Admin.On]</span>
+            }
+            else
+            {
+                <span class="nf-badge nf-badge-muted">@T[InfernoWebLocalizableStrings.Admin.Off]</span>
+            }
+            @if (savedAt is not null)
+            {
+                <span class="nf-muted" role="status"><Icon Name="check" Size="14" /> @savedAt</span>
+            }
+        </div>
+        <div class="inferno-design-actions">
+            <span class="nf-muted nf-truncate" title="@T[InfernoCmsLocalizableStrings.Messaging.Subject]"><Icon Name="mail" Size="14" /> @template.Subject</span>
+        </div>
+    </div>
+    <p class="nf-hint">@T[InfernoCmsLocalizableStrings.Messaging.TokensHint]</p>
+
+    <PickstackScripts />
+    @if (canWrite)
+    {
+        <PageKrafterEditor @key="template.Id" @bind-Value="body" Mode="DocumentMode.Email" OnSave="SaveAsync" Height="calc(100vh - 240px)" />
+    }
+    else
+    {
+        <PageKrafterEditor @key="template.Id" @bind-Value="body" Mode="DocumentMode.Email" Height="calc(100vh - 240px)" />
+    }
+}

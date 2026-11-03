@@ -1,85 +1,29 @@
 @using Inferno.Web.Configuration
 @inherits SettingsEditor<SiteSettings>
 
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <button type="button" class="nav-link @(selectedTab == "General" ? "active" : null)" @onclick='() => SelectTab("General")'>General</button>
-    </li>
-    <li class="nav-item">
-        <button type="button" class="nav-link @(selectedTab == "Localization" ? "active" : null)" @onclick='() => SelectTab("Localization")'>Localization</button>
-    </li>
-    <li class="nav-item">
-        <button type="button" class="nav-link @(selectedTab == "SEO" ? "active" : null)" @onclick='() => SelectTab("SEO")'>SEO</button>
-    </li>
-</ul>
-
-@if (selectedTab == "General")
-{
-    <div class="row">
-        <div class="col-12">
-            <div class="row mb-3">
-                <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Site.SiteName]</label>
-                <div class="col-md-9">
-                    <RadzenTextBox @bind-Value="Model.SiteName" Style="width:100%" />
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="row mb-3">
-                <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultGridPageSize]</label>
-                <div class="col-md-9">
-                    <RadzenNumeric @bind-Value="Model.DefaultGridPageSize" Style="width:100%" />
-                </div>
-            </div>
-        </div>
-    </div>
-}
-else if (selectedTab == "Localization")
-{
-    <div class="row">
-        <div class="col-12">
-            <div class="row mb-3">
-                <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage]</label>
-                <div class="col-md-9">
-                    <!-- TODO: DefaultLanguage: Make it a dropdown -->
-                    <RadzenTextBox @bind-Value="Model.DefaultLanguage" Style="width:100%" />
-                </div>
-            </div>
-        </div>
-    </div>
-}
-else if (selectedTab == "SEO")
-{
-    <div class="row">
-        <div class="col-12">
-            <div class="row mb-3">
-                <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultMetaKeywords]</label>
-                <div class="col-md-9">
-                    <RadzenTextBox @bind-Value="Model.DefaultMetaKeywords" Style="width:100%" />
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="row mb-3">
-                <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultMetaDescription]</label>
-                <div class="col-md-9">
-                    <RadzenTextBox @bind-Value="Model.DefaultMetaDescription" Style="width:100%" />
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="row mb-3">
-                <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Site.HomePageTitle]</label>
-                <div class="col-md-9">
-                    <RadzenTextBox @bind-Value="Model.HomePageTitle" Style="width:100%" />
-                </div>
-            </div>
-        </div>
-    </div>
-}
+<TabSet KeepPanelsMounted="true" AriaLabel="@Data?.Name">
+    <Tab Id="general" Title="@T[InfernoWebLocalizableStrings.Settings.Site.Tabs.General]">
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.SiteName]" For="site-name">
+            <input id="site-name" class="nf-input" @bind="Model.SiteName" />
+        </Field>
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.DefaultGridPageSize]" For="site-page-size">
+            <input id="site-page-size" class="nf-input" type="number" min="1" @bind="Model.DefaultGridPageSize" />
+        </Field>
+    </Tab>
+    <Tab Id="localization" Title="@T[InfernoWebLocalizableStrings.Settings.Site.Tabs.Localization]">
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage]" For="site-language">
+            <input id="site-language" class="nf-input" @bind="Model.DefaultLanguage" placeholder="en-US" />
+        </Field>
+    </Tab>
+    <Tab Id="seo" Title="@T[InfernoWebLocalizableStrings.Settings.Site.Tabs.SEO]">
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.HomePageTitle]" For="site-home-title">
+            <input id="site-home-title" class="nf-input" @bind="Model.HomePageTitle" />
+        </Field>
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.DefaultMetaKeywords]" For="site-keywords">
+            <input id="site-keywords" class="nf-input" @bind="Model.DefaultMetaKeywords" />
+        </Field>
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.DefaultMetaDescription]" For="site-description">
+            <textarea id="site-description" class="nf-textarea" rows="4" @bind="Model.DefaultMetaDescription"></textarea>
+        </Field>
+    </Tab>
+</TabSet>

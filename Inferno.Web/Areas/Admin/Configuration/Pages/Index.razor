@@ -1,62 +1,63 @@
 @page "/admin/configuration/settings/index"
-@inherits RadzenDataPage<Setting, Guid>
+@attribute [Authorize(Policy = InfernoWebPolicies.SettingsRead)]
+@inherits AdminPage
 
-<h1>Settings</h1>
+<PageTitle>@T[InfernoWebLocalizableStrings.General.Settings]</PageTitle>
 
-<div class="row" hidden="@(ShowEditMode == true)">
-    <div class="col-12">
-        <RadzenDataGrid @ref="DataGrid"
-                        TItem="Setting"
-                        IsLoading="@IsLoading"
-                        LoadData="@LoadGridAsync"
-                        Data="Records"
-                        Count="@RecordCount"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        FilterMode="FilterMode.Advanced"
-                        AllowSorting="true"
-                        AllowFiltering="true"
-                        AllowPaging="true"
-                        PageSize="10"
-                        ColumnWidth="200px">
-            <Columns>
-                <RadzenDataGridColumn TItem="Setting" Property="Name" Title="Name" />
-                <RadzenDataGridColumn TItem="Setting" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="50px">
-                    <Template Context="record">
-                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(args => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    </div>
-</div>
+<PageHeader Title="@T[InfernoWebLocalizableStrings.General.Settings]" Icon="sliders" Description="@T[InfernoWebLocalizableStrings.Settings.Description]" />
 
-<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header text-white bg-primary">Details</div>
-            <div class="card-body">
-                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    @if (EditorType is not null)
+@if (groups is null)
+{
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+}
+else if (groups.Count == 0)
+{
+    <EmptyState Icon="sliders" Title="@T[InfernoWebLocalizableStrings.Settings.EmptyTitle]" />
+}
+else
+{
+    <div class="nf-grid inferno-settings-grid">
+        @foreach (var group in groups)
+        {
+            <button type="button" class="nf-card inferno-tile" @key="group.Type" @onclick="() => EditAsync(group)">
+                <span class="inferno-tile-icon"><Icon Name="@IconFor(group)" Size="22" /></span>
+                <span class="inferno-tile-title">@group.Name</span>
+                <span class="inferno-tile-meta">
+                    @if (group.Stored is null)
                     {
-                        <div id="settings-details">
-                            <DynamicComponent Type="EditorType" Parameters="@(new Dictionary<string, object> { { "Data", Model } })" />
-                        </div>
+                        <span class="nf-badge nf-badge-muted">@T[InfernoWebLocalizableStrings.General.Unspecified]</span>
                     }
-                    <hr />
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3 float-end">
-                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
-                                    @T[InfernoWebLocalizableStrings.General.Cancel]
-                                </RadzenButton>
-                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
-                                </RadzenButton>
-                            </div>
-                        </div>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
+                    <Icon Name="chevron-right" Size="16" />
+                </span>
+            </button>
+        }
     </div>
-</div>
+}
+
+<Drawer Open="editing is not null" Scrim="true" Width="min(600px, 100vw)" OnClose="Close"
+        Title="@(editing is null ? null : T[InfernoWebLocalizableStrings.General.EditFormat, editing.Name].Value)">
+    <ChildContent>
+        @if (editing is not null)
+        {
+            <form id="settings-form" @onsubmit="SaveAsync" @onsubmit:preventDefault="true">
+                @if (editorType is null)
+                {
+                    <EmptyState Icon="info" Title="@T[InfernoWebLocalizableStrings.Settings.NoEditor]" />
+                }
+                else
+                {
+                    <DynamicComponent @ref="editor" @key="editing.Type" Type="editorType" Parameters="@(new Dictionary<string, object> { ["Data"] = editing })" />
+                }
+            </form>
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+        @if (canWrite && editorType is not null)
+        {
+            <button type="submit" form="settings-form" class="nf-button nf-button-primary" disabled="@saving">
+                <Icon Name="save" Size="16" /> @T[InfernoWebLocalizableStrings.General.Save]
+            </button>
+        }
+    </Footer>
+</Drawer>

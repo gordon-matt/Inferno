@@ -1,4 +1,4 @@
-﻿using BlogKrafter;
+using BlogKrafter;
 using BlogKrafter.Data.Sql;
 using BlogKrafter.Tenancy;
 using Dependo;
@@ -26,7 +26,6 @@ using Localize.Components;
 using Localize.Components.Pages;
 using LogVue;
 using LogVue.Data.Sql;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -117,15 +116,11 @@ services.Replace(ServiceDescriptor.Scoped<INetForgeMenuCatalog, AdminMenuCatalog
 services.ScopeUsersToTenant<ApplicationUser, int?>(user => user.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
 services.ScopeRolesToTenant<ApplicationRole, int?>(role => role.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
 
-services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddInfernoJwtBearer(configuration);
-
 services.AddInfernoAuthorization(configuration);
 
-// Register CMS-specific authorization policies (Blog, Pages, Menus, etc.). These are
-// referenced from CMS OData controllers but aren't part of the core Identity module,
-// so they're appended here via post-configuration of AuthorizationOptions.
+// Register CMS-specific authorization policies (Pages, Menus, etc.). The admin pages use
+// them but they aren't part of the core Identity module, so they're appended here via
+// post-configuration of AuthorizationOptions.
 services.Configure<AuthorizationOptions>(options => options.AddInfernoCmsPolicies());
 
 #endregion Account / Identity
@@ -196,6 +191,7 @@ services.AddHttpContextAccessor();
 services.AddHttpClient();
 
 services.ConfigureInferno(configuration);
+services.ConfigureNetForgeToastSounds(sounds => sounds.EnableSounds = true);
 
 services.AddPageKrafter();
 services.AddPageKrafterBlock<PageContentZoneBlock>();

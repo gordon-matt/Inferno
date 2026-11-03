@@ -16,7 +16,7 @@ public static class MvcBuilderExtensions
     /// discovery does not always kick in for transitively-referenced assemblies in
     /// this solution layout (and especially fails for plugins loaded at runtime).
     /// Driving discovery from <see cref="WebAppTypeFinder"/> guarantees that every
-    /// controller-bearing assembly is wired into MVC, OData and Swagger.
+    /// controller-bearing assembly is wired into MVC.
     /// </summary>
     public static IMvcBuilder AddInfernoApplicationParts(this IMvcBuilder builder)
     {

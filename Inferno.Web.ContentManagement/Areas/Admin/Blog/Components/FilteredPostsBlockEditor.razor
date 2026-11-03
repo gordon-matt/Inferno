@@ -1,68 +1,36 @@
-@using BlogKrafter.Models
-@using BlogKrafter.Taxonomy
-@using Inferno.Models
 @using Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @inherits ContentBlockEditor<FilteredPostsBlock>
 
-@inject IBlogCategoryService CategoryService
-@inject IBlogTagService TagService
+<Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.FilterType]" For="filtered-posts-type">
+    <InputSelect id="filtered-posts-type" class="nf-select nf-select-block" @bind-Value="Model.FilterType">
+        <option value="@FilterType.None">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.AllPosts]</option>
+        <option value="@FilterType.Category">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.CategoryId]</option>
+        <option value="@FilterType.Tag">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.TagId]</option>
+    </InputSelect>
+</Field>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="FilterType">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.FilterType]</label>
-            <div class="col-md-9">
-                <RadzenDropDown @bind-Value="FilterTypeValue" Data="@availableFilterTypes" TValue="byte" TextProperty="Name" ValueProperty="Id" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row" hidden="@(Model.FilterType != FilterType.Category)">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="CategoryId">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.CategoryId]</label>
-            <div class="col-md-9">
-                <RadzenDropDown @bind-Value="Model.CategoryId" Data="@availableCategories" TValue="int?" TextProperty="Name" ValueProperty="Id" AllowClear="true" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row" hidden="@(Model.FilterType != FilterType.Tag)">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="TagId">@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.TagId]</label>
-            <div class="col-md-9">
-                <RadzenDropDown @bind-Value="Model.TagId" Data="@availableTags" TValue="int?" TextProperty="Name" ValueProperty="Id" AllowClear="true" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-
-@code {
-    private IEnumerable<IdNamePair<byte>> availableFilterTypes = [];
-    private IReadOnlyList<CategoryDto> availableCategories = [];
-    private IReadOnlyList<TagDto> availableTags = [];
-
-    private byte FilterTypeValue
-    {
-        get => (byte)Model.FilterType;
-        set => Model.FilterType = (FilterType)value;
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        availableFilterTypes = Extenso.EnumExtensions.GetValues<FilterType>()
-            .Select(value => new IdNamePair<byte> { Id = (byte)value, Name = value.ToString() });
-
-        var categories = await CategoryService.ListAsync();
-        availableCategories = categories.IsSuccess ? categories.Value : [];
-
-        var tags = await TagService.ListAsync();
-        availableTags = tags.IsSuccess ? tags.Value : [];
-
-        await base.OnInitializedAsync();
-    }
+@if (Model.FilterType == FilterType.Category)
+{
+    <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.CategoryId]" For="filtered-posts-category">
+        <InputSelect id="filtered-posts-category" class="nf-select nf-select-block" @bind-Value="Model.CategoryId">
+            <option value="">—</option>
+            @foreach (var category in categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </InputSelect>
+    </Field>
+}
+else if (Model.FilterType == FilterType.Tag)
+{
+    <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.AllPostsBlock.TagId]" For="filtered-posts-tag">
+        <InputSelect id="filtered-posts-tag" class="nf-select nf-select-block" @bind-Value="Model.TagId">
+            <option value="">—</option>
+            @foreach (var tag in tags)
+            {
+                <option value="@tag.Id">@tag.Name</option>
+            }
+        </InputSelect>
+    </Field>
 }

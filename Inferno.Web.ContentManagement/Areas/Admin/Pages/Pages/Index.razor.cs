@@ -1,12 +1,36 @@
+using Heroicsoft.NetForge.Components.Tables;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Microsoft.AspNetCore.Components;
-using Radzen;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Pages;
 
 public partial class Index
 {
+    private sealed class NewPageForm
+    {
+        public string Name { get; set; }
+
+        public Guid? ParentId { get; set; }
+    }
+
+    private List<Page> pages = [];
+    private List<Page> roots = [];
+
+    /// <summary>The default-language version of each page, for the address, status and last edited columns.</summary>
+    private Dictionary<Guid, PageVersion> currentVersions = [];
+
+    private TreeTable<Page> tree;
+    private string search;
+    private bool loaded;
+    private bool canWrite;
+
+    private bool creating;
+    private bool saving;
+    private NewPageForm newPage = new();
+    private string createError;
+    private List<(Page Page, int Depth)> parentOptions = [];
+
     [Inject]
     private IPageService PageService { get; set; }
 
@@ -17,50 +41,67 @@ public partial class Index
     private IPageAuthoringService Authoring { get; set; }
 
     [Inject]
-    private IWorkContext WorkContext { get; set; }
-
-    [Inject]
     private NavigationManager NavigationManager { get; set; }
 
-    [Inject]
-    private NotificationService NotificationService { get; set; }
+    private string CreateHeading
+    {
+        get
+        {
+            var parent = pages.FirstOrDefault(page => page.Id == newPage.ParentId);
+            return parent is null
+                ? T[InfernoCmsLocalizableStrings.Pages.NewPage].Value
+                : T[InfernoCmsLocalizableStrings.Pages.NewSubPageUnder, parent.Name].Value;
+        }
+    }
 
-    [Inject]
-    private DialogService DialogService { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        canWrite = await HasPolicyAsync(CmsConstants.Policies.PagesWrite);
+        Load();
+    }
 
-    private List<Page> pages = [];
+    private IEnumerable<Page> ChildrenOf(Page page) =>
+        string.IsNullOrWhiteSpace(search) ? PageHierarchy.ChildrenOf(pages, page.Id) : [];
 
-    /// <summary>The default-language version of each page, for the address and status columns.</summary>
-    private Dictionary<Guid, PageVersion> currentVersions = [];
+    private void SearchChanged(string value)
+    {
+        search = value;
+        ApplySearch();
+    }
 
-    private Guid loadVersion = Guid.NewGuid();
-    private bool showCreate;
-    private bool creating;
-    private string newName = string.Empty;
-    private Guid? newParentId;
-    private string newParentName;
-    private string createError;
+    /// <summary>
+    /// Shows the whole tree, or when searching, every matching page as a flat list so that matches
+    /// deep in the tree are not hidden under collapsed parents.
+    /// </summary>
+    private void ApplySearch()
+    {
+        if (string.IsNullOrWhiteSpace(search))
+        {
+            roots = PageHierarchy.ChildrenOf(pages, null);
+            return;
+        }
 
-    private string CreateHeading => newParentName is null
-        ? T[InfernoCmsLocalizableStrings.Pages.NewPage].Value
-        : T[InfernoCmsLocalizableStrings.Pages.NewSubPageUnder, newParentName].Value;
-
-    protected override void OnInitialized() => Load();
+        string term = search.Trim();
+        roots = pages
+            .Where(page =>
+                page.Name.Contains(term, StringComparison.CurrentCultureIgnoreCase) ||
+                (currentVersions.GetValueOrDefault(page.Id)?.Slug?.Contains(term, StringComparison.OrdinalIgnoreCase) ?? false))
+            .OrderBy(page => page.Name, StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+    }
 
     private void Load()
     {
-        int tenantId = WorkContext.CurrentTenant.Id;
-
         using (var connection = PageService.OpenConnection())
         {
-            pages = connection.Query(page => page.TenantId == tenantId).ToList();
+            pages = connection.Query(page => page.TenantId == TenantId).ToList();
         }
 
         List<PageVersion> versions;
         using (var connection = PageVersionService.OpenConnection())
         {
             versions = connection
-                .Query(version => version.TenantId == tenantId && version.CultureCode == null && version.Status != VersionStatus.Archived)
+                .Query(version => version.TenantId == TenantId && version.CultureCode == null && version.Status != VersionStatus.Archived)
                 .ToList();
         }
 
@@ -73,41 +114,48 @@ public partial class Index
                     .ThenByDescending(version => version.DateModifiedUtc)
                     .First());
 
-        loadVersion = Guid.NewGuid();
+        ApplySearch();
+        loaded = true;
     }
 
     /// <summary>Starts a new page at the top level, or under <paramref name="parent"/>.</summary>
     private void BeginCreate(Page parent)
     {
-        newName = string.Empty;
-        newParentId = parent?.Id;
-        newParentName = parent?.Name;
+        newPage = new NewPageForm { ParentId = parent?.Id };
+        parentOptions = PageHierarchy.Flatten(pages);
         createError = null;
-        showCreate = true;
+        creating = true;
     }
 
-    private void CancelCreate() => showCreate = false;
+    private void CancelCreate() => creating = false;
+
+    private void ParentChanged(ChangeEventArgs args) =>
+        newPage.ParentId = Guid.TryParse(args.Value?.ToString(), out var parentId) ? parentId : null;
 
     private async Task CreateAsync()
     {
-        creating = true;
-        createError = null;
+        if (saving)
+        {
+            return;
+        }
 
+        saving = true;
+        createError = null;
         try
         {
-            var result = await Authoring.CreatePageAsync(newName, newParentId);
+            var result = await Authoring.CreatePageAsync(newPage.Name, newPage.ParentId);
             if (!result.Succeeded)
             {
                 createError = T[result.ErrorKey].Value;
                 return;
             }
 
-            showCreate = false;
+            creating = false;
             NavigationManager.NavigateTo($"/admin/pages/design/{result.Version.Id}");
         }
         finally
         {
-            creating = false;
+            saving = false;
         }
     }
 
@@ -116,7 +164,7 @@ public partial class Index
         var result = await Authoring.EnsureFirstVersionAsync(page.Id);
         if (!result.Succeeded)
         {
-            NotificationService.Notify(NotificationSeverity.Error, "Error", T[result.ErrorKey].Value);
+            Toasts.Error(T[result.ErrorKey]);
             return;
         }
 
@@ -126,30 +174,25 @@ public partial class Index
     private async Task DeleteAsync(Page page)
     {
         bool hasSubPages = pages.Any(candidate => candidate.ParentId == page.Id);
-        string question = hasSubPages
-            ? T[InfernoCmsLocalizableStrings.Pages.DeleteConfirmWithSubPages].Value
-            : T[InfernoCmsLocalizableStrings.Pages.DeleteConfirm].Value;
+        bool confirmed = await Dialogs.ConfirmAsync(
+            T[InfernoWebLocalizableStrings.Admin.DeleteTitleFormat, page.Name],
+            hasSubPages ? T[InfernoCmsLocalizableStrings.Pages.DeleteConfirmWithSubPages] : T[InfernoCmsLocalizableStrings.Pages.DeleteConfirm],
+            T[InfernoWebLocalizableStrings.General.Delete],
+            isDestructive: true);
 
-        if (await DialogService.Confirm(question, page.Name) != true)
+        if (!confirmed)
         {
             return;
         }
 
-        try
+        var result = await Authoring.DeletePageAsync(page.Id);
+        if (!result.Succeeded)
         {
-            var result = await Authoring.DeletePageAsync(page.Id);
-            if (!result.Succeeded)
-            {
-                NotificationService.Notify(NotificationSeverity.Error, "Error", T[result.ErrorKey].Value);
-                return;
-            }
+            Toasts.Error(T[result.ErrorKey]);
+            return;
+        }
 
-            Load();
-            NotificationService.Notify(NotificationSeverity.Info, "Info", T[InfernoCmsLocalizableStrings.Pages.Deleted].Value);
-        }
-        catch
-        {
-            NotificationService.Notify(NotificationSeverity.Error, "Error", T[InfernoCmsLocalizableStrings.Pages.ErrorSaveFailed].Value);
-        }
+        Load();
+        Toasts.Success(T[InfernoCmsLocalizableStrings.Pages.Deleted]);
     }
 }

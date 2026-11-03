@@ -1,210 +1,126 @@
 @page "/admin/messaging/templates"
-@using Inferno.Web.ContentManagement.Areas.Admin.Messaging
-@using Inferno.Web.Messaging.Entities
-@using Inferno.Web.Messaging.Services
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Authorization
-@using PageKrafter.Components
-@using PageKrafter.Documents
-@using Pickstack
+@attribute [Authorize(Policy = CmsConstants.Policies.MessagingRead)]
+@inherits AdminPage
 
-<h1>@T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates]</h1>
+<PageTitle>@T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates]</PageTitle>
 
-@if (!allowed)
+<PageHeader Title="@T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates]" Icon="mail" Description="@T[InfernoCmsLocalizableStrings.Messaging.TemplatesDescription]">
+    <Actions>
+        <a class="nf-button" href="/admin/messaging/queued-emails"><Icon Name="inbox" Size="16" /> @T[InfernoCmsLocalizableStrings.Messaging.QueuedEmails]</a>
+        @if (canWrite)
+        {
+            <button type="button" class="nf-button nf-button-primary" @onclick="Create">
+                <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.Messaging.NewTemplate]
+            </button>
+        }
+    </Actions>
+</PageHeader>
+
+<div class="nf-toolbar">
+    <SearchField Value="@search" ValueChanged="SearchChangedAsync" Placeholder="@T[InfernoWebLocalizableStrings.Admin.SearchPlaceholder]" />
+</div>
+
+@if (templates is null)
 {
-    <div class="alert alert-warning" role="alert">You do not have access to message templates.</div>
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
 }
-else if (editing == null)
+else if (templates.Count == 0)
 {
-    <RadzenButton Click="BeginCreate" class="mb-3">@T[InfernoWebLocalizableStrings.General.Create]</RadzenButton>
-    <table class="table">
+    @if (string.IsNullOrWhiteSpace(search))
+    {
+        <EmptyState Icon="mail" Title="@T[InfernoCmsLocalizableStrings.Messaging.EmptyTitle]" Description="@T[InfernoCmsLocalizableStrings.Messaging.EmptyDescription]">
+            @if (canWrite)
+            {
+                <button type="button" class="nf-button nf-button-primary" @onclick="Create">
+                    <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.Messaging.NewTemplate]
+                </button>
+            }
+        </EmptyState>
+    }
+    else
+    {
+        <EmptyState Icon="search" Title="@T[InfernoWebLocalizableStrings.Admin.NoMatchesTitle]" Description="@T[InfernoWebLocalizableStrings.Admin.NoMatchesDescription]" />
+    }
+}
+else
+{
+    <Table>
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Enabled</th>
-                <th></th>
+                <th>@T[InfernoCmsLocalizableStrings.Messaging.Name]</th>
+                <th>@T[InfernoCmsLocalizableStrings.Messaging.Subject]</th>
+                <th>@T[InfernoCmsLocalizableStrings.Messaging.Enabled]</th>
+                <th class="nf-cell-nowrap">@T[InfernoCmsLocalizableStrings.Pages.LastEdited]</th>
+                <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var template in templates)
             {
-                <tr>
-                    <td>@template.Name</td>
-                    <td>@(template.Enabled ? "Yes" : "No")</td>
-                    <td class="text-end">
-                        <button type="button" class="btn btn-secondary btn-sm" @onclick="() => BeginEdit(template)">Edit</button>
-                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteAsync(template)">Delete</button>
+                <tr @key="template.Id">
+                    <td>
+                        <a class="nf-row-title" href="@DesignUrl(template.Id)">@template.Name</a>
+                    </td>
+                    <td class="nf-muted nf-truncate">@template.Subject</td>
+                    <td>
+                        @if (template.Enabled)
+                        {
+                            <span class="nf-badge nf-badge-success">@T[InfernoWebLocalizableStrings.Admin.On]</span>
+                        }
+                        else
+                        {
+                            <span class="nf-badge nf-badge-muted">@T[InfernoWebLocalizableStrings.Admin.Off]</span>
+                        }
+                    </td>
+                    <td class="nf-muted nf-cell-nowrap">@template.DateModifiedUtc?.ToLocalTime().ToString("g")</td>
+                    <td class="nf-cell-actions">
+                        <div class="nf-row-actions">
+                            <a class="nf-icon-button" title="@T[InfernoCmsLocalizableStrings.Messaging.DesignMessage]" href="@DesignUrl(template.Id)">
+                                <Icon Name="edit" Size="16" />
+                            </a>
+                            @if (canWrite)
+                            {
+                                <button type="button" class="nf-icon-button" title="@T[InfernoWebLocalizableStrings.General.Details]" @onclick="() => EditAsync(template)">
+                                    <Icon Name="settings" Size="16" />
+                                </button>
+                                <button type="button" class="nf-icon-button nf-danger-hover" title="@T[InfernoWebLocalizableStrings.General.Delete]" @onclick="() => DeleteAsync(template)">
+                                    <Icon Name="trash" Size="16" />
+                                </button>
+                            }
+                        </div>
                     </td>
                 </tr>
             }
         </tbody>
-    </table>
-}
-else
-{
-    <HeadContent>
-        <link rel="stylesheet" href="_content/PageKrafter.Components/pagekrafter.css" />
-    </HeadContent>
-    <EditForm Model="editing" OnValidSubmit="SaveAsync">
-        <div class="mb-3">
-            <label class="form-label">Name</label>
-            <input class="form-control" @bind="editing.Name" />
-        </div>
-        <div class="form-check mb-3">
-            <label class="form-check-label">
-                <input class="form-check-input me-2" type="checkbox" @bind="editing.Enabled" />
-                Enabled
-            </label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Subject</label>
-            <input class="form-control" @bind="subject" />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Message</label>
-            <div class="form-text mb-2">Tokens such as [UserName] and [Email] are replaced when the message is queued.</div>
-            <PickstackScripts />
-            <PageKrafterEditor @key="editorKey" @bind-Value="body" Mode="DocumentMode.Email" Height="70vh" />
-        </div>
-        <button type="submit" class="btn btn-primary">@T[InfernoWebLocalizableStrings.General.Save]</button>
-        <button type="button" class="btn btn-secondary" @onclick="Cancel">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
-    </EditForm>
+    </Table>
 }
 
-@code {
-    [Inject]
-    private IMessageTemplateService TemplateService { get; set; }
-
-    [Inject]
-    private IMessageTemplateVersionService VersionService { get; set; }
-
-    [Inject]
-    private IAuthorizationService AuthorizationService { get; set; }
-
-    [Inject]
-    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-
-    private bool allowed;
-    private bool canWrite;
-    private List<MessageTemplate> templates = [];
-    private MessageTemplate editing;
-    private string subject = string.Empty;
-    private string body = string.Empty;
-    private int? versionId;
-    private Guid editorKey = Guid.NewGuid();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        allowed = (await AuthorizationService.AuthorizeAsync(state.User, CmsConstants.Policies.MessagingRead)).Succeeded;
-        canWrite = (await AuthorizationService.AuthorizeAsync(state.User, CmsConstants.Policies.MessagingWrite)).Succeeded;
-        if (allowed)
+<Drawer Open="editing is not null" Scrim="true" Width="min(480px, 100vw)" OnClose="Close"
+        Title="@(IsNew ? T[InfernoCmsLocalizableStrings.Messaging.NewTemplate].Value : T[InfernoWebLocalizableStrings.General.EditFormat, editing?.Name ?? string.Empty].Value)">
+    <ChildContent>
+        @if (editing is not null)
         {
-            await LoadAsync();
+            <EditForm id="message-template-form" Model="editing" OnValidSubmit="SaveAsync">
+                <Field Label="@T[InfernoCmsLocalizableStrings.Messaging.Name]" For="template-name">
+                    <InputText id="template-name" class="nf-input" @bind-Value="editing.Name" autofocus />
+                    <ErrorText Errors="errors" Key="Name" />
+                </Field>
+                <Field Label="@T[InfernoCmsLocalizableStrings.Messaging.Subject]" For="template-subject">
+                    <InputText id="template-subject" class="nf-input" @bind-Value="editing.Subject" />
+                    <p class="nf-hint">@T[InfernoCmsLocalizableStrings.Messaging.TokensHint]</p>
+                </Field>
+                <Switch @bind-Value="editing.Enabled" Label="@T[InfernoCmsLocalizableStrings.Messaging.Enabled]" Description="@T[InfernoCmsLocalizableStrings.Messaging.EnabledHint]" />
+                @if (IsNew)
+                {
+                    <p class="nf-hint">@T[InfernoCmsLocalizableStrings.Messaging.DesignAfterCreate]</p>
+                }
+            </EditForm>
         }
-    }
-
-    private async Task LoadAsync()
-    {
-        int tenantId = WorkContext.CurrentTenant.Id;
-        templates = (await TemplateService.FindAsync(new Extenso.Data.Entity.SearchOptions<MessageTemplate>
-        {
-            Query = x => x.TenantId == tenantId
-        })).OrderBy(x => x.Name).ToList();
-    }
-
-    private void BeginCreate()
-    {
-        if (!canWrite)
-        {
-            return;
-        }
-
-        editing = new MessageTemplate
-        {
-            TenantId = WorkContext.CurrentTenant.Id,
-            Editor = "PageKrafter",
-            Enabled = true
-        };
-        subject = string.Empty;
-        body = MessageTemplateDocuments.ForEditor(null);
-        versionId = null;
-        editorKey = Guid.NewGuid();
-    }
-
-    private void BeginEdit(MessageTemplate template)
-    {
-        editing = template;
-        var version = VersionService.FindOne(template.Id, WorkContext.CurrentCultureCode);
-        subject = version?.Subject ?? string.Empty;
-        body = MessageTemplateDocuments.ForEditor(version?.Data);
-        versionId = version?.Id;
-        editorKey = Guid.NewGuid();
-    }
-
-    private async Task SaveAsync()
-    {
-        if (!canWrite || WorkContext.CurrentTenant == null)
-        {
-            return;
-        }
-
-        editing.Editor = "PageKrafter";
-        editing.TenantId = WorkContext.CurrentTenant.Id;
-
-        if (editing.Id == 0)
-        {
-            editing = await TemplateService.InsertAsync(editing);
-        }
-        else
-        {
-            editing = await TemplateService.UpdateAsync(editing);
-        }
-
-        if (versionId.HasValue)
-        {
-            var version = await VersionService.FindOneAsync(versionId.Value);
-            version.Subject = subject ?? string.Empty;
-            version.Data = body ?? string.Empty;
-            version.DateModifiedUtc = DateTime.UtcNow;
-            await VersionService.UpdateAsync(version);
-        }
-        else
-        {
-            await VersionService.InsertAsync(new MessageTemplateVersion
-            {
-                MessageTemplateId = editing.Id,
-                CultureCode = null,
-                Subject = subject ?? string.Empty,
-                Data = body ?? string.Empty,
-                DateCreatedUtc = DateTime.UtcNow,
-                DateModifiedUtc = DateTime.UtcNow
-            });
-        }
-
-        editing = null;
-        await LoadAsync();
-    }
-
-    private async Task DeleteAsync(MessageTemplate template)
-    {
-        if (!canWrite)
-        {
-            return;
-        }
-
-        var versions = await VersionService.FindAsync(new Extenso.Data.Entity.SearchOptions<MessageTemplateVersion>
-        {
-            Query = x => x.MessageTemplateId == template.Id
-        });
-        if (versions.Any())
-        {
-            await VersionService.DeleteAsync(versions);
-        }
-
-        await TemplateService.DeleteAsync(template);
-        await LoadAsync();
-    }
-
-    private void Cancel() => editing = null;
-}
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+        <button type="submit" form="message-template-form" class="nf-button nf-button-primary" disabled="@saving">
+            <Icon Name="save" Size="16" /> @(IsNew ? T[InfernoCmsLocalizableStrings.Messaging.CreateAndDesign] : T[InfernoWebLocalizableStrings.General.Save])
+        </button>
+    </Footer>
+</Drawer>

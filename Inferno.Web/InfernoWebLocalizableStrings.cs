@@ -1,10 +1,27 @@
-﻿namespace Inferno.Web;
+namespace Inferno.Web;
 
 public static class InfernoWebLocalizableStrings
 {
+    public static class Admin
+    {
+        public const string Deleted = "Inferno.Web/Admin.Deleted";
+        public const string DeleteTitleFormat = "Inferno.Web/Admin.DeleteTitleFormat";
+        public const string DeleteWarning = "Inferno.Web/Admin.DeleteWarning";
+        public const string LoadError = "Inferno.Web/Admin.LoadError";
+        public const string Never = "Inferno.Web/Admin.Never";
+        public const string NoMatchesDescription = "Inferno.Web/Admin.NoMatchesDescription";
+        public const string NoMatchesTitle = "Inferno.Web/Admin.NoMatchesTitle";
+        public const string NoPermission = "Inferno.Web/Admin.NoPermission";
+        public const string Off = "Inferno.Web/Admin.Off";
+        public const string On = "Inferno.Web/Admin.On";
+        public const string Saved = "Inferno.Web/Admin.Saved";
+        public const string SearchPlaceholder = "Inferno.Web/Admin.SearchPlaceholder";
+    }
+
     public static class Dashboard
     {
         public const string Administration = "Inferno.Web/Dashboard.Administration";
+        public const string Content = "Inferno.Web/Dashboard.Content";
         public const string Frontend = "Inferno.Web/Dashboard.Frontend";
         public const string Title = "Inferno.Web/Dashboard.Title";
         public const string Welcome = "Inferno.Web/Dashboard.Welcome";
@@ -15,6 +32,8 @@ public static class InfernoWebLocalizableStrings
             public const string BlogSubtitle = "Inferno.Web/Dashboard.Cards.BlogSubtitle";
             public const string ContentBlocks = "Inferno.Web/Dashboard.Cards.ContentBlocks";
             public const string ContentBlocksSubtitle = "Inferno.Web/Dashboard.Cards.ContentBlocksSubtitle";
+            public const string Media = "Inferno.Web/Dashboard.Cards.Media";
+            public const string MediaSubtitle = "Inferno.Web/Dashboard.Cards.MediaSubtitle";
             public const string MembershipSubtitle = "Inferno.Web/Dashboard.Cards.MembershipSubtitle";
             public const string Menus = "Inferno.Web/Dashboard.Cards.Menus";
             public const string MenusSubtitle = "Inferno.Web/Dashboard.Cards.MenusSubtitle";
@@ -23,18 +42,7 @@ public static class InfernoWebLocalizableStrings
             public const string ScheduledTasksSubtitle = "Inferno.Web/Dashboard.Cards.ScheduledTasksSubtitle";
             public const string SettingsSubtitle = "Inferno.Web/Dashboard.Cards.SettingsSubtitle";
             public const string TenantsSubtitle = "Inferno.Web/Dashboard.Cards.TenantsSubtitle";
-        }
-
-        public static class About
-        {
-            public const string Title = "Inferno.Web/Dashboard.About.Title";
-            public const string Description = "Inferno.Web/Dashboard.About.Description";
-            public const string Extensible = "Inferno.Web/Dashboard.About.Extensible";
-            public const string ExtensibleSubtitle = "Inferno.Web/Dashboard.About.ExtensibleSubtitle";
-            public const string MultiTenant = "Inferno.Web/Dashboard.About.MultiTenant";
-            public const string MultiTenantSubtitle = "Inferno.Web/Dashboard.About.MultiTenantSubtitle";
-            public const string Themeable = "Inferno.Web/Dashboard.About.Themeable";
-            public const string ThemeableSubtitle = "Inferno.Web/Dashboard.About.ThemeableSubtitle";
+            public const string ThemesSubtitle = "Inferno.Web/Dashboard.Cards.ThemesSubtitle";
         }
     }
 
@@ -260,15 +268,25 @@ public static class InfernoWebLocalizableStrings
             public const string StopOnError = "Inferno.Web/ScheduledTasks.Model.StopOnError";
         }
 
+        public const string Description = "Inferno.Web/ScheduledTasks.Description";
+        public const string EmptyTitle = "Inferno.Web/ScheduledTasks.EmptyTitle";
+        public const string EveryFormat = "Inferno.Web/ScheduledTasks.EveryFormat";
         public const string ExecutedTaskError = "Inferno.Web/ScheduledTasks.ExecutedTaskError";
         public const string ExecutedTaskSuccess = "Inferno.Web/ScheduledTasks.ExecutedTaskSuccess";
+        public const string LastRun = "Inferno.Web/ScheduledTasks.LastRun";
         public const string ManageScheduledTasks = "Inferno.Web/ScheduledTasks.ManageScheduledTasks";
         public const string RunNow = "Inferno.Web/ScheduledTasks.RunNow";
+        public const string SecondsHint = "Inferno.Web/ScheduledTasks.SecondsHint";
+        public const string StopOnErrorHint = "Inferno.Web/ScheduledTasks.StopOnErrorHint";
         public const string Title = "Inferno.Web/ScheduledTasks.Title";
     }
 
     public static class Settings
     {
+        public const string Description = "Inferno.Web/Settings.Description";
+        public const string EmptyTitle = "Inferno.Web/Settings.EmptyTitle";
+        public const string NoEditor = "Inferno.Web/Settings.NoEditor";
+
         public static class DateTime
         {
             public const string DefaultTimeZoneId = "Inferno.Web/Settings.DateTime.DefaultTimeZoneId";
@@ -289,6 +307,13 @@ public static class InfernoWebLocalizableStrings
 
         public static class Smtp
         {
+            public static class Tabs
+            {
+                public const string Credentials = "Inferno.Web/Settings.Smtp.Tabs.Credentials";
+                public const string Queue = "Inferno.Web/Settings.Smtp.Tabs.Queue";
+                public const string Server = "Inferno.Web/Settings.Smtp.Tabs.Server";
+            }
+
             public const string DisplayName = "Inferno.Web/Settings.Smtp.DisplayName";
             public const string Host = "Inferno.Web/Settings.Smtp.Host";
             public const string Port = "Inferno.Web/Settings.Smtp.Port";
@@ -325,7 +350,14 @@ public static class InfernoWebLocalizableStrings
 
     public static class Tenants
     {
+        public const string DeleteWarning = "Inferno.Web/Tenants.DeleteWarning";
+        public const string Description = "Inferno.Web/Tenants.Description";
+        public const string EmptyTitle = "Inferno.Web/Tenants.EmptyTitle";
+        public const string ExportCsv = "Inferno.Web/Tenants.ExportCsv";
+        public const string ExportExcel = "Inferno.Web/Tenants.ExportExcel";
+        public const string HostsHint = "Inferno.Web/Tenants.HostsHint";
         public const string ManageTenants = "Inferno.Web/Tenants.ManageTenants";
+        public const string NewTenant = "Inferno.Web/Tenants.NewTenant";
         public const string Title = "Inferno.Web/Tenants.Title";
 
         public static class Model
@@ -339,6 +371,10 @@ public static class InfernoWebLocalizableStrings
 
     public static class Themes
     {
+        public const string Current = "Inferno.Web/Themes.Current";
+        public const string Description = "Inferno.Web/Themes.Description";
+        public const string EmptyTitle = "Inferno.Web/Themes.EmptyTitle";
+        public const string SetDefaultSuccessFormat = "Inferno.Web/Themes.SetDefaultSuccessFormat";
         public const string SetDesktopThemeError = "Inferno.Web/Themes.SetDesktopThemeError";
         public const string SetDesktopThemeSuccess = "Inferno.Web/Themes.SetDesktopThemeSuccess";
         public const string SetMobileThemeError = "Inferno.Web/Themes.SetMobileThemeError";

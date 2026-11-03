@@ -1,133 +1,152 @@
 @page "/admin/menus/items/{MenuId:guid}"
+@attribute [Authorize(Policy = CmsConstants.Policies.MenusRead)]
+@inherits AdminPage
 @using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities
-@inherits RadzenDataPage<MenuItem, Guid>
 
-<h1>@T[InfernoCmsLocalizableStrings.Menus.ManageMenuItems] — @MenuName</h1>
+<PageTitle>@(menu?.Name ?? T[InfernoCmsLocalizableStrings.Menus.MenuItems].Value)</PageTitle>
 
-<div class="row" hidden="@(ShowEditMode == true)">
-    <div class="col-12 mb-3">
-        <RadzenButton Click="Create">
-            <i class="fas fa-plus-circle" aria-hidden="true"></i>
-            @T[InfernoWebLocalizableStrings.General.Create]
-        </RadzenButton>
-        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="GoBack">
-            <i class="fas fa-arrow-left" aria-hidden="true"></i>
-            @T[InfernoWebLocalizableStrings.General.Back]
-        </RadzenButton>
-    </div>
+<nav class="nf-breadcrumbs" aria-label="Breadcrumb"><a href="/admin/menus/index">@T[InfernoCmsLocalizableStrings.Menus.Title]</a><span aria-hidden="true">/</span><span aria-current="page">@menu?.Name</span></nav>
 
-    <div class="col-12">
-        <RadzenDataGrid @ref="DataGrid"
-                        TItem="MenuItem"
-                        IsLoading="@IsLoading"
-                        LoadData="@LoadGridAsync"
-                        Data="Records"
-                        Count="@RecordCount"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        FilterMode="FilterMode.Advanced"
-                        AllowSorting="true"
-                        AllowFiltering="true"
-                        AllowPaging="true"
-                        PageSize="10"
-                        ColumnWidth="200px">
-            <Columns>
-                <RadzenDataGridColumn TItem="MenuItem" Property="Text" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Text]" />
-                <RadzenDataGridColumn TItem="MenuItem" Property="Url" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Url]" />
-                <RadzenDataGridColumn TItem="MenuItem" Property="Position" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Position]" Width="100px" />
-                <RadzenDataGridColumn TItem="MenuItem" Property="Enabled" Title="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Enabled]" Width="100px" />
-                <RadzenDataGridColumn TItem="MenuItem" Context="record" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
-                    <Template Context="record">
-                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="edit" Size="ButtonSize.Medium" Click="@(() => EditAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Medium" Click="@(() => DeleteAsync(record.Id))" @onclick:stopPropagation="true"></RadzenButton>
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    </div>
-</div>
+<PageHeader Title="@(menu?.Name ?? T[InfernoCmsLocalizableStrings.Menus.MenuItems].Value)" Icon="menu" Description="@T[InfernoCmsLocalizableStrings.Menus.ItemsDescription]">
+    <Actions>
+        @if (roots.Count > 0)
+        {
+            <button type="button" class="nf-button" @onclick="() => tree?.ExpandAll()">@T[InfernoCmsLocalizableStrings.Menus.ExpandAll]</button>
+            <button type="button" class="nf-button" @onclick="() => tree?.CollapseAll()">@T[InfernoCmsLocalizableStrings.Menus.CollapseAll]</button>
+        }
+        @if (canWrite && menu is not null)
+        {
+            <button type="button" class="nf-button nf-button-primary" @onclick="() => Create(null)">
+                <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.Menus.NewItem]
+            </button>
+        }
+    </Actions>
+</PageHeader>
 
-<div class="row" id="form-section" hidden="@(ShowEditMode == false)">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header text-white bg-primary">@T[InfernoWebLocalizableStrings.General.Details]</div>
-            <div class="card-body">
-                <EditForm class="form-horizontal" Model="Model" OnValidSubmit="OnValidSumbitAsync">
-                    <DataAnnotationsValidator />
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-4">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Text]</label>
-                                <div class="col-md-8">
-                                    <RadzenTextBox @bind-Value="Model.Text" Style="width:100%" Name="Text" />
-                                </div>
-                            </div>
+@if (items is null)
+{
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+}
+else if (items.Count == 0)
+{
+    <EmptyState Icon="menu" Title="@T[InfernoCmsLocalizableStrings.Menus.EmptyItemsTitle]">
+        @if (canWrite && menu is not null)
+        {
+            <button type="button" class="nf-button nf-button-primary" @onclick="() => Create(null)">
+                <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.Menus.NewItem]
+            </button>
+        }
+    </EmptyState>
+}
+else
+{
+    <TreeTable @ref="tree" TItem="MenuItem" Items="roots" ChildrenOf="ChildrenOf" KeyOf="item => item.Id">
+        <Header>
+            <tr>
+                <th>@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Text]</th>
+                <th>@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Url]</th>
+                <th class="nf-cell-number">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Position]</th>
+                <th>@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Enabled]</th>
+                <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
+            </tr>
+        </Header>
+        <RowTemplate Context="row">
+            <tr @key="row.Item.Id">
+                <td>
+                    <TreeToggle Row="row">
+                        @if (canWrite)
+                        {
+                            <button type="button" class="nf-link-button nf-row-title" @onclick="() => Edit(row.Item)">@row.Item.Text</button>
+                        }
+                        else
+                        {
+                            <span class="nf-row-title">@row.Item.Text</span>
+                        }
+                    </TreeToggle>
+                </td>
+                <td class="nf-muted nf-truncate">
+                    @row.Item.Url
+                    @if (row.Item.IsExternalUrl)
+                    {
+                        <Icon Name="external" Size="12" />
+                    }
+                </td>
+                <td class="nf-cell-number">@row.Item.Position</td>
+                <td>
+                    @if (row.Item.Enabled)
+                    {
+                        <span class="nf-badge nf-badge-success">@T[InfernoWebLocalizableStrings.Admin.On]</span>
+                    }
+                    else
+                    {
+                        <span class="nf-badge nf-badge-muted">@T[InfernoWebLocalizableStrings.Admin.Off]</span>
+                    }
+                </td>
+                <td class="nf-cell-actions">
+                    @if (canWrite)
+                    {
+                        <div class="nf-row-actions">
+                            <button type="button" class="nf-icon-button" title="@T[InfernoCmsLocalizableStrings.Menus.AddChild]" @onclick="() => Create(row.Item.Id)">
+                                <Icon Name="plus" Size="16" />
+                            </button>
+                            <button type="button" class="nf-icon-button" title="@T[InfernoWebLocalizableStrings.General.Edit]" @onclick="() => Edit(row.Item)">
+                                <Icon Name="edit" Size="16" />
+                            </button>
+                            <button type="button" class="nf-icon-button nf-danger-hover" title="@T[InfernoWebLocalizableStrings.General.Delete]" @onclick="() => DeleteAsync(row.Item)">
+                                <Icon Name="trash" Size="16" />
+                            </button>
                         </div>
-                        <div class="col-md-6">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-4">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Url]</label>
-                                <div class="col-md-8">
-                                    <RadzenTextBox @bind-Value="Model.Url" Style="width:100%" Name="Url" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    }
+                </td>
+            </tr>
+        </RowTemplate>
+    </TreeTable>
+}
 
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-2">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Description]</label>
-                                <div class="col-md-10">
-                                    <RadzenTextBox @bind-Value="Model.Description" Style="width:100%" Name="Description" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-4">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.CssClass]</label>
-                                <div class="col-md-8">
-                                    <RadzenTextBox @bind-Value="Model.CssClass" Style="width:100%" Name="CssClass" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="row mb-3">
-                                <label class="col-form-label col-md-4">@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Position]</label>
-                                <div class="col-md-8">
-                                    <RadzenNumeric @bind-Value="Model.Position" Style="width:100%" Name="Position" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.Enabled" />@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Enabled]</label></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.IsExternalUrl" />@T[InfernoCmsLocalizableStrings.Menus.IsExternalUrl]</label></div>
-                        </div>
-                    </div>
-
-                    <hr />
-
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3 float-end">
-                                <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Click="Cancel">
-                                    @T[InfernoWebLocalizableStrings.General.Cancel]
-                                </RadzenButton>
-                                <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary">
-                                    <i class="fas fa-save" aria-hidden="true"></i> @T[InfernoWebLocalizableStrings.General.Save]
-                                </RadzenButton>
-                            </div>
-                        </div>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-</div>
+<Drawer Open="editing is not null" Scrim="true" Width="min(520px, 100vw)" OnClose="Close"
+        Title="@(editing?.Id == Guid.Empty ? T[InfernoCmsLocalizableStrings.Menus.NewItem].Value : T[InfernoWebLocalizableStrings.General.EditFormat, editing?.Text ?? string.Empty].Value)">
+    <ChildContent>
+        @if (editing is not null)
+        {
+            <EditForm id="menu-item-form" Model="editing" OnValidSubmit="SaveAsync">
+                <Field Label="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Text]" For="item-text">
+                    <InputText id="item-text" class="nf-input" @bind-Value="editing.Text" autofocus />
+                    <ErrorText Errors="errors" Key="Text" />
+                </Field>
+                <Field Label="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Url]" For="item-url">
+                    <InputText id="item-url" class="nf-input" @bind-Value="editing.Url" placeholder="/about" />
+                    <ErrorText Errors="errors" Key="Url" />
+                </Field>
+                <Switch @bind-Value="editing.IsExternalUrl" Label="@T[InfernoCmsLocalizableStrings.Menus.IsExternalUrl]" Description="@T[InfernoCmsLocalizableStrings.Menus.IsExternalUrlHint]" />
+                <Field Label="@T[InfernoCmsLocalizableStrings.Menus.ParentItem]" For="item-parent">
+                    <select id="item-parent" class="nf-input nf-select-block" value="@(editing.ParentId?.ToString() ?? string.Empty)" @onchange="ParentChanged">
+                        <option value="">@T[InfernoCmsLocalizableStrings.Menus.NoParent]</option>
+                        @foreach (var option in ParentOptions())
+                        {
+                            <option value="@option.Id">@(new string('\u00A0', option.Depth * 4))@option.Text</option>
+                        }
+                    </select>
+                    <ErrorText Errors="errors" Key="ParentId" />
+                </Field>
+                <div class="nf-form-row">
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Position]" For="item-position">
+                        <InputNumber id="item-position" class="nf-input" @bind-Value="editing.Position" />
+                    </Field>
+                    <Field Label="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.CssClass]" For="item-css">
+                        <InputText id="item-css" class="nf-input" @bind-Value="editing.CssClass" />
+                    </Field>
+                </div>
+                <Field Label="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Description]" For="item-description">
+                    <InputTextArea id="item-description" class="nf-textarea" rows="2" @bind-Value="editing.Description" />
+                </Field>
+                <Switch @bind-Value="editing.Enabled" Label="@T[InfernoCmsLocalizableStrings.Menus.MenuItemModel.Enabled]" />
+            </EditForm>
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+        <button type="submit" form="menu-item-form" class="nf-button nf-button-primary" disabled="@saving">
+            <Icon Name="save" Size="16" /> @T[InfernoWebLocalizableStrings.General.Save]
+        </button>
+    </Footer>
+</Drawer>

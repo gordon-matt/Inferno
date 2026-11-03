@@ -1,57 +1,16 @@
-﻿using System.Data;
-using System.Linq.Dynamic.Core;
+using System.Data;
 using System.Text;
 using Extenso;
 using Extenso.Collections;
 using Extenso.Data.Entity;
 using Inferno.Web.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Inferno.Web.Mvc;
 
 public partial class ExportController<T> : InfernoController
      where T : class, IEntity
 {
-    [NonAction]
-    public IQueryable<T> ApplyQuery(IQueryable<T> items, IQueryCollection query = null)
-    {
-        if (query != null)
-        {
-            if (query.ContainsKey("$filter"))
-            {
-                items = items.Where(query["$filter"].ToString());
-            }
-
-            if (query.ContainsKey("$orderBy"))
-            {
-                items = items.OrderBy(query["$orderBy"].ToString());
-            }
-
-            if (query.ContainsKey("$expand"))
-            {
-                string[] propertiesToExpand = query["$orderBy"].ToString().Split(',');
-                foreach (string p in propertiesToExpand)
-                {
-                    items = items.Include(p);
-                }
-            }
-
-            if (query.ContainsKey("$skip"))
-            {
-                items = items.Skip(int.Parse(query["$skip"].ToString()));
-            }
-
-            if (query.ContainsKey("$top"))
-            {
-                items = items.Take(int.Parse(query["$top"].ToString()));
-            }
-        }
-
-        return items;
-    }
-
     [NonAction]
     public FileResult Download(IQueryable<T> query, DownloadOptions options)
     {

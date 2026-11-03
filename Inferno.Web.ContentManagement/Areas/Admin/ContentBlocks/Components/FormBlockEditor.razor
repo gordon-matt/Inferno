@@ -1,4 +1,27 @@
-﻿@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+﻿@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 @inherits ContentBlockEditor<FormBlock>
+
+<TabSet KeepPanelsMounted="true" AriaLabel="@T[InfernoCmsLocalizableStrings.ContentBlocks.BlockSettings]">
+    <Tab Id="form-template" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.HtmlTemplate]">
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.HtmlTemplate]" For="form-template-html">
+            <InputTextArea id="form-template-html" class="nf-textarea nf-textarea-code" rows="14" @bind-Value="Model.HtmlTemplate" />
+        </Field>
+    </Tab>
+    <Tab Id="form-submission" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.Submission]">
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.EmailAddress]" For="form-email">
+            <InputText id="form-email" type="email" class="nf-input" @bind-Value="Model.EmailAddress" />
+            <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.HelpText.EmailAddress]</span>
+        </Field>
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.FormUrl]" For="form-url">
+            <InputText id="form-url" class="nf-input" @bind-Value="Model.FormUrl" />
+            <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.HelpText.FormUrl]</span>
+        </Field>
+        <Switch @bind-Value="Model.UseAjax" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.UseAjax]" />
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.RedirectUrl]" For="form-redirect">
+            <InputText id="form-redirect" class="nf-input" @bind-Value="Model.RedirectUrl" />
+        </Field>
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.FormBlock.ThankYouMessage]" For="form-thanks">
+            <InputTextArea id="form-thanks" class="nf-textarea" rows="4" @bind-Value="Model.ThankYouMessage" />
+        </Field>
+    </Tab>
+</TabSet>

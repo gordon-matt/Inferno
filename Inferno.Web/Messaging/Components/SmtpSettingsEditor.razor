@@ -1,66 +1,37 @@
 @using Inferno.Web.Messaging.Configuration
 @inherits Inferno.Web.Components.SettingsEditor<SmtpSettings>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.DisplayName]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.DisplayName" Style="width:100%" />
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.Host]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.Host" Style="width:100%" />
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.Port]</label>
-            <div class="col-md-9">
-                <RadzenNumeric @bind-Value="Model.Port" Style="width:100%" />
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3"></label>
-            <div class="col-md-9">
-                <div class="form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input me-2" type="checkbox" @bind="Model.EnableSsl" />
-                        @T[InfernoWebLocalizableStrings.Settings.Smtp.EnableSsl]
-                    </label>
-                </div>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input me-2" type="checkbox" @bind="Model.UseDefaultCredentials" />
-                        @T[InfernoWebLocalizableStrings.Settings.Smtp.UseDefaultCredentials]
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.Username]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.Username" Style="width:100%" />
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.Password]</label>
-            <div class="col-md-9">
-                <input class="form-control" type="password" @bind="Model.Password" />
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.MaxTries]</label>
-            <div class="col-md-9">
-                <RadzenNumeric @bind-Value="Model.MaxTries" Style="width:100%" />
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3">@T[InfernoWebLocalizableStrings.Settings.Smtp.MessagesPerBatch]</label>
-            <div class="col-md-9">
-                <RadzenNumeric @bind-Value="Model.MessagesPerBatch" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
+<TabSet KeepPanelsMounted="true" AriaLabel="@Data?.Name">
+    <Tab Id="server" Title="@T[InfernoWebLocalizableStrings.Settings.Smtp.Tabs.Server]">
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.DisplayName]" For="smtp-display-name">
+            <input id="smtp-display-name" class="nf-input" @bind="Model.DisplayName" />
+        </Field>
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.Host]" For="smtp-host">
+            <input id="smtp-host" class="nf-input" @bind="Model.Host" placeholder="smtp.example.com" />
+        </Field>
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.Port]" For="smtp-port">
+            <input id="smtp-port" class="nf-input" type="number" min="1" max="65535" @bind="Model.Port" />
+        </Field>
+        <Switch @bind-Value="Model.EnableSsl" Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.EnableSsl]" />
+    </Tab>
+    <Tab Id="credentials" Title="@T[InfernoWebLocalizableStrings.Settings.Smtp.Tabs.Credentials]">
+        <Switch @bind-Value="Model.UseDefaultCredentials" Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.UseDefaultCredentials]" />
+        @if (!Model.UseDefaultCredentials)
+        {
+            <Field Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.Username]" For="smtp-username">
+                <input id="smtp-username" class="nf-input" autocomplete="off" @bind="Model.Username" />
+            </Field>
+            <Field Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.Password]" For="smtp-password">
+                <input id="smtp-password" class="nf-input" type="password" autocomplete="new-password" @bind="Model.Password" />
+            </Field>
+        }
+    </Tab>
+    <Tab Id="queue" Title="@T[InfernoWebLocalizableStrings.Settings.Smtp.Tabs.Queue]">
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.MaxTries]" For="smtp-max-tries">
+            <input id="smtp-max-tries" class="nf-input" type="number" min="1" @bind="Model.MaxTries" />
+        </Field>
+        <Field Label="@T[InfernoWebLocalizableStrings.Settings.Smtp.MessagesPerBatch]" For="smtp-batch">
+            <input id="smtp-batch" class="nf-input" type="number" min="1" @bind="Model.MessagesPerBatch" />
+        </Field>
+    </Tab>
+</TabSet>

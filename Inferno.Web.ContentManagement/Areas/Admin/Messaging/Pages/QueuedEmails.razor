@@ -1,75 +1,129 @@
 @page "/admin/messaging/queued-emails"
-@using Inferno.Web.Messaging.Entities
-@using Inferno.Web.Messaging.Services
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize(Policy = CmsConstants.Policies.MessagingRead)]
+@inherits AdminPage
+@using Inferno.Web.ContentManagement.Areas.Admin.Messaging.Components
 
-<h1>@T[InfernoCmsLocalizableStrings.Messaging.QueuedEmails]</h1>
+<PageTitle>@T[InfernoCmsLocalizableStrings.Messaging.QueuedEmails]</PageTitle>
 
-@if (!allowed)
+<PageHeader Title="@T[InfernoCmsLocalizableStrings.Messaging.QueuedEmails]" Icon="inbox" Description="@T[InfernoCmsLocalizableStrings.Messaging.QueueDescription]">
+    <Actions>
+        <a class="nf-button" href="/admin/messaging/templates"><Icon Name="mail" Size="16" /> @T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates]</a>
+        <button type="button" class="nf-button" @onclick="LoadAsync"><Icon Name="refresh" Size="16" /> @T[InfernoCmsLocalizableStrings.Messaging.Refresh]</button>
+    </Actions>
+</PageHeader>
+
+<div class="nf-toolbar">
+    <SearchField Value="@search" ValueChanged="SearchChangedAsync" Placeholder="@T[InfernoWebLocalizableStrings.Admin.SearchPlaceholder]" />
+    <select class="nf-select" aria-label="@T[InfernoCmsLocalizableStrings.Messaging.Status]" value="@status" @onchange="StatusChangedAsync">
+        <option value="@QueuedEmailStatus.All">@T[InfernoCmsLocalizableStrings.Messaging.AllEmails]</option>
+        <option value="@QueuedEmailStatus.Waiting">@T[InfernoCmsLocalizableStrings.Messaging.Waiting]</option>
+        <option value="@QueuedEmailStatus.Sent">@T[InfernoCmsLocalizableStrings.Messaging.Sent]</option>
+    </select>
+</div>
+
+@if (listing is null)
 {
-    <div class="alert alert-warning" role="alert">You do not have access to the mail queue.</div>
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
 }
-else if (emails.Count == 0)
+else if (listing.TotalCount == 0)
 {
-    <p>The queue is empty.</p>
+    @if (string.IsNullOrWhiteSpace(search) && status == QueuedEmailStatus.All)
+    {
+        <EmptyState Icon="inbox" Title="@T[InfernoCmsLocalizableStrings.Messaging.QueueEmpty]" Description="@T[InfernoCmsLocalizableStrings.Messaging.QueueEmptyDescription]" />
+    }
+    else
+    {
+        <EmptyState Icon="search" Title="@T[InfernoWebLocalizableStrings.Admin.NoMatchesTitle]" Description="@T[InfernoWebLocalizableStrings.Admin.NoMatchesDescription]" />
+    }
 }
 else
 {
-    <table class="table">
+    <Table>
         <thead>
             <tr>
-                <th>To</th>
-                <th>Subject</th>
-                <th>Created</th>
-                <th>Tries</th>
-                <th>Sent</th>
+                <th>@T[InfernoCmsLocalizableStrings.Messaging.To]</th>
+                <th>@T[InfernoCmsLocalizableStrings.Messaging.Subject]</th>
+                <th class="nf-cell-nowrap">@T[InfernoCmsLocalizableStrings.Messaging.Created]</th>
+                <th>@T[InfernoCmsLocalizableStrings.Messaging.Status]</th>
+                <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var email in emails)
+            @foreach (var email in listing.Items)
             {
-                <tr>
-                    <td>@email.ToAddress</td>
-                    <td>@email.Subject</td>
-                    <td>@email.CreatedOnUtc.ToString("yyyy-MM-dd HH:mm")</td>
-                    <td>@email.SentTries</td>
-                    <td>@(email.SentOnUtc?.ToString("yyyy-MM-dd HH:mm") ?? "Queued")</td>
+                <tr @key="email.Id">
+                    <td>
+                        <button type="button" class="nf-link-button nf-row-title" @onclick="() => OpenAsync(email)">@email.ToAddress</button>
+                        @if (!string.IsNullOrEmpty(email.ToName))
+                        {
+                            <div class="nf-muted">@email.ToName</div>
+                        }
+                    </td>
+                    <td class="nf-truncate">@email.Subject</td>
+                    <td class="nf-muted nf-cell-nowrap">@email.CreatedOnUtc.ToLocalTime().ToString("g")</td>
+                    <td><QueuedEmailStatusBadge Email="email" /></td>
+                    <td class="nf-cell-actions">
+                        <div class="nf-row-actions">
+                            <button type="button" class="nf-icon-button" title="@T[InfernoCmsLocalizableStrings.Messaging.ViewMessage]" @onclick="() => OpenAsync(email)">
+                                <Icon Name="eye" Size="16" />
+                            </button>
+                            @if (canWrite)
+                            {
+                                <button type="button" class="nf-icon-button nf-danger-hover" title="@T[InfernoWebLocalizableStrings.General.Delete]" @onclick="() => DeleteAsync(email)">
+                                    <Icon Name="trash" Size="16" />
+                                </button>
+                            }
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>
-    </table>
+    </Table>
+    <Pager PageNumber="pageNumber" PageSize="pageSize" TotalCount="listing.TotalCount" PageNumberChanged="PageChangedAsync" PageSizeChanged="PageSizeChangedAsync" />
 }
 
-@code {
-    [Inject]
-    private IMessageService MessageService { get; set; }
-
-    [Inject]
-    private IAuthorizationService AuthorizationService { get; set; }
-
-    [Inject]
-    private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-
-    private bool allowed;
-    private List<QueuedEmail> emails = [];
-
-    protected override async Task OnInitializedAsync()
-    {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        allowed = (await AuthorizationService.AuthorizeAsync(state.User, CmsConstants.Policies.MessagingRead)).Succeeded;
-        if (!allowed || WorkContext.CurrentTenant == null)
+<Drawer Open="viewing is not null" Scrim="true" Width="min(760px, 100vw)" OnClose="Close" Title="@viewing?.Summary.Subject">
+    <ChildContent>
+        @if (viewing is not null)
         {
-            return;
+            <dl class="inferno-email-meta">
+                <dt>@T[InfernoCmsLocalizableStrings.Messaging.From]</dt>
+                <dd>@FormatAddress(viewing.FromAddress, viewing.FromName)</dd>
+                <dt>@T[InfernoCmsLocalizableStrings.Messaging.To]</dt>
+                <dd>@FormatAddress(viewing.Summary.ToAddress, viewing.Summary.ToName)</dd>
+                <dt>@T[InfernoCmsLocalizableStrings.Messaging.Created]</dt>
+                <dd>@viewing.Summary.CreatedOnUtc.ToLocalTime().ToString("g")</dd>
+                <dt>@T[InfernoCmsLocalizableStrings.Messaging.Status]</dt>
+                <dd>
+                    <QueuedEmailStatusBadge Email="viewing.Summary" />
+                    @if (viewing.Summary.SentOnUtc is { } sentOn)
+                    {
+                        <span class="nf-muted">@sentOn.ToLocalTime().ToString("g")</span>
+                    }
+                </dd>
+            </dl>
+
+            @if (viewing.Body is null)
+            {
+                <EmptyState Icon="mail" Title="@T[InfernoCmsLocalizableStrings.Messaging.BodyUnavailable]" />
+            }
+            else if (viewing.IsBodyHtml)
+            {
+                <iframe class="inferno-email-preview" sandbox="" srcdoc="@viewing.Body" title="@T[InfernoCmsLocalizableStrings.Messaging.ViewMessage]"></iframe>
+            }
+            else
+            {
+                <pre class="inferno-email-text">@viewing.Body</pre>
+            }
         }
-
-        int tenantId = WorkContext.CurrentTenant.Id;
-        emails = (await MessageService.FindAsync(new Extenso.Data.Entity.SearchOptions<QueuedEmail>
+    </ChildContent>
+    <Footer>
+        @if (canWrite && viewing is not null)
         {
-            Query = x => x.TenantId == tenantId
-        }))
-            .OrderByDescending(x => x.CreatedOnUtc)
-            .Take(100)
-            .ToList();
-    }
-}
+            <button type="button" class="nf-button nf-button-danger" @onclick="() => DeleteAsync(viewing.Summary)">
+                <Icon Name="trash" Size="16" /> @T[InfernoWebLocalizableStrings.General.Delete]
+            </button>
+        }
+        <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Close]</button>
+    </Footer>
+</Drawer>

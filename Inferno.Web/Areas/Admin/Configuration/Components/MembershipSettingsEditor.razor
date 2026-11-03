@@ -1,34 +1,10 @@
 @using Inferno.Web.Security.Membership
 @inherits SettingsEditor<MembershipSettings>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Name">@T[InfernoWebLocalizableStrings.Settings.Membership.GeneratedPasswordLength]</label>
-            <div class="col-md-9">
-                <RadzenNumeric @bind-Value="Model.GeneratedPasswordLength" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Name">@T[InfernoWebLocalizableStrings.Settings.Membership.GeneratedPasswordNumberOfNonAlphanumericChars]</label>
-            <div class="col-md-9">
-                <RadzenNumeric @bind-Value="Model.GeneratedPasswordNumberOfNonAlphanumericChars" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Name"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.DisallowUnconfirmedUserLogin" />@T[InfernoWebLocalizableStrings.Settings.Membership.DisallowUnconfirmedUserLogin]</label></div>
-                @*<RadzenCheckBox @bind-Value="Model.DisallowUnconfirmedUserLogin" Style="width:100%" /> @T[InfernoWebLocalizableStrings.Settings.Membership.DisallowUnconfirmedUserLogin]*@
-            </div>
-        </div>
-    </div>
-</div>
+<Field Label="@T[InfernoWebLocalizableStrings.Settings.Membership.GeneratedPasswordLength]" For="membership-length">
+    <input id="membership-length" class="nf-input" type="number" min="1" @bind="Model.GeneratedPasswordLength" />
+</Field>
+<Field Label="@T[InfernoWebLocalizableStrings.Settings.Membership.GeneratedPasswordNumberOfNonAlphanumericChars]" For="membership-symbols">
+    <input id="membership-symbols" class="nf-input" type="number" min="0" @bind="Model.GeneratedPasswordNumberOfNonAlphanumericChars" />
+</Field>
+<Switch @bind-Value="Model.DisallowUnconfirmedUserLogin" Label="@T[InfernoWebLocalizableStrings.Settings.Membership.DisallowUnconfirmedUserLogin]" />

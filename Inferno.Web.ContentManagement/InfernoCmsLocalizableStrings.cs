@@ -1,4 +1,4 @@
-﻿namespace Inferno.Web.ContentManagement;
+namespace Inferno.Web.ContentManagement;
 
 public static class InfernoCmsLocalizableStrings
 {
@@ -41,7 +41,23 @@ public static class InfernoCmsLocalizableStrings
 
     public static class ContentBlocks
     {
+        public const string AllZones = "Inferno.Web.ContentManagement/ContentBlocks.AllZones";
+        public const string BlockSettings = "Inferno.Web.ContentManagement/ContentBlocks.BlockSettings";
+        public const string ChooseBlockType = "Inferno.Web.ContentManagement/ContentBlocks.ChooseBlockType";
+        public const string ChooseZone = "Inferno.Web.ContentManagement/ContentBlocks.ChooseZone";
+        public const string CreateAndConfigure = "Inferno.Web.ContentManagement/ContentBlocks.CreateAndConfigure";
+        public const string CustomTemplateHint = "Inferno.Web.ContentManagement/ContentBlocks.CustomTemplateHint";
+        public const string Description = "Inferno.Web.ContentManagement/ContentBlocks.Description";
+        public const string EmptyDescription = "Inferno.Web.ContentManagement/ContentBlocks.EmptyDescription";
+        public const string EmptyTitle = "Inferno.Web.ContentManagement/ContentBlocks.EmptyTitle";
+        public const string EntityTypeDescription = "Inferno.Web.ContentManagement/ContentBlocks.EntityTypeDescription";
+        public const string EntityTypeHint = "Inferno.Web.ContentManagement/ContentBlocks.EntityTypeHint";
         public const string ManageContentBlocks = "Inferno.Web.ContentManagement/ContentBlocks.ManageContentBlocks";
+        public const string NewBlock = "Inferno.Web.ContentManagement/ContentBlocks.NewBlock";
+        public const string NoSettings = "Inferno.Web.ContentManagement/ContentBlocks.NoSettings";
+        public const string SettingsAfterCreate = "Inferno.Web.ContentManagement/ContentBlocks.SettingsAfterCreate";
+        public const string ZeroMeansAll = "Inferno.Web.ContentManagement/ContentBlocks.ZeroMeansAll";
+        public const string ZoneHint = "Inferno.Web.ContentManagement/ContentBlocks.ZoneHint";
         public const string ManageZones = "Inferno.Web.ContentManagement/ContentBlocks.ManageZones";
         public const string Title = "Inferno.Web.ContentManagement/ContentBlocks.Title";
         public const string EntityTypeContentBlocks = "Inferno.Web.ContentManagement/ContentBlocks.EntityTypeContentBlocks";
@@ -51,6 +67,7 @@ public static class InfernoCmsLocalizableStrings
 
         public static class AllPostsBlock
         {
+            public const string AllPosts = "Inferno.Web.ContentManagement/ContentBlocks.AllPostsBlock.AllPosts";
             public const string CategoryId = "Inferno.Web.ContentManagement/ContentBlocks.AllPostsBlock.CategoryId";
             public const string FilterType = "Inferno.Web.ContentManagement/ContentBlocks.AllPostsBlock.FilterType";
             public const string TagId = "Inferno.Web.ContentManagement/ContentBlocks.AllPostsBlock.TagId";
@@ -74,7 +91,9 @@ public static class InfernoCmsLocalizableStrings
             //public const string HeightUnit = "Inferno.Web.ContentManagement/ContentBlocks.TagCloudBlock.HeightUnit";
             //public const string CenterX = "Inferno.Web.ContentManagement/ContentBlocks.TagCloudBlock.CenterX";
             //public const string CenterY = "Inferno.Web.ContentManagement/ContentBlocks.TagCloudBlock.CenterY";
+            public const string Appearance = "Inferno.Web.ContentManagement/ContentBlocks.TagCloudBlock.Appearance";
             public const string AutoResize = "Inferno.Web.ContentManagement/ContentBlocks.TagCloudBlock.AutoResize";
+            public const string Layout = "Inferno.Web.ContentManagement/ContentBlocks.TagCloudBlock.Layout";
 
             public const string Steps = "Inferno.Web.ContentManagement/ContentBlocks.TagCloudBlock.Steps";
             public const string ClassPattern = "Inferno.Web.ContentManagement/ContentBlocks.TagCloudBlock.ClassPattern";
@@ -106,6 +125,7 @@ public static class InfernoCmsLocalizableStrings
             public const string RedirectUrl = "Inferno.Web.ContentManagement/ContentBlocks.FormBlock.RedirectUrl";
             public const string SaveResultIfNotRedirectPleaseClick = "Inferno.Web.ContentManagement/ContentBlocks.FormBlock.SaveResultIfNotRedirectPleaseClick";
             public const string SaveResultRedirect = "Inferno.Web.ContentManagement/ContentBlocks.FormBlock.SaveResultRedirect";
+            public const string Submission = "Inferno.Web.ContentManagement/ContentBlocks.FormBlock.Submission";
             public const string ThankYouMessage = "Inferno.Web.ContentManagement/ContentBlocks.FormBlock.ThankYouMessage";
             public const string UseAjax = "Inferno.Web.ContentManagement/ContentBlocks.FormBlock.UseAjax";
         }
@@ -135,6 +155,8 @@ public static class InfernoCmsLocalizableStrings
         {
             public const string BlockType = "Inferno.Web.ContentManagement/ContentBlocks.Model.BlockType";
             public const string CustomTemplatePath = "Inferno.Web.ContentManagement/ContentBlocks.Model.CustomTemplatePath";
+            public const string EntityId = "Inferno.Web.ContentManagement/ContentBlocks.Model.EntityId";
+            public const string EntityType = "Inferno.Web.ContentManagement/ContentBlocks.Model.EntityType";
             public const string IsEnabled = "Inferno.Web.ContentManagement/ContentBlocks.Model.IsEnabled";
             public const string Order = "Inferno.Web.ContentManagement/ContentBlocks.Model.Order";
             public const string Title = "Inferno.Web.ContentManagement/ContentBlocks.Model.Title";
@@ -162,7 +184,9 @@ public static class InfernoCmsLocalizableStrings
             public const string DisableContextMenu = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.DisableContextMenu";
             public const string InvertTime = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.InvertTime";
             public const string Muted = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Muted";
+            public const string Playback = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Playback";
             public const string Poster = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Poster";
+            public const string Protection = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.Protection";
             public const string ProtectionData = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ProtectionData";
             public const string ProtectionHttpRequestHeaders = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ProtectionHttpRequestHeaders";
             public const string ProtectionServerUrl = "Inferno.Web.ContentManagement/ContentBlocks.VideoBlock.ProtectionServerUrl";
@@ -220,8 +244,22 @@ public static class InfernoCmsLocalizableStrings
 
     public static class Menus
     {
+        public const string AddChild = "Inferno.Web.ContentManagement/Menus.AddChild";
+        public const string CollapseAll = "Inferno.Web.ContentManagement/Menus.CollapseAll";
+        public const string DeleteItemWithChildrenWarning = "Inferno.Web.ContentManagement/Menus.DeleteItemWithChildrenWarning";
+        public const string DeleteWarning = "Inferno.Web.ContentManagement/Menus.DeleteWarning";
+        public const string Description = "Inferno.Web.ContentManagement/Menus.Description";
+        public const string EmptyItemsTitle = "Inferno.Web.ContentManagement/Menus.EmptyItemsTitle";
+        public const string EmptyTitle = "Inferno.Web.ContentManagement/Menus.EmptyTitle";
+        public const string ExpandAll = "Inferno.Web.ContentManagement/Menus.ExpandAll";
         public const string IsExternalUrl = "Inferno.Web.ContentManagement/Menus.IsExternalUrl";
+        public const string IsExternalUrlHint = "Inferno.Web.ContentManagement/Menus.IsExternalUrlHint";
         public const string Items = "Inferno.Web.ContentManagement/Menus.Items";
+        public const string ItemsDescription = "Inferno.Web.ContentManagement/Menus.ItemsDescription";
+        public const string NewMenu = "Inferno.Web.ContentManagement/Menus.NewMenu";
+        public const string NoParent = "Inferno.Web.ContentManagement/Menus.NoParent";
+        public const string ParentItem = "Inferno.Web.ContentManagement/Menus.ParentItem";
+        public const string UrlFilterHint = "Inferno.Web.ContentManagement/Menus.UrlFilterHint";
         public const string ManageMenuItems = "Inferno.Web.ContentManagement/Menus.ManageMenuItems";
         public const string ManageMenus = "Inferno.Web.ContentManagement/Menus.ManageMenus";
         public const string MenuItems = "Inferno.Web.ContentManagement/Menus.MenuItems";
@@ -261,10 +299,18 @@ public static class InfernoCmsLocalizableStrings
 
     public static class Newsletters
     {
+        public const string CountFormat = "Inferno.Web.ContentManagement/Newsletters.CountFormat";
+        public const string Description = "Inferno.Web.ContentManagement/Newsletters.Description";
+        public const string EmptyDescription = "Inferno.Web.ContentManagement/Newsletters.EmptyDescription";
+        public const string EmptyTitle = "Inferno.Web.ContentManagement/Newsletters.EmptyTitle";
         public const string ExportToCSV = "Inferno.Web.ContentManagement/Newsletters.ExportToCSV";
         public const string Subscribers = "Inferno.Web.ContentManagement/Newsletters.Subscribers";
         public const string SuccessfullySignedUp = "Inferno.Web.ContentManagement/Newsletters.SuccessfullySignedUp";
         public const string Title = "Inferno.Web.ContentManagement/Newsletters.Title";
+        public const string Unsubscribe = "Inferno.Web.ContentManagement/Newsletters.Unsubscribe";
+        public const string Unsubscribed = "Inferno.Web.ContentManagement/Newsletters.Unsubscribed";
+        public const string UnsubscribeTitleFormat = "Inferno.Web.ContentManagement/Newsletters.UnsubscribeTitleFormat";
+        public const string UnsubscribeWarning = "Inferno.Web.ContentManagement/Newsletters.UnsubscribeWarning";
     }
 
     public static class Messaging
@@ -272,6 +318,36 @@ public static class InfernoCmsLocalizableStrings
         public const string Title = "Inferno.Web.ContentManagement/Messaging.Title";
         public const string MessageTemplates = "Inferno.Web.ContentManagement/Messaging.MessageTemplates";
         public const string QueuedEmails = "Inferno.Web.ContentManagement/Messaging.QueuedEmails";
+        public const string AllEmails = "Inferno.Web.ContentManagement/Messaging.AllEmails";
+        public const string BodyUnavailable = "Inferno.Web.ContentManagement/Messaging.BodyUnavailable";
+        public const string Created = "Inferno.Web.ContentManagement/Messaging.Created";
+        public const string CreateAndDesign = "Inferno.Web.ContentManagement/Messaging.CreateAndDesign";
+        public const string DeleteEmailWarning = "Inferno.Web.ContentManagement/Messaging.DeleteEmailWarning";
+        public const string DeleteWarning = "Inferno.Web.ContentManagement/Messaging.DeleteWarning";
+        public const string DesignAfterCreate = "Inferno.Web.ContentManagement/Messaging.DesignAfterCreate";
+        public const string DesignMessage = "Inferno.Web.ContentManagement/Messaging.DesignMessage";
+        public const string EmptyDescription = "Inferno.Web.ContentManagement/Messaging.EmptyDescription";
+        public const string EmptyTitle = "Inferno.Web.ContentManagement/Messaging.EmptyTitle";
+        public const string Enabled = "Inferno.Web.ContentManagement/Messaging.Enabled";
+        public const string EnabledHint = "Inferno.Web.ContentManagement/Messaging.EnabledHint";
+        public const string From = "Inferno.Web.ContentManagement/Messaging.From";
+        public const string Name = "Inferno.Web.ContentManagement/Messaging.Name";
+        public const string NewTemplate = "Inferno.Web.ContentManagement/Messaging.NewTemplate";
+        public const string QueueDescription = "Inferno.Web.ContentManagement/Messaging.QueueDescription";
+        public const string QueueEmpty = "Inferno.Web.ContentManagement/Messaging.QueueEmpty";
+        public const string QueueEmptyDescription = "Inferno.Web.ContentManagement/Messaging.QueueEmptyDescription";
+        public const string Refresh = "Inferno.Web.ContentManagement/Messaging.Refresh";
+        public const string Retrying = "Inferno.Web.ContentManagement/Messaging.Retrying";
+        public const string Sent = "Inferno.Web.ContentManagement/Messaging.Sent";
+        public const string Status = "Inferno.Web.ContentManagement/Messaging.Status";
+        public const string Subject = "Inferno.Web.ContentManagement/Messaging.Subject";
+        public const string TemplateNotFound = "Inferno.Web.ContentManagement/Messaging.TemplateNotFound";
+        public const string TemplatesDescription = "Inferno.Web.ContentManagement/Messaging.TemplatesDescription";
+        public const string To = "Inferno.Web.ContentManagement/Messaging.To";
+        public const string TokensHint = "Inferno.Web.ContentManagement/Messaging.TokensHint";
+        public const string TriesFormat = "Inferno.Web.ContentManagement/Messaging.TriesFormat";
+        public const string ViewMessage = "Inferno.Web.ContentManagement/Messaging.ViewMessage";
+        public const string Waiting = "Inferno.Web.ContentManagement/Messaging.Waiting";
     }
 
     public static class Pages
@@ -340,6 +416,9 @@ public static class InfernoCmsLocalizableStrings
         public const string ErrorParentInvalid = "Inferno.Web.ContentManagement/Pages.ErrorParentInvalid";
 
         public const string ErrorNotAllowed = "Inferno.Web.ContentManagement/Pages.ErrorNotAllowed";
+        public const string EmptyTitle = "Inferno.Web.ContentManagement/Pages.EmptyTitle";
+        public const string HiddenFromMenus = "Inferno.Web.ContentManagement/Pages.HiddenFromMenus";
+        public const string ViewOnSite = "Inferno.Web.ContentManagement/Pages.ViewOnSite";
         public const string ErrorNotFound = "Inferno.Web.ContentManagement/Pages.ErrorNotFound";
         public const string ErrorNameRequired = "Inferno.Web.ContentManagement/Pages.ErrorNameRequired";
         public const string ErrorTitleRequired = "Inferno.Web.ContentManagement/Pages.ErrorTitleRequired";
@@ -410,10 +489,14 @@ public static class InfernoCmsLocalizableStrings
         }
 
         public const string ConfirmGenerateFile = "Inferno.Web.ContentManagement/Sitemap.ConfirmGenerateFile";
+        public const string Description = "Inferno.Web.ContentManagement/Sitemap.Description";
+        public const string EmptyDescription = "Inferno.Web.ContentManagement/Sitemap.EmptyDescription";
+        public const string EmptyTitle = "Inferno.Web.ContentManagement/Sitemap.EmptyTitle";
         public const string GenerateFile = "Inferno.Web.ContentManagement/Sitemap.GenerateFile";
         public const string GenerateFileError = "Inferno.Web.ContentManagement/Sitemap.GenerateFileError";
         public const string GenerateFileSuccess = "Inferno.Web.ContentManagement/Sitemap.GenerateFileSuccess";
         public const string Title = "Inferno.Web.ContentManagement/Sitemap.Title";
+        public const string ViewFile = "Inferno.Web.ContentManagement/Sitemap.ViewFile";
         public const string XMLSitemap = "Inferno.Web.ContentManagement/Sitemap.XMLSitemap";
     }
 

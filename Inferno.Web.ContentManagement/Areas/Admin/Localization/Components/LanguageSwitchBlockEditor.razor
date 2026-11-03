@@ -1,2 +1,22 @@
-﻿@using Inferno.Web.Components
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Localization
+@inherits ContentBlockEditor<LanguageSwitchBlock>
+@inject Microsoft.Extensions.Localization.IStringLocalizer T
+
+<Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.LanguageSwitchBlock.Style]" For="language-switch-style">
+    <InputSelect id="language-switch-style" class="nf-select nf-select-block" @bind-Value="Model.Style">
+        <option value="@LanguageSwitchBlock.LanguageSwitchStyle.BootstrapNavbarDropdown">Navbar drop-down</option>
+        <option value="@LanguageSwitchBlock.LanguageSwitchStyle.Select">Select box</option>
+        <option value="@LanguageSwitchBlock.LanguageSwitchStyle.List">List</option>
+    </InputSelect>
+</Field>
+
+<Switch @bind-Value="Model.IncludeInvariant" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.LanguageSwitchBlock.IncludeInvariant]" />
+
+@if (Model.IncludeInvariant)
+{
+    <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.LanguageSwitchBlock.InvariantText]" For="language-switch-invariant">
+        <InputText id="language-switch-invariant" class="nf-input" @bind-Value="Model.InvariantText" />
+    </Field>
+}

@@ -1,0 +1,46 @@
+<Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Title]" For="block-title">
+    <InputText id="block-title" class="nf-input" @bind-Value="Block.Title" autofocus />
+    <ErrorText Errors="Errors" Key="Title" />
+</Field>
+
+@if (IsNew)
+{
+    <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.BlockType]" For="block-type">
+        <InputSelect id="block-type" class="nf-select nf-select-block" @bind-Value="Block.BlockType">
+            <option value="">@T[InfernoCmsLocalizableStrings.ContentBlocks.ChooseBlockType]</option>
+            @foreach (var option in BlockTypes)
+            {
+                <option value="@option.TypeName">@option.Name</option>
+            }
+        </InputSelect>
+        <ErrorText Errors="Errors" Key="BlockType" />
+    </Field>
+}
+
+<Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.ZoneId]" For="block-zone">
+    <InputSelect id="block-zone" class="nf-select nf-select-block" @bind-Value="Block.ZoneId">
+        <option value="@Guid.Empty">@T[InfernoCmsLocalizableStrings.ContentBlocks.ChooseZone]</option>
+        @foreach (var zone in Zones)
+        {
+            <option value="@zone.Id">@zone.Name</option>
+        }
+    </InputSelect>
+    <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.ZoneHint]</span>
+    <ErrorText Errors="Errors" Key="ZoneId" />
+</Field>
+
+<div class="nf-form-row">
+    <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.Order]" For="block-order">
+        <InputNumber id="block-order" class="nf-input" @bind-Value="Block.Order" />
+    </Field>
+</div>
+
+<Switch @bind-Value="Block.IsEnabled" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.IsEnabled]" />
+
+@if (!IsNew)
+{
+    <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.Model.CustomTemplatePath]" For="block-template">
+        <InputText id="block-template" class="nf-input inferno-code" @bind-Value="Block.CustomTemplatePath" />
+        <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.CustomTemplateHint]</span>
+    </Field>
+}

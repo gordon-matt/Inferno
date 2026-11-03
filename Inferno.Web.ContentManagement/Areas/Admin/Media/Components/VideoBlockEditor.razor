@@ -1,245 +1,90 @@
-@using Inferno.Models
-@using Inferno.Web.Components
-@using Inferno.Web.ContentManagement.Areas.Admin.Media
+@using System.Globalization
 @using Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
-@using Orientation = Radzen.Orientation
 @inherits ContentBlockEditor<VideoBlock>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="ControlId">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ControlId]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.ControlId" Style="width:100%" />
-            </div>
+<TabSet KeepPanelsMounted="true" AriaLabel="@T[InfernoCmsLocalizableStrings.ContentBlocks.BlockSettings]">
+    <Tab Id="video-source" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Source]">
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Source]" For="video-source-url">
+            <InputText id="video-source-url" class="nf-input" @bind-Value="Model.Source" placeholder="https://" />
+        </Field>
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Poster]" For="video-poster">
+            <InputText id="video-poster" class="nf-input" @bind-Value="Model.Poster" />
+        </Field>
+        <div class="nf-form-row">
+            <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Ratio]" For="video-ratio">
+                <InputText id="video-ratio" class="nf-input" @bind-Value="Model.Ratio" placeholder="16:9" />
+            </Field>
+            <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ControlId]" For="video-control-id">
+                <InputText id="video-control-id" class="nf-input inferno-code" @bind-Value="Model.ControlId" />
+            </Field>
         </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Source">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Source]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.Source" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="AutomaticallyHideControls"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.AutomaticallyHideControls" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutomaticallyHideControls]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="AutoPause"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.AutoPause" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPause]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="AutoPlay"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.AutoPlay" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPlay]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="ClickToPlay"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.ClickToPlay" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ClickToPlay]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Controls"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.Controls" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Controls]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
+    </Tab>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="ControlsList"></label>
-            <div class="col-md-9">
-                <RadzenCheckBoxList @bind-Value="Model.ControlsList" TValue="string" Orientation="Orientation.Vertical" Data="@availableControls" TextProperty="Name" ValueProperty="Id" />
-            </div>
+    <Tab Id="video-playback" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Playback]">
+        <Switch @bind-Value="Model.AutoPlay" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPlay]" />
+        <Switch @bind-Value="Model.Muted" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Muted]" />
+        <Switch @bind-Value="Model.AutoPause" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPause]" />
+        <Switch @bind-Value="Model.ClickToPlay" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ClickToPlay]" />
+        <Switch @bind-Value="Model.ResetOnEnd" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ResetOnEnd]" />
+        <Switch @bind-Value="Model.InvertTime" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.InvertTime]" />
+        <div class="nf-form-row">
+            <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.SeekTime]" For="video-seek">
+                <InputNumber id="video-seek" class="nf-input" min="0" @bind-Value="Model.SeekTime" />
+            </Field>
+            <Field Label="@($"{T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Volume]} ({Model.Volume:P0})")" For="video-volume">
+                <input id="video-volume" type="range" class="nf-range" min="0" max="1" step="0.1"
+                       @bind-value="Model.Volume" @bind-value:event="oninput" @bind-value:culture="CultureInfo.InvariantCulture" />
+            </Field>
         </div>
-    </div>
-</div>
+    </Tab>
 
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="DisableContextMenu"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.DisableContextMenu" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.DisableContextMenu]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="InvertTime"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.InvertTime" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.InvertTime]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Muted"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.Muted" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Muted]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Poster">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Poster]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.Poster" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="ProtectionData">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionData]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.ProtectionData" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="ProtectionHttpRequestHeaders">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionHttpRequestHeaders]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.ProtectionHttpRequestHeaders" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="ProtectionServerUrl">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionServerUrl]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.ProtectionServerUrl" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="ProtectionType">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionType]</label>
-            <div class="col-md-9">
-                <RadzenDropDown Data="videoProtectionTypeValues" @bind-Value="Model.ProtectionType" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Ratio">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Ratio]</label>
-            <div class="col-md-9">
-                <RadzenTextBox @bind-Value="Model.Ratio" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="ResetOnEnd"></label>
-            <div class="col-md-9">
-                <div class="form-check"><label class="form-check-label"><input class="form-check-input me-2" type="checkbox" @bind="Model.ResetOnEnd" />@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ResetOnEnd]</label></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="SeekTime">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.SeekTime]</label>
-            <div class="col-md-9">
-                <RadzenNumeric @bind-Value="Model.SeekTime" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="StreamingLibrary">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.StreamingLibrary]</label>
-            <div class="col-md-9">
-                <RadzenDropDown Data="streamingLibraryValues" @bind-Value="Model.StreamingLibrary" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <div class="row mb-3">
-            <label class="col-form-label col-md-3" for="Volume">@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Volume]</label>
-            <div class="col-md-9">
-                <RadzenSlider @bind-Value="Model.Volume" Min="0" Max="1" Step="0.1" Style="width:100%" />
-            </div>
-        </div>
-    </div>
-</div>
+    <Tab Id="video-controls" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Controls]">
+        <Switch @bind-Value="Model.Controls" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Controls]" />
+        <Switch @bind-Value="Model.AutomaticallyHideControls" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutomaticallyHideControls]" />
+        <Switch @bind-Value="Model.DisableContextMenu" Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.DisableContextMenu]" />
+        @if (Model.Controls)
+        {
+            <fieldset class="nf-check-grid">
+                <legend>@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ControlsList]</legend>
+                @foreach (var control in availableControls)
+                {
+                    <label class="nf-check">
+                        <input type="checkbox" checked="@IsControlSelected(control.Id)" @onchange="args => ToggleControl(control.Id, args)" />
+                        @control.Name
+                    </label>
+                }
+            </fieldset>
+        }
+    </Tab>
 
-@code {
-    private IEnumerable<IdNamePair<string>> availableControls = new List<IdNamePair<string>>
-    {
-        new IdNamePair<string>{ Id = VideoControlsType.PlayLarge, Name = "Play (Large)" },
-        new IdNamePair<string>{ Id = VideoControlsType.Restart, Name = "Restart" },
-        new IdNamePair<string>{ Id = VideoControlsType.Rewind, Name = "Rewind" },
-        new IdNamePair<string>{ Id = VideoControlsType.Play, Name = "Play" },
-        new IdNamePair<string>{ Id = VideoControlsType.FastForward, Name = "Fast Forward" },
-        new IdNamePair<string>{ Id = VideoControlsType.Progress, Name = "Progress" },
-        new IdNamePair<string>{ Id = VideoControlsType.CurrentTime, Name = "Current Time" },
-        new IdNamePair<string>{ Id = VideoControlsType.Duration, Name = "Duration" },
-        new IdNamePair<string>{ Id = VideoControlsType.Mute, Name = "Mute" },
-        new IdNamePair<string>{ Id = VideoControlsType.Volume, Name = "Volume" },
-        new IdNamePair<string>{ Id = VideoControlsType.Captions, Name = "Captions" },
-        new IdNamePair<string>{ Id = VideoControlsType.Settings, Name = "Settings" },
-        new IdNamePair<string>{ Id = VideoControlsType.Pip, Name = "Picture-in-Picture" },
-        new IdNamePair<string>{ Id = VideoControlsType.Airplay, Name = "Airplay (Safari only)" },
-        new IdNamePair<string>{ Id = VideoControlsType.Download, Name = "Download" },
-        new IdNamePair<string>{ Id = VideoControlsType.Fullscreen, Name = "Fullscreen" },
-    };
-
-    private IEnumerable<VideoProtectionType> videoProtectionTypeValues = Extenso.EnumExtensions.GetValues<VideoProtectionType>();
-    private IEnumerable<StreamingLibrary> streamingLibraryValues = Extenso.EnumExtensions.GetValues<StreamingLibrary>();
-}
+    <Tab Id="video-protection" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Protection]">
+        <div class="nf-form-row">
+            <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.StreamingLibrary]" For="video-streaming">
+                <InputSelect id="video-streaming" class="nf-select nf-select-block" @bind-Value="Model.StreamingLibrary">
+                    @foreach (var value in Enum.GetValues<StreamingLibrary>())
+                    {
+                        <option value="@value">@value</option>
+                    }
+                </InputSelect>
+            </Field>
+            <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionType]" For="video-protection-type">
+                <InputSelect id="video-protection-type" class="nf-select nf-select-block" @bind-Value="Model.ProtectionType">
+                    @foreach (var value in Enum.GetValues<VideoProtectionType>())
+                    {
+                        <option value="@value">@value</option>
+                    }
+                </InputSelect>
+            </Field>
+        </div>
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionServerUrl]" For="video-protection-url">
+            <InputText id="video-protection-url" class="nf-input" @bind-Value="Model.ProtectionServerUrl" />
+        </Field>
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionHttpRequestHeaders]" For="video-protection-headers">
+            <InputText id="video-protection-headers" class="nf-input inferno-code" @bind-Value="Model.ProtectionHttpRequestHeaders" />
+        </Field>
+        <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ProtectionData]" For="video-protection-data">
+            <InputTextArea id="video-protection-data" class="nf-textarea nf-textarea-code" @bind-Value="Model.ProtectionData" />
+        </Field>
+    </Tab>
+</TabSet>
