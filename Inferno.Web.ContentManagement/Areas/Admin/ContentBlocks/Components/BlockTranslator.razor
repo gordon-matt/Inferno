@@ -1,0 +1,61 @@
+@inherits AdminPage
+
+<Drawer Open="Block is not null" Scrim="true" Width="min(720px, 100vw)" OnClose="CloseAsync"
+        Title="@(Block is null ? string.Empty : T[InfernoCmsLocalizableStrings.ContentBlocks.TranslationsTitleFormat, Block.Title].Value)">
+    <ChildContent>
+        @if (Block is not null)
+        {
+            @if (languages.Count == 0)
+            {
+                <EmptyState Icon="translate" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.NoLanguages]" />
+            }
+            else
+            {
+                <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.TranslationLanguage]" For="translation-culture">
+                    <select id="translation-culture" class="nf-select nf-select-block" value="@(culture ?? string.Empty)" @onchange="CultureChangedAsync">
+                        <option value="">@T[InfernoCmsLocalizableStrings.ContentBlocks.ChooseLanguage]</option>
+                        @foreach (var language in languages)
+                        {
+                            <option value="@language.CultureCode">@language.Name (@language.CultureCode)@(IsTranslated(language.CultureCode) ? " ✓" : string.Empty)</option>
+                        }
+                    </select>
+                    <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.TranslationHint]</span>
+                </Field>
+
+                @if (translating is not null)
+                {
+                    @if (!exists)
+                    {
+                        <p class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.DefaultContentNote]</p>
+                    }
+
+                    <EditForm id="translation-form" Model="translating" OnValidSubmit="SaveAsync">
+                        @if (EditorType is not null)
+                        {
+                            <DynamicComponent @key="@($"{culture}-{generation}")" @ref="blockEditor" Type="EditorType" Parameters="@(new Dictionary<string, object> { ["Data"] = translating })" />
+                        }
+                        else
+                        {
+                            <EmptyState Icon="sliders" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.NoSettings]" />
+                        }
+                    </EditForm>
+                }
+            }
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="CloseAsync">@T[InfernoWebLocalizableStrings.General.Close]</button>
+        @if (translating is not null && exists)
+        {
+            <button type="button" class="nf-button nf-button-danger" disabled="@saving" @onclick="RemoveAsync">
+                <Icon Name="trash" Size="16" /> @T[InfernoCmsLocalizableStrings.ContentBlocks.RemoveTranslation]
+            </button>
+        }
+        @if (translating is not null && EditorType is not null)
+        {
+            <button type="submit" form="translation-form" class="nf-button nf-button-primary" disabled="@saving">
+                <Icon Name="save" Size="16" /> @T[InfernoWebLocalizableStrings.General.Save]
+            </button>
+        }
+    </Footer>
+</Drawer>

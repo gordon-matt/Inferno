@@ -69,7 +69,15 @@ public sealed class AdminMenuCatalog(INavigationManager navigation) : INetForgeM
             return "circle";
         }
 
-        string key = name.Split(' ', StringSplitOptions.RemoveEmptyEntries)[^1];
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        // Providers may name a NetForge icon directly; legacy Font Awesome class lists are translated below.
+        if (!parts.Any(part => part is "fa" or "fas" or "far" or "fab" or "fal"))
+        {
+            return name.Trim();
+        }
+
+        string key = parts[^1];
 
         if (key.StartsWith("fa-", StringComparison.OrdinalIgnoreCase))
         {

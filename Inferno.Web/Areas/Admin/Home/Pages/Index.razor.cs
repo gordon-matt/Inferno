@@ -6,8 +6,8 @@ public partial class Index
 
     private static readonly DashboardTile[] contentTiles =
     [
-        new("/admin/pages/index", "file-earmark-text", InfernoWebLocalizableStrings.Dashboard.Cards.Pages, InfernoWebLocalizableStrings.Dashboard.Cards.PagesSubtitle),
-        new("/admin/blog/posts", "journal-text", InfernoWebLocalizableStrings.Dashboard.Cards.Blog, InfernoWebLocalizableStrings.Dashboard.Cards.BlogSubtitle),
+        new("/admin/pages/index", "code", InfernoWebLocalizableStrings.Dashboard.Cards.Pages, InfernoWebLocalizableStrings.Dashboard.Cards.PagesSubtitle),
+        new("/admin/blog/posts", "link", InfernoWebLocalizableStrings.Dashboard.Cards.Blog, InfernoWebLocalizableStrings.Dashboard.Cards.BlogSubtitle),
         new("/admin/menus/index", "menu", InfernoWebLocalizableStrings.Dashboard.Cards.Menus, InfernoWebLocalizableStrings.Dashboard.Cards.MenusSubtitle),
         new("/admin/blocks/content-blocks", "grid", InfernoWebLocalizableStrings.Dashboard.Cards.ContentBlocks, InfernoWebLocalizableStrings.Dashboard.Cards.ContentBlocksSubtitle),
         new("/admin/media/index", "image", InfernoWebLocalizableStrings.Dashboard.Cards.Media, InfernoWebLocalizableStrings.Dashboard.Cards.MediaSubtitle)

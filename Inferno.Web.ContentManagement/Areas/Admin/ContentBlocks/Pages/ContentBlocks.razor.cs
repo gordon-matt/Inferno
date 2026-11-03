@@ -1,4 +1,4 @@
-﻿using Ardalis.Result;
+using Ardalis.Result;
 using Heroicsoft.NetForge.Results;
 using Inferno.Web.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components;
@@ -16,6 +16,17 @@ public partial class ContentBlocks
     private string search;
     private Guid? zoneFilter;
     private bool canWrite;
+    private bool canManageZones;
+
+    // The page whose blocks are listed, or null for the site-wide blocks.
+    private Guid? scopePageId;
+    private string scopePageName;
+    private Guid? loadedPageId;
+    private bool initialized;
+
+    private ContentBlock translating;
+    private Type translatingEditorType;
+    private bool zonesOpen;
 
     private ContentBlock editing;
     private bool isNew;
@@ -25,25 +36,92 @@ public partial class ContentBlocks
     private IReadOnlyDictionary<string, string> errors;
     private bool saving;
 
+    /// <summary>Lists only the blocks assigned to this page instead of the site-wide ones.</summary>
+    [SupplyParameterFromQuery(Name = "pageId")]
+    [Parameter]
+    public Guid? PageId { get; set; }
+
     [Inject]
     private IContentBlockAdminService ContentBlockAdminService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         canWrite = await HasPolicyAsync(CmsConstants.Policies.ContentBlocksWrite);
+        canManageZones = await HasPolicyAsync(CmsConstants.Policies.ContentZonesRead);
         blockTypes = ContentBlockAdminService.GetBlockTypes();
+        await LoadZonesAsync();
+    }
 
-        var zoneResult = await ContentBlockAdminService.ListZonesAsync(TenantId);
-        zones = zoneResult.IsSuccess ? zoneResult.Value : [];
+    protected override async Task OnParametersSetAsync()
+    {
+        if (initialized && PageId == loadedPageId)
+        {
+            return;
+        }
+
+        if (initialized)
+        {
+            search = null;
+            zoneFilter = null;
+            Close();
+        }
+
+        initialized = true;
+        loadedPageId = PageId;
+        scopePageId = null;
+        scopePageName = null;
+
+        if (PageId.HasValue)
+        {
+            var page = await ContentBlockAdminService.GetPageNameAsync(TenantId, PageId.Value);
+            if (page.IsSuccess)
+            {
+                scopePageId = PageId;
+                scopePageName = page.Value;
+            }
+            else
+            {
+                Toasts.ShowFailure(page);
+            }
+        }
 
         await LoadAsync();
     }
+
+    private async Task LoadZonesAsync()
+    {
+        var zoneResult = await ContentBlockAdminService.ListZonesAsync(TenantId);
+        zones = zoneResult.IsSuccess ? zoneResult.Value : [];
+    }
+
+    private async Task ZonesChangedAsync()
+    {
+        await LoadZonesAsync();
+        if (zoneFilter.HasValue && zones.All(zone => zone.Id != zoneFilter.Value))
+        {
+            zoneFilter = null;
+        }
+
+        await LoadAsync();
+    }
+
+    private void OpenTranslator(ContentBlock block)
+    {
+        translatingEditorType = blockTypes.FirstOrDefault(option => option.TypeName == block.BlockType)?.EditorType;
+        translating = block;
+    }
+
+    private void CloseTranslator() => translating = null;
+
+    private string Heading => scopePageId is null
+        ? T[InfernoCmsLocalizableStrings.ContentBlocks.Title].Value
+        : T[InfernoCmsLocalizableStrings.ContentBlocks.PageBlocksTitleFormat, scopePageName].Value;
 
     private string ZoneName(Guid zoneId) => zones.FirstOrDefault(zone => zone.Id == zoneId)?.Name ?? "—";
 
     private async Task LoadAsync()
     {
-        var result = await ContentBlockAdminService.ListAsync(TenantId, search, zoneFilter);
+        var result = await ContentBlockAdminService.ListAsync(TenantId, search, zoneFilter, scopePageId);
         if (!result.IsSuccess)
         {
             Toasts.ShowFailure(result);
@@ -71,7 +149,7 @@ public partial class ContentBlocks
         errors = null;
         isNew = true;
         editorType = null;
-        editing = new ContentBlock { IsEnabled = true, ZoneId = zoneFilter ?? Guid.Empty };
+        editing = new ContentBlock { IsEnabled = true, ZoneId = zoneFilter ?? Guid.Empty, PageId = scopePageId };
     }
 
     private void Edit(ContentBlock block, string tab = "details")

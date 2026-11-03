@@ -47,7 +47,7 @@ public class AdminNavigationProvider : INavigationProvider
         // Localization
         builder.Add(T[InfernoWebLocalizableStrings.Localization.Title], "5", item => item
             .Url("/localize/languages")
-            .Icon("fas fa-language")
+            .Icon("translate")
             .Permission(InfernoWebPolicies.LanguagesWrite));
 
         //// Indexing — TODO: not yet ported from MantleCMS
@@ -59,13 +59,13 @@ public class AdminNavigationProvider : INavigationProvider
         // Plugins
         builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "5", item => item
             .Url("/pluginz")
-            .Icon("fas fa-puzzle-piece")
+            .Icon("puzzle")
             .Permission(InfernoWebPolicies.PluginsRead));
 
         // Settings
         builder.Add(T[InfernoWebLocalizableStrings.General.Settings], "5", item => item
             .Url("/admin/configuration/settings/index")
-            .Icon("fas fa-star")
+            .Icon("settings")
             .Permission(InfernoWebPolicies.SettingsRead));
 
         // Tenants
@@ -77,7 +77,7 @@ public class AdminNavigationProvider : INavigationProvider
         // Themes
         builder.Add(T[InfernoWebLocalizableStrings.General.Themes], "5", item => item
             .Url("/admin/configuration/themes/index")
-            .Icon("fas fa-tint")
+            .Icon("palette")
             .Permission(InfernoWebPolicies.ThemesRead));
     }
 
@@ -88,7 +88,7 @@ public class AdminNavigationProvider : INavigationProvider
         // Log
         builder.Add(T[InfernoWebLocalizableStrings.Log.Title], "5", item => item
             .Url("/logvue")
-            .Icon("fas fa-exclamation-triangle")
+            .Icon("logs")
             .Permission(InfernoWebPolicies.LogRead));
 
         // Scheduled Tasks

@@ -1,6 +1,7 @@
 @page "/admin/blocks/entity-type-content-blocks"
 @attribute [Authorize(Policy = CmsConstants.Policies.ContentBlocksRead)]
 @inherits AdminPage
+@using Pickstack
 
 <PageTitle>@T[InfernoCmsLocalizableStrings.ContentBlocks.EntityTypeContentBlocks]</PageTitle>
 
@@ -156,3 +157,5 @@ else
         </button>
     </Footer>
 </Drawer>
+
+<PickstackScripts />

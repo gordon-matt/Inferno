@@ -24,6 +24,7 @@ public partial class Index
     private string search;
     private bool loaded;
     private bool canWrite;
+    private bool canViewBlocks;
 
     private bool creating;
     private bool saving;
@@ -57,6 +58,7 @@ public partial class Index
     protected override async Task OnInitializedAsync()
     {
         canWrite = await HasPolicyAsync(CmsConstants.Policies.PagesWrite);
+        canViewBlocks = await HasPolicyAsync(CmsConstants.Policies.ContentBlocksRead);
         Load();
     }
 

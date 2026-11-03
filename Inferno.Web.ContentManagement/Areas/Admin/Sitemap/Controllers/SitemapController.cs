@@ -1,32 +1,25 @@
-using Inferno.Helpers;
+using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Controllers;
 
-public class SitemapController : Controller
+public class SitemapController(IWorkContext workContext, ISitemapAdminService sitemapAdminService) : Controller
 {
-    private readonly IWorkContext workContext;
-
-    public SitemapController(IWorkContext workContext)
-    {
-        this.workContext = workContext;
-    }
-
     [Route("sitemap.xml")]
-    public IActionResult SitemapXml()
+    public async Task<IActionResult> SitemapXml()
     {
         if (workContext.CurrentTenant == null)
         {
             return NotFound();
         }
 
-        string filePath = CommonHelper.MapPath($"~/sitemap-{workContext.CurrentTenant.Id}.xml");
+        string filePath = sitemapAdminService.GetFilePath(workContext.CurrentTenant.Id);
         if (!System.IO.File.Exists(filePath))
         {
             return NotFound();
         }
 
-        string fileContent = System.IO.File.ReadAllText(filePath);
+        string fileContent = await System.IO.File.ReadAllTextAsync(filePath);
         return Content(fileContent, "text/xml");
     }
 }

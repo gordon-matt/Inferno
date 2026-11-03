@@ -57,5 +57,6 @@ public partial class TemplateDesign
         }
 
         savedAt = $"{T[InfernoCmsLocalizableStrings.Pages.Saved].Value} {DateTime.Now:HH:mm:ss}";
+        Toasts.Success(T[InfernoCmsLocalizableStrings.Pages.Saved]);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Extenso;
+using Extenso;
 using Extenso.Data.Entity;
 using Inferno.Caching;
 using Inferno.Data.Services;
@@ -11,6 +11,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 public interface IEntityTypeContentBlockService : IGenericDataService<EntityTypeContentBlock>
 {
     IEnumerable<IContentBlock> GetContentBlocks(string entityType, string entityId, string zoneName, string cultureCode, bool includeDisabled = false);
+
+    /// <summary>Drops the cached block lists, for changes that do not go through this service.</summary>
+    void ResetCache();
 }
 
 public class EntityTypeContentBlockService : GenericDataService<EntityTypeContentBlock>, IEntityTypeContentBlockService
@@ -96,6 +99,8 @@ public class EntityTypeContentBlockService : GenericDataService<EntityTypeConten
 
     #endregion IEntityTypeContentBlockService Members
 
+    public void ResetCache() => ClearCache();
+
     protected override void ClearCache()
     {
         base.ClearCache();
@@ -115,19 +120,14 @@ public class EntityTypeContentBlockService : GenericDataService<EntityTypeConten
             IContentBlock contentBlock;
             try
             {
-                if (!string.IsNullOrEmpty(cultureCode))
-                {
-                    string entityId = record.Id.ToString();
-
-                    var localizedRecord = localizedRecords.FirstOrDefault(x => x.EntityId == entityId);
-                    if (localizedRecord != null)
-                    {
-                        record.BlockValues = localizedRecord.Value;
-                    }
-                }
+                // The record may be shared, so the translation is read without being written back onto it.
+                string entityId = record.Id.ToString();
+                string blockValues = localizedRecords.FirstOrDefault(x => x.EntityId == entityId)?.Value
+                    ?? record.BlockValues
+                    ?? "{}";
 
                 var blockType = Type.GetType(record.BlockType);
-                contentBlock = (IContentBlock)record.BlockValues.JsonDeserialize(blockType);
+                contentBlock = (IContentBlock)blockValues.JsonDeserialize(blockType);
             }
             catch (Exception x)
             {

@@ -62,6 +62,28 @@ public static class InfernoCmsLocalizableStrings
         public const string Title = "Inferno.Web.ContentManagement/ContentBlocks.Title";
         public const string EntityTypeContentBlocks = "Inferno.Web.ContentManagement/ContentBlocks.EntityTypeContentBlocks";
         public const string Zones = "Inferno.Web.ContentManagement/ContentBlocks.Zones";
+        public const string ZoneInUseFormat = "Inferno.Web.ContentManagement/ContentBlocks.ZoneInUseFormat";
+        public const string BackToPages = "Inferno.Web.ContentManagement/ContentBlocks.BackToPages";
+        public const string ChooseLanguage = "Inferno.Web.ContentManagement/ContentBlocks.ChooseLanguage";
+        public const string DefaultContentNote = "Inferno.Web.ContentManagement/ContentBlocks.DefaultContentNote";
+        public const string NewZone = "Inferno.Web.ContentManagement/ContentBlocks.NewZone";
+        public const string NoLanguages = "Inferno.Web.ContentManagement/ContentBlocks.NoLanguages";
+        public const string NoZones = "Inferno.Web.ContentManagement/ContentBlocks.NoZones";
+        public const string PageBlocks = "Inferno.Web.ContentManagement/ContentBlocks.PageBlocks";
+        public const string PageBlocksDescription = "Inferno.Web.ContentManagement/ContentBlocks.PageBlocksDescription";
+        public const string PageBlocksTitleFormat = "Inferno.Web.ContentManagement/ContentBlocks.PageBlocksTitleFormat";
+        public const string RemoveTranslation = "Inferno.Web.ContentManagement/ContentBlocks.RemoveTranslation";
+        public const string TranslateBlock = "Inferno.Web.ContentManagement/ContentBlocks.TranslateBlock";
+        public const string TranslationHint = "Inferno.Web.ContentManagement/ContentBlocks.TranslationHint";
+        public const string TranslationLanguage = "Inferno.Web.ContentManagement/ContentBlocks.TranslationLanguage";
+        public const string TranslationRemoved = "Inferno.Web.ContentManagement/ContentBlocks.TranslationRemoved";
+        public const string TranslationSaved = "Inferno.Web.ContentManagement/ContentBlocks.TranslationSaved";
+        public const string TranslationsTitleFormat = "Inferno.Web.ContentManagement/ContentBlocks.TranslationsTitleFormat";
+        public const string TranslatedInto = "Inferno.Web.ContentManagement/ContentBlocks.TranslatedInto";
+        public const string ZoneBlockCount = "Inferno.Web.ContentManagement/ContentBlocks.ZoneBlockCount";
+        public const string ZoneName = "Inferno.Web.ContentManagement/ContentBlocks.ZoneName";
+        public const string ZonesDescription = "Inferno.Web.ContentManagement/ContentBlocks.ZonesDescription";
+        public const string ZoneRenameHint = "Inferno.Web.ContentManagement/ContentBlocks.ZoneRenameHint";
 
         #region Blog
 
@@ -464,6 +486,7 @@ public static class InfernoCmsLocalizableStrings
         public static class Pages
         {
             public const string NumberOfPageVersionsToKeep = "Inferno.Web.ContentManagement/Settings.Pages.NumberOfPageVersionsToKeep";
+            public const string NumberOfPageVersionsToKeepHint = "Inferno.Web.ContentManagement/Settings.Pages.NumberOfPageVersionsToKeepHint";
         }
     }
 

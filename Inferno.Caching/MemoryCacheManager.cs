@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,12 +11,12 @@ namespace Inferno.Caching;
 public class MemoryCacheManager : ICacheManager, IDisposable
 {
     private readonly IMemoryCache cache;
-    private readonly HashSet<string> keys;
+    private readonly ConcurrentDictionary<string, byte> keys;
     private bool isDisposed;
 
     public MemoryCacheManager(IServiceProvider serviceProvider)
     {
-        keys = [];
+        keys = new ConcurrentDictionary<string, byte>();
         cache = serviceProvider.GetService<IMemoryCache>();
     }
 
@@ -40,15 +41,19 @@ public class MemoryCacheManager : ICacheManager, IDisposable
             return;
         }
 
+        // A replaced entry keeps its key; only genuine removals and expiries stop tracking it.
         var cacheEntryOptions = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(cacheTimeInMinutes));
+            .SetSlidingExpiration(TimeSpan.FromMinutes(cacheTimeInMinutes))
+            .RegisterPostEvictionCallback((evictedKey, _, reason, _) =>
+            {
+                if (reason != EvictionReason.Replaced && evictedKey is string stringKey)
+                {
+                    keys.TryRemove(stringKey, out _);
+                }
+            });
 
         cache.Set(key, data, cacheEntryOptions);
-
-        if (!IsSet(key))
-        {
-            keys.Add(key);
-        }
+        keys.TryAdd(key, 0);
     }
 
     /// <summary>
@@ -66,10 +71,7 @@ public class MemoryCacheManager : ICacheManager, IDisposable
 
         if (!isSet)
         {
-            if (keys.Contains(key))
-            {
-                keys.Remove(key);
-            }
+            keys.TryRemove(key, out _);
         }
 
         return isSet;
@@ -82,11 +84,7 @@ public class MemoryCacheManager : ICacheManager, IDisposable
     public virtual void Remove(string key)
     {
         cache.Remove(key);
-
-        if (IsSet(key))
-        {
-            keys.Remove(key);
-        }
+        keys.TryRemove(key, out _);
     }
 
     /// <summary>
@@ -98,7 +96,7 @@ public class MemoryCacheManager : ICacheManager, IDisposable
         var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
         var keysToRemove = new List<string>();
 
-        foreach (string key in keys)
+        foreach (string key in keys.Keys)
         {
             if (regex.IsMatch(key))
             {
@@ -117,7 +115,7 @@ public class MemoryCacheManager : ICacheManager, IDisposable
     /// </summary>
     public virtual void Clear()
     {
-        foreach (string key in keys.ToArray())
+        foreach (string key in keys.Keys)
         {
             cache.Remove(key);
         }

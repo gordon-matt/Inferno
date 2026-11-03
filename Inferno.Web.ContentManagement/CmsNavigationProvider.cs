@@ -53,7 +53,7 @@ public class CmsNavigationProvider : INavigationProvider
         // Content Blocks
         builder.Add(T[InfernoCmsLocalizableStrings.ContentBlocks.Title].Value, "5", item => item
             .Url("/admin/blocks/content-blocks")
-            .Icon("fas fa-square")
+            .Icon("grid")
             .Permission(CmsConstants.Policies.ContentBlocksRead));
 
         builder.Add(T[InfernoCmsLocalizableStrings.ContentBlocks.EntityTypeContentBlocks].Value, "5", item => item
@@ -64,13 +64,13 @@ public class CmsNavigationProvider : INavigationProvider
         // Media
         builder.Add(T[InfernoCmsLocalizableStrings.Media.Title].Value, "5", item => item
             .Url("/admin/media/index")
-            .Icon("fas fa-image")
+            .Icon("image")
             .Permission(CmsConstants.Policies.MediaRead));
 
         // Menus
         builder.Add(T[InfernoCmsLocalizableStrings.Menus.Title].Value, "5", item => item
             .Url("/admin/menus/index")
-            .Icon("fas fa-arrow-right")
+            .Icon("menu")
             .Permission(CmsConstants.Policies.MenusRead));
 
         // Pages

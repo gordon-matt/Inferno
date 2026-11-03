@@ -1,8 +1,9 @@
+@using Pickstack
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 @inherits ContentBlockEditor<HtmlBlock>
 
 <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.BodyContent]" For="html-body">
-    <InputTextArea id="html-body" class="nf-textarea nf-textarea-code" rows="14" @bind-Value="Model.BodyContent" />
+    <PickstackEditor Value="@Model.BodyContent" ValueChanged="@(value => Model.BodyContent = value)" Height="420" FileRoot="@WorkContext.TenantRoot" />
     <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.HtmlBlock.HelpText.BodyContent]</span>
 </Field>
 

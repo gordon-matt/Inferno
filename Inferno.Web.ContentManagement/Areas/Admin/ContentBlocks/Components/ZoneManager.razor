@@ -1,0 +1,80 @@
+@inherits AdminPage
+
+<Drawer Open="Open" Scrim="true" Width="min(560px, 100vw)" OnClose="CloseAsync" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.ManageZones]">
+    <ChildContent>
+        @if (Open)
+        {
+            <p class="nf-muted">@T[InfernoCmsLocalizableStrings.ContentBlocks.ZonesDescription]</p>
+
+            @if (canWrite)
+            {
+                <EditForm id="zone-form" Model="form" OnValidSubmit="SaveAsync">
+                    <Field Label="@T[InfernoCmsLocalizableStrings.ContentBlocks.ZoneName]" For="zone-name">
+                        <div class="nf-toolbar">
+                            <InputText id="zone-name" class="nf-input" @bind-Value="form.Name" maxlength="255" />
+                            <button type="submit" class="nf-button nf-button-primary" disabled="@saving">
+                                <Icon Name="@(form.Id == Guid.Empty ? "plus" : "save")" Size="16" />
+                                @(form.Id == Guid.Empty ? T[InfernoCmsLocalizableStrings.ContentBlocks.NewZone] : T[InfernoWebLocalizableStrings.General.Save])
+                            </button>
+                            @if (form.Id != Guid.Empty)
+                            {
+                                <button type="button" class="nf-button" @onclick="CancelEdit">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+                            }
+                        </div>
+                        <ErrorText Errors="errors" Key="Name" />
+                        @if (form.Id != Guid.Empty)
+                        {
+                            <span class="nf-hint">@T[InfernoCmsLocalizableStrings.ContentBlocks.ZoneRenameHint]</span>
+                        }
+                    </Field>
+                </EditForm>
+            }
+
+            @if (zones is null)
+            {
+                <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+            }
+            else if (zones.Count == 0)
+            {
+                <EmptyState Icon="grid" Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.NoZones]" />
+            }
+            else
+            {
+                <Table>
+                    <thead>
+                        <tr>
+                            <th>@T[InfernoCmsLocalizableStrings.ContentBlocks.ZoneName]</th>
+                            <th class="nf-cell-number">@T[InfernoCmsLocalizableStrings.ContentBlocks.ZoneBlockCount]</th>
+                            <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var zone in zones)
+                        {
+                            <tr @key="zone.Id">
+                                <td><span class="nf-row-title">@zone.Name</span></td>
+                                <td class="nf-cell-number">@zone.BlockCount</td>
+                                <td class="nf-cell-actions">
+                                    @if (canWrite)
+                                    {
+                                        <div class="nf-row-actions">
+                                            <button type="button" class="nf-icon-button" title="@T[InfernoWebLocalizableStrings.General.Edit]" @onclick="() => BeginEdit(zone)">
+                                                <Icon Name="edit" Size="16" />
+                                            </button>
+                                            <button type="button" class="nf-icon-button nf-danger-hover" title="@T[InfernoWebLocalizableStrings.General.Delete]" @onclick="() => DeleteAsync(zone)">
+                                                <Icon Name="trash" Size="16" />
+                                            </button>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </Table>
+            }
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="CloseAsync">@T[InfernoWebLocalizableStrings.General.Close]</button>
+    </Footer>
+</Drawer>

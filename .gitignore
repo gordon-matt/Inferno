@@ -289,3 +289,4 @@ InfernoCMS/keys
 !Inferno.Web/Areas/Admin/Log/Views/Log/
 
 InfernoSettings.xml
+InfernoCMS/sitemap-*.xml

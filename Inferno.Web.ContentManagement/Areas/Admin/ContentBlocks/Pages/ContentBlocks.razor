@@ -1,12 +1,28 @@
 @page "/admin/blocks/content-blocks"
 @attribute [Authorize(Policy = CmsConstants.Policies.ContentBlocksRead)]
 @inherits AdminPage
+@using Pickstack
 
-<PageTitle>@T[InfernoCmsLocalizableStrings.ContentBlocks.Title]</PageTitle>
+<PageTitle>@Heading</PageTitle>
 
-<PageHeader Title="@T[InfernoCmsLocalizableStrings.ContentBlocks.Title]" Icon="grid" Description="@T[InfernoCmsLocalizableStrings.ContentBlocks.Description]">
+<PageHeader Title="@Heading" Icon="grid" Description="@(scopePageId is null ? T[InfernoCmsLocalizableStrings.ContentBlocks.Description] : T[InfernoCmsLocalizableStrings.ContentBlocks.PageBlocksDescription])">
     <Actions>
-        <a class="nf-button" href="/admin/blocks/entity-type-content-blocks">@T[InfernoCmsLocalizableStrings.ContentBlocks.EntityTypeContentBlocks]</a>
+        @if (scopePageId is not null)
+        {
+            <a class="nf-button" href="/admin/pages/index">
+                <Icon Name="chevron-left" Size="16" /> @T[InfernoCmsLocalizableStrings.ContentBlocks.BackToPages]
+            </a>
+        }
+        else
+        {
+            <a class="nf-button" href="/admin/blocks/entity-type-content-blocks">@T[InfernoCmsLocalizableStrings.ContentBlocks.EntityTypeContentBlocks]</a>
+        }
+        @if (canManageZones)
+        {
+            <button type="button" class="nf-button" @onclick="() => zonesOpen = true">
+                <Icon Name="grid" Size="16" /> @T[InfernoCmsLocalizableStrings.ContentBlocks.ManageZones]
+            </button>
+        }
         @if (canWrite)
         {
             <button type="button" class="nf-button nf-button-primary" @onclick="Create">
@@ -96,6 +112,9 @@ else
                                 <button type="button" class="nf-icon-button" title="@T[InfernoWebLocalizableStrings.General.Edit]" @onclick="() => Edit(block)">
                                     <Icon Name="edit" Size="16" />
                                 </button>
+                                <button type="button" class="nf-icon-button" title="@T[InfernoCmsLocalizableStrings.ContentBlocks.TranslateBlock]" @onclick="() => OpenTranslator(block)">
+                                    <Icon Name="translate" Size="16" />
+                                </button>
                                 <button type="button" class="nf-icon-button nf-danger-hover" title="@T[InfernoWebLocalizableStrings.General.Delete]" @onclick="() => DeleteAsync(block)">
                                     <Icon Name="trash" Size="16" />
                                 </button>
@@ -147,3 +166,7 @@ else
         </button>
     </Footer>
 </Drawer>
+
+<BlockTranslator Block="translating" EditorType="translatingEditorType" OnClose="CloseTranslator" />
+<ZoneManager Open="zonesOpen" OnClose="() => zonesOpen = false" OnChanged="ZonesChangedAsync" />
+<PickstackScripts />

@@ -1,3 +1,8 @@
 ﻿@using Inferno.Web.Components
 @using Inferno.Web.ContentManagement.Areas.Admin.Pages
 @inherits SettingsEditor<PageSettings>
+
+<Field Label="@T[InfernoCmsLocalizableStrings.Settings.Pages.NumberOfPageVersionsToKeep]" For="page-versions-to-keep">
+    <input id="page-versions-to-keep" class="nf-input" type="number" min="1" max="100" @bind="Model.NumberOfPageVersionsToKeep" />
+</Field>
+<p class="nf-hint">@T[InfernoCmsLocalizableStrings.Settings.Pages.NumberOfPageVersionsToKeepHint]</p>

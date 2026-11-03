@@ -5,7 +5,7 @@
 
 <PageTitle>@T[InfernoCmsLocalizableStrings.Pages.Title]</PageTitle>
 
-<PageHeader Title="@T[InfernoCmsLocalizableStrings.Pages.Title]" Icon="file-earmark-text" Description="@T[InfernoCmsLocalizableStrings.Pages.PagesIntro]">
+<PageHeader Title="@T[InfernoCmsLocalizableStrings.Pages.Title]" Icon="code" Description="@T[InfernoCmsLocalizableStrings.Pages.PagesIntro]">
     <Actions>
         @if (pages.Count > 0)
         {
@@ -31,7 +31,7 @@
 }
 else if (pages.Count == 0)
 {
-    <EmptyState Icon="file-earmark-text" Title="@T[InfernoCmsLocalizableStrings.Pages.EmptyTitle]" Description="@T[InfernoCmsLocalizableStrings.Pages.NewPageIntro]">
+    <EmptyState Icon="code" Title="@T[InfernoCmsLocalizableStrings.Pages.EmptyTitle]" Description="@T[InfernoCmsLocalizableStrings.Pages.NewPageIntro]">
         @if (canWrite)
         {
             <button type="button" class="nf-button nf-button-primary" @onclick="() => BeginCreate(null)">
@@ -100,6 +100,10 @@ else
                             @if (version is not null)
                             {
                                 <ActionMenuItem Icon="eye" Text="@T[InfernoCmsLocalizableStrings.Pages.Preview]" Href="@($"/admin/pages/preview/{version.Id}")" Target="_blank" />
+                            }
+                            @if (canViewBlocks)
+                            {
+                                <ActionMenuItem Icon="grid" Text="@T[InfernoCmsLocalizableStrings.ContentBlocks.PageBlocks]" Href="@($"/admin/blocks/content-blocks?pageId={item.Id}")" />
                             }
                             @if (canWrite)
                             {

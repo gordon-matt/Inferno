@@ -3,13 +3,13 @@ using System.Xml.Serialization;
 using Ardalis.Result;
 using Extenso;
 using Extenso.Data.Entity;
-using Inferno.Helpers;
 using Inferno.Tenants;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Models;
 using Localize.Languages;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services;
@@ -26,6 +26,9 @@ public interface ISitemapAdminService
 
     /// <summary>Writes the tenant's sitemap.xml, using <paramref name="requestBaseUrl"/> when the tenant has no public URL of its own.</summary>
     Task<Result> GenerateAsync(int tenantId, string requestBaseUrl);
+
+    /// <summary>Where the tenant's generated sitemap is stored. Always absolute, because the file writer cannot create a file in the current directory from a bare file name.</summary>
+    string GetFilePath(int tenantId);
 }
 
 public class SitemapAdminService(
@@ -33,6 +36,7 @@ public class SitemapAdminService(
     IPageVersionService pageVersionService,
     ILanguageService languageService,
     IWorkContext workContext,
+    IHostEnvironment hostEnvironment,
     ILogger<SitemapAdminService> logger) : ISitemapAdminService
 {
     private const float DEFAULT_PRIORITY = .5f;
@@ -134,11 +138,17 @@ public class SitemapAdminService(
             var xmlns = new XmlSerializerNamespaces();
             xmlns.Add("xhtml", "http://www.w3.org/1999/xhtml");
 
-            file.XmlSerialize(
-                CommonHelper.MapPath($"~/sitemap-{tenantId}.xml"),
+            bool written = file.XmlSerialize(
+                GetFilePath(tenantId),
                 omitXmlDeclaration: false,
                 xmlns: xmlns,
                 encoding: Encoding.UTF8);
+
+            if (!written)
+            {
+                logger.LogError("Could not write the sitemap file {Path} for tenant {TenantId}", GetFilePath(tenantId), tenantId);
+                return Result.Error("The sitemap file could not be written.");
+            }
 
             return Result.Success();
         }
@@ -148,6 +158,8 @@ public class SitemapAdminService(
             return Result.Error("The sitemap file could not be generated.");
         }
     }
+
+    public string GetFilePath(int tenantId) => Path.Combine(hostEnvironment.ContentRootPath, $"sitemap-{tenantId}.xml");
 
     private async Task<IReadOnlyList<SitemapConfig>> SyncAsync(int tenantId, IReadOnlyList<PageVersion> pageVersions)
     {

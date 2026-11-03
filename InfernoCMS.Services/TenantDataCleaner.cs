@@ -10,6 +10,7 @@ using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Entities;
+using Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services;
 using Inferno.Web.Messaging.Entities;
 using Inferno.Web.Tenants;
 using InfernoCMS.Data;
@@ -118,7 +119,7 @@ public class TenantDataCleaner : ITenantDataCleaner
             CommonHelper.DeleteDirectory(mediaPath);
         }
 
-        string sitemapPath = CommonHelper.MapPath($"~/sitemap-{tenantId}.xml");
+        string sitemapPath = services.GetRequiredService<ISitemapAdminService>().GetFilePath(tenantId);
         if (File.Exists(sitemapPath))
         {
             File.Delete(sitemapPath);

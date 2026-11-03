@@ -1,4 +1,5 @@
-﻿using Extenso;
+using System.Linq.Expressions;
+using Extenso;
 using Extenso.Data.Entity;
 using Inferno.Caching;
 using Inferno.Data.Services;
@@ -13,6 +14,9 @@ public interface IContentBlockService : IGenericDataService<ContentBlock>
     IEnumerable<IContentBlock> GetContentBlocks(Guid pageId, string cultureCode);
 
     IEnumerable<IContentBlock> GetContentBlocks(string zoneName, string cultureCode, Guid? pageId = null, bool includeDisabled = false);
+
+    /// <summary>Drops the cached block lists, for changes that do not go through this service, such as a translation.</summary>
+    void ResetCache();
 }
 
 public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlockService
@@ -36,7 +40,17 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
 
     #region GenericDataService<ContentBlock> Overrides
 
-    //TODO: Override other Delete() methods with similar logic to this one
+    public override int Delete(Expression<Func<ContentBlock, bool>> filterExpression)
+    {
+        string entityType = typeof(ContentBlock).FullName;
+        var ids = Find(new SearchOptions<ContentBlock> { Query = filterExpression }).Select(block => block.Id.ToString()).ToList();
+
+        int rowsAffected = ids.Sum(id => localization.DeleteFor(entityType, id));
+        rowsAffected += base.Delete(filterExpression);
+
+        return rowsAffected;
+    }
+
     public override int Delete(ContentBlock entity)
     {
         string entityType = typeof(ContentBlock).FullName;
@@ -47,6 +61,8 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
 
         return rowsAffected;
     }
+
+    public void ResetCache() => ClearCache();
 
     protected override void ClearCache()
     {
@@ -173,23 +189,14 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
             IContentBlock contentBlock;
             try
             {
-                if (!string.IsNullOrEmpty(cultureCode))
-                {
-                    string entityId = record.Id.ToString();
-
-                    var localizedRecord = localizedRecords.FirstOrDefault(x => x.EntityId == entityId);
-                    if (localizedRecord != null)
-                    {
-                        record.BlockValues = localizedRecord.Value;
-                    }
-                }
+                // The record may be shared, so the translation is read without being written back onto it.
+                string entityId = record.Id.ToString();
+                string blockValues = localizedRecords.FirstOrDefault(x => x.EntityId == entityId)?.Value
+                    ?? record.BlockValues
+                    ?? "{}";
 
                 var blockType = Type.GetType(record.BlockType);
-
-                // Prevent error when trying to deserialize NULL value
-                record.BlockValues ??= "{}";
-
-                contentBlock = (IContentBlock)record.BlockValues.JsonDeserialize(blockType);
+                contentBlock = (IContentBlock)blockValues.JsonDeserialize(blockType);
             }
             catch (Exception x)
             {

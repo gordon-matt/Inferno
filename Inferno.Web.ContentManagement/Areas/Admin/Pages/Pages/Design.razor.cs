@@ -186,6 +186,7 @@ public partial class Design
         }
 
         savedAt = $"{T[InfernoCmsLocalizableStrings.Pages.Saved].Value} {DateTime.Now:HH:mm:ss}";
+        Toasts.Success(T[InfernoCmsLocalizableStrings.Pages.Saved]);
         await RefreshHistoryAsync();
     }
 
