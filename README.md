@@ -1,6 +1,6 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=gordon_matt%40live%2ecom&lc=AU&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
-![Inferno CMS](https://github.com/gordon-matt/Inferno/raw/master/InfernoCMS/wwwroot/img/Logo_Dark.png)
+<img src="https://github.com/gordon-matt/Inferno/raw/master/InfernoCMS/wwwroot/img/Logo_Dark.png" alt="Logo" width="350" />
 
 Inferno is a content management system and application framework for ASP.NET Core, built on .NET 10
 and Blazor. Use it as a ready-made CMS, or as the base for a site that needs pages, menus, users and
@@ -21,6 +21,47 @@ an admin area without building them from scratch.
 - **Themes and settings.** Switch the site's theme, and edit each module's settings in one place.
   The admin area has light and dark modes.
 - **Maintenance.** A log viewer and scheduled tasks.
+
+## Tech
+
+<p align="left">
+    <a href="https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Blazor.jpg" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/PageKrafter" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/PageKrafter/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/BlogKrafter" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/BlogKrafter/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/IdentityNexus" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/IdentityNexus/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/Pluginz" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/Pluginz/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/LogVue" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/LogVue/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/WebFilez" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/WebFilez/blob/master/_Misc/Logo-Light.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/Dependo" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/Dependo/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/Extenso" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/Extenso/raw/master/_Misc/ExtensoLogo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/Pickstack" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/Pickstack/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/Flatmate" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/Flatmate/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>&nbsp;
+    <a href="https://github.com/gordon-matt/Heroicsoft.NetForge" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/Heroicsoft.NetForge/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+    </a>
+</p>
 
 ## Modular by design
 
