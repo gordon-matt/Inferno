@@ -3,6 +3,7 @@ using BlogKrafter.Data.Sql;
 using BlogKrafter.Tenancy;
 using Dependo;
 using Dependo.Autofac;
+using Hangfire;
 using Heroicsoft.NetForge.Abstractions.Auth;
 using Heroicsoft.NetForge.Abstractions.Navigation;
 using Heroicsoft.NetForge.Components;
@@ -19,6 +20,9 @@ using Inferno.Web.Infrastructure;
 using Inferno.Web.Localization;
 using Inferno.Web.Plugins;
 using Inferno.Web.Security;
+using Inferno.Tasks.Infrastructure;
+using Inferno.Tasks.Scheduling;
+using Inferno.Web.Scheduling;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
@@ -190,6 +194,11 @@ services.AddHttpContextAccessor();
 services.AddHttpClient();
 
 services.ConfigureInferno(configuration, inferno => inferno.PublicLayout = typeof(InfernoCMS.Shared.MainLayout));
+
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    services.AddInfernoHangfire(connectionString);
+}
 services.ConfigureNetForgeToastSounds(sounds => sounds.EnableSounds = true);
 
 services.AddPageKrafter();
@@ -310,6 +319,19 @@ app.UseInferno();
 if (databaseInstalled)
 {
     app.MapBlogKrafter();
+}
+
+if (databaseInstalled)
+{
+    app.Use(HangfireDashboardAuthorizationFilter.RedirectUnlessAllowed);
+    app.MapHangfireDashboard(ScheduledJobs.DashboardPath, new DashboardOptions
+    {
+        Authorization = [new HangfireDashboardAuthorizationFilter()],
+        AppPath = "/admin",
+        DashboardTitle = "Scheduled tasks",
+    });
+    app.MapGet("/admin/scheduled-tasks", () => Results.Redirect(ScheduledJobs.DashboardPath));
+    app.MapGet("/admin/scheduled-tasks/index", () => Results.Redirect(ScheduledJobs.DashboardPath));
 }
 
 app.MapIdentityNexus().RequireAuthorization(InfernoWebPolicies.MembershipManage);

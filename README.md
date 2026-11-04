@@ -20,7 +20,8 @@ an admin area without building them from scratch.
   an XML sitemap.
 - **Themes and settings.** Switch the site's theme, and edit each module's settings in one place.
   The admin area has light and dark modes.
-- **Maintenance.** A log viewer and scheduled tasks.
+- **Maintenance.** A log viewer, and [Hangfire](https://www.hangfire.io/) for background jobs. The host
+  administrator sets how often they run under Settings. The job dashboard covers every tenant.
 
 ## Tech
 

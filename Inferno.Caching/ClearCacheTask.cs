@@ -4,7 +4,7 @@ using Inferno.Tasks;
 namespace Inferno.Caching;
 
 /// <summary>
-/// Clear cache schedueled task implementation
+/// Clears the application cache. The cache is process-wide, so this is a host job rather than a per-tenant one.
 /// </summary>
 public class ClearCacheTask : ITask
 {

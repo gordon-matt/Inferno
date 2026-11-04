@@ -8,6 +8,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.Messaging;
 
+/// <summary>
+/// Sends queued mail for every tenant. One host job walks the tenants, because a tenant administrator
+/// must not be able to start, stop or see another tenant's mail run.
+/// </summary>
 public class ProcessQueuedMailTask : ITask
 {
     public string Name => "Process Queued Mail Task";

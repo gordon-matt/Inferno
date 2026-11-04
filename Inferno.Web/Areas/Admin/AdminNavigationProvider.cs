@@ -1,5 +1,6 @@
 ﻿using Dependo;
 using Inferno.Security;
+using Inferno.Tasks.Scheduling;
 using Inferno.Web.Navigation;
 using Inferno.Web.Security;
 using Microsoft.Extensions.Localization;
@@ -91,11 +92,12 @@ public class AdminNavigationProvider : INavigationProvider
             .Icon("logs")
             .Permission(InfernoWebPolicies.LogRead));
 
-        // Scheduled Tasks
+        // Hangfire's own UI, so it opens beside the admin shell. Only the host administrator may use it.
         builder.Add(T[InfernoWebLocalizableStrings.ScheduledTasks.Title], "5", item => item
-            .Url("/admin/scheduled-tasks/index")
-            .Icon("fas fa-clock")
-            .Permission(InfernoWebPolicies.ScheduledTasksRead));
+            .Url(ScheduledJobs.DashboardPath)
+            .Icon("clock")
+            .IsExternal()
+            .Permission(StandardPolicies.FullAccess));
     }
 
     //private void BuildPluginsMenu(NavigationItemBuilder builder)

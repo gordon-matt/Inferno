@@ -28,8 +28,6 @@ public sealed class InfernoWebPermissionProvider : IPermissionProvider
 
         new(InfernoWebPolicies.LogRead, Maintenance, "View the log"),
         new(InfernoWebPolicies.LogWrite, Maintenance, "Clear the log") { Implies = [InfernoWebPolicies.LogRead] },
-        new(InfernoWebPolicies.ScheduledTasksRead, Maintenance, "View scheduled tasks"),
-        new(InfernoWebPolicies.ScheduledTasksWrite, Maintenance, "Manage scheduled tasks") { Implies = [InfernoWebPolicies.ScheduledTasksRead] },
 
         new(InfernoWebPolicies.MembershipManage, Membership, "Manage users and roles")
         {

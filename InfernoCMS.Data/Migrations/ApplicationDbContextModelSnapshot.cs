@@ -84,49 +84,6 @@ namespace InfernoCMS.Data.Migrations
                     b.ToTable("Log", "inferno");
                 });
 
-            modelBuilder.Entity("Inferno.Tasks.Entities.ScheduledTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastEndUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastStartUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastSuccessUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("Seconds")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("StopOnError")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ScheduledTasks", "inferno");
-                });
-
             modelBuilder.Entity("Inferno.Tenants.Entities.Tenant", b =>
                 {
                     b.Property<int>("Id")

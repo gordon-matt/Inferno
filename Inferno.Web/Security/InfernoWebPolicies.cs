@@ -20,10 +20,6 @@ public static class InfernoWebPolicies
     public const string PluginsRead = "Inferno.Plugins.Read";
     public const string PluginsManage = "Inferno.Plugins.Manage";
 
-    // Scheduled Tasks
-    public const string ScheduledTasksRead = "Inferno.ScheduledTasks.Read";
-    public const string ScheduledTasksWrite = "Inferno.ScheduledTasks.Write";
-
     // Settings
     public const string SettingsRead = "Inferno.Settings.Read";
     public const string SettingsWrite = "Inferno.Settings.Write";

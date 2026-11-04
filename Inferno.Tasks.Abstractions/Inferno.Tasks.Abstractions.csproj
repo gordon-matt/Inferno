@@ -4,7 +4,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Inferno.Tasks</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Inferno.Data.Abstractions\Inferno.Data.Abstractions.csproj" />
-  </ItemGroup>
 </Project>

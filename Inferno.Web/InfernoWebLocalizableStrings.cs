@@ -257,27 +257,18 @@ public static class InfernoWebLocalizableStrings
 
     public static class ScheduledTasks
     {
-        public static class Model
-        {
-            public const string Enabled = "Inferno.Web/ScheduledTasks.Model.Enabled";
-            public const string LastEndUtc = "Inferno.Web/ScheduledTasks.Model.LastEndUtc";
-            public const string LastStartUtc = "Inferno.Web/ScheduledTasks.Model.LastStartUtc";
-            public const string LastSuccessUtc = "Inferno.Web/ScheduledTasks.Model.LastSuccessUtc";
-            public const string Name = "Inferno.Web/ScheduledTasks.Model.Name";
-            public const string Seconds = "Inferno.Web/ScheduledTasks.Model.Seconds";
-            public const string StopOnError = "Inferno.Web/ScheduledTasks.Model.StopOnError";
-        }
-
-        public const string Description = "Inferno.Web/ScheduledTasks.Description";
-        public const string EmptyTitle = "Inferno.Web/ScheduledTasks.EmptyTitle";
-        public const string EveryFormat = "Inferno.Web/ScheduledTasks.EveryFormat";
-        public const string ExecutedTaskError = "Inferno.Web/ScheduledTasks.ExecutedTaskError";
-        public const string ExecutedTaskSuccess = "Inferno.Web/ScheduledTasks.ExecutedTaskSuccess";
-        public const string LastRun = "Inferno.Web/ScheduledTasks.LastRun";
-        public const string ManageScheduledTasks = "Inferno.Web/ScheduledTasks.ManageScheduledTasks";
+        public const string AdjustedTo = "Inferno.Web/ScheduledTasks.AdjustedTo";
+        public const string AtLeastOne = "Inferno.Web/ScheduledTasks.AtLeastOne";
+        public const string CardDescription = "Inferno.Web/ScheduledTasks.CardDescription";
+        public const string EditorDescription = "Inferno.Web/ScheduledTasks.EditorDescription";
+        public const string Empty = "Inferno.Web/ScheduledTasks.Empty";
+        public const string EveryMinutes = "Inferno.Web/ScheduledTasks.EveryMinutes";
+        public const string Minutes = "Inferno.Web/ScheduledTasks.Minutes";
+        public const string NextRun = "Inferno.Web/ScheduledTasks.NextRun";
+        public const string NotScheduled = "Inferno.Web/ScheduledTasks.NotScheduled";
+        public const string ReplacesCron = "Inferno.Web/ScheduledTasks.ReplacesCron";
         public const string RunNow = "Inferno.Web/ScheduledTasks.RunNow";
-        public const string SecondsHint = "Inferno.Web/ScheduledTasks.SecondsHint";
-        public const string StopOnErrorHint = "Inferno.Web/ScheduledTasks.StopOnErrorHint";
+        public const string Started = "Inferno.Web/ScheduledTasks.Started";
         public const string Title = "Inferno.Web/ScheduledTasks.Title";
     }
 

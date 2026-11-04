@@ -37,12 +37,16 @@
 
 <h2 class="inferno-section-title">@T[InfernoWebLocalizableStrings.Maintenance.Title]</h2>
 <div class="nf-grid">
-    @foreach (var tile in maintenanceTiles)
+    @foreach (var tile in VisibleMaintenanceTiles)
     {
-        <a class="nf-card inferno-tile" href="@tile.Href" @key="tile.Href" data-enhance-nav="false">
+        <a class="nf-card inferno-tile" href="@tile.Href" @key="tile.Href" target="@(tile.NewTab ? "_blank" : null)" rel="@(tile.NewTab ? "noopener noreferrer" : null)" data-enhance-nav="false">
             <span class="inferno-tile-icon"><Icon Name="@tile.Icon" Size="22" /></span>
             <span class="inferno-tile-body">
                 <span class="inferno-tile-title">@T[tile.Title]</span>
+                @if (!string.IsNullOrEmpty(tile.Subtitle))
+                {
+                    <span class="inferno-tile-meta">@T[tile.Subtitle]</span>
+                }
             </span>
         </a>
     }

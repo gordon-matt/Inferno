@@ -2,7 +2,6 @@
 using Inferno.Data.Entity;
 using Inferno.Helpers;
 using Inferno.Identity.Entities;
-using Inferno.Tasks.Entities;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Configuration.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -24,8 +23,6 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
     }
 
     #endregion Constructors
-
-    public DbSet<ScheduledTask> ScheduledTasks { get; set; }
 
     public DbSet<Setting> Settings { get; set; }
 

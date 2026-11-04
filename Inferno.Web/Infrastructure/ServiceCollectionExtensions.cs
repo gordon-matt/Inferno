@@ -1,5 +1,4 @@
-﻿using Inferno.Tasks.Configuration;
-using Inferno.Web.Configuration;
+﻿using Inferno.Web.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,10 +15,6 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration,
         Action<InfernoWebOptions> configure = null)
     {
-        var tasksOptions = new InfernoTasksOptions();
-        configuration.Bind(tasksOptions);
-        services.AddSingleton(tasksOptions);
-
         var webOptions = new InfernoWebOptions();
         configuration.Bind(webOptions);
         configure?.Invoke(webOptions);

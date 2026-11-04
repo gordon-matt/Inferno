@@ -7,6 +7,7 @@ using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Services;
 using Inferno.Web.Mvc.Themes;
 using Inferno.Web.Navigation;
+using Inferno.Web.Scheduling;
 using Inferno.Web.Security.Membership;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -90,8 +91,8 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
         // Admin screens
         builder.Register<Areas.Admin.Tenants.Services.ITenantAdminService, Areas.Admin.Tenants.Services.TenantAdminService>(ServiceLifetime.Scoped);
-        builder.Register<Areas.Admin.ScheduledTasks.Services.IScheduledTaskAdminService, Areas.Admin.ScheduledTasks.Services.ScheduledTaskAdminService>(ServiceLifetime.Scoped);
         builder.Register<Areas.Admin.Configuration.Services.ISettingsAdminService, Areas.Admin.Configuration.Services.SettingsAdminService>(ServiceLifetime.Scoped);
+        builder.Register<IScheduledJobService, ScheduledJobService>(ServiceLifetime.Scoped);
         builder.Register<Areas.Admin.Configuration.Themes.Services.IThemeAdminService, Areas.Admin.Configuration.Themes.Services.ThemeAdminService>(ServiceLifetime.Scoped);
 
         //// Embedded File Provider

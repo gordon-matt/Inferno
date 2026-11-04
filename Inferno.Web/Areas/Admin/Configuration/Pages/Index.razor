@@ -10,7 +10,7 @@
 {
     <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
 }
-else if (groups.Count == 0)
+else if (groups.Count == 0 && !showSchedules)
 {
     <EmptyState Icon="sliders" Title="@T[InfernoWebLocalizableStrings.Settings.EmptyTitle]" />
 }
@@ -31,13 +31,52 @@ else
                 </span>
             </button>
         }
+        @if (showSchedules)
+        {
+            <button type="button" class="nf-card inferno-tile" @onclick="EditSchedulesAsync">
+                <span class="inferno-tile-icon"><Icon Name="clock" Size="22" /></span>
+                <span class="inferno-tile-title">@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]</span>
+                <span class="inferno-tile-meta">
+                    @T[InfernoWebLocalizableStrings.ScheduledTasks.CardDescription]
+                    <Icon Name="chevron-right" Size="16" />
+                </span>
+            </button>
+        }
     </div>
 }
 
-<Drawer Open="editing is not null" Scrim="true" Width="min(600px, 100vw)" OnClose="Close"
-        Title="@(editing is null ? null : T[InfernoWebLocalizableStrings.General.EditFormat, editing.Name].Value)">
+<Drawer Open="editing is not null || editingSchedules" Scrim="true" Width="min(600px, 100vw)" OnClose="Close" Title="@DrawerTitle">
     <ChildContent>
-        @if (editing is not null)
+        @if (editingSchedules)
+        {
+            <form id="settings-form" @onsubmit="SaveSchedulesAsync" @onsubmit:preventDefault="true">
+                <div class="inferno-schedule">
+                    <p class="nf-hint">@T[InfernoWebLocalizableStrings.ScheduledTasks.EditorDescription]</p>
+                    @if (scheduleEdits.Count == 0)
+                    {
+                        <EmptyState Icon="clock" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Empty]" />
+                    }
+                    else
+                    {
+                        @foreach (var job in scheduleEdits)
+                        {
+                            <div class="inferno-schedule-job" @key="job.Id">
+                                <h3>@job.Name</h3>
+                                <p class="nf-hint">@ScheduleStatus(job)</p>
+                                <Field Label="@T[InfernoWebLocalizableStrings.ScheduledTasks.Minutes]" For="@ScheduleFieldId(job)">
+                                    <input id="@ScheduleFieldId(job)" class="nf-input" type="number" min="1" max="40320" @bind="job.Minutes" />
+                                    <span class="nf-hint">@ScheduleHint(job.Minutes)</span>
+                                </Field>
+                                <button type="button" class="nf-button" @onclick="() => RunNowAsync(job)" disabled="@saving">
+                                    <Icon Name="play" Size="16" /> @T[InfernoWebLocalizableStrings.ScheduledTasks.RunNow]
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+            </form>
+        }
+        else if (editing is not null)
         {
             <form id="settings-form" @onsubmit="SaveAsync" @onsubmit:preventDefault="true">
                 @if (editorType is null)
@@ -53,7 +92,13 @@ else
     </ChildContent>
     <Footer>
         <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
-        @if (canWrite && editorType is not null)
+        @if (editingSchedules)
+        {
+            <button type="submit" form="settings-form" class="nf-button nf-button-primary" disabled="@(saving || scheduleEdits.Count == 0)">
+                <Icon Name="save" Size="16" /> @T[InfernoWebLocalizableStrings.General.Save]
+            </button>
+        }
+        else if (canWrite && editorType is not null)
         {
             <button type="submit" form="settings-form" class="nf-button nf-button-primary" disabled="@saving">
                 <Icon Name="save" Size="16" /> @T[InfernoWebLocalizableStrings.General.Save]

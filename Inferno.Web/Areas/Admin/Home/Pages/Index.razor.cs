@@ -1,8 +1,22 @@
+using Inferno.Security;
+using Inferno.Tasks.Scheduling;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+
 namespace Inferno.Web.Areas.Admin.Home.Pages;
 
 public partial class Index
 {
-    private sealed record DashboardTile(string Href, string Icon, string Title, string Subtitle = null, bool FullReload = false);
+    private sealed record DashboardTile(string Href, string Icon, string Title, string Subtitle = null, bool FullReload = false, bool NewTab = false, bool HostOnly = false);
+
+    [Inject]
+    private IAuthorizationService Authorization { get; set; }
+
+    [Inject]
+    private AuthenticationStateProvider AuthenticationState { get; set; }
+
+    private bool showHostTools;
 
     private static readonly DashboardTile[] contentTiles =
     [
@@ -19,14 +33,23 @@ public partial class Index
         new("/admin/membership", "users", InfernoWebLocalizableStrings.Membership.Title, InfernoWebLocalizableStrings.Dashboard.Cards.MembershipSubtitle, FullReload: true),
         new("/admin/configuration/settings/index", "settings", InfernoWebLocalizableStrings.General.Settings, InfernoWebLocalizableStrings.Dashboard.Cards.SettingsSubtitle),
         new("/admin/configuration/themes/index", "palette", InfernoWebLocalizableStrings.General.Themes, InfernoWebLocalizableStrings.Dashboard.Cards.ThemesSubtitle),
-        new("/admin/scheduled-tasks/index", "clock", InfernoWebLocalizableStrings.ScheduledTasks.Title, InfernoWebLocalizableStrings.Dashboard.Cards.ScheduledTasksSubtitle),
         new("/admin/tenants/index", "briefcase", InfernoWebLocalizableStrings.Tenants.Title, InfernoWebLocalizableStrings.Dashboard.Cards.TenantsSubtitle)
     ];
 
     private static readonly DashboardTile[] maintenanceTiles =
     [
+        new(ScheduledJobs.DashboardPath, "clock", InfernoWebLocalizableStrings.ScheduledTasks.Title, InfernoWebLocalizableStrings.Dashboard.Cards.ScheduledTasksSubtitle, NewTab: true, HostOnly: true),
         new("/logvue", "logs", InfernoWebLocalizableStrings.Log.Title),
         new("/localize/languages", "translate", InfernoWebLocalizableStrings.Localization.Title),
         new("/pluginz", "puzzle", InfernoWebLocalizableStrings.Plugins.Title)
     ];
+
+    private IEnumerable<DashboardTile> VisibleMaintenanceTiles =>
+        maintenanceTiles.Where(tile => showHostTools || !tile.HostOnly);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationState.GetAuthenticationStateAsync();
+        showHostTools = (await Authorization.AuthorizeAsync(state.User, StandardPolicies.FullAccess)).Succeeded;
+    }
 }

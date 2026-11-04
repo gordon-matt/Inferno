@@ -158,6 +158,17 @@ public sealed class PermissionStore(
         return Result.Success();
     }
 
+    public bool TryGetCached(string userId, out GrantedPermissions granted)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            granted = GrantedPermissions.None;
+            return false;
+        }
+
+        return cache.TryGetValue(CacheKey(userId), out granted);
+    }
+
     public void Invalidate(string userId)
     {
         if (!string.IsNullOrEmpty(userId))
