@@ -42,7 +42,7 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         //builder.Register<ResourcesManager>().As<IResourcesManager>().InstancePerLifetimeScope();
 
         // Security
-        //builder.Register<RolesBasedAuthorizationService>().As<IAuthorizationService>().SingleInstance();
+        builder.Register<Security.Permissions.IPermissionProvider, Security.Permissions.InfernoWebPermissionProvider>(ServiceLifetime.Singleton);
 
         // Configuration
         builder.Register<ISettingService, DefaultSettingService>(ServiceLifetime.Transient);

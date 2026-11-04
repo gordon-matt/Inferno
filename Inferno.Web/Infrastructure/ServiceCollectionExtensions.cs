@@ -7,18 +7,24 @@ namespace Inferno.Web.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static void ConfigureInferno(this IServiceCollection services, IConfiguration configuration)
+    /// <summary>
+    /// Binds Inferno's options from configuration, then lets the host set what configuration cannot hold,
+    /// such as <see cref="InfernoWebOptions.PublicLayout"/>.
+    /// </summary>
+    public static IServiceCollection ConfigureInferno(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        Action<InfernoWebOptions> configure = null)
     {
-        //var pluginOptions = new InfernoPluginOptions();
-        //configuration.Bind(pluginOptions);
-        //services.AddSingleton(pluginOptions);
-
         var tasksOptions = new InfernoTasksOptions();
         configuration.Bind(tasksOptions);
         services.AddSingleton(tasksOptions);
 
         var webOptions = new InfernoWebOptions();
         configuration.Bind(webOptions);
+        configure?.Invoke(webOptions);
         services.AddSingleton(webOptions);
+
+        return services;
     }
 }

@@ -12,12 +12,12 @@
   <ItemGroup>
     <PackageReference Include="Dependo.Autofac" Version="1.2.2" />
     <PackageReference Include="Flatmate" Version="1.0.0" />
+    <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.2" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\Heroicsoft.NetForge\Heroicsoft.NetForge.Components\Heroicsoft.NetForge.Components.csproj" />
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Core\Localize.Core.csproj" />

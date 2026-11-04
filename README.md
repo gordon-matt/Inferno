@@ -2,18 +2,83 @@
 
 ![Inferno CMS](https://github.com/gordon-matt/Inferno/raw/master/InfernoCMS/wwwroot/img/Logo_Dark.png)
 
-## Intro
-Inferno is intended to be a multi-purpose framework and CMS similar to [MantleCMS](https://github.com/gordon-matt/MantleCMS), but built with Blazor.
+Inferno is a content management system and application framework for ASP.NET Core, built on .NET 10
+and Blazor. Use it as a ready-made CMS, or as the base for a site that needs pages, menus, users and
+an admin area without building them from scratch.
 
-I had intended to keep the repo private until I had a BETA version, but I have been far too busy and unsure of when I will ever get to finish this. The status of this project is barely a working prototype. The project structure is well done and there are some demo pages that have already been implemented. I have made this repo public in case someone might make good use of it in the event I never get around to finishing it myself.
+## Features
 
-## Tech
+- **Pages and content.** A page tree with drag-and-drop page design, version history with restore,
+  content blocks and zones, menus, and a media library with a file manager and rich text editor.
+- **Blog.** Posts, categories and tags, edited in the same admin area.
+- **Multi-tenant.** One installation serves several sites, each with its own pages, settings,
+  users and roles, chosen by host name.
+- **Users, roles and permissions.** ASP.NET Core Identity with a full management UI. Permissions are
+  claims, granted to roles or to individual users, and every module adds its own.
+- **Localization.** Manage languages and translate the site's text from the admin area.
+- **Marketing and messaging.** Newsletter subscribers, email templates, a queued email sender, and
+  an XML sitemap.
+- **Themes and settings.** Switch the site's theme, and edit each module's settings in one place.
+  The admin area has light and dark modes.
+- **Maintenance.** A log viewer and scheduled tasks.
 
-| | | |
-| :---: | :---: | :---: |
-|[<br />![Blazor](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Blazor.jpg) ](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)|[<br />![Extenso](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Extenso.png) ](https://github.com/gordon-matt/Extenso)|[<br />![Bootstrap](https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Bootstrap.jpg) ](http://getbootstrap.com/)|
+## Modular by design
 
-The admin area is an Interactive Server Blazor app built with Heroicsoft NetForge components. Admin pages inject their services directly; there is no separate API project.
+Almost everything in Inferno is a separate module, and the core knows very little about any of them.
+
+- **Registrars.** Each project wires itself up with a [Dependo](https://github.com/gordon-matt/Dependo)
+  dependency registrar, so adding a module to the host is mostly a project reference.
+- **Plugins.** Plugins are NuGet packages tagged `inferno-cms`. They are browsed, installed and removed
+  from the admin area through [Pluginz](https://github.com/gordon-matt/Pluginz), and loaded at startup.
+- **Permissions.** A module declares its permissions by implementing `IPermissionProvider`. They appear
+  in the users and roles editors and can be used as authorization policies by name, with no
+  extra registration.
+- **Settings.** A module's settings are a class plus an editor component, discovered at startup.
+- **Reusable libraries.** The larger features are standalone libraries that work in any ASP.NET Core
+  site, not only Inferno:
+
+| Library | What it does |
+| --- | --- |
+| [PageKrafter](https://github.com/gordon-matt/PageKrafter) | Drag-and-drop page designer |
+| [BlogKrafter](https://github.com/gordon-matt/BlogKrafter) | Blog engine and admin |
+| [IdentityNexus](https://github.com/gordon-matt/IdentityNexus) | Users and roles management UI for ASP.NET Core Identity |
+| [Localize.NET](https://github.com/gordon-matt/Localize.NET) | Database-backed localization with a translation UI |
+| [LogVue](https://github.com/gordon-matt/LogVue) | Log viewer |
+| [Pickstack](https://github.com/gordon-matt/Pickstack) | File manager and rich text editor integration |
+| [Pluginz](https://github.com/gordon-matt/Pluginz) | Plugin discovery, installation and loading |
+| [NetForge](https://github.com/gordon-matt/Heroicsoft.NetForge) | Blazor UI components and the admin shell |
+| [Extenso](https://github.com/gordon-matt/Extenso) | Data access, repositories and helpers |
+
+## Getting started
+
+### Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- SQL Server (LocalDB, Express or full)
+
+### Run it
+
+1. Clone this repository. The solution references the libraries above by relative path, so clone
+   them into a `Libraries` folder two levels up (for example `D:\Source\GitHub\Libraries` next to
+   `D:\Source\GitHub\CMS\Inferno`).
+2. Run the site:
+
+   ```bash
+   dotnet run --project InfernoCMS --launch-profile http
+   ```
+
+3. Open `http://localhost:5263`. The first run takes you to `/installation`. Choose the database
+   server and name (or paste a connection string), create the administrator account, and optionally
+   add sample data. The database and default tenant are created for you, and the connection settings
+   are saved to `App_Data/InfernoSettings.xml`.
+4. Sign in and go to `/admin`.
+
+### Next steps
+
+- Add users and roles under **Membership**, and give roles permissions on their **Permissions** tab.
+  Members of the Administrators role already hold everything.
+- Add another tenant under **Configuration > Tenants**, with the host names it should answer to.
+- Install plugins under **Configuration > Plugins**.
 
 ## Support
 

@@ -39,36 +39,40 @@ public static partial class CmsConstants
         internal const string Zones = "Zones";
     }
 
+    /// <summary>
+    /// The CMS permissions. Each value is both a policy name and a stored claim value, so renaming one
+    /// orphans existing grants. <see cref="Security.CmsPermissionProvider"/> describes them.
+    /// </summary>
     public static class Policies
     {
-        public const string BlogRead = "Blog: Read";
-        public const string BlogWrite = "Blog: Write";
+        public const string BlogRead = "Cms.Blog.Read";
+        public const string BlogWrite = "Cms.Blog.Write";
 
-        public const string ContentBlocksRead = "Content Blocks: Read";
-        public const string ContentBlocksWrite = "Content Blocks: Write";
-        public const string ContentZonesRead = "Content Zones: Read";
-        public const string ContentZonesWrite = "Content Zones: Write";
+        public const string ContentBlocksRead = "Cms.ContentBlocks.Read";
+        public const string ContentBlocksWrite = "Cms.ContentBlocks.Write";
+        public const string ContentZonesRead = "Cms.ContentZones.Read";
+        public const string ContentZonesWrite = "Cms.ContentZones.Write";
 
-        public const string MediaRead = "Media: Read";
-        public const string MediaWrite = "Media: Write";
+        public const string MediaRead = "Cms.Media.Read";
+        public const string MediaWrite = "Cms.Media.Write";
 
-        public const string MenusRead = "Menus: Read";
-        public const string MenusWrite = "Menus: Write";
+        public const string MenusRead = "Cms.Menus.Read";
+        public const string MenusWrite = "Cms.Menus.Write";
 
-        public const string NewsletterRead = "Newsletters: Read";
-        public const string NewsletterWrite = "Newsletters: Write";
+        public const string NewsletterRead = "Cms.Newsletters.Read";
+        public const string NewsletterWrite = "Cms.Newsletters.Write";
 
-        public const string PageHistoryRead = "Page History: Read";
-        public const string PageHistoryRestore = "Page History: Restore";
-        public const string PageHistoryWrite = "Page History: Write";
-        public const string PagesRead = "Pages: Read";
-        public const string PagesWrite = "Pages: Write";
+        public const string PageHistoryRead = "Cms.PageHistory.Read";
+        public const string PageHistoryRestore = "Cms.PageHistory.Restore";
+        public const string PageHistoryWrite = "Cms.PageHistory.Write";
+        public const string PagesRead = "Cms.Pages.Read";
+        public const string PagesWrite = "Cms.Pages.Write";
 
-        public const string SitemapRead = "Sitemap: Read";
-        public const string SitemapWrite = "Sitemap: Write";
+        public const string SitemapRead = "Cms.Sitemap.Read";
+        public const string SitemapWrite = "Cms.Sitemap.Write";
 
-        public const string MessagingRead = "Messaging: Read";
-        public const string MessagingWrite = "Messaging: Write";
+        public const string MessagingRead = "Cms.Messaging.Read";
+        public const string MessagingWrite = "Cms.Messaging.Write";
     }
 
 }

@@ -22,6 +22,7 @@ using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
+using InfernoCMS.Identity.Permissions;
 using Localize.Components;
 using Localize.Components.Pages;
 using LogVue;
@@ -38,7 +39,7 @@ using PageKrafter;
 using PageKrafter.Components;
 using Pickstack;
 using Pickstack.FileManager.WebFilez;
-using Pickstack.RichTextEditor.TinyMce7;
+using Pickstack.RichTextEditor.TinyMce8;
 using Pluginz;
 using Pluginz.Components;
 using Pluginz.Components.Pages;
@@ -108,6 +109,7 @@ services.AddIdentityNexus<ApplicationUser, ApplicationRole>(options =>
     options.BasePath = "/admin/membership";
     options.HomePath = "/admin";
     options.LogoutPath = "/Identity/Account/LogOut";
+    options.AddPermissionSections();
 });
 
 // After every AddNetForgeComponents call, which registers the static BuildMenu catalog.
@@ -116,11 +118,8 @@ services.Replace(ServiceDescriptor.Scoped<INetForgeMenuCatalog, AdminMenuCatalog
 services.ScopeUsersToTenant<ApplicationUser, int?>(user => user.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
 services.ScopeRolesToTenant<ApplicationRole, int?>(role => role.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
 
-services.AddInfernoAuthorization(configuration);
-
-// Register CMS-specific authorization policies (Pages, Menus, etc.). The admin pages use
-// them but they aren't part of the core Identity module, so they're appended here via
-// post-configuration of AuthorizationOptions.
+// Every permission a module declares is a policy. Only policies named by other libraries are added by hand.
+services.AddInfernoAuthorization();
 services.Configure<AuthorizationOptions>(options => options.AddInfernoCmsPolicies());
 
 #endregion Account / Identity
@@ -182,7 +181,7 @@ services.AddPickstack(configuration)
     .AddWebFilez(files => files
         .UseHostBlazor()
         .Server(server => server.MaxUploadBytes = 32 * 1024 * 1024))
-    .AddTinyMce7(editor => editor
+    .AddTinyMce8(editor => editor
         .WithHeight(400)
         .WithToolbar("undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media | code"));
 
@@ -190,15 +189,12 @@ services.AddHttpContextAccessor();
 
 services.AddHttpClient();
 
-services.ConfigureInferno(configuration);
+services.ConfigureInferno(configuration, inferno => inferno.PublicLayout = typeof(InfernoCMS.Shared.MainLayout));
 services.ConfigureNetForgeToastSounds(sounds => sounds.EnableSounds = true);
 
 services.AddPageKrafter();
 services.AddPageKrafterBlock<PageContentZoneBlock>();
 services.AddPageKrafterFilePicker<PickstackFilePicker>();
-
-// Library pages cannot name a layout in this project, so they go through PublicSiteLayout.
-Inferno.Web.Components.PublicSiteLayout.LayoutType = typeof(InfernoCMS.Shared.MainLayout);
 
 // The blog is its own database. Until installation has saved a connection there is nothing to migrate.
 if (!string.IsNullOrWhiteSpace(connectionString))

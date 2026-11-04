@@ -1,31 +1,27 @@
-using Inferno.Security;
-using Inferno.Web.Security;
+using IdentityNexus.Services;
+using Inferno.Web.Security.Permissions;
 using InfernoCMS.Data;
 using InfernoCMS.Data.Entities;
+using InfernoCMS.Identity.Permissions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace InfernoCMS.Identity.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddInfernoAuthorization(this IServiceCollection services, IConfiguration configuration) =>
-        services.AddAuthorization(options =>
-        {
-            // Baseline policies. Anyone in the built-in Administrators role satisfies these automatically,
-            // which lines up with how the seed "super admin" user gets provisioned in StartupTask.
-            options.AddPolicy(StandardPolicies.AdminAccess, policy => policy.RequireAssertion(ctx =>
-                ctx.User.IsInRole(InfernoSecurityConstants.Roles.Administrators) ||
-                ctx.User.HasClaim(AuthorizationOptionsExtensions.PermissionClaimType, StandardPolicies.AdminAccess) ||
-                ctx.User.HasClaim(AuthorizationOptionsExtensions.PermissionClaimType, StandardPolicies.FullAccess)));
-
-            options.AddPolicy(StandardPolicies.FullAccess, policy => policy.RequireAssertion(ctx =>
-                ctx.User.IsInRole(InfernoSecurityConstants.Roles.Administrators) ||
-                ctx.User.HasClaim(AuthorizationOptionsExtensions.PermissionClaimType, StandardPolicies.FullAccess)));
-
-            options.AddInfernoWebPolicies();
-        });
+    /// <summary>
+    /// Authorizes with permissions: every permission a module declares becomes a policy, and grants are read
+    /// from the Identity claim tables. Administrators hold every permission without being granted any.
+    /// </summary>
+    public static IServiceCollection AddInfernoAuthorization(this IServiceCollection services)
+    {
+        services.AddMemoryCache();
+        services.AddInfernoPermissions();
+        services.AddSingleton<IPermissionStore, PermissionStore>();
+        services.AddIdentityNexusObserver<PermissionCacheObserver>();
+        return services;
+    }
 
     public static IdentityBuilder AddInfernoIdentity(this IServiceCollection services) =>
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>

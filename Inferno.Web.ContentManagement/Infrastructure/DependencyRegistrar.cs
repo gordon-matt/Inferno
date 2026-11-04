@@ -76,6 +76,8 @@ public class DependencyRegistrar : IDependencyRegistrar
 
         #region Security
 
+        builder.Register<Inferno.Web.Security.Permissions.IPermissionProvider, ContentManagement.Security.CmsPermissionProvider>(ServiceLifetime.Singleton);
+
         // User Profile Providers
         builder.Register<Inferno.Web.Security.Membership.IUserProfileProvider, NewsletterUserProfileProvider>(ServiceLifetime.Singleton);
 

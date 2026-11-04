@@ -1,0 +1,53 @@
+@inherits IdentityNexus.Extensibility.IdentityNexusSection
+
+@if (!loaded)
+{
+    <p class="nf-muted">Loading permissions…</p>
+}
+else if (IsAdministratorsRole)
+{
+    <p>Members of the Administrators role hold every permission, so there is nothing to choose here.</p>
+}
+else
+{
+    <p class="nf-muted nf-small">
+        @(IsUser
+            ? "Granted to this user directly, on top of what their roles give them."
+            : "Every member of this role holds these permissions.")
+    </p>
+    @if (IsInAdministratorsRole)
+    {
+        <p class="nf-small">This user is in the Administrators role, so they hold every permission whatever is ticked here.</p>
+    }
+    @if (!canEdit)
+    {
+        <p class="nf-muted nf-small">You can see these permissions but not change them.</p>
+    }
+
+    @foreach (var group in Groups)
+    {
+        <h3>@group.Key</h3>
+        @foreach (var permission in group)
+        {
+            string note = Note(permission);
+            <label class="nx-check" style="align-items: flex-start;">
+                <input type="checkbox"
+                       checked="@selected.Contains(permission.Name)"
+                       disabled="@(!canEdit)"
+                       @onchange="e => Toggle(permission.Name, e.Value is true)" />
+                <span>
+                    @permission.DisplayName
+                    @if (note is not null)
+                    {
+                        <span class="nf-muted nf-small"> · @note</span>
+                    }
+                    @if (!string.IsNullOrEmpty(permission.Description))
+                    {
+                        <br />
+                        <span class="nf-muted nf-small">@permission.Description</span>
+                    }
+                </span>
+            </label>
+        }
+    }
+}
