@@ -22,23 +22,6 @@
     <Project Path="Inferno/Inferno.csproj" />
   </Folder>
   <Folder Name="/Tests/" />
-  <Folder Name="/_Other/">
-    <Project Path="../../Libraries/BlogKrafter/BlogKrafter.Data.Sql/BlogKrafter.Data.Sql.csproj" />
-    <Project Path="../../Libraries/BlogKrafter/BlogKrafter.Data/BlogKrafter.Data.csproj" />
-    <Project Path="../../Libraries/BlogKrafter/BlogKrafter.Services/BlogKrafter.Services.csproj" />
-    <Project Path="../../Libraries/BlogKrafter/BlogKrafter/BlogKrafter.csproj" />
-    <Project Path="../../Libraries/Localize.NET/Localize.Components/Localize.Components.csproj" />
-    <Project Path="../../Libraries/Localize.NET/Localize.Core/Localize.Core.csproj" />
-    <Project Path="../../Libraries/Localize.NET/Localize.Data.Sql/Localize.Data.Sql.csproj" />
-    <Project Path="../../Libraries/Localize.NET/Localize.Data/Localize.Data.csproj" />
-    <Project Path="../../Libraries/Localize.NET/Localize.Services/Localize.Services.csproj" />
-    <Project Path="../../Libraries/PageKrafter/PageKrafter.Components/PageKrafter.Components.csproj" />
-    <Project Path="../../Libraries/PageKrafter/PageKrafter.Core/PageKrafter.Core.csproj" />
-    <Project Path="../../Libraries/Pluginz/Pluginz.Components/Pluginz.Components.csproj" />
-    <Project Path="../../Libraries/Pluginz/Pluginz.Core/Pluginz.Core.csproj" />
-    <Project Path="../../Libraries/Pluginz/Pluginz.Services/Pluginz.Services.csproj" />
-    <Project Path="../../Libraries/Pluginz/Pluginz.Web/Pluginz.Web.csproj" />
-  </Folder>
   <Project Path="InfernoCMS.Data/InfernoCMS.Data.csproj" />
   <Project Path="InfernoCMS.Identity/InfernoCMS.Identity.csproj" />
   <Project Path="InfernoCMS.Services/InfernoCMS.Services.csproj" />

@@ -7,11 +7,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
     <ProjectReference Include="..\Inferno.Web.ContentManagement\Inferno.Web.ContentManagement.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\BlogKrafter\BlogKrafter.Data\BlogKrafter.Data.csproj" />
     <ProjectReference Include="..\Inferno.Logging.Abstractions\Inferno.Logging.Abstractions.csproj" />
     <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BlogKrafter.Data" Version="1.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.14" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -9,16 +9,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Core\Localize.Core.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Data\Localize.Data.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Services\Localize.Services.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\BlogKrafter\BlogKrafter.Services\BlogKrafter.Services.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\PageKrafter\PageKrafter.Components\PageKrafter.Components.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Inferno.Tests" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BlogKrafter.Services" Version="1.0.0" />
+    <PackageReference Include="Localize.Core" Version="1.0.0" />
+    <PackageReference Include="Localize.Data" Version="1.0.0" />
+    <PackageReference Include="Localize.Services" Version="1.0.0" />
+    <PackageReference Include="PageKrafter.Components" Version="1.0.0" />
     <PackageReference Include="Pickstack" Version="1.0.2" />
   </ItemGroup>
 </Project>

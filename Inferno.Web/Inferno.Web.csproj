@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -13,22 +13,22 @@
     <PackageReference Include="Dependo.Autofac" Version="1.2.2" />
     <PackageReference Include="Flatmate" Version="1.0.0" />
     <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.2" />
+    <PackageReference Include="Localize.Core" Version="1.0.0" />
+    <PackageReference Include="Localize.Data.Sql" Version="1.0.0" />
+    <PackageReference Include="Localize.Services" Version="1.0.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Pluginz.Core" Version="1.0.0" />
+    <PackageReference Include="Pluginz.Services" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Core\Localize.Core.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Data.Sql\Localize.Data.Sql.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Services\Localize.Services.csproj" />
     <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />
     <ProjectReference Include="..\Inferno.Tasks.Abstractions\Inferno.Tasks.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Tasks\Inferno.Tasks.csproj" />
     <ProjectReference Include="..\Inferno.Tenants.Abstractions\Inferno.Tenants.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Pluginz\Pluginz.Core\Pluginz.Core.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\Pluginz\Pluginz.Services\Pluginz.Services.csproj" />
   </ItemGroup>
 </Project>
