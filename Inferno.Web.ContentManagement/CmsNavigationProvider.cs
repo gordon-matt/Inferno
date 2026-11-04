@@ -56,11 +56,6 @@ public class CmsNavigationProvider : INavigationProvider
             .Icon("grid")
             .Permission(CmsConstants.Policies.ContentBlocksRead));
 
-        builder.Add(T[InfernoCmsLocalizableStrings.ContentBlocks.EntityTypeContentBlocks].Value, "5", item => item
-            .Url("/admin/blocks/entity-type-content-blocks")
-            .Icon("fas fa-th-large")
-            .Permission(CmsConstants.Policies.ContentBlocksRead));
-
         // Media
         builder.Add(T[InfernoCmsLocalizableStrings.Media.Title].Value, "5", item => item
             .Url("/admin/media/index")

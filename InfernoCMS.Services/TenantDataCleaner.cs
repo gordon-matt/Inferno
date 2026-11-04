@@ -60,19 +60,9 @@ public class TenantDataCleaner : ITenantDataCleaner
             .Where(x => zoneIds.Contains(x.ZoneId) || (x.PageId != null && pageIds.Contains(x.PageId.Value)))
             .Select(x => x.Id)
             .ToListAsync();
-        var entityBlockIds = await dbContext.Set<EntityTypeContentBlock>()
-            .Where(x => zoneIds.Contains(x.ZoneId))
-            .Select(x => x.Id)
-            .ToListAsync();
-
         if (blockIds.Count > 0)
         {
             await dbContext.Set<ContentBlock>().Where(x => blockIds.Contains(x.Id)).ExecuteDeleteAsync();
-        }
-
-        if (entityBlockIds.Count > 0)
-        {
-            await dbContext.Set<EntityTypeContentBlock>().Where(x => entityBlockIds.Contains(x.Id)).ExecuteDeleteAsync();
         }
 
         await dbContext.Set<PageVersion>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();

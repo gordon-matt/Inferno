@@ -52,7 +52,6 @@ public class DependencyRegistrar : IDependencyRegistrar
         builder.Register<IPageAuthoringService, PageAuthoringService>(ServiceLifetime.Scoped);
 
         // Content Blocks
-        builder.Register<IEntityTypeContentBlockService, EntityTypeContentBlockService>(ServiceLifetime.Transient);
         builder.Register<IContentBlockService, ContentBlockService>(ServiceLifetime.Transient);
         builder.Register<IZoneService, ZoneService>(ServiceLifetime.Transient);
         builder.Register<IContentBlockAdminService, ContentBlockAdminService>(ServiceLifetime.Transient);
@@ -108,7 +107,6 @@ public class DependencyRegistrar : IDependencyRegistrar
         #region Other: Content Blocks
 
         builder.Register<IContentBlockProvider, DefaultContentBlockProvider>(ServiceLifetime.Transient);
-        builder.Register<IEntityTypeContentBlockProvider, DefaultEntityTypeContentBlockProvider>(ServiceLifetime.Transient);
 
         builder.Register<Components.CmsMenuBuilder, Components.CmsMenuBuilder>(ServiceLifetime.Transient);
         builder.Register<Components.CmsBreadcrumbBuilder, Components.CmsBreadcrumbBuilder>(ServiceLifetime.Transient);

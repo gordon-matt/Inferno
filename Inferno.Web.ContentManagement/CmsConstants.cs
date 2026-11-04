@@ -27,7 +27,6 @@ public static partial class CmsConstants
     internal static class Tables
     {
         internal const string ContentBlocks = "ContentBlocks";
-        internal const string EntityTypeContentBlocks = "EntityTypeContentBlocks";
         internal const string HistoricPages = "HistoricPages";
         internal const string MenuItems = "MenuItems";
         internal const string Menus = "Menus";

@@ -13,10 +13,6 @@
                 <Icon Name="chevron-left" Size="16" /> @T[InfernoCmsLocalizableStrings.ContentBlocks.BackToPages]
             </a>
         }
-        else
-        {
-            <a class="nf-button" href="/admin/blocks/entity-type-content-blocks">@T[InfernoCmsLocalizableStrings.ContentBlocks.EntityTypeContentBlocks]</a>
-        }
         @if (canManageZones)
         {
             <button type="button" class="nf-button" @onclick="() => zonesOpen = true">

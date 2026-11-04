@@ -20,9 +20,9 @@ Shared coding conventions live in Blueprint/.cursor/rules/conventions.mdc (absol
 | Heroicsoft.NetForge.Components | ProjectReference (from Inferno.Web; also brings in Heroicsoft.NetForge.Results) | n/a | `D:\Source\GitHub\Libraries\Heroicsoft.NetForge` (`..\..\Libraries\Heroicsoft.NetForge`) |
 | Flatmate | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Flatmate` (`..\..\Libraries\Flatmate`) |
 | IdentityNexus | ProjectReference | n/a | `D:\Source\GitHub\Libraries\IdentityNexus` (`..\..\Libraries\IdentityNexus`) |
-| Pickstack | NuGet PackageReference | Pickstack 1.0.1 | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
-| Pickstack.FileManager.WebFilez | NuGet PackageReference | Pickstack.FileManager.WebFilez 1.0.1 | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
-| Pickstack.RichTextEditor.TinyMce7 | NuGet PackageReference | Pickstack.RichTextEditor.TinyMce7 1.0.1 | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
+| Pickstack | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
+| Pickstack.FileManager.WebFilez | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
+| Pickstack.RichTextEditor.TinyMce7 | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
 
 ## Unresolved
 

@@ -50,8 +50,6 @@ public static class InfernoCmsLocalizableStrings
         public const string Description = "Inferno.Web.ContentManagement/ContentBlocks.Description";
         public const string EmptyDescription = "Inferno.Web.ContentManagement/ContentBlocks.EmptyDescription";
         public const string EmptyTitle = "Inferno.Web.ContentManagement/ContentBlocks.EmptyTitle";
-        public const string EntityTypeDescription = "Inferno.Web.ContentManagement/ContentBlocks.EntityTypeDescription";
-        public const string EntityTypeHint = "Inferno.Web.ContentManagement/ContentBlocks.EntityTypeHint";
         public const string ManageContentBlocks = "Inferno.Web.ContentManagement/ContentBlocks.ManageContentBlocks";
         public const string NewBlock = "Inferno.Web.ContentManagement/ContentBlocks.NewBlock";
         public const string NoSettings = "Inferno.Web.ContentManagement/ContentBlocks.NoSettings";
@@ -60,7 +58,6 @@ public static class InfernoCmsLocalizableStrings
         public const string ZoneHint = "Inferno.Web.ContentManagement/ContentBlocks.ZoneHint";
         public const string ManageZones = "Inferno.Web.ContentManagement/ContentBlocks.ManageZones";
         public const string Title = "Inferno.Web.ContentManagement/ContentBlocks.Title";
-        public const string EntityTypeContentBlocks = "Inferno.Web.ContentManagement/ContentBlocks.EntityTypeContentBlocks";
         public const string Zones = "Inferno.Web.ContentManagement/ContentBlocks.Zones";
         public const string ZoneInUseFormat = "Inferno.Web.ContentManagement/ContentBlocks.ZoneInUseFormat";
         public const string BackToPages = "Inferno.Web.ContentManagement/ContentBlocks.BackToPages";
@@ -177,8 +174,6 @@ public static class InfernoCmsLocalizableStrings
         {
             public const string BlockType = "Inferno.Web.ContentManagement/ContentBlocks.Model.BlockType";
             public const string CustomTemplatePath = "Inferno.Web.ContentManagement/ContentBlocks.Model.CustomTemplatePath";
-            public const string EntityId = "Inferno.Web.ContentManagement/ContentBlocks.Model.EntityId";
-            public const string EntityType = "Inferno.Web.ContentManagement/ContentBlocks.Model.EntityType";
             public const string IsEnabled = "Inferno.Web.ContentManagement/ContentBlocks.Model.IsEnabled";
             public const string Order = "Inferno.Web.ContentManagement/ContentBlocks.Model.Order";
             public const string Title = "Inferno.Web.ContentManagement/ContentBlocks.Model.Title";

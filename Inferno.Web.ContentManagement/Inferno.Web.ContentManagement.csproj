@@ -14,9 +14,7 @@
     <ProjectReference Include="..\..\..\Libraries\Localize.NET\Localize.Services\Localize.Services.csproj" />
     <ProjectReference Include="..\..\..\Libraries\BlogKrafter\BlogKrafter.Services\BlogKrafter.Services.csproj" />
     <ProjectReference Include="..\..\..\Libraries\PageKrafter\PageKrafter.Components\PageKrafter.Components.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Pickstack" Version="1.0.1.1" />
+    <ProjectReference Include="..\..\..\Libraries\Pickstack\Pickstack\Pickstack.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Inferno.Tests" />

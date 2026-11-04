@@ -37,6 +37,13 @@
     <Project Path="../../Libraries/Localize.NET/Localize.Services/Localize.Services.csproj" />
     <Project Path="../../Libraries/PageKrafter/PageKrafter.Components/PageKrafter.Components.csproj" />
     <Project Path="../../Libraries/PageKrafter/PageKrafter.Core/PageKrafter.Core.csproj" />
+    <Project Path="../../Libraries/Pickstack/Pickstack.Abstractions/Pickstack.Abstractions.csproj" />
+    <Project Path="../../Libraries/Pickstack/Pickstack.FileManager.WebFilez/Pickstack.FileManager.WebFilez.csproj" />
+    <Project Path="../../Libraries/Pickstack/Pickstack.FileManager/Pickstack.FileManager.csproj" />
+    <Project Path="../../Libraries/Pickstack/Pickstack.RichTextEditor.TinyMce/Pickstack.RichTextEditor.TinyMce.csproj" />
+    <Project Path="../../Libraries/Pickstack/Pickstack.RichTextEditor.TinyMce7/Pickstack.RichTextEditor.TinyMce7.csproj" />
+    <Project Path="../../Libraries/Pickstack/Pickstack.RichTextEditor/Pickstack.RichTextEditor.csproj" />
+    <Project Path="../../Libraries/Pickstack/Pickstack/Pickstack.csproj" />
     <Project Path="../../Libraries/Pluginz/Pluginz.Components/Pluginz.Components.csproj" />
     <Project Path="../../Libraries/Pluginz/Pluginz.Core/Pluginz.Core.csproj" />
     <Project Path="../../Libraries/Pluginz/Pluginz.Services/Pluginz.Services.csproj" />

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -37,8 +37,8 @@
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Pickstack.FileManager.WebFilez" Version="1.0.1" />
-    <PackageReference Include="Pickstack.RichTextEditor.TinyMce7" Version="1.0.1" />
+    <ProjectReference Include="..\..\..\Libraries\Pickstack\Pickstack.FileManager.WebFilez\Pickstack.FileManager.WebFilez.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pickstack\Pickstack.RichTextEditor.TinyMce7\Pickstack.RichTextEditor.TinyMce7.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
@@ -66,6 +66,7 @@
     <ProjectReference Include="..\..\..\Libraries\Pluginz\Pluginz.Web\Pluginz.Web.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Components\" />
     <Folder Include="Models\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>

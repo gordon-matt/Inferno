@@ -197,6 +197,9 @@ services.AddPageKrafter();
 services.AddPageKrafterBlock<PageContentZoneBlock>();
 services.AddPageKrafterFilePicker<PickstackFilePicker>();
 
+// Library pages cannot name a layout in this project, so they go through PublicSiteLayout.
+Inferno.Web.Components.PublicSiteLayout.LayoutType = typeof(InfernoCMS.Shared.MainLayout);
+
 // The blog is its own database. Until installation has saved a connection there is nothing to migrate.
 if (!string.IsNullOrWhiteSpace(connectionString))
 {

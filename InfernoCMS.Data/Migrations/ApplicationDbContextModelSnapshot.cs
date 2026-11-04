@@ -245,65 +245,6 @@ namespace InfernoCMS.Data.Migrations
                     b.ToTable("ContentBlocks", "inferno");
                 });
 
-            modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities.EntityTypeContentBlock", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BlockName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("BlockType")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(1024)");
-
-                    b.Property<string>("BlockValues")
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomTemplatePath")
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("EntityId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("EntityType")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(512)");
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("ZoneId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EntityTypeContentBlocks", "inferno");
-                });
-
             modelBuilder.Entity("Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities.Zone", b =>
                 {
                     b.Property<Guid>("Id")
