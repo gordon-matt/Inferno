@@ -26,40 +26,40 @@ an admin area without building them from scratch.
 
 <p align="left">
     <a href="https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Blazor.jpg" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/Inferno/raw/master/_SolutionItems/Logos/Blazor.jpg" alt="Blazor" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/PageKrafter" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/PageKrafter/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/PageKrafter/raw/master/_Misc/Logo.png" alt="PageKrafter" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/BlogKrafter" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/BlogKrafter/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/BlogKrafter/raw/master/_Misc/Logo.png" alt="BlogKrafter" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/IdentityNexus" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/IdentityNexus/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/IdentityNexus/raw/master/_Misc/Logo.png" alt="IdentityNexus" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/Pluginz" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/Pluginz/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/Pluginz/raw/master/_Misc/Logo.png" alt="Pluginz" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/LogVue" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/LogVue/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/LogVue/raw/master/_Misc/Logo.png" alt="LogVue" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/WebFilez" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/WebFilez/blob/master/_Misc/Logo-Light.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/WebFilez/blob/master/_Misc/Logo-Light.png" alt="WebFilez" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/Dependo" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/Dependo/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/Dependo/raw/master/_Misc/Logo.png" alt="Dependo" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/Extenso" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/Extenso/raw/master/_Misc/ExtensoLogo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/Extenso/raw/master/_Misc/ExtensoLogo.png" alt="Extenso" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/Pickstack" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/Pickstack/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/Pickstack/raw/master/_Misc/Logo.png" alt="Pickstack" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/Flatmate" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/Flatmate/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/Flatmate/raw/master/_Misc/Logo.png" alt="Flatmate" height="60"/>
     </a>&nbsp;
     <a href="https://github.com/gordon-matt/Heroicsoft.NetForge" target="_blank" rel="noreferrer">
-        <img src="https://github.com/gordon-matt/Heroicsoft.NetForge/raw/master/_Misc/Logo.png" alt="dotnet" height="60"/>
+        <img src="https://github.com/gordon-matt/Heroicsoft.NetForge/raw/master/_Misc/Logo-Light.png" alt=".NetForge" height="60"/>
     </a>
 </p>
 
