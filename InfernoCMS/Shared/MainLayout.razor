@@ -1,65 +1,49 @@
-@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
-@using Inferno.Web.ContentManagement.Components
-@using Inferno.Web.Mvc.Themes
-@inherits LayoutComponentBase
+@inherits ThemeLayoutBase
 
-<HeadContent>
-    <link rel="stylesheet" href="/Themes/@themeName/theme.css" />
-</HeadContent>
-
-<header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-3">
-        <div class="container">
-            <a class="navbar-brand" href="/">@SiteSettings.SiteName</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#public-nav" aria-controls="public-nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="public-nav">
-                <AutoMenu />
-                <ContentZone Name="SearchForm" />
-                <ul class="navbar-nav ms-auto">
-                    <AuthorizeView>
-                        <Authorized>
-                            <li class="nav-item"><a class="nav-link" href="/account/profile">@context.User.Identity?.Name</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/admin">@T[InfernoWebLocalizableStrings.Dashboard.Administration]</a></li>
-                            <li class="nav-item">
-                                <form method="post" action="/Identity/Account/LogOut" data-enhance="false">
-                                    <button type="submit" class="nav-link btn btn-link">Log out</button>
-                                </form>
-                            </li>
-                        </Authorized>
-                        <NotAuthorized>
-                            <li class="nav-item"><a class="nav-link" href="/Identity/Account/Login">Log in</a></li>
-                        </NotAuthorized>
-                    </AuthorizeView>
-                </ul>
+@* The site's own public layout. Kameleon renders it when no compiled theme is in effect, and static themes restyle
+   it. Every part a theme may want to move is a region; Program.cs fills the regions pages leave empty. *@
+<div class="inferno-public">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-3">
+            <div class="container">
+                <a class="navbar-brand" href="/"><ThemeRegion Name="@ThemeRegions.Header" /></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#public-nav" aria-controls="public-nav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="public-nav">
+                    <ThemeRegion Name="@ThemeRegions.PrimaryNavigation" />
+                </div>
             </div>
+        </nav>
+    </header>
+
+    <ThemeRegion Name="@ThemeRegions.Hero">
+        <Template Context="content">
+            <section class="container mb-4">@content</section>
+        </Template>
+    </ThemeRegion>
+
+    <div class="container pb-5">
+        <ThemeRegion Name="@ThemeRegions.Breadcrumbs" />
+        @* The page stays in the same place whether or not there is a sidebar, so adding one does not rebuild it. *@
+        <div class="row">
+            <main role="main" class="@(HasRegion(ThemeRegions.Sidebar) ? "col-lg-9" : "col-12")">
+                @Body
+            </main>
+            @if (HasRegion(ThemeRegions.Sidebar))
+            {
+                <aside class="col-lg-3">
+                    <ThemeRegion Name="@ThemeRegions.Sidebar" />
+                </aside>
+            }
         </div>
-    </nav>
-</header>
-
-<div class="container pb-5">
-    <AutoBreadcrumbs />
-    <main role="main">
-        @Body
-    </main>
-</div>
-
-<footer class="border-top footer text-muted mt-auto py-3">
-    <div class="container d-flex justify-content-between">
-        <span>&copy; @DateTime.Now.Year - @SiteSettings.SiteName</span>
-        <ContentZone Name="Footer" />
     </div>
-</footer>
 
-@code {
-    [Inject]
-    private IThemeContext ThemeContext { get; set; }
+    <footer class="border-top footer text-muted mt-auto py-3">
+        <div class="container d-flex justify-content-between">
+            <ThemeRegion Name="@ThemeRegions.Footer" />
+        </div>
+    </footer>
 
-    private string themeName = "Default";
-
-    protected override void OnInitialized()
-    {
-        themeName = string.IsNullOrWhiteSpace(ThemeContext.WorkingTheme) ? "Default" : ThemeContext.WorkingTheme;
-    }
-}
+    <ThemeRegion Name="@ThemeRegions.Overlay" />
+</div>

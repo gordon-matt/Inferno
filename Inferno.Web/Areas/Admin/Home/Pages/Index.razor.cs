@@ -32,7 +32,7 @@ public partial class Index
     [
         new("/admin/membership", "users", InfernoWebLocalizableStrings.Membership.Title, InfernoWebLocalizableStrings.Dashboard.Cards.MembershipSubtitle, FullReload: true),
         new("/admin/configuration/settings/index", "settings", InfernoWebLocalizableStrings.General.Settings, InfernoWebLocalizableStrings.Dashboard.Cards.SettingsSubtitle),
-        new("/admin/configuration/themes/index", "palette", InfernoWebLocalizableStrings.General.Themes, InfernoWebLocalizableStrings.Dashboard.Cards.ThemesSubtitle),
+        new("/admin/themes", "palette", InfernoWebLocalizableStrings.General.Themes, InfernoWebLocalizableStrings.Dashboard.Cards.ThemesSubtitle),
         new("/admin/tenants/index", "briefcase", InfernoWebLocalizableStrings.Tenants.Title, InfernoWebLocalizableStrings.Dashboard.Cards.TenantsSubtitle)
     ];
 

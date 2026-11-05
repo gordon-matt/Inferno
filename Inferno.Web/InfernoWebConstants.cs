@@ -34,7 +34,6 @@ public class InfernoWebConstants
     public static class StateProviders
     {
         public const string CurrentCultureCode = "CurrentCultureCode";
-        public const string CurrentTheme = "CurrentTheme";
         public const string CurrentUser = "CurrentUser";
     }
 }

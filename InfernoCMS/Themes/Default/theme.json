@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "default",
+  "name": "Default",
+  "version": "1.0.0",
+  "description": "The default Inferno theme.",
+  "author": "Inferno",
+  "stylesheets": [ "theme.css" ],
+  "supportsRightToLeft": false
+}

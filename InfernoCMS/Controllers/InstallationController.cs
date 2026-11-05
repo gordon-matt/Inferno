@@ -98,7 +98,6 @@ public class InstallationController : Controller
                 AdminEmail = model.AdminEmail,
                 AdminPassword = model.AdminPassword,
                 DefaultLanguage = string.IsNullOrWhiteSpace(model.DefaultLanguage) ? "en-US" : model.DefaultLanguage,
-                Theme = "Default",
                 CreateSampleData = model.CreateSampleData
             };
             DataSettingsManager.SaveSettings(settings);

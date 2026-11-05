@@ -5,7 +5,6 @@ using Localize;
 using Inferno.Web.Areas.Admin;
 using Inferno.Web.Configuration;
 using Inferno.Web.Configuration.Services;
-using Inferno.Web.Mvc.Themes;
 using Inferno.Web.Navigation;
 using Inferno.Web.Scheduling;
 using Inferno.Web.Security.Membership;
@@ -30,10 +29,8 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.Register<IWebHelper, WebHelper>(ServiceLifetime.Scoped);
         //builder.Register<IDateTimeHelper, DateTimeHelper>(ServiceLifetime.Scoped);
 
-        // Work Context, Themes, Routing, etc
+        // Work Context, Routing, etc
         builder.Register<IWorkContext, WorkContext>(ServiceLifetime.Scoped);
-        builder.Register<IThemeProvider, ThemeProvider>(ServiceLifetime.Scoped);
-        builder.Register<IThemeContext, ThemeContext>(ServiceLifetime.Scoped);
         //builder.Register<IEmbeddedResourceResolver, EmbeddedResourceResolver>(ServiceLifetime.Singleton);
         //builder.Register<IRoutePublisher, RoutePublisher>(ServiceLifetime.Singleton);
 
@@ -67,7 +64,6 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
         // Work Context State Providers
         builder.Register<IWorkContextStateProvider, CurrentUserStateProvider>(ServiceLifetime.Transient);
-        builder.Register<IWorkContextStateProvider, CurrentThemeStateProvider>(ServiceLifetime.Transient);
         builder.Register<IWorkContextStateProvider, Localization.CurrentCultureCodeStateProvider>(ServiceLifetime.Transient);
 
         builder.Register<Localization.IWebCultureManager, Localization.WebCultureManager>(ServiceLifetime.Scoped);
@@ -81,8 +77,6 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
         // User Profile Providers
         builder.Register<IUserProfileProvider, AccountUserProfileProvider>(ServiceLifetime.Singleton);
-        builder.Register<IUserProfileProvider, ThemeUserProfileProvider>(ServiceLifetime.Singleton);
-
         //// Data / Services
         //builder.Register<IGenericAttributeService, GenericAttributeService>(ServiceLifetime.Scoped);
 
@@ -93,8 +87,6 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.Register<Areas.Admin.Tenants.Services.ITenantAdminService, Areas.Admin.Tenants.Services.TenantAdminService>(ServiceLifetime.Scoped);
         builder.Register<Areas.Admin.Configuration.Services.ISettingsAdminService, Areas.Admin.Configuration.Services.SettingsAdminService>(ServiceLifetime.Scoped);
         builder.Register<IScheduledJobService, ScheduledJobService>(ServiceLifetime.Scoped);
-        builder.Register<Areas.Admin.Configuration.Themes.Services.IThemeAdminService, Areas.Admin.Configuration.Themes.Services.ThemeAdminService>(ServiceLifetime.Scoped);
-
         //// Embedded File Provider
         //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
     }

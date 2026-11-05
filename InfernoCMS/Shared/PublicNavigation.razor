@@ -1,0 +1,21 @@
+@using Inferno.Web.ContentManagement.Components
+
+@* The public menu, the search form and the account links, for the primary navigation region. *@
+<AutoMenu />
+<ContentZone Name="SearchForm" />
+<ul class="navbar-nav ms-auto">
+    <AuthorizeView>
+        <Authorized>
+            <li class="nav-item"><a class="nav-link" href="/account/profile">@context.User.Identity?.Name</a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin">@T[InfernoWebLocalizableStrings.Dashboard.Administration]</a></li>
+            <li class="nav-item">
+                <form method="post" action="/Identity/Account/LogOut" data-enhance="false">
+                    <button type="submit" class="nav-link btn btn-link">Log out</button>
+                </form>
+            </li>
+        </Authorized>
+        <NotAuthorized>
+            <li class="nav-item"><a class="nav-link" href="/Identity/Account/Login">Log in</a></li>
+        </NotAuthorized>
+    </AuthorizeView>
+</ul>

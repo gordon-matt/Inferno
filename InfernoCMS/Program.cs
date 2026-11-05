@@ -15,6 +15,7 @@ using Inferno.Tenants;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
+using Inferno.Web.ContentManagement.Components;
 using Inferno.Web.ContentManagement.Security;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Localization;
@@ -27,6 +28,11 @@ using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
 using InfernoCMS.Identity.Permissions;
+using InfernoCMS.Shared;
+using Kameleon;
+using Kameleon.Components;
+using Kameleon.Data.Sql;
+using Kameleon.Tenancy;
 using Localize.Components;
 using Localize.Components.Pages;
 using LogVue;
@@ -124,7 +130,11 @@ services.ScopeRolesToTenant<ApplicationRole, int?>(role => role.TenantId, _ => T
 
 // Every permission a module declares is a policy. Only policies named by other libraries are added by hand.
 services.AddInfernoAuthorization();
-services.Configure<AuthorizationOptions>(options => options.AddInfernoCmsPolicies());
+services.Configure<AuthorizationOptions>(options =>
+{
+    options.AddInfernoWebPolicies();
+    options.AddInfernoCmsPolicies();
+});
 
 #endregion Account / Identity
 
@@ -147,6 +157,34 @@ services.AddRouting(routeOptions =>
 
 services.AddFlatmate<Tenant, InfernoTenantResolver>();
 services.AddFlatmateCircuit<Tenant>();
+
+#region Themes
+
+// After the NetForge, Identity and authorization setup above: Kameleon only fills in what the host has not.
+services.AddScoped<IThemeTenantProvider, InfernoCMS.Infrastructure.InfernoThemeTenantProvider>();
+services.AddScoped<IThemeTenantDirectory, InfernoCMS.Infrastructure.InfernoThemeTenantDirectory>();
+services.AddKameleon(theme =>
+{
+    configuration.GetSection(KameleonOptions.SectionName).Bind(theme);
+
+    // MainLayout is the site's own chrome: static themes restyle it, and it is used when no theme resolves.
+    theme.HostLayout = typeof(MainLayout);
+    theme.AdminLayout = typeof(Inferno.Web.Areas.Admin.Home.Shared.AdminLayout);
+
+    // What every theme shows in a region when the page supplies nothing for it.
+    theme.AddRegionContent<SiteBrand>(ThemeRegions.Header);
+    theme.AddRegionContent<PublicNavigation>(ThemeRegions.PrimaryNavigation);
+    theme.AddRegionContent<AutoBreadcrumbs>(ThemeRegions.Breadcrumbs);
+    theme.AddRegionContent<PublicFooter>(ThemeRegions.Footer);
+});
+
+// Until installation has saved a connection, theme settings are kept in memory.
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    services.AddKameleonSqlServer(connectionString);
+}
+
+#endregion Themes
 
 services.AddCmsLocalization(databaseInstalled ? connectionString : null);
 
@@ -193,7 +231,7 @@ services.AddHttpContextAccessor();
 
 services.AddHttpClient();
 
-services.ConfigureInferno(configuration, inferno => inferno.PublicLayout = typeof(InfernoCMS.Shared.MainLayout));
+services.ConfigureInferno(configuration, inferno => inferno.PublicLayout = typeof(KameleonLayout));
 
 if (!string.IsNullOrWhiteSpace(connectionString))
 {
@@ -213,7 +251,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
     services.AddBlogKrafter(blog =>
     {
         blog.Title = "Blog";
-        blog.PublicLayout = typeof(InfernoCMS.Shared.MainLayout);
+        blog.PublicLayout = typeof(KameleonLayout);
         blog.AdminLayout = typeof(Inferno.Web.Areas.Admin.Home.Shared.AdminLayout);
     });
     services.AddBlogKrafterSqlServer(connectionString);
@@ -283,11 +321,6 @@ app.UseCors("AllowAll");
 app.UseLocalize();
 
 app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Themes")),
-    RequestPath = "/Themes"
-});
 app.UsePluginz();
 app.UseDefaultFiles();
 
@@ -337,6 +370,8 @@ if (databaseInstalled)
 app.MapIdentityNexus().RequireAuthorization(InfernoWebPolicies.MembershipManage);
 app.MapLogVue().RequireAuthorization(InfernoWebPolicies.LogRead);
 app.MapLocalize();
+app.MapKameleon();
+app.MapGet("/admin/configuration/themes/index", () => Results.Redirect("/admin/themes"));
 app.MapControllers();
 app.MapPluginz();
 app.MapGet("/admin/plugins", () => Results.Redirect("/pluginz"));
@@ -352,6 +387,7 @@ var routerAssemblies = DependoResolver.Instance
     .Where(assembly => assembly != typeof(InfernoCMS.App).Assembly)
     .Append(typeof(Languages).Assembly)
     .Append(typeof(Plugins).Assembly)
+    .Append(KameleonComponents.Assembly)
     .Concat(databaseInstalled ? [typeof(BlogKrafterComponents).Assembly] : [])
     .Concat(app.Services.GetRequiredService<IPluginWebAssemblies>().Assemblies)
     .Distinct()

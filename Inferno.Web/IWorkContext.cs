@@ -17,6 +17,4 @@ public interface IWorkContext
     InfernoUser CurrentUser { get; }
 
     BreadcrumbCollection Breadcrumbs { get; set; }
-
-    string CurrentTheme { get; }
 }

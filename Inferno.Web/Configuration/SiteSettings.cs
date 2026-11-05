@@ -8,9 +8,7 @@ public class SiteSettings : ISettings
     public SiteSettings()
     {
         SiteName = "My Site";
-        DefaultTheme = "Default";
         DefaultGridPageSize = 10;
-        DefaultFrontendLayoutPath = "~/Views/Shared/_Layout.cshtml";
         //AdminLayoutPath = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
         HomePageTitle = "Home Page";
     }
@@ -30,9 +28,6 @@ public class SiteSettings : ISettings
     [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.SiteName)]
     public string SiteName { get; set; }
 
-    [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultFrontendLayoutPath)]
-    public string DefaultFrontendLayoutPath { get; set; }
-
     //[LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.AdminLayoutPath)]
     //public string AdminLayoutPath { get; set; }
 
@@ -40,16 +35,6 @@ public class SiteSettings : ISettings
     public int DefaultGridPageSize { get; set; }
 
     #endregion General
-
-    #region Themes
-
-    [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultTheme)]
-    public string DefaultTheme { get; set; }
-
-    [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.AllowUserToSelectTheme)]
-    public bool AllowUserToSelectTheme { get; set; }
-
-    #endregion Themes
 
     #region Localization
 

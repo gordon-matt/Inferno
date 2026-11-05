@@ -222,20 +222,15 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Settings.Model.Name, "Name" },
 
         { InfernoWebLocalizableStrings.Settings.Site.AdminLayoutPath, "Admin Layout Path" },
-        { InfernoWebLocalizableStrings.Settings.Site.AllowUserToSelectTheme, "Allow User To Select Theme" },
-        { InfernoWebLocalizableStrings.Settings.Site.DefaultFrontendLayoutPath, "Default Frontend Layout Path" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultGridPageSize, "Default Grid Page Size" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage, "Default Language" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultMetaDescription, "Default Meta Description" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultMetaKeywords, "Default Meta Keywords" },
-        { InfernoWebLocalizableStrings.Settings.Site.DefaultTheme, "Default Theme" },
         { InfernoWebLocalizableStrings.Settings.Site.HomePageTitle, "Home Page Title" },
         { InfernoWebLocalizableStrings.Settings.Site.SiteName, "Site Name" },
         { InfernoWebLocalizableStrings.Settings.Site.Tabs.General, "General" },
         { InfernoWebLocalizableStrings.Settings.Site.Tabs.Localization, "Localization" },
         { InfernoWebLocalizableStrings.Settings.Site.Tabs.SEO, "SEO" },
-        { InfernoWebLocalizableStrings.Settings.Site.Tabs.Themes, "Themes" },
-
         { InfernoWebLocalizableStrings.Settings.Description, "Configuration for this site. Pick a group to edit it." },
         { InfernoWebLocalizableStrings.Settings.EmptyTitle, "No settings" },
         { InfernoWebLocalizableStrings.Settings.NoEditor, "This group has nothing to edit." },
@@ -266,24 +261,14 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Tenants.Model.Url, "URL" },
         { InfernoWebLocalizableStrings.Tenants.Title, "Tenants" },
 
+        { InfernoWebLocalizableStrings.Themes.Catalog, "Theme Catalog" },
         { InfernoWebLocalizableStrings.Themes.Current, "Current" },
-        { InfernoWebLocalizableStrings.Themes.Description, "Choose how the public site looks." },
-        { InfernoWebLocalizableStrings.Themes.EmptyTitle, "No themes are installed" },
-        { InfernoWebLocalizableStrings.Themes.SetDefaultSuccessFormat, "{0} is now the site theme." },
-        { InfernoWebLocalizableStrings.Themes.Model.IsDefaultTheme, "Default Theme" },
-        { InfernoWebLocalizableStrings.Themes.Model.PreviewImageUrl, "Preview" },
-        { InfernoWebLocalizableStrings.Themes.Model.SupportRtl, "Supports RTL" },
-        { InfernoWebLocalizableStrings.Themes.SetDesktopThemeError, "Error when setting default desktop theme." },
-        { InfernoWebLocalizableStrings.Themes.SetDesktopThemeSuccess, "Successfully set default desktop theme." },
-        { InfernoWebLocalizableStrings.Themes.SetMobileThemeError, "Error when setting default mobile theme." },
-        { InfernoWebLocalizableStrings.Themes.SetMobileThemeSuccess, "Successfully set default mobile theme." },
 
         { InfernoWebLocalizableStrings.UserProfile.Account.FamilyName, "Family Name" },
         { InfernoWebLocalizableStrings.UserProfile.Account.GivenNames, "Given Name/s" },
         { InfernoWebLocalizableStrings.UserProfile.Account.ShowFamilyNameFirst, "Show Family Name First" },
         { InfernoWebLocalizableStrings.UserProfile.Localization.PreferredLanguage, "Preferred Language" },
         { InfernoWebLocalizableStrings.UserProfile.Mobile.DontUseMobileVersion, "Don't Use Mobile Version" },
-        { InfernoWebLocalizableStrings.UserProfile.Theme.PreferredTheme, "Preferred Theme" },
     };
 
     #endregion ILanguagePack Members

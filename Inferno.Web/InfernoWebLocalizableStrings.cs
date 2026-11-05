@@ -323,13 +323,9 @@ public static class InfernoWebLocalizableStrings
                 public const string General = "Inferno.Web/Settings.Site.Tabs.General";
                 public const string Localization = "Inferno.Web/Settings.Site.Tabs.Localization";
                 public const string SEO = "Inferno.Web/Settings.Site.Tabs.SEO";
-                public const string Themes = "Inferno.Web/Settings.Site.Tabs.Themes";
             }
 
             public const string AdminLayoutPath = "Inferno.Web/Settings.Site.AdminLayoutPath";
-            public const string AllowUserToSelectTheme = "Inferno.Web/Settings.Site.AllowUserToSelectTheme";
-            public const string DefaultTheme = "Inferno.Web/Settings.Site.DefaultTheme";
-            public const string DefaultFrontendLayoutPath = "Inferno.Web/Settings.Site.DefaultFrontendLayoutPath";
             public const string DefaultGridPageSize = "Inferno.Web/Settings.Site.DefaultGridPageSize";
             public const string DefaultLanguage = "Inferno.Web/Settings.Site.DefaultLanguage";
             public const string DefaultMetaDescription = "Inferno.Web/Settings.Site.DefaultMetaDescription";
@@ -362,21 +358,8 @@ public static class InfernoWebLocalizableStrings
 
     public static class Themes
     {
+        public const string Catalog = "Inferno.Web/Themes.Catalog";
         public const string Current = "Inferno.Web/Themes.Current";
-        public const string Description = "Inferno.Web/Themes.Description";
-        public const string EmptyTitle = "Inferno.Web/Themes.EmptyTitle";
-        public const string SetDefaultSuccessFormat = "Inferno.Web/Themes.SetDefaultSuccessFormat";
-        public const string SetDesktopThemeError = "Inferno.Web/Themes.SetDesktopThemeError";
-        public const string SetDesktopThemeSuccess = "Inferno.Web/Themes.SetDesktopThemeSuccess";
-        public const string SetMobileThemeError = "Inferno.Web/Themes.SetMobileThemeError";
-        public const string SetMobileThemeSuccess = "Inferno.Web/Themes.SetMobileThemeSuccess";
-
-        public static class Model
-        {
-            public const string PreviewImageUrl = "Inferno.Web/Themes.Model.PreviewImageUrl";
-            public const string SupportRtl = "Inferno.Web/Themes.Model.SupportRtl";
-            public const string IsDefaultTheme = "Inferno.Web/Themes.Model.IsDefaultTheme";
-        }
     }
 
     public static class UserProfile
@@ -396,11 +379,6 @@ public static class InfernoWebLocalizableStrings
         public static class Mobile
         {
             public const string DontUseMobileVersion = "Inferno.Web/UserProfile.Mobile.DontUseMobileVersion";
-        }
-
-        public static class Theme
-        {
-            public const string PreferredTheme = "Inferno.Web/UserProfile.Theme.PreferredTheme";
         }
     }
 }

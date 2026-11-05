@@ -1,8 +1,11 @@
-body {
+/* Every selector sits under .inferno-public, the root of the public layout, because the theme's stylesheet is
+   linked on every page of the document, including the admin screens. */
+
+.inferno-public {
     font-family: "Segoe UI", sans-serif;
 }
 
-.tag-cloud a {
+.inferno-public .tag-cloud a {
     display: inline-block;
     margin: 0.15rem 0.35rem;
 }

@@ -9,7 +9,7 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="assemblies" OnNavigateAsync="OnNavigateAsync">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(KameleonLayout)" />
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
@@ -32,6 +32,7 @@
                 .Select(x => x.GetType().Assembly)
                 .Append(typeof(Languages).Assembly)
                 .Append(typeof(Plugins).Assembly)
+                .Append(KameleonComponents.Assembly)
                 .Concat(DataSettingsHelper.IsDatabaseInstalled ? [typeof(BlogKrafterComponents).Assembly] : [])
                 .Concat(DependoResolver.Instance.Resolve<IPluginWebAssemblies>().Assemblies)
                 .Distinct()

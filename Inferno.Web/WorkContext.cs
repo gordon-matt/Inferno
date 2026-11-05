@@ -38,12 +38,6 @@ public partial class WorkContext : IWorkContext
 
     public BreadcrumbCollection Breadcrumbs { get; set; }
 
-    public string CurrentTheme
-    {
-        get => GetState<string>(InfernoWebConstants.StateProviders.CurrentTheme);
-        set => SetState(InfernoWebConstants.StateProviders.CurrentTheme, value);
-    }
-
     public string CurrentCultureCode => GetState<string>(InfernoWebConstants.StateProviders.CurrentCultureCode);
 
     public InfernoUser CurrentUser => GetState<InfernoUser>(InfernoWebConstants.StateProviders.CurrentUser);

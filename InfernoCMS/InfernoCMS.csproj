@@ -66,6 +66,15 @@
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Kameleon\Kameleon\Kameleon.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Kameleon\Kameleon.Data.Sql\Kameleon.Data.Sql.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Static themes are read from disk at run time, so every file in them must be published, not only the manifests. -->
+    <Content Update="Themes\**" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="Themes\**" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Components\" />
     <Folder Include="Models\" />
     <Folder Include="wwwroot\img\" />

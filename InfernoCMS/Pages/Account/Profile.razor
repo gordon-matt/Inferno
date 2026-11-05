@@ -3,6 +3,7 @@
 @using System.Reflection
 @using Inferno.Security.Membership
 @using Inferno.Web.Security.Membership
+@using Kameleon.Administration
 @using Microsoft.AspNetCore.Authorization
 
 <PageTitle>Profile</PageTitle>
@@ -39,6 +40,17 @@
     <button type="submit" class="btn btn-primary">Save</button>
 </EditForm>
 
+@if (canChooseTheme)
+{
+    @* Outside the form: the picker saves the moment a theme is chosen. Shown only where the site allows a personal choice. *@
+    <section class="card mt-4">
+        <div class="card-header">Theme</div>
+        <div class="card-body">
+            <ThemePicker Label="Site theme" />
+        </div>
+    </section>
+}
+
 @code {
     [Inject]
     private IEnumerable<IUserProfileProvider> Providers { get; set; }
@@ -46,11 +58,18 @@
     [Inject]
     private IMembershipService MembershipService { get; set; }
 
+    [Inject]
+    private IUserThemeService UserThemes { get; set; }
+
     private List<ProfileSection> sections = [];
     private string message;
+    private bool canChooseTheme;
 
     protected override async Task OnInitializedAsync()
     {
+        var choices = await UserThemes.GetChoicesAsync();
+        canChooseTheme = choices.IsSuccess && choices.Value.CanChoose;
+
         string userId = WorkContext.CurrentUser?.Id;
         if (string.IsNullOrEmpty(userId))
         {

@@ -77,9 +77,15 @@ public class AdminNavigationProvider : INavigationProvider
 
         // Themes
         builder.Add(T[InfernoWebLocalizableStrings.General.Themes], "5", item => item
-            .Url("/admin/configuration/themes/index")
+            .Url("/admin/themes")
             .Icon("palette")
             .Permission(InfernoWebPolicies.ThemesRead));
+
+        // Which themes the application offers at all, and to which tenants. Host administrator only.
+        builder.Add(T[InfernoWebLocalizableStrings.Themes.Catalog], "5", item => item
+            .Url("/admin/themes/catalog")
+            .Icon("grid")
+            .Permission(StandardPolicies.FullAccess));
     }
 
     private void BuildMaintenanceMenu(NavigationItemBuilder builder)

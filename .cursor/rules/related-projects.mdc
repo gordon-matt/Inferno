@@ -20,6 +20,8 @@ Shared coding conventions live in Blueprint/.cursor/rules/conventions.mdc (absol
 | Heroicsoft.NetForge.Components | ProjectReference (from Inferno.Web; also brings in Heroicsoft.NetForge.Results) | n/a | `D:\Source\GitHub\Libraries\Heroicsoft.NetForge` (`..\..\Libraries\Heroicsoft.NetForge`) |
 | Flatmate | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Flatmate` (`..\..\Libraries\Flatmate`) |
 | IdentityNexus | ProjectReference | n/a | `D:\Source\GitHub\Libraries\IdentityNexus` (`..\..\Libraries\IdentityNexus`) |
+| Kameleon | ProjectReference (not published to NuGet yet) | n/a | `D:\Source\GitHub\Libraries\Kameleon` (`..\..\Libraries\Kameleon`) |
+| Kameleon.Data.Sql | ProjectReference (not published to NuGet yet) | n/a | `D:\Source\GitHub\Libraries\Kameleon` (`..\..\Libraries\Kameleon`) |
 | Pickstack | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
 | Pickstack.FileManager.WebFilez | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
 | Pickstack.RichTextEditor.TinyMce7 | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |

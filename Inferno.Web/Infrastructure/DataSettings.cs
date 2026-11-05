@@ -17,8 +17,6 @@ public class DataSettings
 
     public string DefaultLanguage { get; set; }
 
-    public string Theme { get; set; }
-
     public bool IsValid() => !string.IsNullOrEmpty(ProviderName) && !string.IsNullOrEmpty(ConnectionString);
 }
 
