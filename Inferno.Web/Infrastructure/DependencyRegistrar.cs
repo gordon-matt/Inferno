@@ -19,25 +19,12 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
     public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
-        //var settings = DataSettingsManager.LoadSettings();
-        //builder.RegisterInstance(settings);
         builder.RegisterInstance(DataSettingsManager.LoadSettings());
 
         builder.Register<IRouterAssemblyMarker, RouterAssemblyMarker>(ServiceLifetime.Singleton);
 
-        // Helpers
         builder.Register<IWebHelper, WebHelper>(ServiceLifetime.Scoped);
-        //builder.Register<IDateTimeHelper, DateTimeHelper>(ServiceLifetime.Scoped);
-
-        // Work Context, Routing, etc
         builder.Register<IWorkContext, WorkContext>(ServiceLifetime.Scoped);
-        //builder.Register<IEmbeddedResourceResolver, EmbeddedResourceResolver>(ServiceLifetime.Singleton);
-        //builder.Register<IRoutePublisher, RoutePublisher>(ServiceLifetime.Singleton);
-
-        //// Resources (JS and CSS)
-        //builder.Register<ScriptRegistrar>().AsSelf().InstancePerLifetimeScope();
-        //builder.Register<StyleRegistrar>().AsSelf().InstancePerLifetimeScope();
-        //builder.Register<ResourcesManager>().As<IResourcesManager>().InstancePerLifetimeScope();
 
         // Security
         builder.Register<Security.Permissions.IPermissionProvider, Security.Permissions.InfernoWebPermissionProvider>(ServiceLifetime.Singleton);
@@ -71,24 +58,14 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
         // Localization
         builder.Register<ILanguagePack, LanguagePackInvariant>(ServiceLifetime.Transient);
-        //builder.Register<IWebCultureManager, WebCultureManager>(ServiceLifetime.Scoped);
-        //builder.Register<ICultureSelector, SiteCultureSelector>(ServiceLifetime.Singleton);
-        //builder.Register<ICultureSelector, CookieCultureSelector>(ServiceLifetime.Singleton);
 
         // User Profile Providers
         builder.Register<IUserProfileProvider, AccountUserProfileProvider>(ServiceLifetime.Singleton);
-        //// Data / Services
-        //builder.Register<IGenericAttributeService, GenericAttributeService>(ServiceLifetime.Scoped);
-
-        //// Rendering
-        //builder.Register<IRazorViewRenderService, MantleRazorViewRenderService>(ServiceLifetime.Transient);
 
         // Admin screens
         builder.Register<Areas.Admin.Tenants.Services.ITenantAdminService, Areas.Admin.Tenants.Services.TenantAdminService>(ServiceLifetime.Scoped);
         builder.Register<Areas.Admin.Configuration.Services.ISettingsAdminService, Areas.Admin.Configuration.Services.SettingsAdminService>(ServiceLifetime.Scoped);
         builder.Register<IScheduledJobService, ScheduledJobService>(ServiceLifetime.Scoped);
-        //// Embedded File Provider
-        //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
     }
 
     public void Register(ContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration) =>

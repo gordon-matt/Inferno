@@ -143,20 +143,7 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Localization.ResetLocalizableStringsError, "There was an error when resetting the localized strings." },
         { InfernoWebLocalizableStrings.Localization.ResetLocalizableStringsSuccess, "Successfully reset the localized strings." },
 
-        { InfernoWebLocalizableStrings.Log.ClearConfirm, "Are you sure you want to clear the log?" },
-        { InfernoWebLocalizableStrings.Log.ClearError, "Error when trying to clear the log." },
-        { InfernoWebLocalizableStrings.Log.ClearSuccess, "Successfully cleared the log." },
         { InfernoWebLocalizableStrings.Log.Title, "Log" },
-        { InfernoWebLocalizableStrings.Log.Model.ErrorClass, "Error Class" },
-        { InfernoWebLocalizableStrings.Log.Model.ErrorMessage, "Error Message" },
-        { InfernoWebLocalizableStrings.Log.Model.ErrorMethod, "Error Method" },
-        { InfernoWebLocalizableStrings.Log.Model.ErrorSource, "Error Source" },
-        { InfernoWebLocalizableStrings.Log.Model.EventDateTime, "Event Date/Time" },
-        { InfernoWebLocalizableStrings.Log.Model.EventLevel, "Event Level" },
-        { InfernoWebLocalizableStrings.Log.Model.EventMessage, "Event Message" },
-        { InfernoWebLocalizableStrings.Log.Model.InnerErrorMessage, "Inner Error Message" },
-        { InfernoWebLocalizableStrings.Log.Model.MachineName, "Machine Name" },
-        { InfernoWebLocalizableStrings.Log.Model.UserName, "Username" },
 
         { InfernoWebLocalizableStrings.Maintenance.Title, "Maintenance" },
 

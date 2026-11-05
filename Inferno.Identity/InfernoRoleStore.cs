@@ -35,19 +35,6 @@ public abstract class InfernoRoleStore<TRole, TContext> : RoleStore<TRole, TCont
 
     protected override IdentityRoleClaim<string> CreateRoleClaim(TRole role, Claim claim) => new() { RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value };
 
-    // Get by ID should not need to override.. onyl for getting by name
-    //public override Task<TRole> FindByIdAsync(string id, CancellationToken cancellationToken = default(CancellationToken))
-    //{
-    //    cancellationToken.ThrowIfCancellationRequested();
-    //    ThrowIfDisposed();
-    //    var roleId = ConvertIdFromString(id);
-    //    return Roles.FirstOrDefaultAsync(
-    //        u =>
-    //            u.Id.Equals(roleId)
-    //            && (u.TenantId == TenantId || (u.TenantId == null)),
-    //        cancellationToken);
-    //}
-
     public override Task<TRole> FindByNameAsync(string normalizedName, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

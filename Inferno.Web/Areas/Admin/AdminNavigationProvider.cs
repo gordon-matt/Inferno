@@ -105,9 +105,4 @@ public class AdminNavigationProvider : INavigationProvider
             .IsExternal()
             .Permission(StandardPolicies.FullAccess));
     }
-
-    //private void BuildPluginsMenu(NavigationItemBuilder builder)
-    //{
-    //    builder.Icon("fa fa-puzzle-piece");
-    //}
 }

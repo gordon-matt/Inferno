@@ -35,9 +35,6 @@ public class DependencyRegistrar : IDependencyRegistrar
     {
         builder.Register<IRouterAssemblyMarker, RouterAssemblyMarker>(ServiceLifetime.Singleton);
 
-        // Embedded File Provider
-        //builder.Register<IEmbeddedFileProviderRegistrar, EmbeddedFileProviderRegistrar>(ServiceLifetime.Scoped);
-
         #region Services
 
         // Menus

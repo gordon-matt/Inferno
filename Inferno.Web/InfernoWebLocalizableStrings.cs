@@ -161,23 +161,6 @@ public static class InfernoWebLocalizableStrings
 
     public static class Log
     {
-        public static class Model
-        {
-            public const string ErrorClass = "Inferno.Web/Log.Model.ErrorClass";
-            public const string ErrorMessage = "Inferno.Web/Log.Model.ErrorMessage";
-            public const string ErrorMethod = "Inferno.Web/Log.Model.ErrorMethod";
-            public const string ErrorSource = "Inferno.Web/Log.Model.ErrorSource";
-            public const string EventDateTime = "Inferno.Web/Log.Model.EventDateTime";
-            public const string EventLevel = "Inferno.Web/Log.Model.EventLevel";
-            public const string EventMessage = "Inferno.Web/Log.Model.EventMessage";
-            public const string InnerErrorMessage = "Inferno.Web/Log.Model.InnerErrorMessage";
-            public const string MachineName = "Inferno.Web/Log.Model.MachineName";
-            public const string UserName = "Inferno.Web/Log.Model.UserName";
-        }
-
-        public const string ClearConfirm = "Inferno.Web/Log.ClearConfirm";
-        public const string ClearError = "Inferno.Web/Log.ClearError";
-        public const string ClearSuccess = "Inferno.Web/Log.ClearSuccess";
         public const string Title = "Inferno.Web/Log.Title";
     }
 

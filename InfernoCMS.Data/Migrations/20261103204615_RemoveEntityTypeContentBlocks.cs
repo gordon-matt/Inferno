@@ -11,9 +11,14 @@ namespace InfernoCMS.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Localize.NET creates this table in its own context, which migrates after installation.
+            // A brand new database has nothing to clean up.
             migrationBuilder.Sql("""
-                DELETE FROM [localize].[LocalizableProperties]
-                WHERE [EntityType] = 'Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities.EntityTypeContentBlock'
+                IF OBJECT_ID(N'[localize].[LocalizableProperties]', N'U') IS NOT NULL
+                BEGIN
+                    DELETE FROM [localize].[LocalizableProperties]
+                    WHERE [EntityType] = 'Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities.EntityTypeContentBlock'
+                END
                 """);
 
             migrationBuilder.DropTable(

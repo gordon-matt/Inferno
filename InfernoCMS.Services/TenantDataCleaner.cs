@@ -4,7 +4,6 @@ using System.Globalization;
 using BlogKrafter.Data;
 using BlogKrafter.Data.Entities;
 using Inferno.Helpers;
-using Inferno.Logging.Entities;
 using Inferno.Web.Configuration.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
@@ -83,7 +82,6 @@ public class TenantDataCleaner : ITenantDataCleaner
         await dbContext.Set<QueuedEmail>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
         await dbContext.Set<Setting>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
         await DeleteLocalizationAsync(tenantId);
-        await dbContext.Set<LogEntry>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
         await dbContext.Set<UserProfileEntry>().Where(x => x.TenantId == tenantId).ExecuteDeleteAsync();
 
         var userIds = await dbContext.Users.Where(x => x.TenantId == tenantId).Select(x => x.Id).ToListAsync();

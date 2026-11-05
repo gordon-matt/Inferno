@@ -10,8 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Inferno.Identity;
 
 public abstract class InfernoIdentityDbContext<TUser, TRole>
-    : IdentityDbContext<TUser, TRole, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>//,
-                                                                                                                                                                                   //ISupportSeed
+    : IdentityDbContext<TUser, TRole, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
     where TUser : InfernoIdentityUser
     where TRole : InfernoIdentityRole
 {
@@ -42,8 +41,6 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
         }
     }
 
-    #region ISupportSeed Members
-
     public virtual void Seed()
     {
         var tenant = new Tenant
@@ -53,7 +50,6 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
             Hosts = "my-domain.com"
         };
 
-        // Create default tenant
         Tenants.Add(tenant);
         SaveChanges();
 
@@ -62,20 +58,6 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
         {
             mediaFolder.Create();
         }
-
-        //var dataSettings = DependoResolver.Instance.Resolve<DataSettings>();
-
-        //if (dataSettings.CreateSampleData)
-        //{
-        //    var seeders = DependoResolver.Instance.ResolveAll<IDbSeeder>().OrderBy(x => x.Order);
-
-        //    foreach (var seeder in seeders)
-        //    {
-        //        seeder.Seed(this);
-        //    }
-        //}
     }
-
-    #endregion ISupportSeed Members
 
 }

@@ -257,49 +257,6 @@ public abstract class IdentityMembershipService : IMembershipService
         }
     }
 
-    //public async Task AssignUserToRoles(object userId, IEnumerable<object> roleIds)
-    //{
-    //    string uId = userId.ToString();
-
-    //    var ids = roleIds.Select(x => Convert.ToString(x));
-    //    var roleNames = await roleManager.Roles.Where(x => ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
-
-    //    var currentRoles = await userManager.GetRolesAsync(uId);
-
-    //    var toDelete = currentRoles.Where(x => !roleNames.Contains(x));
-    //    var toAdd = roleNames.Where(x => !currentRoles.Contains(x));
-
-    //    if (toDelete.Any())
-    //    {
-    //        foreach (string roleName in toDelete)
-    //        {
-    //            var result = await userManager.RemoveFromRoleAsync(uId, roleName);
-
-    //            if (!result.Succeeded)
-    //            {
-    //                string errorMessage = string.Join(Environment.NewLine, result.Errors.Select(x => x.Description));
-    //                throw new InfernoException(errorMessage);
-    //            }
-    //        }
-    //        cachedUserRoles.Remove(uId);
-    //    }
-
-    //    if (toAdd.Any())
-    //    {
-    //        foreach (string roleName in toAdd)
-    //        {
-    //            var result = await userManager.AddToRoleAsync(uId, roleName);
-
-    //            if (!result.Succeeded)
-    //            {
-    //                string errorMessage = string.Join(Environment.NewLine, result.Errors.Select(x => x.Description));
-    //                throw new InfernoException(errorMessage);
-    //            }
-    //        }
-    //        cachedUserRoles.Remove(uId);
-    //    }
-    //}
-
     public async Task AssignUserToRolesAsync(int? tenantId, object userId, IEnumerable<object> roleIds)
     {
         string uId = userId.ToString();
