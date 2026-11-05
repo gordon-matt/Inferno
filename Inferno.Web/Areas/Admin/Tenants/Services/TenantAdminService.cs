@@ -1,4 +1,5 @@
 using Ardalis.Result;
+using Flatmate;
 using Inferno.Helpers;
 using Inferno.Security.Membership;
 using Inferno.Tenants.Entities;
@@ -32,8 +33,20 @@ public class TenantAdminService(
     ITenantService tenantService,
     IMembershipService membershipService,
     ITenantDataCleaner tenantDataCleaner,
+    ITenantCache<Tenant> tenantCache,
     ILogger<TenantAdminService> logger) : ITenantAdminService
 {
+    /// <summary>Forgets what the resolver remembered for these hosts, so a new, changed or removed tenant takes effect now instead of after the cache expires.</summary>
+    private void EvictHosts(params string[] hostLists)
+    {
+        foreach (string host in hostLists
+            .Where(list => !string.IsNullOrWhiteSpace(list))
+            .SelectMany(list => list.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)))
+        {
+            tenantCache.Evict(host.ToLowerInvariant());
+        }
+    }
+
     public Task<Result<ListPage<Tenant>>> SearchAsync(ListQuery query)
     {
         using var connection = tenantService.OpenConnection();
@@ -83,12 +96,14 @@ public class TenantAdminService(
                     return Result<Tenant>.NotFound();
                 }
 
+                string previousHosts = existing.Hosts;
                 existing.Name = tenant.Name.Trim();
                 existing.Url = tenant.Url.Trim();
                 existing.Hosts = tenant.Hosts?.Trim();
                 existing.SslEnabled = tenant.SslEnabled;
                 existing.SecureUrl = tenant.SecureUrl?.Trim();
                 await tenantService.UpdateAsync(existing);
+                EvictHosts(previousHosts, existing.Hosts);
                 return Result.Success(existing);
             }
 
@@ -102,6 +117,7 @@ public class TenantAdminService(
             });
 
             await membershipService.EnsureAdminRoleForTenantAsync(created.Id);
+            EvictHosts(created.Hosts);
 
             var mediaFolder = new DirectoryInfo(CommonHelper.MapPath($"~/Media/Uploads/Tenant_{created.Id}"));
             if (!mediaFolder.Exists)
@@ -130,6 +146,7 @@ public class TenantAdminService(
         {
             await tenantDataCleaner.CleanAsync(id);
             await tenantService.DeleteAsync(tenant);
+            EvictHosts(tenant.Hosts);
             return Result.Success();
         }
         catch (Exception exception)

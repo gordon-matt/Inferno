@@ -1,0 +1,107 @@
+/* Midnight: a dark restyle of the public layout. Every rule sits under .inferno-public because the stylesheet is
+   linked on every page of the document, including the admin screens. The colour default is on :root so the
+   variable exists even before the administrator saves a value. */
+
+:root {
+    --midnight-accent: #38bdf8;
+}
+
+.inferno-public {
+    --nf-bg: #0b0f1a;
+    --nf-surface: #131a2b;
+    --nf-surface-2: #182036;
+    --nf-hover: #1b2540;
+    --nf-border: #26324d;
+    --nf-border-soft: #1c2640;
+    --nf-text: #e6ebf5;
+    --nf-muted: #93a0bd;
+    --nf-accent: var(--midnight-accent);
+    --nf-accent-text: #04121c;
+    --bs-body-color: #e6ebf5;
+    --bs-body-bg: #0b0f1a;
+    --bs-border-color: #26324d;
+    --bs-link-color: var(--midnight-accent);
+
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background:
+        radial-gradient(900px 400px at 85% -10%, color-mix(in srgb, var(--midnight-accent) 22%, transparent), transparent 70%),
+        #0b0f1a;
+    color: #e6ebf5;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color-scheme: dark;
+}
+
+.inferno-public a { color: var(--midnight-accent); }
+.inferno-public h1, .inferno-public h2, .inferno-public h3 { color: #f4f7ff; letter-spacing: -0.01em; }
+.inferno-public h1 { font-weight: 700; }
+
+.inferno-public header .navbar {
+    background: rgb(11 15 26 / 0.85) !important;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #26324d !important;
+}
+
+.inferno-public .navbar-brand {
+    color: #fff !important;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.inferno-public .navbar .nav-link,
+.inferno-public .navbar .btn-link { color: #b9c4dd !important; }
+.inferno-public .navbar .nav-link:hover,
+.inferno-public .navbar .nav-link:focus { color: var(--midnight-accent) !important; }
+.inferno-public .navbar .dropdown-menu { background: #131a2b; border-color: #26324d; }
+.inferno-public .navbar .dropdown-item { color: #dbe3f5; }
+.inferno-public .navbar .dropdown-item:hover { background: #1b2540; color: var(--midnight-accent); }
+.inferno-public .navbar-toggler { border-color: #26324d; filter: invert(1); }
+
+.inferno-public main { flex: 1 0 auto; }
+
+.inferno-public .breadcrumb { --bs-breadcrumb-divider-color: #6b7a99; --bs-breadcrumb-item-active-color: #93a0bd; }
+
+.inferno-public .card,
+.inferno-public .list-group-item,
+.inferno-public .nf-card {
+    background: #131a2b;
+    border-color: #26324d;
+    color: #e6ebf5;
+}
+
+.inferno-public .btn-primary,
+.inferno-public .nf-btn-primary {
+    background: var(--midnight-accent);
+    border-color: var(--midnight-accent);
+    color: #04121c;
+    font-weight: 600;
+}
+
+.inferno-public .form-control,
+.inferno-public .nf-input {
+    background: #0f1524;
+    border-color: #26324d;
+    color: #e6ebf5;
+}
+
+.inferno-public .form-control::placeholder { color: #6b7a99; }
+.inferno-public .text-muted { color: #93a0bd !important; }
+.inferno-public hr { border-color: #26324d; opacity: 1; }
+.inferno-public img { border-radius: 10px; }
+
+.inferno-public .tag-cloud a {
+    display: inline-block;
+    margin: 0.15rem 0.35rem;
+    padding: 0.1rem 0.6rem;
+    border: 1px solid #26324d;
+    border-radius: 999px;
+    background: #131a2b;
+}
+
+.inferno-public footer.footer {
+    background: #080b14;
+    border-top: 1px solid #26324d !important;
+    color: #93a0bd !important;
+}

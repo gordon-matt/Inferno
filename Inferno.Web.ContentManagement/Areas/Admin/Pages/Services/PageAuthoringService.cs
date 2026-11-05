@@ -312,11 +312,14 @@ public class PageAuthoringService : IPageAuthoringService
     {
         cultureCode = NormalizeCulture(cultureCode);
 
+        int? tenantId = workContext.CurrentTenant?.Id;
+
         List<PageVersion> candidates;
         using (var connection = versionService.OpenConnection())
         {
+            // Scoped to the current tenant so another tenant's page can't be read by guessing its id.
             candidates = connection
-                .Query(version => version.PageId == pageId && version.CultureCode == cultureCode && version.Status != VersionStatus.Archived)
+                .Query(version => version.TenantId == tenantId && version.PageId == pageId && version.CultureCode == cultureCode && version.Status != VersionStatus.Archived)
                 .ToList();
         }
 
@@ -330,11 +333,13 @@ public class PageAuthoringService : IPageAuthoringService
     {
         cultureCode = NormalizeCulture(cultureCode);
 
+        int? tenantId = workContext.CurrentTenant?.Id;
+
         List<PageVersion> history;
         using (var connection = versionService.OpenConnection())
         {
             history = connection
-                .Query(version => version.PageId == pageId && version.CultureCode == cultureCode && version.Status == VersionStatus.Archived)
+                .Query(version => version.TenantId == tenantId && version.PageId == pageId && version.CultureCode == cultureCode && version.Status == VersionStatus.Archived)
                 .OrderByDescending(version => version.DateModifiedUtc)
                 .ToList();
         }

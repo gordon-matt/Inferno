@@ -12,14 +12,6 @@ public static class InfernoWebPolicies
     public const string LocalizableStringsRead = "Inferno.LocalizableStrings.Read";
     public const string LocalizableStringsWrite = "Inferno.LocalizableStrings.Write";
 
-    // Log
-    public const string LogRead = "Inferno.Log.Read";
-    public const string LogWrite = "Inferno.Log.Write";
-
-    // Plugins
-    public const string PluginsRead = "Inferno.Plugins.Read";
-    public const string PluginsManage = "Inferno.Plugins.Manage";
-
     // Settings
     public const string SettingsRead = "Inferno.Settings.Read";
     public const string SettingsWrite = "Inferno.Settings.Write";

@@ -57,11 +57,11 @@ public class AdminNavigationProvider : INavigationProvider
         //    .Icon("fas fa-search")
         //    .Permission(StandardPolicies.FullAccess));
 
-        // Plugins
+        // Plugins. They load into the whole application, so only the host administrator sees them.
         builder.Add(T[InfernoWebLocalizableStrings.Plugins.Title], "5", item => item
             .Url("/pluginz")
             .Icon("puzzle")
-            .Permission(InfernoWebPolicies.PluginsRead));
+            .Permission(StandardPolicies.FullAccess));
 
         // Settings
         builder.Add(T[InfernoWebLocalizableStrings.General.Settings], "5", item => item
@@ -92,11 +92,11 @@ public class AdminNavigationProvider : INavigationProvider
     {
         builder.Icon("fas fa-wrench");
 
-        // Log
+        // Log. It covers the whole application and is not split by tenant, so only the host administrator sees it.
         builder.Add(T[InfernoWebLocalizableStrings.Log.Title], "5", item => item
             .Url("/logvue")
             .Icon("logs")
-            .Permission(InfernoWebPolicies.LogRead));
+            .Permission(StandardPolicies.FullAccess));
 
         // Hangfire's own UI, so it opens beside the admin shell. Only the host administrator may use it.
         builder.Add(T[InfernoWebLocalizableStrings.ScheduledTasks.Title], "5", item => item

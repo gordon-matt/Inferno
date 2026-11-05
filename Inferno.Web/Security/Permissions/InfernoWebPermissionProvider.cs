@@ -6,7 +6,6 @@ public sealed class InfernoWebPermissionProvider : IPermissionProvider
 {
     private const string General = "General";
     private const string Localization = "Localization";
-    private const string Maintenance = "Maintenance";
     private const string Membership = "Membership";
     private const string Configuration = "Configuration";
 
@@ -18,16 +17,13 @@ public sealed class InfernoWebPermissionProvider : IPermissionProvider
         },
         new(StandardPolicies.FullAccess, General, "Full access")
         {
-            Description = "Every permission, including tenants and any added by plugins later.",
+            Description = "Every permission, plus what belongs to the whole application: tenants, plugins, the log, scheduled tasks and the theme catalog. Only the host administrator has it.",
         },
 
         new(InfernoWebPolicies.LanguagesRead, Localization, "View languages"),
         new(InfernoWebPolicies.LanguagesWrite, Localization, "Manage languages") { Implies = [InfernoWebPolicies.LanguagesRead] },
         new(InfernoWebPolicies.LocalizableStringsRead, Localization, "View translations"),
         new(InfernoWebPolicies.LocalizableStringsWrite, Localization, "Edit translations") { Implies = [InfernoWebPolicies.LocalizableStringsRead] },
-
-        new(InfernoWebPolicies.LogRead, Maintenance, "View the log"),
-        new(InfernoWebPolicies.LogWrite, Maintenance, "Clear the log") { Implies = [InfernoWebPolicies.LogRead] },
 
         new(InfernoWebPolicies.MembershipManage, Membership, "Manage users and roles")
         {
@@ -39,8 +35,6 @@ public sealed class InfernoWebPermissionProvider : IPermissionProvider
             Implies = [InfernoWebPolicies.MembershipManage],
         },
 
-        new(InfernoWebPolicies.PluginsRead, Configuration, "View plugins"),
-        new(InfernoWebPolicies.PluginsManage, Configuration, "Install and remove plugins") { Implies = [InfernoWebPolicies.PluginsRead] },
         new(InfernoWebPolicies.SettingsRead, Configuration, "View settings"),
         new(InfernoWebPolicies.SettingsWrite, Configuration, "Edit settings") { Implies = [InfernoWebPolicies.SettingsRead] },
         new(InfernoWebPolicies.ThemesRead, Configuration, "View themes"),

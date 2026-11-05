@@ -1,4 +1,4 @@
-﻿using Dependo;
+using Dependo;
 using Extenso.Collections;
 using Extenso.Data.Entity;
 using Flatmate;
@@ -14,7 +14,6 @@ namespace Inferno.Web.Tenants;
 public class InfernoTenantResolver : MemoryCacheTenantResolver<Tenant>
 {
     private readonly ITenantService tenantService;
-    private IEnumerable<Tenant> tenants;
 
     public InfernoTenantResolver(
         IMemoryCache cache,
@@ -23,10 +22,6 @@ public class InfernoTenantResolver : MemoryCacheTenantResolver<Tenant>
         : base(cache, loggerFactory)
     {
         this.tenantService = tenantService;
-        tenants = tenantService.Find(new SearchOptions<Tenant>
-        {
-            Query = x => true
-        });
     }
 
     protected override string GetContextIdentifier(HttpContext context) => context.Request.Host.Value.ToLower();
@@ -53,13 +48,11 @@ public class InfernoTenantResolver : MemoryCacheTenantResolver<Tenant>
 
             Tenant tenant;
 
-            if (tenants.IsNullOrEmpty())
+            // Read on every lookup that misses the cache, so tenants added since startup are found.
+            var tenants = tenantService.Find(new SearchOptions<Tenant>
             {
-                tenants = tenantService.Find(new SearchOptions<Tenant>
-                {
-                    Query = x => true
-                });
-            }
+                Query = x => true
+            });
 
             if (tenants.IsNullOrEmpty())
             {
@@ -77,10 +70,19 @@ public class InfernoTenantResolver : MemoryCacheTenantResolver<Tenant>
                 tenant = tenants.FirstOrDefault(s => s.ContainsHostValue(host));
             }
 
-            tenant ??= tenants.First();
+            // An unlisted host belongs to nobody, unless the site only has the one tenant. Guessing the first
+            // would show one tenant's site, and its sign-in, under a host name that was never given to it.
+            tenant ??= tenants.Count() == 1 ? tenants.First() : null;
 
-            logger.LogInformation("[Tenant]: ID: {TenantID}, Name: {TenantName}, Hosts: {TenantHosts}", tenant.Id, tenant.Name, tenant.Hosts);
-            tenantContext = new TenantContext<Tenant>(tenant);
+            if (tenant is null)
+            {
+                logger.LogWarning("[Tenant]: No tenant has the host {Host}.", host);
+            }
+            else
+            {
+                logger.LogInformation("[Tenant]: ID: {TenantID}, Name: {TenantName}, Hosts: {TenantHosts}", tenant.Id, tenant.Name, tenant.Hosts);
+                tenantContext = new TenantContext<Tenant>(tenant);
+            }
         }
         catch (Exception x)
         {

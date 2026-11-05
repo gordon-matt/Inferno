@@ -1,7 +1,10 @@
+using System.Net;
 using System.Net.Mail;
+using System.Net.Sockets;
 using System.Text;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Models;
 using Inferno.Web.Messaging.Services;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -24,6 +27,7 @@ public class FormBlockSubmissionService : IFormBlockSubmissionService
         "ContentBlockTitle",
         "FormUrl",
         "X-Requested-With",
+        FormBlockToken.FIELD_NAME,
         "__RequestVerificationToken"
     };
 
@@ -31,34 +35,61 @@ public class FormBlockSubmissionService : IFormBlockSubmissionService
     private readonly IEnumerable<IFormBlockProcessor> processors;
     private readonly IHttpClientFactory httpClientFactory;
     private readonly ILogger<FormBlockSubmissionService> logger;
+    private readonly IDataProtectionProvider dataProtection;
 
     public FormBlockSubmissionService(
         IEmailSender emailSender,
         IEnumerable<IFormBlockProcessor> processors,
         IHttpClientFactory httpClientFactory,
-        ILogger<FormBlockSubmissionService> logger)
+        ILogger<FormBlockSubmissionService> logger,
+        IDataProtectionProvider dataProtection)
     {
         this.emailSender = emailSender;
         this.processors = processors;
         this.httpClientFactory = httpClientFactory;
         this.logger = logger;
+        this.dataProtection = dataProtection;
     }
 
     public async Task<SaveResultModel> SubmitAsync(IFormCollection form, string referrer)
     {
-        string thankYouMessage = form["ThankYouMessage"];
-        string redirectUrl = form["RedirectUrl"];
-        string emailAddress = form["EmailAddress"];
-        string contentBlockTitle = form["ContentBlockTitle"];
-        string formUrl = form["FormUrl"];
-        string destination = string.IsNullOrWhiteSpace(redirectUrl) ? "/" : redirectUrl;
+        // Only the sealed settings are trusted. Anything a visitor posts for the destination
+        // (recipient, target URL, redirect) is ignored, so the form cannot be turned into a mail
+        // relay or a way to make the server call internal addresses.
+        var settings = FormBlockToken.Unprotect(dataProtection, form[FormBlockToken.FIELD_NAME]);
+        if (settings is null)
+        {
+            return new SaveResultModel
+            {
+                Success = false,
+                Message = "This form is no longer valid. Please reload the page and try again.",
+                RedirectUrl = "/"
+            };
+        }
+
+        string thankYouMessage = settings.ThankYouMessage;
+        string emailAddress = settings.EmailAddress;
+        string contentBlockTitle = settings.Title;
+        string formUrl = settings.FormUrl;
+        string destination = string.IsNullOrWhiteSpace(settings.RedirectUrl) ? "/" : settings.RedirectUrl;
 
         if (!string.IsNullOrWhiteSpace(formUrl))
         {
+            if (!await IsPublicHttpUrlAsync(formUrl))
+            {
+                logger.LogWarning("Form block post to {FormUrl} was refused because it is not a public http(s) address", formUrl);
+                return new SaveResultModel
+                {
+                    Success = false,
+                    Message = "This form is not configured correctly.",
+                    RedirectUrl = referrer ?? "/"
+                };
+            }
+
             try
             {
                 using var client = httpClientFactory.CreateClient();
-                using var content = new FormUrlEncodedContent(form.Keys.ToDictionary(k => k, k => form[k].ToString()));
+                using var content = new FormUrlEncodedContent(form.Keys.Where(k => !ReservedKeys.Contains(k)).ToDictionary(k => k, k => form[k].ToString()));
                 using var response = await client.PostAsync(formUrl, content);
                 return new SaveResultModel
                 {
@@ -146,6 +177,56 @@ public class FormBlockSubmissionService : IFormBlockSubmissionService
                 RedirectUrl = referrer ?? "/"
             };
         }
+    }
+
+    /// <summary>
+    /// Accepts only http(s) URLs whose host resolves exclusively to public addresses.
+    /// </summary>
+    private static async Task<bool> IsPublicHttpUrlAsync(string url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri)
+            || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        {
+            return false;
+        }
+
+        try
+        {
+            var addresses = await Dns.GetHostAddressesAsync(uri.DnsSafeHost);
+            return addresses.Length > 0 && addresses.All(IsPublicAddress);
+        }
+        catch (SocketException)
+        {
+            return false;
+        }
+    }
+
+    private static bool IsPublicAddress(IPAddress address)
+    {
+        if (address.IsIPv4MappedToIPv6)
+        {
+            address = address.MapToIPv4();
+        }
+
+        if (IPAddress.IsLoopback(address) || address.Equals(IPAddress.Any) || address.Equals(IPAddress.IPv6Any))
+        {
+            return false;
+        }
+
+        if (address.AddressFamily == AddressFamily.InterNetworkV6)
+        {
+            return !(address.IsIPv6LinkLocal || address.IsIPv6SiteLocal || address.IsIPv6Multicast
+                || (address.GetAddressBytes()[0] & 0xFE) == 0xFC); // fc00::/7 unique local
+        }
+
+        var b = address.GetAddressBytes();
+        return !(b[0] == 10
+            || (b[0] == 172 && b[1] is >= 16 and <= 31)
+            || (b[0] == 192 && b[1] == 168)
+            || (b[0] == 169 && b[1] == 254)    // link-local, incl. cloud metadata
+            || (b[0] == 100 && b[1] is >= 64 and <= 127) // carrier-grade NAT
+            || b[0] == 0
+            || b[0] >= 224);
     }
 
     private static string BuildBody(IFormCollection form)

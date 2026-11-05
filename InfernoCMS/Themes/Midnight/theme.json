@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "midnight",
+  "name": "Midnight",
+  "version": "1.0.0",
+  "description": "A dark theme with a glowing accent. Easy on the eyes after sunset.",
+  "author": "Inferno",
+  "stylesheets": [ "midnight.css" ],
+  "supportsRightToLeft": true,
+  "settings": [
+    {
+      "key": "accent",
+      "name": "Accent colour",
+      "kind": "color",
+      "default": "#38bdf8",
+      "cssVariable": "--midnight-accent"
+    }
+  ]
+}

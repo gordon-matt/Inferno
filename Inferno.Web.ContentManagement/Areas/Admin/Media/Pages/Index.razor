@@ -1,4 +1,5 @@
 ﻿@page "/admin/media/index"
+@attribute [Authorize(Policy = CmsConstants.Policies.MediaRead)]
 
 @inject IWorkContext WorkContext
 

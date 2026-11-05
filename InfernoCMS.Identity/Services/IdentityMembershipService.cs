@@ -282,6 +282,16 @@ public abstract class IdentityMembershipService : IMembershipService
 
             var rIds = roleIds.ToListOf<string>();
 
+            // Never trust the caller's role ids: each one must belong to the scope being edited,
+            // otherwise a tenant could hand out host roles (or another tenant's roles).
+            int validCount = await context.Set<ApplicationRole>()
+                .CountAsync(r => rIds.Contains(r.Id) && r.TenantId == tenantId);
+
+            if (validCount != rIds.Distinct().Count())
+            {
+                throw new InfernoException("One or more of the selected roles do not belong to this scope.");
+            }
+
             var toDelete = from ur in context.Set<IdentityUserRole<string>>()
                            join r in context.Set<ApplicationRole>() on ur.RoleId equals r.Id
                            where r.TenantId == tenantId

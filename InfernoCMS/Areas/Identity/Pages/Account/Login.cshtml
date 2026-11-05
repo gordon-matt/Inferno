@@ -1,5 +1,6 @@
 ﻿@page
 @model InfernoCMS.Areas.Identity.Pages.Account.LoginModel
+@inject Inferno.Web.Configuration.SiteSettings SiteSettings
 @{
     ViewData["Title"] = "Sign in";
 }
@@ -33,9 +34,12 @@
 <p class="nf-hint">
     <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
 </p>
-<p class="nf-hint">
-    No account yet? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Create one</a>
-</p>
+@if (SiteSettings.AllowRegistration)
+{
+    <p class="nf-hint">
+        No account yet? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Create one</a>
+    </p>
+}
 
 @if ((Model.ExternalLogins?.Count ?? 0) > 0)
 {

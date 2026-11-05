@@ -9,6 +9,8 @@
         <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.DefaultGridPageSize]" For="site-page-size">
             <input id="site-page-size" class="nf-input" type="number" min="1" @bind="Model.DefaultGridPageSize" />
         </Field>
+        <Switch @bind-Value="Model.EnableBlog" Label="@T[InfernoWebLocalizableStrings.Settings.Site.EnableBlog]" />
+        <Switch @bind-Value="Model.AllowRegistration" Label="@T[InfernoWebLocalizableStrings.Settings.Site.AllowRegistration]" />
     </Tab>
     <Tab Id="localization" Title="@T[InfernoWebLocalizableStrings.Settings.Site.Tabs.Localization]">
         <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage]" For="site-language">

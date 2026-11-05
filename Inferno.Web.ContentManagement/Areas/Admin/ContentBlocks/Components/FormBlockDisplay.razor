@@ -1,14 +1,12 @@
 ﻿@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks
 @using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Components
+@using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services
+@using Microsoft.AspNetCore.DataProtection
 @inherits ContentBlockDisplay<FormBlock>
 
 <form id="@formId" method="post" action="/inferno-cms/form-content-block/save" enctype="multipart/form-data">
     <input type="hidden" name="Id" value="@Model.Id" />
-    <input type="hidden" name="ThankYouMessage" value="@Model.ThankYouMessage" />
-    <input type="hidden" name="RedirectUrl" value="@Model.RedirectUrl" />
-    <input type="hidden" name="EmailAddress" value="@Model.EmailAddress" />
-    <input type="hidden" name="FormUrl" value="@Model.FormUrl" />
-    <input type="hidden" name="ContentBlockTitle" value="@Model.Title" />
+    <input type="hidden" name="@FormBlockToken.FIELD_NAME" value="@token" />
     @((MarkupString)(Model.HtmlTemplate ?? string.Empty))
     @if (string.IsNullOrWhiteSpace(Model.HtmlTemplate) || !Model.HtmlTemplate.Contains("<button", StringComparison.OrdinalIgnoreCase))
     {
@@ -35,13 +33,26 @@
 
 @code {
     private string formId = "form-block";
+    private string token = string.Empty;
 
     [Inject]
     private IJSRuntime Js { get; set; }
 
+    [Inject]
+    private IDataProtectionProvider DataProtection { get; set; }
+
     protected override void OnParametersSet()
     {
         formId = "form-block-" + Model?.Id;
+        if (Model is not null)
+        {
+            token = FormBlockToken.Protect(DataProtection, new FormBlockSettings(
+                Model.ThankYouMessage,
+                Model.RedirectUrl,
+                Model.EmailAddress,
+                Model.FormUrl,
+                Model.Title));
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

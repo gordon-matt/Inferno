@@ -313,6 +313,8 @@ public static class InfernoWebLocalizableStrings
             public const string DefaultLanguage = "Inferno.Web/Settings.Site.DefaultLanguage";
             public const string DefaultMetaDescription = "Inferno.Web/Settings.Site.DefaultMetaDescription";
             public const string DefaultMetaKeywords = "Inferno.Web/Settings.Site.DefaultMetaKeywords";
+            public const string EnableBlog = "Inferno.Web/Settings.Site.EnableBlog";
+            public const string AllowRegistration = "Inferno.Web/Settings.Site.AllowRegistration";
             public const string HomePageTitle = "Inferno.Web/Settings.Site.HomePageTitle";
             public const string SiteName = "Inferno.Web/Settings.Site.SiteName";
         }

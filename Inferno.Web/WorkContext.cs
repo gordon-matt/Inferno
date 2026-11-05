@@ -2,6 +2,7 @@
 using Dependo;
 using Extenso;
 using Extenso.Data.Entity;
+using Flatmate;
 using Inferno.Exceptions;
 using Inferno.Security.Membership;
 using Inferno.Tenants;
@@ -51,25 +52,37 @@ public partial class WorkContext : IWorkContext
                 return cachedTenant;
             }
 
+            // The tenant Flatmate resolved for this request is the one the theme, blog and identity
+            // code already use, so take it. Resolving the host a second way let the two disagree.
             try
             {
-                // Try to determine the current tenant by HTTP_HOST
-                string host = webHelper.GetUrlHost();
-
-                if (host.Contains(':'))
+                if (DependoResolver.Instance.Resolve<ICurrentTenant<Tenant>>()?.Tenant is { } resolved)
                 {
-                    host = host.LeftOf(':');
+                    cachedTenant = resolved;
+                    return cachedTenant;
                 }
+            }
+            catch (Exception)
+            {
+                // Outside a request there is nothing resolved, so fall through to the host.
+            }
+
+            try
+            {
+                // No resolved tenant (a background job, say). Match by HTTP_HOST, with the port first
+                // because tenants list their hosts that way, then without it.
+                string host = webHelper.GetUrlHost();
 
                 var tenantService = DependoResolver.Instance.Resolve<ITenantService>();
                 var allTenants = tenantService.Find(new SearchOptions<Tenant>
                 {
                     Query = x => true
                 });
-                var tenant = allTenants.FirstOrDefault(s => s.ContainsHostValue(host));
+                var tenant = allTenants.FirstOrDefault(s => s.ContainsHostValue(host))
+                    ?? (host.Contains(':') ? allTenants.FirstOrDefault(s => s.ContainsHostValue(host.LeftOf(':'))) : null);
 
-                // Load the first found tenant
-                tenant ??= allTenants.FirstOrDefault();
+                // An unlisted host belongs to nobody, unless the site only has the one tenant.
+                tenant ??= allTenants.Count() == 1 ? allTenants.First() : null;
                 cachedTenant = tenant ?? throw new InfernoException("No tenant could be loaded");
                 return cachedTenant;
             }
@@ -80,7 +93,21 @@ public partial class WorkContext : IWorkContext
         }
     }
 
+    public IDisposable ActAsTenant(Tenant tenant)
+    {
+        ArgumentNullException.ThrowIfNull(tenant);
+
+        var previous = cachedTenant;
+        cachedTenant = tenant;
+        return new TenantScope(() => cachedTenant = previous);
+    }
+
     #endregion IWorkContext Members
+
+    private sealed class TenantScope(Action restore) : IDisposable
+    {
+        public void Dispose() => restore();
+    }
 
     private Func<object> FindResolverForState<T>(string name)
     {

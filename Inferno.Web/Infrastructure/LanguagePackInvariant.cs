@@ -213,6 +213,8 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage, "Default Language" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultMetaDescription, "Default Meta Description" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultMetaKeywords, "Default Meta Keywords" },
+        { InfernoWebLocalizableStrings.Settings.Site.EnableBlog, "Enable the blog" },
+        { InfernoWebLocalizableStrings.Settings.Site.AllowRegistration, "Let visitors create accounts" },
         { InfernoWebLocalizableStrings.Settings.Site.HomePageTitle, "Home Page Title" },
         { InfernoWebLocalizableStrings.Settings.Site.SiteName, "Site Name" },
         { InfernoWebLocalizableStrings.Settings.Site.Tabs.General, "General" },

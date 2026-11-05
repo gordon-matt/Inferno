@@ -9,6 +9,7 @@ public class SiteSettings : ISettings
     {
         SiteName = "My Site";
         DefaultGridPageSize = 10;
+        EnableBlog = true;
         //AdminLayoutPath = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
         HomePageTitle = "Home Page";
     }
@@ -33,6 +34,14 @@ public class SiteSettings : ISettings
 
     [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultGridPageSize)]
     public int DefaultGridPageSize { get; set; }
+
+    /// <summary>Whether this tenant has a blog. When off, the Blog link is left out of the menu and /blog answers 404.</summary>
+    [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.EnableBlog)]
+    public bool EnableBlog { get; set; }
+
+    /// <summary>Whether visitors may create their own account. Off by default: accounts are made by an administrator. A new account has no permissions either way.</summary>
+    [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.AllowRegistration)]
+    public bool AllowRegistration { get; set; }
 
     #endregion General
 

@@ -1,0 +1,116 @@
+/* Sunrise: a warm, editorial restyle of the public layout. Every rule sits under .inferno-public because the
+   stylesheet is linked on every page of the document, including the admin screens. The colour default is on
+   :root so the variable exists even before the administrator saves a value. */
+
+:root {
+    --sunrise-accent: #c2410c;
+}
+
+.inferno-public {
+    --nf-bg: #fbf4e8;
+    --nf-surface: #fffdf8;
+    --nf-surface-2: #f6ecda;
+    --nf-border: #e8d9bd;
+    --nf-border-soft: #f0e5cf;
+    --nf-text: #3b2a1a;
+    --nf-muted: #8a7358;
+    --nf-accent: var(--sunrise-accent);
+    --bs-body-color: #3b2a1a;
+    --bs-body-bg: #fbf4e8;
+    --bs-link-color: var(--sunrise-accent);
+
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #fbf4e8;
+    color: #3b2a1a;
+    font-family: "Segoe UI", Georgia, serif;
+    font-size: 1.02rem;
+}
+
+.inferno-public a { color: var(--sunrise-accent); }
+
+.inferno-public h1,
+.inferno-public h2,
+.inferno-public h3,
+.inferno-public .navbar-brand {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #2a1b0e;
+}
+
+.inferno-public h1 { font-weight: 700; font-size: 2.4rem; }
+
+.inferno-public header .navbar {
+    background: #fffdf8 !important;
+    border-bottom: 4px solid var(--sunrise-accent) !important;
+    padding-block: 0.9rem;
+}
+
+.inferno-public .navbar-brand {
+    font-size: 1.6rem;
+    font-style: italic;
+    font-weight: 700;
+    color: var(--sunrise-accent) !important;
+}
+
+.inferno-public .navbar .nav-link {
+    color: #5a4128 !important;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+}
+
+.inferno-public .navbar .nav-link:hover { color: var(--sunrise-accent) !important; }
+.inferno-public .navbar .dropdown-menu { background: #fffdf8; border-color: #e8d9bd; }
+.inferno-public .navbar .dropdown-item:hover { background: #f6ecda; color: var(--sunrise-accent); }
+
+.inferno-public main { flex: 1 0 auto; }
+
+.inferno-public main p { line-height: 1.7; }
+.inferno-public main > h1:first-child { border-bottom: 1px solid #e8d9bd; padding-bottom: 0.4rem; }
+
+.inferno-public .breadcrumb { --bs-breadcrumb-divider-color: #b69b76; font-size: 0.85rem; }
+
+.inferno-public .card,
+.inferno-public .list-group-item,
+.inferno-public .nf-card {
+    background: #fffdf8;
+    border-color: #e8d9bd;
+    border-radius: 4px;
+    box-shadow: 0 1px 0 #e8d9bd;
+}
+
+.inferno-public .btn-primary,
+.inferno-public .nf-btn-primary {
+    background: var(--sunrise-accent);
+    border-color: var(--sunrise-accent);
+    color: #fff;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.inferno-public .form-control,
+.inferno-public .nf-input {
+    background: #fffdf8;
+    border-color: #e0cca8;
+    border-radius: 2px;
+}
+
+.inferno-public img { border-radius: 4px; }
+
+.inferno-public .tag-cloud a {
+    display: inline-block;
+    margin: 0.15rem 0.35rem;
+    padding: 0.05rem 0.55rem;
+    border: 1px dashed var(--sunrise-accent);
+    border-radius: 2px;
+}
+
+.inferno-public footer.footer {
+    background: #3b2a1a;
+    color: #e9d9bd !important;
+    border-top: 0 !important;
+}
+
+.inferno-public footer.footer a { color: #f6c79a; }

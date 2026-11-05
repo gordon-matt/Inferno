@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -19,14 +19,17 @@ public class RegisterModel : PageModel
     private readonly IUserEmailStore<ApplicationUser> _emailStore;
     private readonly ILogger<RegisterModel> _logger;
     private readonly IEmailSender _emailSender;
+    private readonly Inferno.Web.Configuration.SiteSettings _siteSettings;
 
     public RegisterModel(
         UserManager<ApplicationUser> userManager,
         IUserStore<ApplicationUser> userStore,
         SignInManager<ApplicationUser> signInManager,
         ILogger<RegisterModel> logger,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        Inferno.Web.Configuration.SiteSettings siteSettings)
     {
+        _siteSettings = siteSettings;
         _userManager = userManager;
         _userStore = userStore;
         _emailStore = GetEmailStore();
@@ -89,14 +92,26 @@ public class RegisterModel : PageModel
         public string ConfirmPassword { get; set; }
     }
 
-    public async Task OnGetAsync(string returnUrl = null)
+    public async Task<IActionResult> OnGetAsync(string returnUrl = null)
     {
+        // Accounts are made by an administrator unless this tenant has opted in to self-registration.
+        if (!_siteSettings.AllowRegistration)
+        {
+            return NotFound();
+        }
+
         ReturnUrl = returnUrl;
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
+        if (!_siteSettings.AllowRegistration)
+        {
+            return NotFound();
+        }
+
         returnUrl ??= Url.Content("~/");
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         if (ModelState.IsValid)

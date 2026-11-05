@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrise",
+  "name": "Sunrise",
+  "version": "1.0.0",
+  "description": "A warm, editorial theme: cream paper, serif headlines and a terracotta accent.",
+  "author": "Inferno",
+  "stylesheets": [ "sunrise.css" ],
+  "supportsRightToLeft": false,
+  "settings": [
+    {
+      "key": "accent",
+      "name": "Accent colour",
+      "kind": "color",
+      "default": "#c2410c",
+      "cssVariable": "--sunrise-accent"
+    }
+  ]
+}

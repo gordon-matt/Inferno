@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Inferno.Web;
+using Inferno.Web.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
@@ -15,17 +16,20 @@ public class CmsMenuBuilder
     private readonly IEnumerable<IAutoMenuProvider> menuProviders;
     private readonly IWorkContext workContext;
     private readonly IStringLocalizer localizer;
+    private readonly SiteSettings siteSettings;
 
     public CmsMenuBuilder(
         IPageVersionService pageVersionService,
         IEnumerable<IAutoMenuProvider> menuProviders,
         IWorkContext workContext,
-        IStringLocalizer localizer)
+        IStringLocalizer localizer,
+        SiteSettings siteSettings)
     {
         this.pageVersionService = pageVersionService;
         this.menuProviders = menuProviders;
         this.workContext = workContext;
         this.localizer = localizer;
+        this.siteSettings = siteSettings;
     }
 
     public async Task<IReadOnlyList<MenuItem>> BuildMainMenuAsync(ClaimsPrincipal user, bool includeHomePageLink)
@@ -69,7 +73,10 @@ public class CmsMenuBuilder
             });
         }
 
-        menuItems.Add(BlogLink());
+        if (siteSettings.EnableBlog)
+        {
+            menuItems.Add(BlogLink());
+        }
 
         foreach (var provider in menuProviders)
         {
@@ -90,7 +97,10 @@ public class CmsMenuBuilder
 
         if (string.IsNullOrEmpty(currentUrlSlug))
         {
-            menuItems.Add(BlogLink());
+            if (siteSettings.EnableBlog)
+            {
+                menuItems.Add(BlogLink());
+            }
 
             foreach (var provider in menuProviders)
             {

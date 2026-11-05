@@ -17,6 +17,9 @@ public class DataSettings
 
     public string DefaultLanguage { get; set; }
 
+    /// <summary>Set by the demo data once it has created its tenants, until the theme tables exist and each tenant has its theme.</summary>
+    public bool DemoThemesPending { get; set; }
+
     public bool IsValid() => !string.IsNullOrEmpty(ProviderName) && !string.IsNullOrEmpty(ConnectionString);
 }
 

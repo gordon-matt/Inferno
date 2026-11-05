@@ -66,3 +66,11 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+/* The footer menu runs along a line instead of down a column. */
+.footer-menu .navbar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 0.5rem 0;
+}
+

@@ -11,6 +11,7 @@ using Heroicsoft.NetForge.Components.Layout;
 using Heroicsoft.NetForge.Components.Navigation;
 using IdentityNexus;
 using Inferno.Identity;
+using Inferno.Security;
 using Inferno.Tenants;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
@@ -27,6 +28,7 @@ using Inferno.Web.Scheduling;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
+using InfernoCMS.Infrastructure;
 using InfernoCMS.Identity.Permissions;
 using InfernoCMS.Shared;
 using Kameleon;
@@ -182,6 +184,9 @@ services.AddKameleon(theme =>
 if (!string.IsNullOrWhiteSpace(connectionString))
 {
     services.AddKameleonSqlServer(connectionString);
+
+    // Registered after Kameleon so it starts after Kameleon has created its tables.
+    services.AddHostedService<InfernoCMS.Infrastructure.DemoThemeSeeder>();
 }
 
 #endregion Themes
@@ -192,8 +197,9 @@ services.AddCmsLocalization(databaseInstalled ? connectionString : null);
 builder.AddPluginz<InfernoPluginScope>(options =>
 {
     options.RequireAuthentication = true;
-    options.ReadPolicy = InfernoWebPolicies.PluginsRead;
-    options.ManagePolicy = InfernoWebPolicies.PluginsManage;
+    // Plugins load into the whole application, not one tenant, so only the host administrator may see or manage them.
+    options.ReadPolicy = StandardPolicies.FullAccess;
+    options.ManagePolicy = StandardPolicies.FullAccess;
 });
 services.AddPluginzWeb();
 services.AddPluginzNuGet(nuget => nuget.TagFilter = "inferno-cms");
@@ -351,6 +357,23 @@ app.UseInferno();
 
 if (databaseInstalled)
 {
+    app.UseSecurityHeaders();
+    app.UseKnownTenant();
+    app.UseMediaGuard();
+
+    // The blog is optional per tenant. A tenant that has switched it off has no /blog pages or feeds.
+    app.Use(async (context, next) =>
+    {
+        if (context.Request.Path.StartsWithSegments("/blog")
+            && !context.RequestServices.GetRequiredService<Inferno.Web.Configuration.SiteSettings>().EnableBlog)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            return;
+        }
+
+        await next();
+    });
+
     app.MapBlogKrafter();
 }
 
@@ -368,7 +391,8 @@ if (databaseInstalled)
 }
 
 app.MapIdentityNexus().RequireAuthorization(InfernoWebPolicies.MembershipManage);
-app.MapLogVue().RequireAuthorization(InfernoWebPolicies.LogRead);
+// The log belongs to the whole application and its entries are not tagged by tenant, so only the host administrator may read it.
+app.MapLogVue().RequireAuthorization(StandardPolicies.FullAccess);
 app.MapLocalize();
 app.MapKameleon();
 app.MapGet("/admin/configuration/themes/index", () => Results.Redirect("/admin/themes"));
