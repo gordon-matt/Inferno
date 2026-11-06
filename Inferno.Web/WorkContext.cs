@@ -71,7 +71,12 @@ public partial class WorkContext : IWorkContext
             {
                 // No resolved tenant (a background job, say). Match by HTTP_HOST, with the port first
                 // because tenants list their hosts that way, then without it.
+                // GetUrlHost is a full URL. Tenants store the host header, such as localhost:5001.
                 string host = webHelper.GetUrlHost();
+                if (Uri.TryCreate(host, UriKind.Absolute, out Uri absolute))
+                {
+                    host = absolute.Authority;
+                }
 
                 var tenantService = DependoResolver.Instance.Resolve<ITenantService>();
                 var allTenants = tenantService.Find(new SearchOptions<Tenant>

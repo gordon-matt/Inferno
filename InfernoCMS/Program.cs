@@ -127,8 +127,8 @@ services.AddIdentityNexus<ApplicationUser, ApplicationRole>(options =>
 // After every AddNetForgeComponents call, which registers the static BuildMenu catalog.
 services.Replace(ServiceDescriptor.Scoped<INetForgeMenuCatalog, AdminMenuCatalog>());
 
-services.ScopeUsersToTenant<ApplicationUser, int?>(user => user.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
-services.ScopeRolesToTenant<ApplicationRole, int?>(role => role.TenantId, _ => TenantKey.OfNullable((int?)CurrentTenantId.Resolve()));
+services.ScopeUsersToTenant<ApplicationUser, int?>(user => user.TenantId, provider => TenantKey.OfNullable(CurrentTenantId.Resolve(provider)));
+services.ScopeRolesToTenant<ApplicationRole, int?>(role => role.TenantId, provider => TenantKey.OfNullable(CurrentTenantId.Resolve(provider)));
 
 // Every permission a module declares is a policy. Only policies named by other libraries are added by hand.
 services.AddInfernoAuthorization();
@@ -159,6 +159,7 @@ services.AddRouting(routeOptions =>
 
 services.AddFlatmate<Tenant, InfernoTenantResolver>();
 services.AddFlatmateCircuit<Tenant>();
+services.AddCurrentTenantCircuit();
 
 #region Themes
 
@@ -330,12 +331,8 @@ app.UseStaticFiles();
 app.UsePluginz();
 app.UseDefaultFiles();
 
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseAntiforgery();
-
+// Before routing and authentication. Identity reads the user store while the cookie is validated,
+// and that store needs the tenant Flatmate has already resolved.
 app.UseFlatmate<Tenant>();
 
 app.Use(async (context, next) =>
@@ -352,6 +349,12 @@ app.Use(async (context, next) =>
 
     await next();
 });
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
 
 app.UseInferno();
 

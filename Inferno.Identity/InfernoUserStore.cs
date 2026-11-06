@@ -25,7 +25,7 @@ public abstract class InfernoUserStore<TUser, TRole, TContext>
     #region Properties
 
     protected DbSet<TRole> Roles => Context.Set<TRole>();
-    protected int TenantId => CurrentTenantId.Resolve();
+    protected int? TenantId => CurrentTenantId.Resolve();
     protected DbSet<IdentityUserClaim<string>> UserClaims => Context.Set<IdentityUserClaim<string>>();
     protected DbSet<IdentityUserLogin<string>> UserLogins => Context.Set<IdentityUserLogin<string>>();
     protected DbSet<IdentityUserRole<string>> UserRoles => Context.Set<IdentityUserRole<string>>();
@@ -40,7 +40,7 @@ public abstract class InfernoUserStore<TUser, TRole, TContext>
     {
         get
         {
-            int tenantId = TenantId;
+            int? tenantId = TenantId;
             return base.Users.Where(user => user.TenantId == tenantId || user.TenantId == null);
         }
     }

@@ -15,13 +15,13 @@ public abstract class InfernoRoleStore<TRole, TContext> : RoleStore<TRole, TCont
     {
     }
 
-    private int TenantId => CurrentTenantId.Resolve();
+    private int? TenantId => CurrentTenantId.Resolve();
 
     public override IQueryable<TRole> Roles
     {
         get
         {
-            int tenantId = TenantId;
+            int? tenantId = TenantId;
             return base.Roles.Where(role => role.TenantId == tenantId || role.TenantId == null);
         }
     }
