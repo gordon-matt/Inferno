@@ -66,7 +66,6 @@ public class NewsletterTemplateStartupTask : IStartupTask
         {
             TenantId = tenantId,
             Name = name,
-            Editor = "PageKrafter",
             Enabled = true
         });
 

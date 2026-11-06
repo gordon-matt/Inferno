@@ -109,6 +109,24 @@ else
                     <InputText id="template-subject" class="nf-input" @bind-Value="editing.Subject" />
                     <p class="nf-hint">@T[InfernoCmsLocalizableStrings.Messaging.TokensHint]</p>
                 </Field>
+                <Field Label="@T[InfernoCmsLocalizableStrings.Messaging.Tokens]">
+                    <div class="inferno-token-list">
+                        @foreach (var row in tokenDrafts)
+                        {
+                            <div class="inferno-token-row" @key="row.Key">
+                                <input class="nf-input" @bind="row.Value" placeholder="{{ FirstName }}" />
+                                <button type="button" class="nf-icon-button" title="@T[InfernoCmsLocalizableStrings.Messaging.RemoveToken]" @onclick="() => RemoveToken(row)">
+                                    <Icon Name="trash" Size="16" />
+                                </button>
+                            </div>
+                        }
+                        <button type="button" class="nf-button" @onclick="AddToken">
+                            <Icon Name="plus" Size="16" /> @T[InfernoCmsLocalizableStrings.Messaging.AddToken]
+                        </button>
+                    </div>
+                    <p class="nf-hint">@T[InfernoCmsLocalizableStrings.Messaging.TokensHelp]</p>
+                    <ErrorText Errors="errors" Key="Tokens" />
+                </Field>
                 <Switch @bind-Value="editing.Enabled" Label="@T[InfernoCmsLocalizableStrings.Messaging.Enabled]" Description="@T[InfernoCmsLocalizableStrings.Messaging.EnabledHint]" />
                 @if (IsNew)
                 {

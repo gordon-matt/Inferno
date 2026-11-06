@@ -1,5 +1,4 @@
 using Ardalis.Result;
-using Heroicsoft.NetForge.Results;
 using Inferno.Web.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.Messaging.Services;
 using Microsoft.AspNetCore.Components;
@@ -13,6 +12,7 @@ public partial class MessageTemplates
     private bool canWrite;
 
     private MessageTemplateDetails editing;
+    private List<TokenDraft> tokenDrafts = [];
     private IReadOnlyDictionary<string, string> errors;
     private bool saving;
 
@@ -44,6 +44,7 @@ public partial class MessageTemplates
     private void Create()
     {
         editing = new MessageTemplateDetails();
+        tokenDrafts = [];
         errors = null;
     }
 
@@ -57,8 +58,13 @@ public partial class MessageTemplates
         }
 
         editing = result.Value;
+        tokenDrafts = editing.Tokens.Select(value => new TokenDraft { Value = value }).ToList();
         errors = null;
     }
+
+    private void AddToken() => tokenDrafts.Add(new TokenDraft());
+
+    private void RemoveToken(TokenDraft row) => tokenDrafts.Remove(row);
 
     private void Close() => editing = null;
 
@@ -73,6 +79,7 @@ public partial class MessageTemplates
         try
         {
             bool isNew = IsNew;
+            editing.Tokens = tokenDrafts.Select(row => row.Value).ToList();
             var result = await TemplateAdminService.SaveDetailsAsync(TenantId, editing);
             if (result.Status == ResultStatus.Invalid)
             {
@@ -124,5 +131,18 @@ public partial class MessageTemplates
 
         await LoadAsync();
         Toasts.Success(T[InfernoWebLocalizableStrings.Admin.Deleted]);
+    }
+
+    private sealed class TokenDraft
+    {
+        /// <summary>
+        /// Only used as a unique key for the row in the table. It is not persisted to the database and is not used in the template.
+        /// </summary>
+        public string Key { get; } = Guid.NewGuid().ToString("N");
+
+        /// <summary>
+        /// The token value, e.g. <c>{{ FirstName }}</c>. It is persisted to the database and used in the template.
+        /// </summary>
+        public string Value { get; set; } = string.Empty;
     }
 }

@@ -14,7 +14,7 @@ public class MessageTemplateVersion : BaseEntity<int>
     public string Subject { get; set; }
 
     /// <summary>
-    /// HTML body. Tokens such as [UserName] are replaced when the message is queued.
+    /// HTML body, or a PageKrafter document. Liquid tokens such as {{ FirstName }} are filled when the message is queued.
     /// </summary>
     public string Data { get; set; }
 

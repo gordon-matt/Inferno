@@ -3,6 +3,7 @@
 @inherits AdminPage
 @using PageKrafter.Components
 @using PageKrafter.Documents
+@using PageKrafter.Editing
 @using Pickstack
 
 <PageTitle>@T[InfernoCmsLocalizableStrings.Messaging.DesignMessage] — @template?.Name</PageTitle>
@@ -42,10 +43,10 @@ else
     <PickstackScripts />
     @if (canWrite)
     {
-        <PageKrafterEditor @key="template.Id" @bind-Value="body" Mode="DocumentMode.Email" OnSave="SaveAsync" Height="calc(100vh - 240px)" />
+        <PageKrafterEditor @key="template.Id" @bind-Value="body" Mode="DocumentMode.Email" Tokens="tokens" OnSave="SaveAsync" Height="calc(100vh - 240px)" />
     }
     else
     {
-        <PageKrafterEditor @key="template.Id" @bind-Value="body" Mode="DocumentMode.Email" Height="calc(100vh - 240px)" />
+        <PageKrafterEditor @key="template.Id" @bind-Value="body" Mode="DocumentMode.Email" Tokens="tokens" Height="calc(100vh - 240px)" />
     }
 }

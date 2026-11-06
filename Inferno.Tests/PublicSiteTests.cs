@@ -3,6 +3,7 @@ using Inferno.Tenants.Entities;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 using Inferno.Web.Messaging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Inferno.Tests;
@@ -56,7 +57,7 @@ public class TokenizerTests
     [Fact]
     public void Replace_HtmlEncodesTokenValues_WhenRequested()
     {
-        var tokenizer = new Tokenizer();
+        var tokenizer = Create();
         string result = tokenizer.Replace(
             "Hello [Name]",
             [new Token("[Name]", "<Ann>")],
@@ -68,7 +69,7 @@ public class TokenizerTests
     [Fact]
     public void Replace_LeavesTokenValuesRaw_WhenHtmlEncodeIsOff()
     {
-        var tokenizer = new Tokenizer();
+        var tokenizer = Create();
         string result = tokenizer.Replace(
             "Hello [Name]",
             [new Token("[Name]", "<Ann>")],
@@ -76,6 +77,56 @@ public class TokenizerTests
 
         Assert.Equal("Hello <Ann>", result);
     }
+
+    [Fact]
+    public void Replace_RendersLiquidAndEncodesTheValue()
+    {
+        var tokenizer = Create();
+        string result = tokenizer.Replace(
+            "<p>Hello {{ Name }}</p>",
+            [new Token("Name", "<Ann>")],
+            htmlEncode: true);
+
+        Assert.Equal("<p>Hello &lt;Ann&gt;</p>", result);
+    }
+
+    [Fact]
+    public void Replace_RendersATokenWrittenAsTheLiquidTag()
+    {
+        var tokenizer = Create();
+        string result = tokenizer.Replace(
+            "Hello {{ FIRST_NAME }}",
+            [new Token("{{ FIRST_NAME }}", "Ann")],
+            htmlEncode: false);
+
+        Assert.Equal("Hello Ann", result);
+    }
+
+    [Fact]
+    public void Replace_FillsTheOlderBracketFormFromTheLiquidName()
+    {
+        var tokenizer = Create();
+        string result = tokenizer.Replace(
+            "Hello [Name] and {{ Name | upcase }}",
+            [new Token("Name", "Ann")],
+            htmlEncode: false);
+
+        Assert.Equal("Hello Ann and ANN", result);
+    }
+
+    [Fact]
+    public void Replace_LeavesInvalidLiquidInPlaceAfterBracketReplacement()
+    {
+        var tokenizer = Create();
+        string result = tokenizer.Replace(
+            "Hello [Name] {{ Name",
+            [new Token("Name", "Ann")],
+            htmlEncode: false);
+
+        Assert.Equal("Hello Ann {{ Name", result);
+    }
+
+    private static Tokenizer Create() => new(NullLogger<Tokenizer>.Instance);
 }
 
 public class TenantUrlExtensionsTests

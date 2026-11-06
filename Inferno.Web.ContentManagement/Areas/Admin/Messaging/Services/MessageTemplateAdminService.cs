@@ -1,4 +1,5 @@
 using Ardalis.Result;
+using Inferno.Web.Messaging;
 using Inferno.Web.Messaging.Entities;
 using Inferno.Web.Messaging.Services;
 
@@ -16,9 +17,11 @@ public sealed class MessageTemplateDetails
     public string Subject { get; set; }
 
     public bool Enabled { get; set; } = true;
+
+    public List<string> Tokens { get; set; } = [];
 }
 
-public sealed record MessageTemplateDocument(int Id, string Name, string Subject, bool Enabled, string Body);
+public sealed record MessageTemplateDocument(int Id, string Name, string Subject, bool Enabled, string Body, IReadOnlyList<string> Tokens);
 
 /// <summary>
 /// Admin operations for message templates. Templates are edited in the default language: sending
@@ -43,8 +46,6 @@ public class MessageTemplateAdminService(
     IMessageTemplateService templateService,
     IMessageTemplateVersionService versionService) : IMessageTemplateAdminService
 {
-    private const string EDITOR = "PageKrafter";
-
     public Task<IReadOnlyList<MessageTemplateSummary>> ListAsync(int tenantId, string search)
     {
         List<MessageTemplate> templates;
@@ -97,6 +98,7 @@ public class MessageTemplateAdminService(
             Name = template.Name,
             Subject = version?.Subject,
             Enabled = template.Enabled,
+            Tokens = MessageTemplateTokens.Read(template.Tokens).ToList(),
         });
     }
 
@@ -114,7 +116,8 @@ public class MessageTemplateAdminService(
             template.Name,
             version?.Subject,
             template.Enabled,
-            MessageTemplateDocuments.ForEditor(version?.Data)));
+            MessageTemplateDocuments.ForEditor(version?.Data),
+            MessageTemplateTokens.Read(template.Tokens)));
     }
 
     public async Task<Result<MessageTemplateDetails>> SaveDetailsAsync(int tenantId, MessageTemplateDetails details)
@@ -138,6 +141,13 @@ public class MessageTemplateAdminService(
             return Result<MessageTemplateDetails>.Invalid(new ValidationError { Identifier = nameof(MessageTemplateDetails.Name), ErrorMessage = "Another template already uses this name." });
         }
 
+        var tokens = MessageTemplateTokens.Normalize(details.Tokens);
+        if (!tokens.IsSuccess)
+        {
+            return Result<MessageTemplateDetails>.Invalid(tokens.ValidationErrors);
+        }
+
+        string tokenJson = MessageTemplateTokens.Write(tokens.Value);
         MessageTemplate template;
         if (details.Id == 0)
         {
@@ -145,8 +155,8 @@ public class MessageTemplateAdminService(
             {
                 TenantId = tenantId,
                 Name = name,
-                Editor = EDITOR,
                 Enabled = details.Enabled,
+                Tokens = tokenJson,
             });
         }
         else
@@ -159,7 +169,7 @@ public class MessageTemplateAdminService(
 
             template.Name = name;
             template.Enabled = details.Enabled;
-            template.Editor = EDITOR;
+            template.Tokens = tokenJson;
             await templateService.UpdateAsync(template);
         }
 
@@ -167,6 +177,7 @@ public class MessageTemplateAdminService(
 
         details.Id = template.Id;
         details.Name = name;
+        details.Tokens = tokens.Value.ToList();
         return Result<MessageTemplateDetails>.Success(details);
     }
 

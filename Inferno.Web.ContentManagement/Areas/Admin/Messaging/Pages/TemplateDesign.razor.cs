@@ -2,6 +2,7 @@ using Heroicsoft.NetForge.Results;
 using Inferno.Web.ContentManagement.Areas.Admin.Messaging.Services;
 using Microsoft.AspNetCore.Components;
 using PageKrafter.Documents;
+using PageKrafter.Editing;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Messaging.Pages;
 
@@ -9,6 +10,7 @@ public partial class TemplateDesign
 {
     private MessageTemplateDocument template;
     private string body;
+    private IReadOnlyList<EditorToken> tokens = [];
     private string message;
     private string savedAt;
     private bool canWrite;
@@ -39,6 +41,7 @@ public partial class TemplateDesign
 
         template = result.Value;
         body = template.Body;
+        tokens = template.Tokens.Select(value => new EditorToken(value)).ToArray();
         savedAt = null;
     }
 

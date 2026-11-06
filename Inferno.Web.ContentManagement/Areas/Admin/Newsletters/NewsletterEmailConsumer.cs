@@ -1,3 +1,4 @@
+using Dependo;
 using Inferno.Web.ContentManagement.Areas.Admin.Messaging;
 using Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Events;
 using Inferno.Web.Events;
@@ -38,19 +39,19 @@ public class NewsletterEmailConsumer :
 
         var tokens = new List<Token>
         {
-            new("[UserName]", user.UserName ?? user.Email),
-            new("[Email]", user.Email),
-            new("[Password]", password ?? string.Empty)
+            new("UserName", user.UserName ?? user.Email),
+            new("Email", user.Email),
+            new("Password", password ?? string.Empty)
         };
 
         int tenantId = workContext.CurrentTenant.Id;
         if (templateName == SubscribedTemplate)
         {
-            EnsureTemplate(tenantId, SubscribedTemplate, "Thank you for subscribing", MessageTemplateDocuments.Email("<p>Thank you, [UserName]. You are signed up at [Email].</p>"));
+            EnsureTemplate(tenantId, SubscribedTemplate, "Thank you for subscribing", MessageTemplateDocuments.Email("<p>Thank you, {{ UserName }}. You are signed up at {{ Email }}.</p>"));
         }
         else if (templateName == UnsubscribedTemplate)
         {
-            EnsureTemplate(tenantId, UnsubscribedTemplate, "You have unsubscribed", MessageTemplateDocuments.Email("<p>[UserName], you have been removed from the mailing list.</p>"));
+            EnsureTemplate(tenantId, UnsubscribedTemplate, "You have unsubscribed", MessageTemplateDocuments.Email("<p>{{ UserName }}, you have been removed from the mailing list.</p>"));
         }
 
         messageService.SendEmailMessage(
@@ -62,11 +63,21 @@ public class NewsletterEmailConsumer :
             user.UserName);
     }
 
+    private static readonly string[] NewsletterTokenList = ["{{ UserName }}", "{{ Email }}", "{{ Password }}"];
+
     private void EnsureTemplate(int tenantId, string name, string subject, string body)
     {
-        var templateService = Dependo.DependoResolver.Instance.Resolve<IMessageTemplateService>();
-        if (templateService.Find(tenantId, name) != null)
+        var templateService = DependoResolver.Instance.Resolve<IMessageTemplateService>();
+        string tokenJson = MessageTemplateTokens.Write(NewsletterTokenList);
+        var existing = templateService.Find(tenantId, name);
+        if (existing != null)
         {
+            if (string.IsNullOrWhiteSpace(existing.Tokens))
+            {
+                existing.Tokens = tokenJson;
+                templateService.Update(existing);
+            }
+
             return;
         }
 
@@ -74,11 +85,11 @@ public class NewsletterEmailConsumer :
         {
             TenantId = tenantId,
             Name = name,
-            Editor = "PageKrafter",
-            Enabled = true
+            Enabled = true,
+            Tokens = tokenJson
         });
 
-        var versionService = Dependo.DependoResolver.Instance.Resolve<IMessageTemplateVersionService>();
+        var versionService = DependoResolver.Instance.Resolve<IMessageTemplateVersionService>();
         versionService.Insert(new MessageTemplateVersion
         {
             MessageTemplateId = template.Id,

@@ -361,7 +361,11 @@ public static class InfernoCmsLocalizableStrings
         public const string TemplateNotFound = "Inferno.Web.ContentManagement/Messaging.TemplateNotFound";
         public const string TemplatesDescription = "Inferno.Web.ContentManagement/Messaging.TemplatesDescription";
         public const string To = "Inferno.Web.ContentManagement/Messaging.To";
+        public const string Tokens = "Inferno.Web.ContentManagement/Messaging.Tokens";
+        public const string TokensHelp = "Inferno.Web.ContentManagement/Messaging.TokensHelp";
         public const string TokensHint = "Inferno.Web.ContentManagement/Messaging.TokensHint";
+        public const string AddToken = "Inferno.Web.ContentManagement/Messaging.AddToken";
+        public const string RemoveToken = "Inferno.Web.ContentManagement/Messaging.RemoveToken";
         public const string TriesFormat = "Inferno.Web.ContentManagement/Messaging.TriesFormat";
         public const string ViewMessage = "Inferno.Web.ContentManagement/Messaging.ViewMessage";
         public const string Waiting = "Inferno.Web.ContentManagement/Messaging.Waiting";

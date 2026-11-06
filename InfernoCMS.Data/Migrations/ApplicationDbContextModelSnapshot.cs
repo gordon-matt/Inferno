@@ -355,12 +355,6 @@ namespace InfernoCMS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Editor")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
@@ -375,6 +369,10 @@ namespace InfernoCMS.Data.Migrations
 
                     b.Property<int?>("TenantId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Tokens")
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

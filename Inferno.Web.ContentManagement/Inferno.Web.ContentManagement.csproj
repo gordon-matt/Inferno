@@ -18,7 +18,7 @@
     <PackageReference Include="Localize.Core" Version="1.0.1" />
     <PackageReference Include="Localize.Data" Version="1.0.1" />
     <PackageReference Include="Localize.Services" Version="1.0.1" />
-    <PackageReference Include="PageKrafter.Components" Version="1.0.1" />
+    <PackageReference Include="PageKrafter.Components" Version="1.0.2" />
     <PackageReference Include="Pickstack" Version="1.0.3" />
   </ItemGroup>
 </Project>
