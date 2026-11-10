@@ -1,0 +1,40 @@
+@page "/admin/google-analytics"
+@attribute [Authorize(Policy = GoogleAnalyticsPolicies.Manage)]
+@layout Inferno.Web.Areas.Admin.Home.Shared.AdminLayout
+@inherits AdminPage
+
+<PageTitle>Google Analytics</PageTitle>
+
+<PageHeader Title="Google Analytics" Icon="globe" Description="The measurement ID is sent with every page. The property and service account feed the dashboard widgets." />
+
+@if (!loaded)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else
+{
+    <EditForm Model="form" OnValidSubmit="SaveAsync">
+        <Field Label="Measurement ID" For="ga-measurement">
+            <InputText id="ga-measurement" class="nf-input" @bind-Value="form.MeasurementId" placeholder="G-XXXXXXXX" />
+            <span class="nf-hint">From the Google tag, for example G-AB12CD34. A content block can override it.</span>
+        </Field>
+        <Field Label="Property ID" For="ga-property">
+            <InputText id="ga-property" class="nf-input" @bind-Value="form.PropertyId" placeholder="123456789" />
+            <span class="nf-hint">The numeric GA4 property ID. Admin, Property settings.</span>
+        </Field>
+        <Field Label="Service account key" For="ga-key">
+            <InputTextArea id="ga-key" class="nf-textarea nf-textarea-code" rows="8" @bind-Value="form.ServiceAccountJson" />
+            <span class="nf-hint">
+                @if (hasKey)
+                {
+                    <text>A key is already saved. Leave this blank to keep it. </text>
+                }
+                Paste the JSON key of a service account that has Viewer access to the property. It is used only to read reports.
+            </span>
+        </Field>
+        <div class="nf-form-actions">
+            <button type="submit" class="nf-button nf-button-primary" disabled="@saving">Save</button>
+            <a class="nf-button" href="/admin/blocks/content-blocks">Add the script block</a>
+        </div>
+    </EditForm>
+}

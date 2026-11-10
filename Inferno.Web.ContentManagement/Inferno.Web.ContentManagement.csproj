@@ -8,12 +8,15 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Components\GridKrafter\GridKrafter.Components\GridKrafter.Components.csproj" />
+    <ProjectReference Include="..\Inferno.Tasks\Inferno.Tasks.csproj" />
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Inferno.Tests" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BlogKrafter.Data" Version="1.0.2" />
     <PackageReference Include="BlogKrafter.Services" Version="1.0.2" />
     <PackageReference Include="Localize.Core" Version="1.0.2" />
     <PackageReference Include="Localize.Data" Version="1.0.2" />

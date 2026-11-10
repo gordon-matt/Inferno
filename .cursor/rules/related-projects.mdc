@@ -15,6 +15,7 @@ Shared coding conventions live in Blueprint/.cursor/rules/conventions.mdc (absol
 | Dependo | NuGet PackageReference | Dependo 1.2.0 | `D:\Source\GitHub\Libraries\Dependo` (`..\..\Libraries\Dependo`) |
 | Dependo.Autofac | NuGet PackageReference | Dependo.Autofac 1.2.1 | `D:\Source\GitHub\Libraries\Dependo` (`..\..\Libraries\Dependo`) |
 | Extenso.AspNetCore.Mvc | NuGet PackageReference | Extenso.AspNetCore.Mvc 10.0.1 | `D:\Source\GitHub\Libraries\Extenso` (`..\..\Libraries\Extenso`) |
+| GridKrafter | ProjectReference (GridKrafter.Components, not published yet) | n/a | `D:\Source\GitHub\Components\GridKrafter` (`..\..\Components\GridKrafter`) |
 | Extenso.Core | NuGet PackageReference | Extenso.Core 10.0.1 | `D:\Source\GitHub\Libraries\Extenso` (`..\..\Libraries\Extenso`) |
 | Extenso.Data.Entity | NuGet PackageReference | Extenso.Data.Entity 10.1.1 | `D:\Source\GitHub\Libraries\Extenso` (`..\..\Libraries\Extenso`) |
 | Heroicsoft.NetForge.Components | ProjectReference (from Inferno.Web; also brings in Heroicsoft.NetForge.Results) | n/a | `D:\Source\GitHub\Libraries\Heroicsoft.NetForge` (`..\..\Libraries\Heroicsoft.NetForge`) |

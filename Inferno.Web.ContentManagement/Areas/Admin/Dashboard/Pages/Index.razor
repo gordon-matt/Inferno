@@ -1,0 +1,17 @@
+@page "/admin"
+@page "/admin/index"
+
+@attribute [Authorize(Policy = StandardPolicies.AdminAccess)]
+@inherits AdminPage
+
+<PageTitle>@T[InfernoWebLocalizableStrings.Dashboard.Title]</PageTitle>
+
+<PageHeader Title="@T[InfernoWebLocalizableStrings.Dashboard.Title]" Icon="home" Description="@T[InfernoWebLocalizableStrings.Dashboard.Welcome]" />
+
+@if (board is not null)
+{
+    <Dashboard Class="inferno-dashboard" Theme="@Constants.Themes.Bootstrap" ShowToolbar="true"
+               DisplayMode="DisplayMode.Tabs" Widgets="definitions" Board="board" SavedBoard="saved"
+               BoardChanged="SaveAsync" Language="@System.Globalization.CultureInfo.CurrentUICulture.Name"
+               ButtonsOnHover="true" />
+}

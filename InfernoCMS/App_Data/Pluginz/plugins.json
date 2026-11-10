@@ -1,0 +1,10 @@
+{
+  "plugins": {
+    "Inferno.Plugins.GoogleAnalytics": {
+      "installed": true,
+      "enabled": true,
+      "installedVersion": "1.0.0",
+      "installedUtc": "2026-11-10T21:22:26.3408662Z"
+    }
+  }
+}

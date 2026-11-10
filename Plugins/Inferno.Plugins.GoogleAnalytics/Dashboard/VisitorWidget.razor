@@ -1,0 +1,30 @@
+@inherits AnalyticsWidget
+
+@if (Data is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (Data.Error is not null)
+{
+    <p class="nf-muted">@Data.Error <a href="@Data.SettingsUrl">Google Analytics settings</a></p>
+}
+else
+{
+    <div class="inferno-ga-summary">
+        <div>
+            <strong>@Data.TodayUsers</strong>
+            <span class="nf-muted">Today</span>
+            <span class="inferno-stat-detail nf-muted">@Data.TodayViews views</span>
+        </div>
+        <div>
+            <strong>@Data.WeekUsers</strong>
+            <span class="nf-muted">7 days</span>
+            <span class="inferno-stat-detail nf-muted">@Data.WeekViews views</span>
+        </div>
+        <div>
+            <strong>@Data.MonthUsers</strong>
+            <span class="nf-muted">28 days</span>
+            <span class="inferno-stat-detail nf-muted">@Data.MonthViews views</span>
+        </div>
+    </div>
+}

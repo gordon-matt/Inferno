@@ -27,7 +27,7 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Dashboard.Content, "Content" },
         { InfernoWebLocalizableStrings.Dashboard.Frontend, "Frontend" },
         { InfernoWebLocalizableStrings.Dashboard.Title, "Dashboard" },
-        { InfernoWebLocalizableStrings.Dashboard.Welcome, "Welcome to the Inferno CMS administration area." },
+        { InfernoWebLocalizableStrings.Dashboard.Welcome, "The site at a glance. Turn on Edit to add, move and resize widgets." },
         { InfernoWebLocalizableStrings.Dashboard.Cards.Blog, "Blog" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.BlogSubtitle, "Posts & categories" },
         { InfernoWebLocalizableStrings.Dashboard.Cards.ContentBlocks, "Content Blocks" },

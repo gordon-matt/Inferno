@@ -1,0 +1,1 @@
+{ "systemName": "Inferno.Plugins.GoogleAnalytics", "friendlyName": "Google Analytics", "version": "1.0.0", "author": "Inferno", "description": "Adds the Google Analytics tag to the public site and visitor widgets to the dashboard.", "group": "Analytics", "hostVersion": "", "displayOrder": 0, "assembly": "Inferno.Plugins.GoogleAnalytics.dll", "privateAssemblies": [] }

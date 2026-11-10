@@ -1,0 +1,30 @@
+@inherits InfernoWidget
+
+@if (Snapshot is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (!string.IsNullOrEmpty(Snapshot.Error))
+{
+    <p class="nf-muted">@Snapshot.Error</p>
+}
+else if (Snapshot.Recent.Count == 0)
+{
+    <p class="nf-muted">Nothing has been edited yet.</p>
+}
+else
+{
+    <ul class="inferno-feed">
+        @foreach (var item in Snapshot.Recent)
+        {
+            <li>
+                <a href="@item.Href">@item.Title</a>
+                <span class="nf-muted">@item.Kind@By(item) · @When(item.WhenUtc)</span>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private static string By(RecentItem item) => string.IsNullOrWhiteSpace(item.By) ? "" : $" · {item.By}";
+}

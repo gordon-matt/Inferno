@@ -1,0 +1,31 @@
+@inherits AnalyticsWidget
+
+@if (Data is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (Data.Error is not null)
+{
+    <p class="nf-muted">@Data.Error <a href="@Data.SettingsUrl">Google Analytics settings</a></p>
+}
+else if (Data.TopPages.Count == 0)
+{
+    <p class="nf-muted">No page views in the last 28 days.</p>
+}
+else
+{
+    <div class="inferno-rank inferno-rank-head"><span>Page</span><span>Views</span></div>
+    @foreach (var entry in Data.TopPages)
+    {
+        <div class="inferno-rank">
+            <span>
+                <strong>@entry.Label</strong>
+                @if (!string.IsNullOrWhiteSpace(entry.Detail))
+                {
+                    <span class="nf-muted">@entry.Detail</span>
+                }
+            </span>
+            <span>@entry.Value</span>
+        </div>
+    }
+}

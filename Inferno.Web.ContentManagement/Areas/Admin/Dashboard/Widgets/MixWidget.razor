@@ -1,0 +1,48 @@
+@inherits InfernoWidget
+
+@if (Snapshot is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (!string.IsNullOrEmpty(Snapshot.Error))
+{
+    <p class="nf-muted">@Snapshot.Error</p>
+}
+else if (Points.Count == 0)
+{
+    <p class="nf-muted">No content yet.</p>
+}
+else
+{
+    <MeterList Points="Points" />
+}
+
+@code {
+    private IReadOnlyList<MeterList.MeterPoint> Points
+    {
+        get
+        {
+            if (Snapshot is null)
+            {
+                return [];
+            }
+
+            var points = new List<MeterList.MeterPoint>();
+            if (Snapshot.CanReadPages)
+            {
+                points.Add(new("Pages published", Snapshot.PublishedPages));
+                points.Add(new("Pages in draft", Snapshot.DraftPages));
+                points.Add(new("Pages archived", Snapshot.ArchivedPages));
+            }
+
+            if (Snapshot.BlogEnabled && Snapshot.CanReadPosts)
+            {
+                points.Add(new("Posts published", Snapshot.PublishedPosts));
+                points.Add(new("Posts scheduled", Snapshot.ScheduledPosts));
+                points.Add(new("Posts in draft", Snapshot.DraftPosts));
+            }
+
+            return points;
+        }
+    }
+}

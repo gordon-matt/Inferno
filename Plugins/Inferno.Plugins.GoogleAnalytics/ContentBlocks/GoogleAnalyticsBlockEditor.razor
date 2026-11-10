@@ -1,0 +1,6 @@
+@inherits ContentBlockEditor<GoogleAnalyticsBlock>
+
+<Field Label="Measurement ID" For="ga-measurement">
+    <InputText id="ga-measurement" class="nf-input" @bind-Value="Model.MeasurementId" placeholder="G-XXXXXXXX" />
+    <span class="nf-hint">Leave blank to use the measurement ID from Google Analytics settings. Add the block to the Scripts zone so it runs on every page.</span>
+</Field>

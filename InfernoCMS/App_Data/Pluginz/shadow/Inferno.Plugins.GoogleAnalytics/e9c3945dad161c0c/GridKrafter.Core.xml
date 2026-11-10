@@ -1,0 +1,1052 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GridKrafter.Core</name>
+    </assembly>
+    <members>
+        <member name="T:GridKrafter.Constants">
+            <summary>Names shared by the components, the browser and hosts.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.DefaultSection">
+            <summary>The section a board gets when it doesn't define any.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.StoragePrefix">
+            <summary>Prefix for browser storage keys, so a dashboard's saved state doesn't collide with the host's own.</summary>
+        </member>
+        <member name="T:GridKrafter.Constants.Themes">
+            <summary>Values for a dashboard's or widget's theme.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.Themes.Light">
+            <summary>Light colours.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.Themes.Dark">
+            <summary>Dark colours.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.Themes.Auto">
+            <summary>Follows the operating system's light or dark setting.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.Themes.Bootstrap">
+            <summary>Takes its colours, fonts and corners from Bootstrap's CSS variables, including <c>data-bs-theme</c>.</summary>
+        </member>
+        <member name="T:GridKrafter.Constants.DomEvents">
+            <summary>The DOM events the custom element raises. Each bubbles and carries its data as <c>event.detail</c>.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.DomEvents.Changed">
+            <summary>The board changed: <c>{ kind, itemId, sectionId, layout, board }</c>.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.DomEvents.Layout">
+            <summary>The breakpoint changed: <c>{ id, columns, minWidth }</c>.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.DomEvents.Mounts">
+            <summary>The set of empty widget bodies changed, so a host can render into them: <c>{ mounts: [{ id, kind, section }] }</c>.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.DomEvents.Refresh">
+            <summary>A widget without its own content was refreshed: <c>{ id, kind }</c>.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.DomEvents.EditMode">
+            <summary>Edit mode was switched on or off from the toolbar: <c>{ editing }</c>.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.DomEvents.Ready">
+            <summary>The dashboard has measured itself and restored any saved state: <c>{ layout, board }</c>.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.DomEvents.Option">
+            <summary>
+            Sent the other way: content that isn't a Blazor component dispatches it from inside a widget's
+            body, bubbling, to save one of the widget's settings with the board: <c>{ key, value }</c>.
+            A missing or <see langword="null"/> value removes the setting.
+            </summary>
+        </member>
+        <member name="T:GridKrafter.Constants.Defaults">
+            <summary>Sizes used when nothing else says otherwise.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.Defaults.RowHeight">
+            <summary>The height of a grid row, in CSS pixels.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.Defaults.Gap">
+            <summary>The space between widgets, in CSS pixels.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.Defaults.Width">
+            <summary>The width of a new widget, in columns of the largest layout.</summary>
+        </member>
+        <member name="F:GridKrafter.Constants.Defaults.Height">
+            <summary>The height of a new widget, in rows.</summary>
+        </member>
+        <member name="T:GridKrafter.Layout.BoardArranger">
+            <summary>
+            Works out where a section's widgets sit in one layout. A layout only stores positions once
+            someone arranges widgets in it; until then they're derived from the next larger layout, so the
+            phone layout keeps following the desktop one until it's been customised.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Layout.BoardArranger.Arrange(System.Collections.Generic.IReadOnlyList{GridKrafter.Models.DashboardItem},System.Collections.Generic.IReadOnlyList{GridKrafter.Models.DashboardLayout},GridKrafter.Models.DashboardLayout,GridKrafter.Layout.GridCompaction,System.Func{GridKrafter.Models.DashboardItem,GridKrafter.Layout.GridNode})">
+            <summary>The section's nodes for a layout, from its saved placements or derived from a larger layout.</summary>
+            <param name="items">The section's visible items.</param>
+            <param name="layouts">All the dashboard's layouts.</param>
+            <param name="layout">The layout to arrange.</param>
+            <param name="compaction">The dashboard's compaction.</param>
+            <param name="describe">
+            Turns an item into a node with its limits; the node's rectangle is the item's starting
+            position (<see cref="P:GridKrafter.Models.DashboardItem.X"/>, <see cref="P:GridKrafter.Models.DashboardItem.Y"/>) and size.
+            </param>
+            <returns>A valid layout of every item.</returns>
+        </member>
+        <member name="T:GridKrafter.Layout.GridCompaction">
+            <summary>What happens to empty space above a node.</summary>
+        </member>
+        <member name="F:GridKrafter.Layout.GridCompaction.Vertical">
+            <summary>Nodes rise until something stops them, so the grid never has holes at the top.</summary>
+        </member>
+        <member name="F:GridKrafter.Layout.GridCompaction.None">
+            <summary>Nodes stay where they're put; only collisions move them.</summary>
+        </member>
+        <member name="T:GridKrafter.Layout.GridEngine">
+            <summary>
+            Places nodes on a grid with a fixed number of columns and as many rows as they need. Every
+            operation is pure: it returns new nodes in the order it was given them, so a drag is always
+            previewed from the layout it started with instead of compounding each step's adjustments.
+            </summary>
+        </member>
+        <member name="F:GridKrafter.Layout.GridEngine.CoverageThreshold">
+            <summary>
+            A collision only counts once the dragged node covers more than this share of what it hits
+            (or of itself, when that's smaller), so grazing a neighbour doesn't shove it aside.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.#ctor(System.Int32,GridKrafter.Layout.GridCompaction)">
+            <summary>
+            Initializes a new instance of the <see cref="T:GridKrafter.Layout.GridEngine"/> class.
+            </summary>
+            <param name="columns">The number of columns; at least one.</param>
+            <param name="compaction">What happens to empty space above a node.</param>
+        </member>
+        <member name="P:GridKrafter.Layout.GridEngine.Columns">
+            <summary>
+            Gets the number of columns.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridEngine.Compaction">
+            <summary>
+            Gets what happens to empty space above a node.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Bottom(System.Collections.Generic.IEnumerable{GridKrafter.Layout.GridNode})">
+            <summary>The first row below every node; zero for an empty grid.</summary>
+            <param name="nodes">The nodes.</param>
+            <returns>The number of rows in use.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Clamp(GridKrafter.Layout.GridNode,GridKrafter.Layout.GridRect)">
+            <summary>Fits a rectangle inside the grid and the node's own size limits.</summary>
+            <param name="node">The node whose limits apply.</param>
+            <param name="rect">Where it would like to be.</param>
+            <returns>The nearest rectangle that's allowed.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Normalize(System.Collections.Generic.IEnumerable{GridKrafter.Layout.GridNode})">
+            <summary>
+            Makes a layout valid: everything inside the grid and its size limits, nothing overlapping
+            (later nodes in reading order move down), and with vertical compaction no gaps above.
+            </summary>
+            <param name="nodes">The nodes, in any state.</param>
+            <returns>The same nodes, in the same order, laid out validly.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Move(System.Collections.Generic.IReadOnlyList{GridKrafter.Layout.GridNode},System.String,System.Int32,System.Int32)">
+            <summary>
+            Moves one node and rearranges the rest around it. A same-sized neighbour sharing its row or
+            column swaps places with it; moving down onto something lifts that above when there's room;
+            anything else in the way is pushed down.
+            </summary>
+            <param name="nodes">The layout before the move, normally the one the drag started from.</param>
+            <param name="id">The node to move.</param>
+            <param name="x">The column to move its left edge to.</param>
+            <param name="y">The row to move its top edge to.</param>
+            <returns>
+            The new layout; the same list when nothing changes; or <see langword="null"/> when the node
+            can't move, or only grazes its neighbours so the previous preview should stand.
+            </returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Nudge(System.Collections.Generic.IReadOnlyList{GridKrafter.Layout.GridNode},System.String,System.Int32,System.Int32)">
+            <summary>Moves a node one step at a time in a direction until the layout actually changes, for keyboard moves.</summary>
+            <param name="nodes">The current layout.</param>
+            <param name="id">The node to move.</param>
+            <param name="dx">The column direction: -1, 0 or 1.</param>
+            <param name="dy">The row direction: -1, 0 or 1.</param>
+            <returns>The new layout, or <see langword="null"/> when it can't go any further that way.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Resize(System.Collections.Generic.IReadOnlyList{GridKrafter.Layout.GridNode},System.String,GridKrafter.Layout.GridRect)">
+            <summary>Resizes one node and pushes whatever it now covers out of the way.</summary>
+            <param name="nodes">The layout before the resize, normally the one the drag started from.</param>
+            <param name="id">The node to resize.</param>
+            <param name="rect">The rectangle it should cover.</param>
+            <returns>
+            The new layout; the same list when nothing changes; or <see langword="null"/> when it can't
+            be resized there (it's locked, or the new size would cover a locked node).
+            </returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Insert(System.Collections.Generic.IReadOnlyList{GridKrafter.Layout.GridNode},GridKrafter.Layout.GridNode)">
+            <summary>Adds a node exactly where it says it is, pushing anything there down. Used when a node is dragged in from another grid.</summary>
+            <param name="nodes">The layout to add to.</param>
+            <param name="node">The node to add; its id mustn't already be in the layout.</param>
+            <returns>The layout with the node appended.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Add(System.Collections.Generic.IReadOnlyList{GridKrafter.Layout.GridNode},GridKrafter.Layout.GridNode)">
+            <summary>Adds a node at the first place its size fits, reading left to right and top to bottom.</summary>
+            <param name="nodes">The layout to add to.</param>
+            <param name="node">The node to add; only its size is used.</param>
+            <returns>The layout with the node appended.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.FindSpace(System.Collections.Generic.IReadOnlyList{GridKrafter.Layout.GridNode},System.Int32,System.Int32)">
+            <summary>The first free spot of a given size, reading left to right and top to bottom.</summary>
+            <param name="nodes">The layout to search.</param>
+            <param name="w">The number of columns needed.</param>
+            <param name="h">The number of rows needed.</param>
+            <returns>A rectangle that overlaps nothing; at worst, below everything.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Project(System.Collections.Generic.IReadOnlyList{GridKrafter.Layout.GridNode},System.Int32)">
+            <summary>
+            Re-flows a layout made for a different number of columns. Widths scale, and the nodes are
+            laid out again in their reading order, each at the first spot after the one before, so a
+            row of four tiles becomes two rows of two rather than leaving holes or changing their order.
+            Down to one column it's a simple stack.
+            </summary>
+            <param name="nodes">The layout to convert.</param>
+            <param name="fromColumns">The number of columns it was made for.</param>
+            <returns>The same nodes, laid out for <see cref="P:GridKrafter.Layout.GridEngine.Columns"/>.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.FlowFrom(System.Collections.Generic.List{GridKrafter.Layout.GridRect},System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>The first free spot at or after a cell, reading left to right and top to bottom.</summary>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.BelowLocked(GridKrafter.Layout.GridRect[],System.Boolean[],System.Int32,GridKrafter.Layout.GridRect)">
+            <summary>A locked node can't make room, so whatever lands on one drops below it.</summary>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.Settle(GridKrafter.Layout.GridRect[],System.Boolean[],System.Int32[])">
+            <summary>
+            Moves every node that isn't fixed down until it overlaps nothing placed before it. Fixed
+            nodes are placed first; the rest follow in the given order, so earlier ones keep their spot.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.CompactUp(GridKrafter.Layout.GridRect[],System.Boolean[])">
+            <summary>
+            Raises every node that isn't fixed as far as it'll go. Expects a layout without overlaps,
+            which means each node only has to clear the nodes above it in its own columns.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.TrySwap(GridKrafter.Layout.GridRect[],System.Int32,GridKrafter.Layout.GridRect,System.Int32)">
+            <summary>
+            Trades places with a neighbour that shares the moving node's row (same top and height) or
+            column (same left and width). The two keep their order along that line without a gap, so
+            differently sized neighbours swap too.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Layout.GridEngine.LiftAbove(GridKrafter.Layout.GridRect[],System.Int32,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            When a node moves down onto others, each of them goes just above it if that space is free,
+            so they trade places instead of everything being shoved further down.
+            </summary>
+        </member>
+        <member name="T:GridKrafter.Layout.GridNode">
+            <summary>One thing on the grid, where it is, and how far it may grow or shrink.</summary>
+            <param name="Id">Identifies the node; unique within a grid.</param>
+            <param name="Rect">Where the node sits.</param>
+        </member>
+        <member name="M:GridKrafter.Layout.GridNode.#ctor(System.String,GridKrafter.Layout.GridRect)">
+            <summary>One thing on the grid, where it is, and how far it may grow or shrink.</summary>
+            <param name="Id">Identifies the node; unique within a grid.</param>
+            <param name="Rect">Where the node sits.</param>
+        </member>
+        <member name="P:GridKrafter.Layout.GridNode.Id">
+            <summary>Identifies the node; unique within a grid.</summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridNode.Rect">
+            <summary>Where the node sits.</summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridNode.MinW">
+            <summary>
+            Gets the minimum number of columns.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridNode.MinH">
+            <summary>
+            Gets the minimum number of rows.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridNode.MaxW">
+            <summary>
+            Gets the maximum number of columns, or <see langword="null"/> for the full width.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridNode.MaxH">
+            <summary>
+            Gets the maximum number of rows, or <see langword="null"/> for no limit.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridNode.Locked">
+            <summary>Never moved by the engine, and can't be dragged or resized; everything else flows around it.</summary>
+        </member>
+        <member name="T:GridKrafter.Layout.GridRect">
+            <summary>
+            A block of grid cells. <see cref="P:GridKrafter.Layout.GridRect.X"/> is the first column and <see cref="P:GridKrafter.Layout.GridRect.Y"/> the first row,
+            both zero-based; <see cref="P:GridKrafter.Layout.GridRect.W"/> and <see cref="P:GridKrafter.Layout.GridRect.H"/> are how many columns and rows it spans.
+            </summary>
+            <param name="X">The first column.</param>
+            <param name="Y">The first row.</param>
+            <param name="W">The number of columns.</param>
+            <param name="H">The number of rows.</param>
+        </member>
+        <member name="M:GridKrafter.Layout.GridRect.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            A block of grid cells. <see cref="P:GridKrafter.Layout.GridRect.X"/> is the first column and <see cref="P:GridKrafter.Layout.GridRect.Y"/> the first row,
+            both zero-based; <see cref="P:GridKrafter.Layout.GridRect.W"/> and <see cref="P:GridKrafter.Layout.GridRect.H"/> are how many columns and rows it spans.
+            </summary>
+            <param name="X">The first column.</param>
+            <param name="Y">The first row.</param>
+            <param name="W">The number of columns.</param>
+            <param name="H">The number of rows.</param>
+        </member>
+        <member name="P:GridKrafter.Layout.GridRect.X">
+            <summary>The first column.</summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridRect.Y">
+            <summary>The first row.</summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridRect.W">
+            <summary>The number of columns.</summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridRect.H">
+            <summary>The number of rows.</summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridRect.Right">
+            <summary>The column just past the right edge.</summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridRect.Bottom">
+            <summary>The row just below the bottom edge.</summary>
+        </member>
+        <member name="P:GridKrafter.Layout.GridRect.Area">
+            <summary>The number of cells covered.</summary>
+        </member>
+        <member name="M:GridKrafter.Layout.GridRect.Intersects(GridKrafter.Layout.GridRect)">
+            <summary>Whether the two share at least one cell. Touching edges don't count.</summary>
+            <param name="other">The other rectangle.</param>
+            <returns><see langword="true"/> when they overlap.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridRect.Overlap(GridKrafter.Layout.GridRect)">
+            <summary>The number of cells both cover.</summary>
+            <param name="other">The other rectangle.</param>
+            <returns>The shared area, or zero.</returns>
+        </member>
+        <member name="M:GridKrafter.Layout.GridRect.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:GridKrafter.Localization.GridKrafterLocaleCatalog">
+            <summary>
+            Built-in catalogs are embedded in this assembly. A host adds a language by dropping
+            <c>{tag}.json</c> in <see cref="P:GridKrafter.Localization.GridKrafterLocalizationOptions.Directory"/>, or in
+            <c>GridKrafter/Locales</c> beside the app. Missing keys fall back through parent tags to English.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterLocaleCatalog.#ctor(GridKrafter.Localization.GridKrafterLocalizationOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:GridKrafter.Localization.GridKrafterLocaleCatalog"/> class.
+            </summary>
+            <param name="options">Where to find extra language files.</param>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterLocaleCatalog.Shared">
+            <summary>
+            Gets the catalog used when no localizer is registered: the built-in languages plus any files beside the app.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterLocaleCatalog.Languages">
+            <inheritdoc/>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterLocaleCatalog.Resolve(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterLocaleCatalog.TryCulture(System.String)">
+            <summary>Null under invariant globalization, as in the custom elements build.</summary>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterLocaleCatalog.Merge(System.String,System.IO.Stream)">
+            <summary>Later catalogs win, so a host's files overlay the built-in ones.</summary>
+        </member>
+        <member name="T:GridKrafter.Localization.GridKrafterText">
+            <summary>
+            The strings for one language. The indexer returns English when this catalog has no value for
+            a key, and the key itself only when English has no value either.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterText.English">
+            <summary>
+            Gets the built-in English strings.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterText.Language">
+            <summary>
+            Gets the tag of the catalog that matched, such as <c>fr</c> for a request for <c>fr-CA</c>.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterText.Culture">
+            <summary>
+            Gets the culture for numbers and dates; invariant when globalization is.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterText.IsRightToLeft">
+            <summary>
+            Gets a value indicating whether the language is written right to left.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterText.Item(System.String)">
+            <summary>The string for a key.</summary>
+            <param name="key">The key, such as <c>widget.collapse</c>.</param>
+            <returns>The string, or the key when no catalog has it.</returns>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterText.Get(System.String)">
+            <summary>The string for a key.</summary>
+            <param name="key">The key.</param>
+            <returns>The string, or the key when no catalog has it.</returns>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterText.Format(System.String,System.Object[])">
+            <summary>The string for a key with <c>{0}</c>-style placeholders filled in using <see cref="P:GridKrafter.Localization.GridKrafterText.Culture"/>.</summary>
+            <param name="key">The key.</param>
+            <param name="args">The values for the placeholders.</param>
+            <returns>The formatted string; the unformatted one if a translation's placeholders are broken.</returns>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterText.Find(System.String)">
+            <summary>The string for a key if any catalog has one.</summary>
+            <param name="key">The key.</param>
+            <returns>The string, or <see langword="null"/>.</returns>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterText.ColorName(System.String)">
+            <summary>The name of a colour from <see cref="P:GridKrafter.Models.WidgetColors.Names"/>.</summary>
+            <param name="color">The palette name.</param>
+            <returns>The translated name, or the palette name.</returns>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterText.LayoutName(GridKrafter.Models.DashboardLayout)">
+            <summary>The name of a layout: translated, then its own <see cref="P:GridKrafter.Models.DashboardLayout.Name"/>, then its id.</summary>
+            <param name="layout">The layout.</param>
+            <returns>The name to show.</returns>
+        </member>
+        <member name="T:GridKrafter.Localization.GridKrafterLanguage">
+            <summary>A language the dashboard can show, named for a language menu.</summary>
+            <param name="Tag">The IETF language tag, such as <c>pt-BR</c>.</param>
+            <param name="NativeName">The language's name in that language.</param>
+            <param name="IsRightToLeft">Whether it's written right to left.</param>
+        </member>
+        <member name="M:GridKrafter.Localization.GridKrafterLanguage.#ctor(System.String,System.String,System.Boolean)">
+            <summary>A language the dashboard can show, named for a language menu.</summary>
+            <param name="Tag">The IETF language tag, such as <c>pt-BR</c>.</param>
+            <param name="NativeName">The language's name in that language.</param>
+            <param name="IsRightToLeft">Whether it's written right to left.</param>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterLanguage.Tag">
+            <summary>The IETF language tag, such as <c>pt-BR</c>.</summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterLanguage.NativeName">
+            <summary>The language's name in that language.</summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterLanguage.IsRightToLeft">
+            <summary>Whether it's written right to left.</summary>
+        </member>
+        <member name="T:GridKrafter.Localization.IGridKrafterLocalizer">
+            <summary>Loads JSON catalogs and resolves a tag, including fallback to English.</summary>
+        </member>
+        <member name="P:GridKrafter.Localization.IGridKrafterLocalizer.Languages">
+            <summary>
+            Gets every language with a catalog, English first.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Localization.IGridKrafterLocalizer.Resolve(System.String)">
+            <summary>The strings for a language tag, falling back through parent tags to English.</summary>
+            <param name="languageTag">An IETF tag, or <see langword="null"/> for English.</param>
+            <returns>The strings.</returns>
+        </member>
+        <member name="T:GridKrafter.Localization.GridKrafterLocalizationOptions">
+            <summary>
+            Where extra language files live. Each file is named with an IETF tag, such as <c>fr-CA.json</c>,
+            and contains a flat object of string keys. Keys you leave out fall back to English.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Localization.GridKrafterLocalizationOptions.Directory">
+            <summary>
+            Gets or sets a folder of <c>{tag}.json</c> files. Files overlay the built-in catalog for that tag, and a
+            tag with no built-in file becomes a new language. A path that doesn't exist is ignored.
+            </summary>
+        </member>
+        <member name="T:GridKrafter.Models.BoardMerge">
+            <summary>
+            Applies what a person saved to the board as the host defines it now. The host stays in charge
+            of content and limits; the person keeps their arrangement, titles, colours and settings.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Models.BoardMerge.Apply(GridKrafter.Models.DashboardBoard,GridKrafter.Models.DashboardBoard,System.Func{GridKrafter.Models.DashboardItem,System.Boolean})">
+            <summary>Copies saved state onto the current board.</summary>
+            <param name="current">The board as the host defines it; changed in place.</param>
+            <param name="saved">The board that was saved earlier.</param>
+            <param name="keep">
+            Whether a saved item the host no longer defines should stay, typically because it was added
+            from a catalog whose definition still exists. Without this, such items are dropped.
+            </param>
+            <returns><paramref name="current"/>.</returns>
+        </member>
+        <member name="T:GridKrafter.Models.DashboardBoard">
+            <summary>
+            Everything a dashboard shows and everything a person changed about it, in one serializable
+            object. Save it as a whole; <see cref="T:GridKrafter.Models.BoardMerge"/> applies a saved board to a newer definition.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardBoard.Version">
+            <summary>
+            Gets or sets the format version, so older saved boards can be recognised.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardBoard.Sections">
+            <summary>
+            Gets or sets the sections in display order. A board without any shows one untitled section.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardBoard.Items">
+            <summary>
+            Gets or sets the widgets.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Models.DashboardBoard.Find(System.String)">
+            <summary>The item with an id, if there is one.</summary>
+            <param name="id">The item's id.</param>
+            <returns>The item, or <see langword="null"/>.</returns>
+        </member>
+        <member name="M:GridKrafter.Models.DashboardBoard.FindSection(System.String)">
+            <summary>The section with an id, if there is one.</summary>
+            <param name="id">The section's id.</param>
+            <returns>The section, or <see langword="null"/>.</returns>
+        </member>
+        <member name="M:GridKrafter.Models.DashboardBoard.SectionOf(GridKrafter.Models.DashboardItem)">
+            <summary>The section an item is shown in: its own when that exists, otherwise the first.</summary>
+            <param name="item">The item.</param>
+            <returns>A section id.</returns>
+        </member>
+        <member name="M:GridKrafter.Models.DashboardBoard.Tidy">
+            <summary>Makes sure there's at least one section and every id is unique, dropping later duplicates.</summary>
+            <returns>This board.</returns>
+        </member>
+        <member name="T:GridKrafter.Models.DashboardItem">
+            <summary>
+            One widget on a dashboard: what it shows, how it looks, and where it sits in each layout.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Id">
+            <summary>
+            Gets or sets the identifier; unique within the board and stable, since saved state is keyed by it.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Kind">
+            <summary>
+            Gets or sets the widget definition that renders it, when it comes from a catalog.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Section">
+            <summary>
+            Gets or sets the section it's in; <see langword="null"/> or unknown means the first section.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Title">
+            <summary>
+            Gets or sets the header text. People can rename widgets, so this is part of their saved state.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Icon">
+            <summary>
+            Gets or sets a built-in icon name, or CSS classes for an icon font such as <c>fa fa-chart-line</c>.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Color">
+            <summary>
+            Gets or sets a palette name from <see cref="T:GridKrafter.Models.WidgetColors"/> or a CSS colour, used for the header.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Collapsed">
+            <summary>
+            Gets or sets a value indicating whether only the header shows.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Hidden">
+            <summary>
+            Gets or sets a value indicating whether it was deleted. Declared widgets are hidden rather than
+            removed so they can be brought back and don't reappear when the page declares them again.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Placements">
+            <summary>
+            Gets or sets where it sits in each layout, keyed by <see cref="P:GridKrafter.Models.DashboardLayout.Id"/>. A layout
+            without an entry derives the position from the next larger layout.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.X">
+            <summary>
+            Gets or sets the starting column in the largest layout, before anyone has moved it; <see langword="null"/> finds the first free spot.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Y">
+            <summary>
+            Gets or sets the starting row in the largest layout, before anyone has moved it.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.W">
+            <summary>
+            Gets or sets the starting width in columns of the largest layout.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.H">
+            <summary>
+            Gets or sets the starting height in rows.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.MinW">
+            <summary>
+            Gets or sets the minimum width in columns.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.MinH">
+            <summary>
+            Gets or sets the minimum height in rows.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.MaxW">
+            <summary>
+            Gets or sets the maximum width in columns.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.MaxH">
+            <summary>
+            Gets or sets the maximum height in rows.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Locked">
+            <summary>
+            Gets or sets a value indicating whether it stays put: it can't be dragged or resized and other widgets flow around it.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.AutoHeight">
+            <summary>
+            Gets or sets a value indicating whether the height follows the content instead of being resizable.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Buttons">
+            <summary>
+            Gets or sets the header buttons, replacing the dashboard's defaults.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Chrome">
+            <summary>
+            Gets or sets the frame style, replacing the dashboard's default.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.NoPadding">
+            <summary>
+            Gets or sets a value indicating whether the body has no padding, for tables, maps and charts that should reach the edges.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Options">
+            <summary>
+            Gets or sets the widget's own settings, as edited in its settings panel.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Html">
+            <summary>
+            Gets or sets markup to show as the body, for hosts that aren't Blazor. It's trusted as-is, so never put user input here.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Url">
+            <summary>
+            Gets or sets an address whose HTML is fetched into the body, and fetched again on refresh.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Template">
+            <summary>
+            Gets or sets a CSS selector for a <c>&lt;template&gt;</c> on the page whose content becomes the body.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardItem.Refresh">
+            <summary>
+            Gets or sets how often, in seconds, to refresh automatically; zero or <see langword="null"/> never does.
+            </summary>
+        </member>
+        <member name="T:GridKrafter.Models.DashboardLayout">
+            <summary>
+            A breakpoint: from a minimum width up, the dashboard uses this many columns and remembers its
+            own widget positions.
+            </summary>
+            <param name="Id">Identifies the layout in saved placements, so keep it stable.</param>
+            <param name="MinWidth">The narrowest dashboard, in CSS pixels, that uses this layout.</param>
+            <param name="Columns">The number of grid columns.</param>
+        </member>
+        <member name="M:GridKrafter.Models.DashboardLayout.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+            A breakpoint: from a minimum width up, the dashboard uses this many columns and remembers its
+            own widget positions.
+            </summary>
+            <param name="Id">Identifies the layout in saved placements, so keep it stable.</param>
+            <param name="MinWidth">The narrowest dashboard, in CSS pixels, that uses this layout.</param>
+            <param name="Columns">The number of grid columns.</param>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardLayout.Id">
+            <summary>Identifies the layout in saved placements, so keep it stable.</summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardLayout.MinWidth">
+            <summary>The narrowest dashboard, in CSS pixels, that uses this layout.</summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardLayout.Columns">
+            <summary>The number of grid columns.</summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardLayout.Name">
+            <summary>
+            Gets the name to show, when the language catalog doesn't have one for <see cref="P:GridKrafter.Models.DashboardLayout.Id"/>.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardLayout.Defaults">
+            <summary>Twelve columns from 1100px, six from 640px and a single column below that.</summary>
+        </member>
+        <member name="M:GridKrafter.Models.DashboardLayout.Order(System.Collections.Generic.IEnumerable{GridKrafter.Models.DashboardLayout})">
+            <summary>The layouts from widest to narrowest, which is the order positions are derived in.</summary>
+            <param name="layouts">The layouts, in any order.</param>
+            <returns>The layouts ordered by <see cref="P:GridKrafter.Models.DashboardLayout.MinWidth"/>, largest first.</returns>
+        </member>
+        <member name="M:GridKrafter.Models.DashboardLayout.ForWidth(System.Collections.Generic.IReadOnlyList{GridKrafter.Models.DashboardLayout},System.Double)">
+            <summary>The layout a dashboard of a given width uses.</summary>
+            <param name="layouts">The layouts to choose from; when empty, <see cref="P:GridKrafter.Models.DashboardLayout.Defaults"/>.</param>
+            <param name="width">The dashboard's width in CSS pixels.</param>
+            <returns>The widest layout whose <see cref="P:GridKrafter.Models.DashboardLayout.MinWidth"/> fits, or the narrowest one.</returns>
+        </member>
+        <member name="T:GridKrafter.Models.DashboardSection">
+            <summary>A titled band of the dashboard with its own grid. Widgets can be dragged between sections.</summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardSection.Id">
+            <summary>
+            Gets or sets the identifier items use to say they belong here.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardSection.Title">
+            <summary>
+            Gets or sets the heading. A section without one has no header outside edit mode.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardSection.Icon">
+            <summary>
+            Gets or sets a built-in icon name, or CSS classes for an icon font.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardSection.Collapsed">
+            <summary>
+            Gets or sets a value indicating whether only the header shows.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.DashboardSection.Collapsible">
+            <summary>
+            Gets or sets a value indicating whether people can collapse the section.
+            </summary>
+        </member>
+        <member name="T:GridKrafter.Models.DisplayMode">
+            <summary>How a dashboard shows its sections.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.DisplayMode.Tabs">
+            <summary>One section at a time, chosen from a tab strip. Dragging a widget onto another tab moves it there.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.DisplayMode.Accordion">
+            <summary>Every section stacked, each one collapsible.</summary>
+        </member>
+        <member name="T:GridKrafter.Models.WidgetButtons">
+            <summary>The buttons in a widget's header. In JSON, a comma-separated list such as <c>"collapse, fullscreen"</c>.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.None">
+            <summary>No buttons.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.Refresh">
+            <summary>Reloads the content and updates the timestamp.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.Color">
+            <summary>Picks the header colour.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.Edit">
+            <summary>Opens the edit panel to rename the widget and change its settings.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.Fullscreen">
+            <summary>Fills the window with the widget.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.Collapse">
+            <summary>Shows only the header, or everything again.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.Delete">
+            <summary>Removes the widget, after asking.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.Default">
+            <summary>Everything except refresh, which only makes sense for content that can reload.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetButtons.All">
+            <summary>Every button.</summary>
+        </member>
+        <member name="T:GridKrafter.Models.WidgetChrome">
+            <summary>How a widget is framed.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetChrome.Panel">
+            <summary>A header bar with the icon, title, toolbar and buttons above the body.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetChrome.Card">
+            <summary>The content fills the card; the title is a small badge and the buttons appear on hover.</summary>
+        </member>
+        <member name="F:GridKrafter.Models.WidgetChrome.Plain">
+            <summary>No frame at all: the content is the widget.</summary>
+        </member>
+        <member name="T:GridKrafter.Models.WidgetColors">
+            <summary>
+            The header colours people can pick from. The stylesheet defines each one for light and dark
+            themes; hosts can also use any CSS colour for <see cref="P:GridKrafter.Models.DashboardItem.Color"/>.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Models.WidgetColors.Names">
+            <summary>The palette, in the order the picker shows it.</summary>
+        </member>
+        <member name="M:GridKrafter.Models.WidgetColors.IsNamed(System.String)">
+            <summary>Whether a colour is one of <see cref="P:GridKrafter.Models.WidgetColors.Names"/>.</summary>
+            <param name="color">The colour.</param>
+            <returns><see langword="true"/> for a palette name.</returns>
+        </member>
+        <member name="M:GridKrafter.Models.WidgetColors.IsCustom(System.String)">
+            <summary>
+            Whether a colour that isn't a palette name is safe to put in a style attribute: a hex colour
+            or a CSS colour function such as <c>rgb()</c>, <c>hsl()</c> or <c>oklch()</c>.
+            </summary>
+            <param name="color">The colour.</param>
+            <returns><see langword="true"/> when it can be used as a custom colour.</returns>
+        </member>
+        <member name="M:GridKrafter.Models.WidgetColors.CustomColor">
+            <remarks>
+            Pattern:<br/>
+            <code>^(#[0-9a-fA-F]{3,8}|(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch)\\([0-9a-zA-Z.,%/\\s+-]{1,80}\\))$</code><br/>
+            Explanation:<br/>
+            <code>
+            ○ Match if at the beginning of the string.<br/>
+            ○ 1st capture group.<br/>
+                ○ Match with 2 alternative expressions.<br/>
+                    ○ Match a sequence of expressions.<br/>
+                        ○ Match '#'.<br/>
+                        ○ Match a hexadecimal digit atomically at least 3 and at most 8 times.<br/>
+                    ○ Match a sequence of expressions.<br/>
+                        ○ 2nd capture group.<br/>
+                            ○ Match with 4 alternative expressions.<br/>
+                                ○ Match a sequence of expressions.<br/>
+                                    ○ Match the string "rgb".<br/>
+                                    ○ Match 'a' atomically, optionally.<br/>
+                                ○ Match a sequence of expressions.<br/>
+                                    ○ Match 'h'.<br/>
+                                    ○ Match with 2 alternative expressions.<br/>
+                                        ○ Match a sequence of expressions.<br/>
+                                            ○ Match the string "sl".<br/>
+                                            ○ Match 'a' atomically, optionally.<br/>
+                                        ○ Match the string "wb".<br/>
+                                ○ Match a sequence of expressions.<br/>
+                                    ○ Match 'l'.<br/>
+                                    ○ Match with 2 alternative expressions.<br/>
+                                        ○ Match the string "ab".<br/>
+                                        ○ Match the string "ch".<br/>
+                                ○ Match a sequence of expressions.<br/>
+                                    ○ Match the string "okl".<br/>
+                                    ○ Match with 2 alternative expressions.<br/>
+                                        ○ Match the string "ab".<br/>
+                                        ○ Match the string "ch".<br/>
+                        ○ Match '('.<br/>
+                        ○ Match a character in the set [%+-9A-Za-z\s] atomically at least 1 and at most 80 times.<br/>
+                        ○ Match ')'.<br/>
+            ○ Match if at the end of the string or if before an ending newline.<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="T:GridKrafter.Serialization.DashboardJson">
+            <summary>Reads and writes boards and layouts as JSON, the format the custom element, storage and hosts share.</summary>
+        </member>
+        <member name="M:GridKrafter.Serialization.DashboardJson.Serialize(GridKrafter.Models.DashboardBoard,System.Boolean)">
+            <summary>Writes a board.</summary>
+            <param name="board">The board.</param>
+            <param name="indented">Whether to indent it for people to read.</param>
+            <returns>The JSON.</returns>
+        </member>
+        <member name="M:GridKrafter.Serialization.DashboardJson.TryParse(System.String)">
+            <summary>Reads a board, tidying ids and sections.</summary>
+            <param name="json">The JSON.</param>
+            <returns>The board, or an invalid result describing what's wrong.</returns>
+        </member>
+        <member name="M:GridKrafter.Serialization.DashboardJson.TryParseLayouts(System.String)">
+            <summary>Reads a list of layouts, ignoring any without an id or columns.</summary>
+            <param name="json">The JSON array.</param>
+            <returns>The layouts, or an invalid result describing what's wrong.</returns>
+        </member>
+        <member name="M:GridKrafter.Serialization.DashboardJson.SerializeLayouts(System.Collections.Generic.IEnumerable{GridKrafter.Models.DashboardLayout})">
+            <summary>Writes a list of layouts.</summary>
+            <param name="layouts">The layouts.</param>
+            <returns>The JSON array.</returns>
+        </member>
+        <member name="M:GridKrafter.Serialization.DashboardJson.Clone(GridKrafter.Models.DashboardBoard)">
+            <summary>A deep copy, so a host's board and a dashboard's working copy never share state.</summary>
+            <param name="board">The board.</param>
+            <returns>An independent copy.</returns>
+        </member>
+        <member name="M:GridKrafter.Serialization.DashboardJson.ToNode(GridKrafter.Models.DashboardBoard)">
+            <summary>The board as a JSON node, for embedding in a larger payload such as a DOM event.</summary>
+            <param name="board">The board.</param>
+            <returns>The JSON object.</returns>
+        </member>
+        <member name="T:GridKrafter.Serialization.GridKrafterJsonContext">
+            <summary>
+            Source-generated JSON for boards, so they serialize without reflection in trimmed WebAssembly
+            builds. camelCase, skipping nulls, and lenient about trailing commas and comments in host JSON.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.Indented">
+            <summary>The same settings, indented for people to read.</summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.Boolean">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.GridRect">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.DashboardBoard">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.DashboardItem">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.DashboardLayout">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.DashboardSection">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.WidgetButtons">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.NullableWidgetButtons">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.WidgetChrome">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.NullableWidgetChrome">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.DictionaryStringGridRect">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.ListDashboardItem">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.ListDashboardLayout">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.ListDashboardSection">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.JsonObject">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.Int32">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.NullableInt32">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.String">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.Default">
+            <summary>
+            The default <see cref="T:System.Text.Json.Serialization.JsonSerializerContext"/> associated with a default <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance.
+            </summary>
+        </member>
+        <member name="P:GridKrafter.Serialization.GridKrafterJsonContext.GeneratedSerializerOptions">
+            <summary>
+            The source-generated options associated with this context.
+            </summary>
+        </member>
+        <member name="M:GridKrafter.Serialization.GridKrafterJsonContext.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:GridKrafter.Serialization.GridKrafterJsonContext.#ctor(System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:GridKrafter.Serialization.GridKrafterJsonContext.GetTypeInfo(System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.CustomColor_0">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the CustomColor method.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.CustomColor_0.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.CustomColor_0.#ctor">
+            <summary>Initializes the instance.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.CustomColor_0.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.CustomColor_0.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.CustomColor_0.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.CustomColor_0.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.CustomColor_0.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.CustomColor_0.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Determine whether <paramref name="inputSpan"/> at base.runtextpos is a match for the regular expression.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if the regular expression matches at the current position; otherwise, false.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.Utilities">
+            <summary>Helper methods used by generated <see cref="T:System.Text.RegularExpressions.Regex"/>-derived implementations.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout">
+            <summary>Default timeout value set in <see cref="T:System.AppContext"/>, or <see cref="F:System.Text.RegularExpressions.Regex.InfiniteMatchTimeout"/> if none was set.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_hasTimeout">
+            <summary>Whether <see cref="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout"/> is non-infinite.</summary>
+        </member>
+    </members>
+</doc>

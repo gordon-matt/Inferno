@@ -1,0 +1,34 @@
+@inherits InfernoWidget
+
+@if (Snapshot is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (!string.IsNullOrEmpty(Snapshot.Error))
+{
+    <p class="nf-muted">@Snapshot.Error</p>
+}
+else if (!Snapshot.CanReadUsers)
+{
+    <p class="nf-muted">You can't view accounts.</p>
+}
+else if (Snapshot.Accounts.Count == 0)
+{
+    <p class="nf-muted">No accounts yet.</p>
+}
+else
+{
+    <ul class="inferno-feed">
+        @foreach (var account in Snapshot.Accounts)
+        {
+            <li>
+                <a href="@DashboardLinks.Membership">@account.Name</a>
+                <span class="nf-muted">@account.Email@(account.Locked ? " · Locked" : "")</span>
+            </li>
+        }
+    </ul>
+    @if (Snapshot.Users > Snapshot.Accounts.Count)
+    {
+        <p class="nf-muted"><a href="@DashboardLinks.Membership">All @Snapshot.Users accounts</a></p>
+    }
+}

@@ -12,6 +12,13 @@ public static partial class CmsConstants
         private static partial Regex EmailRegex();
     }
 
+    /// <summary>Zone names the public layout renders. A zone is created the first time that layout is shown.</summary>
+    public static class LayoutZones
+    {
+        /// <summary>End of the public layout, for script blocks such as analytics.</summary>
+        public const string Scripts = "Scripts";
+    }
+
     public static class Areas
     {
         public const string Blocks = "Admin/Blocks";

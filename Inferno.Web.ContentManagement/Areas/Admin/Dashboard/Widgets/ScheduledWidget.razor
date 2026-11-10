@@ -1,0 +1,34 @@
+@inherits InfernoWidget
+
+@if (Snapshot is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (!string.IsNullOrEmpty(Snapshot.Error))
+{
+    <p class="nf-muted">@Snapshot.Error</p>
+}
+else if (!Snapshot.BlogEnabled)
+{
+    <p class="nf-muted">The blog is switched off. <a href="@DashboardLinks.Settings">Site settings</a></p>
+}
+else if (!Snapshot.CanReadPosts)
+{
+    <p class="nf-muted">You can't view posts.</p>
+}
+else if (Snapshot.Scheduled.Count == 0)
+{
+    <p class="nf-muted">Nothing is scheduled.</p>
+}
+else
+{
+    <ul class="inferno-feed">
+        @foreach (var item in Snapshot.Scheduled)
+        {
+            <li>
+                <a href="@item.Href">@item.Title</a>
+                <span class="nf-muted">Publishes @When(item.PublishAtUtc)</span>
+            </li>
+        }
+    </ul>
+}

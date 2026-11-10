@@ -1,0 +1,28 @@
+@inherits InfernoWidget
+
+@if (Snapshot is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (!string.IsNullOrEmpty(Snapshot.Error))
+{
+    <p class="nf-muted">@Snapshot.Error</p>
+}
+else if (!Snapshot.CanReadUsers)
+{
+    <p class="nf-muted">You can't view accounts.</p>
+}
+else if (Snapshot.Roles.Count == 0)
+{
+    <p class="nf-muted">No roles yet.</p>
+}
+else
+{
+    <MeterList Points="Points" />
+}
+
+@code {
+    private IReadOnlyList<MeterList.MeterPoint> Points => Snapshot is null
+        ? []
+        : Snapshot.Roles.Select(role => new MeterList.MeterPoint(role.Name, role.Count)).ToList();
+}

@@ -1,0 +1,40 @@
+@inherits AnalyticsWidget
+
+@if (Data is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (Data.Error is not null)
+{
+    <p class="nf-muted">@Data.Error <a href="@Data.SettingsUrl">Google Analytics settings</a></p>
+}
+else if (Points.Count == 0)
+{
+    <p class="nf-muted">No visits in this range.</p>
+}
+else
+{
+    <p class="inferno-legend"><i></i> Visitors <i class="alt"></i> Views</p>
+    <ColumnChart Label="Visitors" Points="Points" />
+}
+
+@code {
+    private int Range => int.TryParse(Option("days", "28"), out int days) ? days : 28;
+
+    private IReadOnlyList<ColumnChart.ChartPoint> Points
+    {
+        get
+        {
+            if (Data is null)
+            {
+                return [];
+            }
+
+            var start = DateTime.UtcNow.Date.AddDays(-(Range - 1));
+            return Data.Days
+                .Where(day => day.Date >= start)
+                .Select(day => new ColumnChart.ChartPoint(day.Date.ToString("d MMM"), day.Users, day.Views))
+                .ToList();
+        }
+    }
+}

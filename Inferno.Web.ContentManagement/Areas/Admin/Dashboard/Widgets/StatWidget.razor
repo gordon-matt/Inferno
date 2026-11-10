@@ -1,0 +1,40 @@
+@inherits InfernoWidget
+
+@if (Snapshot is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (!string.IsNullOrEmpty(Snapshot.Error))
+{
+    <p class="nf-muted">@Snapshot.Error</p>
+}
+else if (UnavailableReason is not null)
+{
+    <div class="inferno-stat">
+        <span class="inferno-stat-value">—</span>
+        <span class="inferno-stat-label">@Label</span>
+        <span class="inferno-stat-detail nf-muted">@UnavailableReason</span>
+    </div>
+}
+else if (Href is null)
+{
+    <div class="inferno-stat">
+        <span class="inferno-stat-value">@Value</span>
+        <span class="inferno-stat-label">@Label</span>
+        @if (Detail is not null)
+        {
+            <span class="inferno-stat-detail nf-muted">@Detail</span>
+        }
+    </div>
+}
+else
+{
+    <a class="inferno-stat" href="@Href">
+        <span class="inferno-stat-value">@Value</span>
+        <span class="inferno-stat-label">@Label</span>
+        @if (Detail is not null)
+        {
+            <span class="inferno-stat-detail nf-muted">@Detail</span>
+        }
+    </a>
+}

@@ -52,6 +52,7 @@ using PageKrafter.Components;
 using Pickstack;
 using Pickstack.FileManager.WebFilez;
 using Pickstack.RichTextEditor.TinyMce8;
+using GridKrafter;
 using Pluginz;
 using Pluginz.Components;
 using Pluginz.Components.Pages;
@@ -215,6 +216,8 @@ services.AddRazorPages().AddNewtonsoftJson();
 
 services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+services.AddGridKrafter();
 
 services.AddResponseCompression(options =>
 {

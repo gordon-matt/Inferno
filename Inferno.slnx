@@ -19,6 +19,9 @@
     <Project Path="Inferno.Web/Inferno.Web.csproj" />
     <Project Path="Inferno/Inferno.csproj" />
   </Folder>
+  <Folder Name="/Plugins/">
+    <Project Path="Plugins/Inferno.Plugins.GoogleAnalytics/Inferno.Plugins.GoogleAnalytics.csproj" />
+  </Folder>
   <Folder Name="/Tests/" />
   <Project Path="InfernoCMS.Data/InfernoCMS.Data.csproj" />
   <Project Path="InfernoCMS.Identity/InfernoCMS.Identity.csproj" />

@@ -1,0 +1,27 @@
+@using System.Globalization
+
+<ul class="inferno-meters">
+    @foreach (var point in Points)
+    {
+        <li>
+            <span>@point.Label</span>
+            <span class="inferno-meter" role="presentation"><span style="width: @Width(point.Value)"></span></span>
+            <strong>@point.Value.ToString("0", CultureInfo.CurrentCulture)</strong>
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public IReadOnlyList<MeterPoint> Points { get; set; } = [];
+
+    private double Max => Points.Count == 0 ? 0 : Points.Max(point => point.Value);
+
+    private string Width(double value)
+    {
+        double percent = Max <= 0 ? 0 : value / Max * 100;
+        return percent.ToString("0.#", CultureInfo.InvariantCulture) + "%";
+    }
+
+    public sealed record MeterPoint(string Label, double Value);
+}

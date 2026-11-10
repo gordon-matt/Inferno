@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Inferno.Identity\Inferno.Identity.csproj" />
     <ProjectReference Include="..\Inferno.Web.ContentManagement\Inferno.Web.ContentManagement.csproj" />
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
+    <ProjectReference Include="..\Plugins\Inferno.Plugins.GoogleAnalytics\Inferno.Plugins.GoogleAnalytics.csproj" />
   </ItemGroup>
 
 </Project>

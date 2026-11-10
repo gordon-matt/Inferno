@@ -195,7 +195,13 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
                     ?? record.BlockValues
                     ?? "{}";
 
-                var blockType = Type.GetType(record.BlockType);
+                var blockType = ContentBlockTypes.Resolve(record.BlockType);
+                if (blockType is null)
+                {
+                    Logger.LogError("Content block {ContentBlockId} has an unknown type {BlockType}.", record.Id, record.BlockType);
+                    continue;
+                }
+
                 contentBlock = (IContentBlock)blockValues.JsonDeserialize(blockType);
             }
             catch (Exception x)

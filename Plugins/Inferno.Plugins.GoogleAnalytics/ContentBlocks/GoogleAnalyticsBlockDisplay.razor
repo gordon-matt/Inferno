@@ -1,0 +1,23 @@
+@inherits ContentBlockDisplay<GoogleAnalyticsBlock>
+@inject IJSRuntime Js
+@inject IGoogleAnalyticsSettingsStore Settings
+
+@code {
+    // Blazor does not run a script tag emitted by a component, so the tag is added to the document after render.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        string id = GoogleAnalyticsIds.EffectiveMeasurementId(Model.MeasurementId, Settings.Get().MeasurementId);
+        if (!GoogleAnalyticsIds.IsMeasurementId(id))
+        {
+            return;
+        }
+
+        var module = await Js.InvokeAsync<IJSObjectReference>("import", "./_content/Inferno.Plugins.GoogleAnalytics/analytics.js");
+        await module.InvokeVoidAsync("install", id);
+    }
+}

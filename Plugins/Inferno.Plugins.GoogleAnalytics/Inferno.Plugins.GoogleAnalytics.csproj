@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Title>Google Analytics</Title>
+    <Description>Adds the Google Analytics tag to the public site and visitor widgets to the dashboard.</Description>
+    <Version>1.0.0</Version>
+    <Authors>Inferno</Authors>
+    <IsPluginzPlugin>true</IsPluginzPlugin>
+    <PluginzSystemName>Inferno.Plugins.GoogleAnalytics</PluginzSystemName>
+    <PluginzGroup>Analytics</PluginzGroup>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dependo.Autofac" Version="1.2.3">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Extenso.Data.Entity" Version="10.2.1">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.3">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Pluginz.Core" Version="1.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Inferno.Web\Inferno.Web.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Inferno.Web.ContentManagement\Inferno.Web.ContentManagement.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\GridKrafter\GridKrafter.Components\GridKrafter.Components.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Target Name="DropHostAssemblies" BeforeTargets="_CopyFilesMarkedCopyLocal">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != '$(AssemblyName)'" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyToInfernoCms" AfterTargets="Build">
+    <PropertyGroup>
+      <_PluginDest>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\InfernoCMS\Plugins\$(PluginzSystemName)'))</_PluginDest>
+    </PropertyGroup>
+    <ItemGroup>
+      <_PluginFile Include="$(OutputPath)**\*.*" />
+      <_StalePluginAssembly Include="$(_PluginDest)\*.dll" Exclude="$(_PluginDest)\$(AssemblyName).dll" />
+      <_StalePluginAssembly Include="$(_PluginDest)\*.pdb" Exclude="$(_PluginDest)\$(AssemblyName).pdb" />
+    </ItemGroup>
+    <Delete Files="@(_StalePluginAssembly)" />
+    <Copy SourceFiles="@(_PluginFile)" DestinationFiles="@(_PluginFile->'$(_PluginDest)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

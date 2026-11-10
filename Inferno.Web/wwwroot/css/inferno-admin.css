@@ -216,6 +216,246 @@
     font-size: 0.8125rem;
 }
 
+.inferno-dashboard {
+    margin-top: 0.25rem;
+}
+
+.inferno-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    min-height: 4.5rem;
+    padding: 0.15rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.inferno-stat:hover,
+.inferno-stat:focus-visible {
+    color: inherit;
+    text-decoration: none;
+}
+
+.inferno-stat-value {
+    font-size: 1.75rem;
+    font-weight: 650;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+
+.inferno-stat-label {
+    margin-top: 0.2rem;
+    color: var(--nf-muted);
+}
+
+.inferno-stat-detail {
+    margin-top: 0.15rem;
+    font-size: 0.8125rem;
+}
+
+.inferno-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0 0 0.5rem;
+    color: var(--nf-muted);
+    font-size: 0.75rem;
+}
+
+.inferno-legend i {
+    display: inline-block;
+    width: 0.65rem;
+    height: 0.65rem;
+    margin-left: 0.65rem;
+    border-radius: 0.15rem;
+    background: var(--nf-accent);
+}
+
+.inferno-legend i:first-child {
+    margin-left: 0;
+}
+
+.inferno-legend i.alt {
+    background: color-mix(in srgb, var(--nf-muted) 70%, transparent);
+}
+
+.inferno-chart {
+    display: flex;
+    align-items: stretch;
+    gap: 0.35rem;
+    height: calc(100% - 1.5rem);
+    min-height: 8rem;
+}
+
+.inferno-chart-col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100%;
+}
+
+.inferno-chart-plot {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    min-height: 0;
+}
+
+.inferno-chart-bar {
+    width: 42%;
+    min-height: 2px;
+    border-radius: 0.2rem 0.2rem 0 0;
+    background: var(--nf-accent);
+}
+
+.inferno-chart-bar-alt {
+    background: color-mix(in srgb, var(--nf-muted) 70%, transparent);
+}
+
+.inferno-chart-label {
+    flex: none;
+    margin-top: 0.35rem;
+    font-size: 0.7rem;
+    color: var(--nf-muted);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inferno-meters {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.inferno-meters li {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr) auto;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.inferno-meter {
+    height: 0.45rem;
+    border-radius: 999px;
+    background: var(--nf-border);
+    overflow: hidden;
+}
+
+.inferno-meter > span {
+    display: block;
+    height: 100%;
+    background: var(--nf-accent);
+}
+
+.inferno-feed {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.inferno-feed li,
+.inferno-rank {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--nf-border);
+}
+
+.inferno-rank {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.inferno-feed li:last-child,
+.inferno-rank:last-child {
+    border-bottom: 0;
+}
+
+.inferno-feed a,
+.inferno-rank a {
+    font-weight: 600;
+    color: inherit;
+    text-decoration: none;
+}
+
+.inferno-feed a:hover,
+.inferno-rank a:hover {
+    color: var(--nf-accent);
+}
+
+.inferno-shortcuts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.inferno-shortcuts-heading {
+    margin: 0.65rem 0 0.15rem;
+    color: var(--nf-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.inferno-shortcuts-heading:first-child {
+    margin-top: 0;
+}
+
+.inferno-shortcuts a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+.inferno-shortcuts a:hover {
+    color: var(--nf-accent);
+}
+
+.inferno-ga-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    height: 100%;
+}
+
+.inferno-ga-summary div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.inferno-ga-summary strong {
+    font-size: 1.75rem;
+    font-weight: 650;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+
+.inferno-rank-head {
+    color: var(--nf-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .inferno-tile {
         transition: none;

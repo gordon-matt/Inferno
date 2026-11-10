@@ -64,6 +64,11 @@
     <ProjectReference Include="..\InfernoCMS.Identity\InfernoCMS.Identity.csproj" />
     <ProjectReference Include="..\InfernoCMS.Services\InfernoCMS.Services.csproj" />
     <ProjectReference Include="..\Inferno\Inferno.csproj" />
+    <ProjectReference Include="..\Plugins\Inferno.Plugins.GoogleAnalytics\Inferno.Plugins.GoogleAnalytics.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <!-- Static themes are read from disk at run time, so every file in them must be published, not only the manifests. -->

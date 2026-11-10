@@ -47,6 +47,8 @@ public class DependencyRegistrar : IDependencyRegistrar
         builder.Register<IPageVersionService, PageVersionService>(ServiceLifetime.Transient);
         builder.Register<IPageContentService, PageContentService>(ServiceLifetime.Transient);
         builder.Register<IPageAuthoringService, PageAuthoringService>(ServiceLifetime.Scoped);
+        builder.Register<Areas.Admin.Dashboard.DashboardSnapshotSource, Areas.Admin.Dashboard.DashboardSnapshotSource>(ServiceLifetime.Scoped);
+        builder.Register<Inferno.Web.Dashboard.IDashboardContributor, Areas.Admin.Dashboard.ContentDashboardContributor>(ServiceLifetime.Singleton);
 
         // Content Blocks
         builder.Register<IContentBlockService, ContentBlockService>(ServiceLifetime.Transient);

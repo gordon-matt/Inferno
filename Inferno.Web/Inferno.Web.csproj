@@ -24,6 +24,7 @@
     <PackageReference Include="Pluginz.Services" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Components\GridKrafter\GridKrafter.Components\GridKrafter.Components.csproj" />
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
     <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />

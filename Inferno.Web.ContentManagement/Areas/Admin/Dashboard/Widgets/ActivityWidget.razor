@@ -1,0 +1,27 @@
+@inherits InfernoWidget
+
+@if (Snapshot is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (!string.IsNullOrEmpty(Snapshot.Error))
+{
+    <p class="nf-muted">@Snapshot.Error</p>
+}
+else if (Snapshot.Activity.All(week => week.Pages == 0 && week.Posts == 0))
+{
+    <p class="nf-muted">Nothing has been updated in the last eight weeks.</p>
+}
+else
+{
+    <p class="inferno-legend"><i></i> Pages <i class="alt"></i> Posts</p>
+    <ColumnChart Label="Content updated by week" Points="Points" />
+}
+
+@code {
+    private IReadOnlyList<ColumnChart.ChartPoint> Points => Snapshot is null
+        ? []
+        : Snapshot.Activity
+            .Select(week => new ColumnChart.ChartPoint(week.WeekStart.ToString("d MMM"), week.Pages, week.Posts))
+            .ToList();
+}

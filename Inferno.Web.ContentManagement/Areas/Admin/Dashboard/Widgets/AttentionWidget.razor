@@ -1,0 +1,30 @@
+@inherits InfernoWidget
+
+@if (Snapshot is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (!string.IsNullOrEmpty(Snapshot.Error))
+{
+    <p class="nf-muted">@Snapshot.Error</p>
+}
+else if (Snapshot.AttentionCount == 0)
+{
+    <p class="nf-muted">Nothing needs attention.</p>
+}
+else
+{
+    <ul class="inferno-feed">
+        @foreach (var item in Snapshot.Attention)
+        {
+            <li>
+                <a href="@item.Href">@item.Title</a>
+                <span class="nf-muted">@item.Reason</span>
+            </li>
+        }
+    </ul>
+    @if (Snapshot.AttentionCount > Snapshot.Attention.Count)
+    {
+        <p class="nf-muted">And @(Snapshot.AttentionCount - Snapshot.Attention.Count) more.</p>
+    }
+}

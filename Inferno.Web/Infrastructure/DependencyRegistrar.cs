@@ -50,6 +50,7 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.Register<INavigationProvider, AdminNavigationProvider>(ServiceLifetime.Singleton);
         builder.RegisterSelf<Security.Permissions.PermissionVisibility>(ServiceLifetime.Scoped);
         builder.RegisterSelf<AdminLinkAccess>(ServiceLifetime.Scoped);
+        builder.Register<Dashboard.IDashboardBoardStore, Dashboard.DashboardBoardStore>(ServiceLifetime.Scoped);
 
         // Work Context State Providers
         builder.Register<IWorkContextStateProvider, CurrentUserStateProvider>(ServiceLifetime.Transient);

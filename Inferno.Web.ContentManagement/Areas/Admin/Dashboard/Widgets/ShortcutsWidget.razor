@@ -1,0 +1,58 @@
+@using Inferno.Tasks.Scheduling
+@using Inferno.Web
+@using Inferno.Web.Areas.Admin
+@using Inferno.Web.ContentManagement
+
+@inject AdminLinkAccess Links
+@inject AuthenticationStateProvider AuthenticationState
+
+@if (visible.Count == 0)
+{
+    <p class="nf-muted">No admin sections are available for this account.</p>
+}
+else
+{
+    <div class="inferno-shortcuts">
+        @foreach (var group in visible.GroupBy(tile => tile.Group))
+        {
+            <p class="inferno-shortcuts-heading">@group.Key</p>
+            @foreach (var tile in group)
+            {
+                <a href="@tile.Href" target="@(tile.NewTab ? "_blank" : null)" rel="@(tile.NewTab ? "noopener noreferrer" : null)" data-enhance-nav="@(tile.FullReload || tile.NewTab ? "false" : null)">
+                    <Icon Name="@tile.Icon" Size="16" />
+                    <span>@T[tile.Title]</span>
+                </a>
+            }
+        }
+    </div>
+}
+
+@code {
+    private sealed record Shortcut(string Group, string Href, string Icon, string Title, bool FullReload = false, bool NewTab = false);
+
+    private static readonly Shortcut[] Tiles =
+    [
+        new("Content", "/admin/pages/index", "code", InfernoCmsLocalizableStrings.Pages.Title),
+        new("Content", "/admin/blog/posts", "link", InfernoWebLocalizableStrings.Dashboard.Cards.Blog),
+        new("Content", "/admin/menus/index", "menu", InfernoWebLocalizableStrings.Dashboard.Cards.Menus),
+        new("Content", "/admin/blocks/content-blocks", "grid", InfernoWebLocalizableStrings.Dashboard.Cards.ContentBlocks),
+        new("Content", "/admin/media/index", "image", InfernoWebLocalizableStrings.Dashboard.Cards.Media),
+        new("Administration", "/admin/membership", "users", InfernoWebLocalizableStrings.Membership.Title, FullReload: true),
+        new("Administration", "/admin/configuration/settings/index", "settings", InfernoWebLocalizableStrings.General.Settings),
+        new("Administration", "/admin/themes", "palette", InfernoWebLocalizableStrings.General.Themes),
+        new("Administration", "/admin/tenants/index", "briefcase", InfernoWebLocalizableStrings.Tenants.Title),
+        new("Maintenance", ScheduledJobs.DashboardPath, "clock", InfernoWebLocalizableStrings.ScheduledTasks.Title, NewTab: true),
+        new("Maintenance", "/logvue", "logs", InfernoWebLocalizableStrings.Log.Title),
+        new("Maintenance", "/localize/languages", "translate", InfernoWebLocalizableStrings.Localization.Title),
+        new("Maintenance", "/pluginz", "puzzle", InfernoWebLocalizableStrings.Plugins.Title),
+    ];
+
+    private IReadOnlyList<Shortcut> visible = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationState.GetAuthenticationStateAsync();
+        var allowed = await Links.VisibleHrefsAsync(state.User);
+        visible = [.. Tiles.Where(tile => allowed.Contains(AdminLinkAccess.Key(tile.Href)))];
+    }
+}

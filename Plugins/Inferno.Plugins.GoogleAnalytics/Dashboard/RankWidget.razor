@@ -1,0 +1,26 @@
+@inherits AnalyticsWidget
+
+@if (Data is null)
+{
+    <p class="nf-muted">Loading…</p>
+}
+else if (Data.Error is not null)
+{
+    <p class="nf-muted">@Data.Error <a href="@Data.SettingsUrl">Google Analytics settings</a></p>
+}
+else if (Points.Count == 0)
+{
+    <p class="nf-muted">@(Devices ? "No visitors in the last 28 days." : "No sessions in the last 28 days.")</p>
+}
+else
+{
+    <MeterList Points="Points" />
+}
+
+@code {
+    private bool Devices => string.Equals(Option("series", "sources"), "devices", StringComparison.Ordinal);
+
+    private IReadOnlyList<MeterList.MeterPoint> Points => Data is null
+        ? []
+        : (Devices ? Data.Devices : Data.Sources).Select(row => new MeterList.MeterPoint(row.Label, row.Value)).ToList();
+}
