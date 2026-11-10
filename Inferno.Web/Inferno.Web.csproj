@@ -14,9 +14,9 @@
     <PackageReference Include="Flatmate" Version="1.0.1" />
     <PackageReference Include="Fluid.Core" Version="2.41.1" />
     <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.3" />
-    <PackageReference Include="Localize.Core" Version="1.0.1" />
-    <PackageReference Include="Localize.Data.Sql" Version="1.0.1" />
-    <PackageReference Include="Localize.Services" Version="1.0.1" />
+    <PackageReference Include="Localize.Core" Version="1.0.2" />
+    <PackageReference Include="Localize.Data.Sql" Version="1.0.2" />
+    <PackageReference Include="Localize.Services" Version="1.0.2" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

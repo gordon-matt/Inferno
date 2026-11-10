@@ -7,9 +7,11 @@
 
 <PageHeader Title="@T[InfernoWebLocalizableStrings.Dashboard.Title]" Icon="home" Description="@T[InfernoWebLocalizableStrings.Dashboard.Welcome]" />
 
-<h2 class="inferno-section-title">@T[InfernoWebLocalizableStrings.Dashboard.Content]</h2>
-<div class="nf-grid">
-    @foreach (var tile in contentTiles)
+@if (visibleContent.Count > 0)
+{
+    <h2 class="inferno-section-title">@T[InfernoWebLocalizableStrings.Dashboard.Content]</h2>
+    <div class="nf-grid">
+    @foreach (var tile in visibleContent)
     {
         <a class="nf-card inferno-tile" href="@tile.Href" @key="tile.Href">
             <span class="inferno-tile-icon"><Icon Name="@tile.Icon" Size="22" /></span>
@@ -19,11 +21,14 @@
             </span>
         </a>
     }
-</div>
+    </div>
+}
 
-<h2 class="inferno-section-title">@T[InfernoWebLocalizableStrings.Dashboard.Administration]</h2>
-<div class="nf-grid">
-    @foreach (var tile in adminTiles)
+@if (visibleAdmin.Count > 0)
+{
+    <h2 class="inferno-section-title">@T[InfernoWebLocalizableStrings.Dashboard.Administration]</h2>
+    <div class="nf-grid">
+    @foreach (var tile in visibleAdmin)
     {
         <a class="nf-card inferno-tile" href="@tile.Href" @key="tile.Href" data-enhance-nav="@(tile.FullReload ? "false" : null)">
             <span class="inferno-tile-icon"><Icon Name="@tile.Icon" Size="22" /></span>
@@ -33,11 +38,14 @@
             </span>
         </a>
     }
-</div>
+    </div>
+}
 
-<h2 class="inferno-section-title">@T[InfernoWebLocalizableStrings.Maintenance.Title]</h2>
-<div class="nf-grid">
-    @foreach (var tile in VisibleMaintenanceTiles)
+@if (visibleMaintenance.Count > 0)
+{
+    <h2 class="inferno-section-title">@T[InfernoWebLocalizableStrings.Maintenance.Title]</h2>
+    <div class="nf-grid">
+    @foreach (var tile in visibleMaintenance)
     {
         <a class="nf-card inferno-tile" href="@tile.Href" @key="tile.Href" target="@(tile.NewTab ? "_blank" : null)" rel="@(tile.NewTab ? "noopener noreferrer" : null)" data-enhance-nav="false">
             <span class="inferno-tile-icon"><Icon Name="@tile.Icon" Size="22" /></span>
@@ -50,4 +58,5 @@
             </span>
         </a>
     }
-</div>
+    </div>
+}

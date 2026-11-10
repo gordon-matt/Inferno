@@ -1,7 +1,5 @@
-using System.Security.Claims;
 using Heroicsoft.NetForge.Abstractions.Navigation;
 using Heroicsoft.NetForge.Components.Navigation;
-using Inferno.Security;
 using Inferno.Web.Navigation;
 using Inferno.Web.Security.Permissions;
 
@@ -12,7 +10,7 @@ namespace Inferno.Web.Areas.Admin;
 /// IdentityNexus all read this, so plugins appear on every back office page.
 /// Registered scoped because providers read the current tenant and language.
 /// </summary>
-public sealed class AdminMenuCatalog(INavigationManager navigation, IPermissionStore permissions, IPermissionCatalog catalog) : INetForgeMenuCatalog
+public sealed class AdminMenuCatalog(INavigationManager navigation, PermissionVisibility visibility) : INetForgeMenuCatalog
 {
     public const string MenuName = "Admin";
 
@@ -61,29 +59,10 @@ public sealed class AdminMenuCatalog(INavigationManager navigation, IPermissionS
             Icon = Icon(item.IconName),
             External = item.IsExternal,
             MatchAll = href.Equals("/admin", StringComparison.OrdinalIgnoreCase),
-            IsVisible = RequiresHost(item) ? IsHostAdministrator : null,
+            IsVisible = user => visibility.Allows(user, item.Policies),
             Children = item.Items?.Select(ToItem).ToList() ?? [],
         };
     }
-
-    /// <summary>
-    /// Full access belongs to the host administrator only. The grants are read from the cache filled by the
-    /// page that is being authorized, so this does not query the database while the menu renders. When nothing
-    /// is cached yet the item stays visible; the page it opens still checks.
-    /// </summary>
-    private bool IsHostAdministrator(ClaimsPrincipal user)
-    {
-        string userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId) || !permissions.TryGetCached(userId, out var granted))
-        {
-            return true;
-        }
-
-        return catalog.IsGranted(StandardPolicies.FullAccess, granted);
-    }
-
-    private static bool RequiresHost(MenuItem item) =>
-        item.Policies.Any(policy => policy == StandardPolicies.FullAccess);
 
     private static string Icon(string? name)
     {

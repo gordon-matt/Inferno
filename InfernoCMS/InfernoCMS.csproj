@@ -13,19 +13,19 @@
     <None Remove="Areas\Admin\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BlogKrafter" Version="1.0.1" />
-    <PackageReference Include="BlogKrafter.Data.Sql" Version="1.0.1" />
+    <PackageReference Include="BlogKrafter" Version="1.0.2" />
+    <PackageReference Include="BlogKrafter.Data.Sql" Version="1.0.2" />
     <PackageReference Include="Dependo.Autofac" Version="1.2.3" />
     <PackageReference Include="EPPlus" Version="8.7.2" />
     <PackageReference Include="Extenso.AspNetCore.Mvc" Version="10.2.1" />
     <PackageReference Include="Flatmate" Version="1.0.1" />
     <PackageReference Include="IdentityNexus" Version="1.1.1" />
-    <PackageReference Include="Kameleon" Version="1.0.0" />
-    <PackageReference Include="Kameleon.Data.Sql" Version="1.0.0" />
-    <PackageReference Include="Localize.Components" Version="1.0.1" />
-    <PackageReference Include="LogVue" Version="1.1.4" />
-    <PackageReference Include="LogVue.Data.Sql" Version="1.1.4" />
-    <PackageReference Include="LogVue.Providers.Serilog" Version="1.1.4" />
+    <PackageReference Include="Kameleon" Version="1.0.1" />
+    <PackageReference Include="Kameleon.Data.Sql" Version="1.0.1" />
+    <PackageReference Include="Localize.Components" Version="1.0.2" />
+    <PackageReference Include="LogVue" Version="1.1.5" />
+    <PackageReference Include="LogVue.Data.Sql" Version="1.1.5" />
+    <PackageReference Include="LogVue.Providers.Serilog" Version="1.1.5" />
     <PackageReference Include="PageKrafter.Components" Version="1.0.2" />
     <PackageReference Include="Pickstack.FileManager.WebFilez" Version="1.0.4" />
     <PackageReference Include="Pickstack.RichTextEditor.TinyMce8" Version="1.0.3" />

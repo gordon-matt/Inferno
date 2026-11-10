@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Inferno.Web.Security.Permissions;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +25,17 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
 
     protected override TimeSpan RevalidationInterval => TimeSpan.FromMinutes(30);
 
+    /// <summary>
+    /// The admin menu decides what to show while it renders, so the grants have to be cached
+    /// before the shell is drawn. This runs before any page in the circuit.
+    /// </summary>
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
+        AuthenticationState state = await base.GetAuthenticationStateAsync();
+        await WarmPermissionsAsync(state.User);
+        return state;
+    }
+
     protected override async Task<bool> ValidateAuthenticationStateAsync(
         AuthenticationState authenticationState, CancellationToken cancellationToken)
     {
@@ -45,6 +57,19 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
                 scope.Dispose();
             }
         }
+    }
+
+    private async Task WarmPermissionsAsync(ClaimsPrincipal user)
+    {
+        string userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+
+        await using AsyncServiceScope scope = _scopeFactory.CreateAsyncScope();
+        var store = scope.ServiceProvider.GetRequiredService<IPermissionStore>();
+        await store.GetGrantedAsync(userId);
     }
 
     private async Task<bool> ValidateSecurityStampAsync(UserManager<TUser> userManager, ClaimsPrincipal principal)

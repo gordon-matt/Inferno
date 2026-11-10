@@ -10,7 +10,7 @@
     <ProjectReference Include="..\InfernoCMS.Data\InfernoCMS.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BlogKrafter.Data" Version="1.0.1" />
+    <PackageReference Include="BlogKrafter.Data" Version="1.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.14" />
   </ItemGroup>
 </Project>
