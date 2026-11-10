@@ -216,8 +216,34 @@
     font-size: 0.8125rem;
 }
 
-.inferno-dashboard {
+.gk-root.inferno-dashboard {
     margin-top: 0.25rem;
+    /* GridKrafter's light, dark and bootstrap themes set their own colours. This name matches none of
+       them, so the board follows the admin theme through the tokens below. */
+    --gk-font: var(--nf-font);
+    --gk-mono: var(--nf-mono);
+    --gk-radius: var(--nf-radius);
+    --gk-radius-small: var(--nf-radius-small);
+    --gk-surface: var(--nf-surface);
+    --gk-surface-2: var(--nf-surface-2);
+    --gk-raised: var(--nf-surface);
+    --gk-header-bg: var(--nf-surface-2);
+    --gk-hover: var(--nf-hover);
+    --gk-border: var(--nf-border);
+    --gk-border-strong: var(--nf-border);
+    --gk-text: var(--nf-text);
+    --gk-muted: var(--nf-muted);
+    --gk-accent: var(--nf-accent);
+    --gk-accent-text: var(--nf-accent-text);
+    --gk-accent-soft: var(--nf-accent-soft);
+    --gk-danger: var(--nf-danger);
+    --gk-success: var(--nf-success);
+    --gk-warning: var(--nf-warning);
+    --gk-shadow: none;
+    --gk-shadow-lifted: var(--nf-shadow);
+    --gk-backdrop: var(--nf-scrim);
+    color: var(--gk-text);
+    color-scheme: inherit;
 }
 
 .inferno-stat {
@@ -246,7 +272,7 @@
 
 .inferno-stat-label {
     margin-top: 0.2rem;
-    color: var(--nf-muted);
+    color: var(--gk-muted);
 }
 
 .inferno-stat-detail {
@@ -259,7 +285,7 @@
     align-items: center;
     gap: 0.35rem;
     margin: 0 0 0.5rem;
-    color: var(--nf-muted);
+    color: var(--gk-muted);
     font-size: 0.75rem;
 }
 
@@ -269,7 +295,7 @@
     height: 0.65rem;
     margin-left: 0.65rem;
     border-radius: 0.15rem;
-    background: var(--nf-accent);
+    background: var(--gk-accent);
 }
 
 .inferno-legend i:first-child {
@@ -277,7 +303,7 @@
 }
 
 .inferno-legend i.alt {
-    background: color-mix(in srgb, var(--nf-muted) 70%, transparent);
+    background: color-mix(in srgb, var(--gk-muted) 70%, transparent);
 }
 
 .inferno-chart {
@@ -309,18 +335,18 @@
     width: 42%;
     min-height: 2px;
     border-radius: 0.2rem 0.2rem 0 0;
-    background: var(--nf-accent);
+    background: var(--gk-accent);
 }
 
 .inferno-chart-bar-alt {
-    background: color-mix(in srgb, var(--nf-muted) 70%, transparent);
+    background: color-mix(in srgb, var(--gk-muted) 70%, transparent);
 }
 
 .inferno-chart-label {
     flex: none;
     margin-top: 0.35rem;
     font-size: 0.7rem;
-    color: var(--nf-muted);
+    color: var(--gk-muted);
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
@@ -346,14 +372,14 @@
 .inferno-meter {
     height: 0.45rem;
     border-radius: 999px;
-    background: var(--nf-border);
+    background: var(--gk-border);
     overflow: hidden;
 }
 
 .inferno-meter > span {
     display: block;
     height: 100%;
-    background: var(--nf-accent);
+    background: var(--gk-accent);
 }
 
 .inferno-feed {
@@ -368,7 +394,7 @@
     flex-direction: column;
     gap: 0.1rem;
     padding: 0.45rem 0;
-    border-bottom: 1px solid var(--nf-border);
+    border-bottom: 1px solid var(--gk-border);
 }
 
 .inferno-rank {
@@ -392,7 +418,7 @@
 
 .inferno-feed a:hover,
 .inferno-rank a:hover {
-    color: var(--nf-accent);
+    color: var(--gk-accent);
 }
 
 .inferno-shortcuts {
@@ -403,7 +429,7 @@
 
 .inferno-shortcuts-heading {
     margin: 0.65rem 0 0.15rem;
-    color: var(--nf-muted);
+    color: var(--gk-muted);
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -424,7 +450,7 @@
 }
 
 .inferno-shortcuts a:hover {
-    color: var(--nf-accent);
+    color: var(--gk-accent);
 }
 
 .inferno-ga-summary {
@@ -449,7 +475,7 @@
 }
 
 .inferno-rank-head {
-    color: var(--nf-muted);
+    color: var(--gk-muted);
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
