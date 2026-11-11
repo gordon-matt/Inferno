@@ -35,6 +35,9 @@ an admin area without building them from scratch.
     <a href="https://github.com/gordon-matt/BlogKrafter" target="_blank" rel="noreferrer">
         <img src="https://github.com/gordon-matt/BlogKrafter/raw/master/_Misc/Logo.png" alt="BlogKrafter" height="60"/>
     </a>&nbsp;
+    <a href="https://github.com/gordon-matt/GridKrafter" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/GridKrafter/raw/master/_Misc/Logo.png" alt="GridKrafter" height="60"/>
+    </a>&nbsp;
     <a href="https://github.com/gordon-matt/IdentityNexus" target="_blank" rel="noreferrer">
         <img src="https://github.com/gordon-matt/IdentityNexus/raw/master/_Misc/Logo.png" alt="IdentityNexus" height="60"/>
     </a>&nbsp;
