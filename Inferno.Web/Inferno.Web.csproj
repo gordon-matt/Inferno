@@ -13,6 +13,7 @@
     <PackageReference Include="Dependo.Autofac" Version="1.2.3" />
     <PackageReference Include="Flatmate" Version="1.0.1" />
     <PackageReference Include="Fluid.Core" Version="2.41.1" />
+    <PackageReference Include="GridKrafter.Components" Version="1.0.0" />
     <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.3" />
     <PackageReference Include="Localize.Core" Version="1.0.2" />
     <PackageReference Include="Localize.Data.Sql" Version="1.0.2" />
@@ -24,7 +25,6 @@
     <PackageReference Include="Pluginz.Services" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Components\GridKrafter\GridKrafter.Components\GridKrafter.Components.csproj" />
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />
     <ProjectReference Include="..\Inferno.Data\Inferno.Data.csproj" />
     <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />
