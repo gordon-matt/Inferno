@@ -68,6 +68,7 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         // Admin screens
         builder.Register<Areas.Admin.Tenants.Services.ITenantAdminService, Areas.Admin.Tenants.Services.TenantAdminService>(ServiceLifetime.Scoped);
         builder.Register<Areas.Admin.Configuration.Services.ISettingsAdminService, Areas.Admin.Configuration.Services.SettingsAdminService>(ServiceLifetime.Scoped);
+        builder.Register<ISettingsSection, Areas.Admin.Configuration.ScheduledTasksSection>(ServiceLifetime.Scoped);
         builder.Register<IScheduledJobService, ScheduledJobService>(ServiceLifetime.Scoped);
     }
 

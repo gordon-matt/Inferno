@@ -1,0 +1,82 @@
+@using Inferno.Web.Areas.Admin.Configuration
+@attribute [Microsoft.AspNetCore.Components.RouteAttribute(ScheduledTasksSection.Path)]
+@attribute [Authorize(Policy = StandardPolicies.FullAccess)]
+@inherits AdminPage
+
+<PageTitle>@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]</PageTitle>
+
+<nav class="nf-breadcrumbs" aria-label="Breadcrumb"><a href="/admin/configuration/settings/index">@T[InfernoWebLocalizableStrings.General.Settings]</a><span aria-hidden="true">/</span><span aria-current="page">@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]</span></nav>
+
+<PageHeader Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Title]" Icon="clock" Description="@T[InfernoWebLocalizableStrings.ScheduledTasks.EditorDescription]" />
+
+@if (jobs is null)
+{
+    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+}
+else if (jobs.Count == 0)
+{
+    <EmptyState Icon="clock" Title="@T[InfernoWebLocalizableStrings.ScheduledTasks.Empty]" />
+}
+else
+{
+    <Table>
+        <thead>
+            <tr>
+                <th>@T[InfernoWebLocalizableStrings.General.Name]</th>
+                <th>@T[InfernoWebLocalizableStrings.ScheduledTasks.Interval]</th>
+                <th class="nf-cell-actions"><span class="nf-sr-only">@T[InfernoWebLocalizableStrings.General.Actions]</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var job in jobs)
+            {
+                <tr @key="job.Id">
+                    <td>
+                        <button type="button" class="nf-link-button nf-row-title" @onclick="() => Edit(job)">@job.Name</button>
+                    </td>
+                    <td>
+                        @IntervalText(job)
+                        @if (job.IsScheduled && job.NextExecutionUtc is DateTime next)
+                        {
+                            <div class="nf-muted">@T[InfernoWebLocalizableStrings.ScheduledTasks.NextRun, next.ToLocalTime().ToString("g")]</div>
+                        }
+                    </td>
+                    <td class="nf-cell-actions">
+                        <div class="nf-row-actions">
+                            <button type="button" class="nf-icon-button" title="@T[InfernoWebLocalizableStrings.General.Edit]" @onclick="() => Edit(job)">
+                                <Icon Name="edit" Size="16" />
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </Table>
+}
+
+<Drawer Open="editing is not null" Scrim="true" Width="min(480px, 100vw)" OnClose="Close" Title="@DrawerTitle">
+    <ChildContent>
+        @if (editing is not null)
+        {
+            <form id="schedule-form" @key="editing.Id" @onsubmit="SaveAsync" @onsubmit:preventDefault="true">
+                @if (EditStatus(editing) is string status)
+                {
+                    <p class="nf-hint">@status</p>
+                }
+                <Field Label="@T[InfernoWebLocalizableStrings.ScheduledTasks.Minutes]" For="schedule-minutes">
+                    <input id="schedule-minutes" class="nf-input" type="number" min="1" max="40320" @bind="editing.Minutes" />
+                    <span class="nf-hint">@ScheduleHint(editing.Minutes)</span>
+                </Field>
+                <button type="button" class="nf-button" @onclick="RunNowAsync" disabled="@(saving || editing.Minutes < 1)">
+                    <Icon Name="play" Size="16" /> @T[InfernoWebLocalizableStrings.ScheduledTasks.RunNow]
+                </button>
+            </form>
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="Close">@T[InfernoWebLocalizableStrings.General.Cancel]</button>
+        <button type="submit" form="schedule-form" class="nf-button nf-button-primary" disabled="@(saving || editing is null || editing.Minutes < 1)">
+            <Icon Name="save" Size="16" /> @T[InfernoWebLocalizableStrings.General.Save]
+        </button>
+    </Footer>
+</Drawer>

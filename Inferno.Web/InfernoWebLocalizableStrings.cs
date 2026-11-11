@@ -246,6 +246,7 @@ public static class InfernoWebLocalizableStrings
         public const string EditorDescription = "Inferno.Web/ScheduledTasks.EditorDescription";
         public const string Empty = "Inferno.Web/ScheduledTasks.Empty";
         public const string EveryMinutes = "Inferno.Web/ScheduledTasks.EveryMinutes";
+        public const string Interval = "Inferno.Web/ScheduledTasks.Interval";
         public const string Minutes = "Inferno.Web/ScheduledTasks.Minutes";
         public const string NextRun = "Inferno.Web/ScheduledTasks.NextRun";
         public const string NotScheduled = "Inferno.Web/ScheduledTasks.NotScheduled";

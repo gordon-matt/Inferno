@@ -194,6 +194,7 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.ScheduledTasks.EditorDescription, "These jobs cover every tenant. The shortest interval is one minute, and a minute step has to divide the hour." },
         { InfernoWebLocalizableStrings.ScheduledTasks.Empty, "No background jobs are installed." },
         { InfernoWebLocalizableStrings.ScheduledTasks.EveryMinutes, "Runs every {0} minutes." },
+        { InfernoWebLocalizableStrings.ScheduledTasks.Interval, "Interval" },
         { InfernoWebLocalizableStrings.ScheduledTasks.Minutes, "Minutes" },
         { InfernoWebLocalizableStrings.ScheduledTasks.NextRun, "Next run {0}" },
         { InfernoWebLocalizableStrings.ScheduledTasks.NotScheduled, "Not running yet. Save to start it." },
