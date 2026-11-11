@@ -3,7 +3,12 @@
 @layout Inferno.Web.Areas.Admin.Home.Shared.AdminLayout
 @inherits AdminPage
 
+@using Inferno.Web
+@inject Microsoft.Extensions.Localization.IStringLocalizer T
+
 <PageTitle>Google Analytics</PageTitle>
+
+<nav class="nf-breadcrumbs" aria-label="Breadcrumb"><a href="/admin/configuration/settings/index">@T[InfernoWebLocalizableStrings.General.Settings]</a><span aria-hidden="true">/</span><span aria-current="page">Google Analytics</span></nav>
 
 <PageHeader Title="Google Analytics" Icon="globe" Description="The measurement ID is sent with every page. The property and service account feed the dashboard widgets." />
 
