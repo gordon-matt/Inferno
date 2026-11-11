@@ -50,6 +50,9 @@ an admin area without building them from scratch.
     <a href="https://github.com/gordon-matt/WebFilez" target="_blank" rel="noreferrer">
         <img src="https://github.com/gordon-matt/WebFilez/blob/master/_Misc/Logo-Light.png" alt="WebFilez" height="60"/>
     </a>&nbsp;
+    <a href="https://github.com/gordon-matt/Kameleon" target="_blank" rel="noreferrer">
+        <img src="https://github.com/gordon-matt/Kameleon/blob/master/_Misc/Logo.png" alt="Kameleon" height="60"/>
+    </a>&nbsp;
     <a href="https://github.com/gordon-matt/Dependo" target="_blank" rel="noreferrer">
         <img src="https://github.com/gordon-matt/Dependo/raw/master/_Misc/Logo.png" alt="Dependo" height="60"/>
     </a>&nbsp;
