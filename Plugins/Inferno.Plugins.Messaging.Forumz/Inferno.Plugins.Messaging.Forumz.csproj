@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Title>Forums</Title>
+    <Description>A Blazor forum mounted at /forums. Groups, topics, posts, subscriptions and private messages.</Description>
+    <Version>1.0.0</Version>
+    <Authors>Inferno</Authors>
+    <IsPluginzPlugin>true</IsPluginzPlugin>
+    <PluginzSystemName>Inferno.Plugins.Messaging.Forumz</PluginzSystemName>
+    <PluginzGroup>Messaging</PluginzGroup>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dependo.Autofac" Version="1.2.3">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Extenso.Data.Entity" Version="10.2.1">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Pluginz.Core" Version="1.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Pluginz.Web" Version="1.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Inferno.Identity\Inferno.Identity.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Inferno.Web\Inferno.Web.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Inferno.Web.ContentManagement\Inferno.Web.ContentManagement.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Libraries\Forumz\Forumz\Forumz.csproj" />
+    <ProjectReference Include="..\..\..\..\Libraries\Forumz\Forumz.Data.Sql\Forumz.Data.Sql.csproj" />
+  </ItemGroup>
+
+  <Target Name="DropHostAssemblies" BeforeTargets="_CopyFilesMarkedCopyLocal">
+    <ItemGroup>
+      <!-- Forumz is not part of the host, so its assemblies stay beside the plugin. -->
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != '$(AssemblyName)' AND !$([System.String]::Copy('%(Filename)').StartsWith('Forumz'))" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyToInfernoCms" AfterTargets="Build">
+    <PropertyGroup>
+      <_PluginDest>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\InfernoCMS\Plugins\$(PluginzSystemName)'))</_PluginDest>
+    </PropertyGroup>
+    <ItemGroup>
+      <_PluginFile Include="$(OutputPath)**\*.*" />
+      <_StalePluginAssembly Include="$(_PluginDest)\*.dll" Exclude="$(_PluginDest)\$(AssemblyName).dll" />
+      <_StalePluginAssembly Include="$(_PluginDest)\*.pdb" Exclude="$(_PluginDest)\$(AssemblyName).pdb" />
+    </ItemGroup>
+    <Delete Files="@(_StalePluginAssembly)" />
+    <Copy SourceFiles="@(_PluginFile)" DestinationFiles="@(_PluginFile->'$(_PluginDest)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

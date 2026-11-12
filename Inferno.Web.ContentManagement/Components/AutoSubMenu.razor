@@ -6,7 +6,7 @@
     <div class="list-group mb-3">
         @foreach (var item in items)
         {
-            <a class="list-group-item list-group-item-action" href="@item.Url">@item.Text</a>
+            <a class="list-group-item list-group-item-action" href="@item.Url" data-enhance-nav="@(item.IsExternalUrl ? "false" : null)">@item.Text</a>
         }
     </div>
 }

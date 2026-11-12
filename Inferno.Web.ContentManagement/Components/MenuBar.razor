@@ -7,7 +7,7 @@
         if (children.Count == 0)
         {
             <li class="nav-item">
-                <a class="nav-link" href="@item.Url">@item.Text</a>
+                <a class="nav-link" href="@item.Url" data-enhance-nav="@FullLoad(item)">@item.Text</a>
             </li>
         }
         else
@@ -17,7 +17,7 @@
                 <ul class="dropdown-menu">
                     @foreach (var child in children)
                     {
-                        <li><a class="dropdown-item" href="@child.Url">@child.Text</a></li>
+                        <li><a class="dropdown-item" href="@child.Url" data-enhance-nav="@FullLoad(child)">@child.Text</a></li>
                     }
                 </ul>
             </li>
@@ -33,4 +33,7 @@
         .Where(x => x.Enabled && x.ParentId == null)
         .OrderBy(x => x.Position)
         .ThenBy(x => x.Text);
+
+    // A separate document, such as the forum, is not a route in this circuit. Null omits the attribute.
+    private static string FullLoad(MenuItem item) => item.IsExternalUrl ? "false" : null;
 }

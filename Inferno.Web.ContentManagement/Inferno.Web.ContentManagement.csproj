@@ -15,8 +15,8 @@
     <InternalsVisibleTo Include="Inferno.Tests" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BlogKrafter.Data" Version="1.0.2" />
-    <PackageReference Include="BlogKrafter.Services" Version="1.0.2" />
+    <PackageReference Include="BlogKrafter.Data" Version="1.0.3" />
+    <PackageReference Include="BlogKrafter.Services" Version="1.0.3" />
     <PackageReference Include="GridKrafter.Components" Version="1.0.0" />
     <PackageReference Include="Localize.Core" Version="1.0.2" />
     <PackageReference Include="Localize.Data" Version="1.0.2" />

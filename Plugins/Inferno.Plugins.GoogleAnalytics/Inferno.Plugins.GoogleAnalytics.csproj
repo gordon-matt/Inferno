@@ -28,9 +28,10 @@
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="GridKrafter.Components" Version="1.0.0" />
-    <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.3">
+    <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.4">
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Pluginz.Core" Version="1.0.1">
       <PrivateAssets>all</PrivateAssets>

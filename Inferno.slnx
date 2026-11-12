@@ -21,6 +21,7 @@
   </Folder>
   <Folder Name="/Plugins/">
     <Project Path="Plugins/Inferno.Plugins.GoogleAnalytics/Inferno.Plugins.GoogleAnalytics.csproj" />
+    <Project Path="Plugins/Inferno.Plugins.Messaging.Forumz/Inferno.Plugins.Messaging.Forumz.csproj" />
   </Folder>
   <Folder Name="/Tests/" />
   <Project Path="InfernoCMS.Data/InfernoCMS.Data.csproj" />

@@ -5,6 +5,12 @@
       "enabled": true,
       "installedVersion": "1.0.0",
       "installedUtc": "2026-11-10T21:22:26.3408662Z"
+    },
+    "Inferno.Plugins.Messaging.Forumz": {
+      "installed": true,
+      "enabled": true,
+      "installedVersion": "1.0.0",
+      "installedUtc": "2026-11-11T11:04:16.0518259Z"
     }
   }
 }
