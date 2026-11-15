@@ -1,0 +1,7 @@
+@using Heroicsoft.NetForge.Components.Forms
+@using Inferno.Web.Components
+@inherits SettingsEditor<ForumSettings>
+
+<Switch @bind-Value="Model.OpenInNewTab"
+        Label="Open in a new tab"
+        Description="The forum keeps its own top bar. Leave this off to show it under the site menu." />

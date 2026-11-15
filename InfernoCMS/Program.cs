@@ -3,6 +3,7 @@ using BlogKrafter.Data.Sql;
 using BlogKrafter.Tenancy;
 using Dependo;
 using Dependo.Autofac;
+using GridKrafter;
 using Hangfire;
 using Heroicsoft.NetForge.Abstractions.Auth;
 using Heroicsoft.NetForge.Abstractions.Navigation;
@@ -12,6 +13,8 @@ using Heroicsoft.NetForge.Components.Navigation;
 using IdentityNexus;
 using Inferno.Identity;
 using Inferno.Security;
+using Inferno.Tasks.Infrastructure;
+using Inferno.Tasks.Scheduling;
 using Inferno.Tenants;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
@@ -21,15 +24,13 @@ using Inferno.Web.ContentManagement.Security;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Localization;
 using Inferno.Web.Plugins;
-using Inferno.Web.Security;
-using Inferno.Tasks.Infrastructure;
-using Inferno.Tasks.Scheduling;
 using Inferno.Web.Scheduling;
+using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
 using InfernoCMS.Identity.Infrastructure;
-using InfernoCMS.Infrastructure;
 using InfernoCMS.Identity.Permissions;
+using InfernoCMS.Infrastructure;
 using InfernoCMS.Shared;
 using Kameleon;
 using Kameleon.Components;
@@ -45,18 +46,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.FileProviders;
 using OfficeOpenXml;
 using PageKrafter;
 using PageKrafter.Components;
 using Pickstack;
 using Pickstack.FileManager.WebFilez;
 using Pickstack.RichTextEditor.TinyMce8;
-using GridKrafter;
 using Pluginz;
 using Pluginz.Components;
 using Pluginz.Components.Pages;
 using Pluginz.Web;
+using WebFilez.Plugins.Video;
 
 ExcelPackage.License.SetNonCommercialOrganization("Inferno");
 
@@ -165,8 +165,8 @@ services.AddCurrentTenantCircuit();
 #region Themes
 
 // After the NetForge, Identity and authorization setup above: Kameleon only fills in what the host has not.
-services.AddScoped<IThemeTenantProvider, InfernoCMS.Infrastructure.InfernoThemeTenantProvider>();
-services.AddScoped<IThemeTenantDirectory, InfernoCMS.Infrastructure.InfernoThemeTenantDirectory>();
+services.AddScoped<IThemeTenantProvider, InfernoThemeTenantProvider>();
+services.AddScoped<IThemeTenantDirectory, InfernoThemeTenantDirectory>();
 services.AddKameleon(theme =>
 {
     configuration.GetSection(KameleonOptions.SectionName).Bind(theme);
@@ -188,7 +188,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
     services.AddKameleonSqlServer(connectionString);
 
     // Registered after Kameleon so it starts after Kameleon has created its tables.
-    services.AddHostedService<InfernoCMS.Infrastructure.DemoThemeSeeder>();
+    services.AddHostedService<DemoThemeSeeder>();
 }
 
 #endregion Themes
@@ -233,9 +233,18 @@ services.AddPickstack(configuration)
     .AddWebFilez(files => files
         .UseHostBlazor()
         .Server(server => server.MaxUploadBytes = 32 * 1024 * 1024))
+    .AddVideo(video => video.DownloadIfMissing = true)
+    .Pickstack
     .AddTinyMce8(editor => editor
         .WithHeight(400)
-        .WithToolbar("undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media | code"));
+        .ShowMenubar()
+        .WithPlugins(
+            "accordion", "advlist", "anchor", "autolink", "autoresize", "autosave", "charmap", "code",
+            "codesample", "directionality", "emoticons", "fullscreen", "help", "image",
+            "importcss", "insertdatetime", "link", "lists", "media",
+            "nonbreaking", "pagebreak", "preview", "quickbars", "save", "searchreplace",
+            "table", "visualblocks", "visualchars", "wordcount")
+        .WithToolbar("undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save print | pagebreak anchor codesample | ltr rtl"));
 
 services.AddHttpContextAccessor();
 
@@ -256,8 +265,8 @@ services.AddPageKrafterFilePicker<PickstackFilePicker>();
 // The blog is its own database. Until installation has saved a connection there is nothing to migrate.
 if (!string.IsNullOrWhiteSpace(connectionString))
 {
-    services.AddScoped<IBlogTenantProvider, InfernoCMS.Infrastructure.InfernoBlogTenantProvider>();
-    services.AddScoped<BlogKrafter.Infrastructure.IBlogFileRootProvider, InfernoCMS.Infrastructure.InfernoBlogFileRootProvider>();
+    services.AddScoped<IBlogTenantProvider, InfernoBlogTenantProvider>();
+    services.AddScoped<BlogKrafter.Infrastructure.IBlogFileRootProvider, InfernoBlogFileRootProvider>();
     services.AddBlogKrafter(blog =>
     {
         blog.Title = "Blog";

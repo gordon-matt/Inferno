@@ -286,6 +286,8 @@ build/
 
 InfernoCMS/wwwroot/lib
 InfernoCMS/wwwroot/Media
+InfernoCMS/wwwroot/forumz
+InfernoCMS/ffmpeg
 InfernoCMS/keys
 
 !Inferno.Web/Areas/Admin/Log/
@@ -293,6 +295,5 @@ InfernoCMS/keys
 
 InfernoSettings.xml
 InfernoCMS/sitemap-*.xml
-
 
 InfernoCMS/App_Data/Pluginz

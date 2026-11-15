@@ -25,6 +25,10 @@ public class MenuItem : BaseEntity<Guid>
 
     public bool IsExternalUrl { get; set; }
 
+    /// <summary>Opens the link in a new browser tab. Not stored; set by code that builds a menu.</summary>
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public bool OpenInNewTab { get; set; }
+
     public Guid? RefId { get; set; }
 
     //public virtual Menu Menu { get; set; }
@@ -48,6 +52,7 @@ public class MenuItemMap : InfernoEntityTypeConfiguration<MenuItem>
         builder.Property(x => x.Position).IsRequired();
         builder.Property(x => x.Enabled).IsRequired();
         builder.Property(x => x.IsExternalUrl).IsRequired();
+        builder.Ignore(x => x.OpenInNewTab);
 
         //HasRequired(x => x.Menu).WithMany().HasForeignKey(x => x.MenuId);
         //HasOptional(x => x.Parent).WithMany().HasForeignKey(x => x.ParentId);

@@ -1,0 +1,93 @@
+@page "/forums"
+@page "/forums/{*Path}"
+@layout global::Forumz.Components.Shared.ForumHostLayout
+
+@switch (page)
+{
+    case ForumPage.Home:
+        <Index />
+        break;
+    case ForumPage.Active:
+        <Active />
+        break;
+    case ForumPage.Search:
+        <Search />
+        break;
+    case ForumPage.Subscriptions:
+        <Subscriptions />
+        break;
+    case ForumPage.Messages:
+        <Messages />
+        break;
+    case ForumPage.NewMessage:
+        <Message />
+        break;
+    case ForumPage.Message:
+        <MessageRead MessageId="id" />
+        break;
+    case ForumPage.Profile:
+        <Profile />
+        break;
+    case ForumPage.Forum:
+        <Forum ForumId="id" />
+        break;
+    case ForumPage.NewTopic:
+        <NewTopic ForumId="id" />
+        break;
+    case ForumPage.Topic:
+        <Topic TopicId="id" />
+        break;
+    default:
+        <EmptyState Icon="search" Title="That page isn't here" Description="The link doesn't match a forum page." />
+        break;
+}
+
+@code {
+    [Parameter]
+    public string? Path { get; set; }
+
+    private ForumPage page;
+    private int id;
+
+    protected override void OnParametersSet()
+    {
+        string[] parts = string.IsNullOrEmpty(Path)
+            ? []
+            : Path.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        (page, id) = parts switch
+        {
+            [] => (ForumPage.Home, 0),
+            ["active"] => (ForumPage.Active, 0),
+            ["search"] => (ForumPage.Search, 0),
+            ["subscriptions"] => (ForumPage.Subscriptions, 0),
+            ["messages"] => (ForumPage.Messages, 0),
+            ["messages", "new"] => (ForumPage.NewMessage, 0),
+            ["profile"] => (ForumPage.Profile, 0),
+            ["messages", var text] when Number(text, out int messageId) => (ForumPage.Message, messageId),
+            ["forum", var text] when Number(text, out int forumId) => (ForumPage.Forum, forumId),
+            ["forum", var text, "new"] when Number(text, out int forumId) => (ForumPage.NewTopic, forumId),
+            ["topic", var text] when Number(text, out int topicId) => (ForumPage.Topic, topicId),
+            _ => (ForumPage.Missing, 0),
+        };
+    }
+
+    private static bool Number(string text, out int value) =>
+        int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out value);
+
+    private enum ForumPage
+    {
+        Home,
+        Active,
+        Search,
+        Subscriptions,
+        Messages,
+        NewMessage,
+        Message,
+        Profile,
+        Forum,
+        NewTopic,
+        Topic,
+        Missing,
+    }
+}

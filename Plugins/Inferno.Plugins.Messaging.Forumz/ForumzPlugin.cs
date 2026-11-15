@@ -2,6 +2,8 @@ using Forumz;
 using Forumz.Data.Sql;
 using Forumz.Services;
 using Inferno.Plugins.Messaging.Forumz;
+using Inferno.Web.Components;
+using Inferno.Web.Configuration;
 using Inferno.Web.ContentManagement.Infrastructure;
 using Inferno.Web.Infrastructure;
 using Inferno.Web.Navigation;
@@ -14,8 +16,9 @@ using Pluginz.Web;
 namespace Inferno.Plugins.Messaging.Forumz;
 
 /// <summary>
-/// Mounts the Forumz Blazor circuit at /forums. The library owns the pages; this plugin supplies
-/// Inferno's tenant, permissions and database.
+/// Draws the forum at /forums. By default it sits under Inferno's menu. A tenant can open it in a
+/// new tab with the forum's own top bar. The library owns the pages; this plugin supplies Inferno's
+/// tenant, permissions and database.
 /// </summary>
 public sealed class ForumzPlugin : PluginBase, IWebPlugin
 {
@@ -28,6 +31,8 @@ public sealed class ForumzPlugin : PluginBase, IWebPlugin
             options.Title = "Forums";
             options.HomePath = "/";
             options.LogoutPath = "/Identity/Account/LogOut";
+            // PublicSiteLayout is the site's top bar. The forum's own links render under it.
+            options.PublicLayout = typeof(PublicSiteLayout);
         });
 
         if (!string.IsNullOrWhiteSpace(installed.ConnectionString))
@@ -38,12 +43,14 @@ public sealed class ForumzPlugin : PluginBase, IWebPlugin
         // Registered after AddForumz so these replace the single-tenant defaults.
         services.AddScoped<IForumTenantScope, InfernoForumTenantScope>();
         services.AddScoped<IForumAccess, InfernoForumAccess>();
+        services.AddScoped<IForumPresentation, InfernoForumPresentation>();
+        services.AddScoped<ISettings, ForumSettings>();
         services.AddSingleton<IPermissionProvider, ForumzPermissionProvider>();
         services.AddSingleton<INavigationProvider, ForumzNavigationProvider>();
         services.AddSingleton<IAutoMenuProvider, ForumzAutoMenuProvider>();
     }
 
-    /// <summary>The forum is its own Blazor document, mounted beside Inferno's router.</summary>
+    /// <summary>Feeds, the stylesheet, and the forum document. A tenant that stays in the site layout does not use the document.</summary>
     public void MapEndpoints(IEndpointRouteBuilder endpoints, PluginRuntimeContext context) =>
         endpoints.MapForumz();
 }
