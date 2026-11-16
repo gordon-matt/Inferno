@@ -15,7 +15,7 @@
   <ItemGroup>
     <PackageReference Include="BlogKrafter" Version="1.0.3" />
     <PackageReference Include="BlogKrafter.Data.Sql" Version="1.0.3" />
-    <PackageReference Include="Dependo.Autofac" Version="1.2.3" />
+    <ProjectReference Include="..\..\..\Libraries\Dependo\Dependo.Autofac\Dependo.Autofac.csproj" />
     <PackageReference Include="EPPlus" Version="8.7.2" />
     <PackageReference Include="Extenso.AspNetCore.Mvc" Version="10.2.1" />
     <PackageReference Include="Flatmate" Version="1.0.1" />

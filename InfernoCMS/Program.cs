@@ -60,6 +60,10 @@ using WebFilez.Plugins.Video;
 
 ExcelPackage.License.SetNonCommercialOrganization("Inferno");
 
+// Plugins are loaded by Pluginz before the container is built, so Dependo does not also
+// load every DLL in the output folder while discovering registrars and startup types.
+DependoCatalog.ProbeBinFolder = false;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseServiceProviderFactory(new DependoAutofacServiceProviderFactory());

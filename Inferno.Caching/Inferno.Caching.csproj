@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dependo.Autofac" Version="1.2.3" />
+    <ProjectReference Include="..\..\..\Libraries\Dependo\Dependo.Autofac\Dependo.Autofac.csproj" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.14" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.14" />
   </ItemGroup>

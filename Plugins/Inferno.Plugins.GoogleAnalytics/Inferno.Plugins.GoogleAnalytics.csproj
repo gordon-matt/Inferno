@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dependo.Autofac" Version="1.2.3">
+    <ProjectReference Include="..\..\..\..\Libraries\Dependo\Dependo.Autofac\Dependo.Autofac.csproj">
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
-    </PackageReference>
+    </ProjectReference>
     <PackageReference Include="Extenso.Data.Entity" Version="10.2.1">
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>

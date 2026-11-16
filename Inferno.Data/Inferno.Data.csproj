@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dependo.Autofac" Version="1.2.3" />
+    <ProjectReference Include="..\..\..\Libraries\Dependo\Dependo.Autofac\Dependo.Autofac.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
   </ItemGroup>
   <ItemGroup>
