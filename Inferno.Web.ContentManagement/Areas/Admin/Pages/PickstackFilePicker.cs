@@ -7,7 +7,7 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages;
 /// Lets PageKrafter choose files with whichever Pickstack file manager the site registered, opened on the
 /// current tenant's folder like the rich text editors are. Pages that use it need <c>&lt;PickstackScripts /&gt;</c>.
 /// </summary>
-public sealed class PickstackFilePicker(IJSRuntime js, IWorkContext workContext) : IFilePicker, IAsyncDisposable
+public sealed class PickstackFilePicker(IJSRuntime js, IFileRootProvider fileRoots) : IFilePicker, IAsyncDisposable
 {
     private const string Module = "./_content/Inferno.Web.ContentManagement/js/pickstack-file-picker.js";
 
@@ -25,7 +25,7 @@ public sealed class PickstackFilePicker(IJSRuntime js, IWorkContext workContext)
                 FilePickerKind.Video => "media",
                 _ => "any",
             },
-            root = workContext.TenantRoot,
+            root = fileRoots.GetFileRoot(),
             title = request.Title,
         });
 

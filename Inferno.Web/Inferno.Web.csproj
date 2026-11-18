@@ -10,7 +10,7 @@
     <SupportedPlatform Include="browser" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\Dependo\Dependo.Autofac\Dependo.Autofac.csproj" />
+    <PackageReference Include="Dependo.Autofac" Version="1.3.0" />
     <PackageReference Include="Flatmate" Version="1.0.1" />
     <PackageReference Include="Fluid.Core" Version="2.41.1" />
     <PackageReference Include="GridKrafter.Components" Version="1.0.0" />

@@ -3,10 +3,13 @@
 	Dependo's catalog generator does not flow across a ProjectReference, so the local source is attached here.
 	Published Dependo container packages already carry the analyzer. Set DependoUseProjectGenerator to false
 	before switching these projects back to PackageReference, or the generator runs twice.
+	Alternatively, comment out the whole <ItemGroup/>
 	-->
+	<!--
 	<ItemGroup Condition="'$(DependoUseProjectGenerator)' != 'false'">
 		<ProjectReference Include="$(MSBuildThisFileDirectory)..\..\Libraries\Dependo\Dependo.Generator\Dependo.Generator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" SetTargetFramework="TargetFramework=netstandard2.0" PrivateAssets="all" />
 	</ItemGroup>
+	-->
 	<ItemGroup>
 		<CompilerVisibleProperty Include="DependoCatalog" />
 	</ItemGroup>

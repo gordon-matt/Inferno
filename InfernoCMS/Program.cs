@@ -49,6 +49,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using OfficeOpenXml;
 using PageKrafter;
 using PageKrafter.Components;
+using PageKrafter.Files;
 using Pickstack;
 using Pickstack.FileManager.WebFilez;
 using Pickstack.RichTextEditor.TinyMce8;
@@ -64,6 +65,26 @@ ExcelPackage.License.SetNonCommercialOrganization("Inferno");
 // load every DLL in the output folder while discovering registrars and startup types.
 DependoCatalog.ProbeBinFolder = false;
 
+// Third-party assemblies in the output folder. Microsoft, System, Autofac, EPPlus, Newtonsoft,
+// and Serilog are already skipped. Inferno, its plugins, and the application libraries stay included.
+DependoCatalog.SkipAssembliesStartingWith(
+    "AngleSharp",
+    "Ardalis",
+    "dotnet-aspnet-codegenerator",
+    "Fluid",
+    "Hangfire",
+    "HtmlSanitizer",
+    "Humanizer",
+    "LinqKit",
+    "Markdig",
+    "Mono.TextTemplating",
+    "NuGet",
+    "Parlot",
+    "SharpCompress",
+    "SkiaSharp",
+    "TimeZoneConverter",
+    "Xabe");
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseServiceProviderFactory(new DependoAutofacServiceProviderFactory());
@@ -74,7 +95,7 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 
 // Installed means the installation page has saved a connection. Until then there is no database.
-var installedSettings = Inferno.Web.Infrastructure.DataSettingsManager.LoadSettings();
+var installedSettings = DataSettingsManager.LoadSettings();
 bool databaseInstalled = !string.IsNullOrWhiteSpace(installedSettings.ConnectionString);
 string connectionString = databaseInstalled ? installedSettings.ConnectionString : null;
 
@@ -240,7 +261,9 @@ services.AddPickstack(configuration)
     .AddVideo(video => video.DownloadIfMissing = true)
     .Pickstack
     .AddTinyMce8(editor => editor
-        .WithHeight(400)
+        .WithHeight(520)
+        .WithMinHeight(520)
+        .ShowPromotion(false)
         .ShowMenubar()
         .WithPlugins(
             "accordion", "advlist", "anchor", "autolink", "autoresize", "autosave", "charmap", "code",
@@ -248,7 +271,11 @@ services.AddPickstack(configuration)
             "importcss", "insertdatetime", "link", "lists", "media",
             "nonbreaking", "pagebreak", "preview", "quickbars", "save", "searchreplace",
             "table", "visualblocks", "visualchars", "wordcount")
-        .WithToolbar("undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save print | pagebreak anchor codesample | ltr rtl"));
+        .WithToolbars(
+            "undo redo | save print | preview fullscreen code",
+            "blocks fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor removeformat",
+            "align | numlist bullist | outdent indent | lineheight | ltr rtl",
+            "link anchor image media | table | accordion accordionremove | pagebreak codesample charmap emoticons"));
 
 services.AddHttpContextAccessor();
 
@@ -262,6 +289,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
 }
 services.ConfigureNetForgeToastSounds(sounds => sounds.EnableSounds = true);
 
+services.AddScoped<IFileRootProvider, InfernoBlogFileRootProvider>();
 services.AddPageKrafter();
 services.AddPageKrafterBlock<PageContentZoneBlock>();
 services.AddPageKrafterFilePicker<PickstackFilePicker>();
