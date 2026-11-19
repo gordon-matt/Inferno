@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Inferno.Plugins.Messaging.Forumz;
 
 /// <summary>
-/// The tenant Flatmate resolved for this circuit. Null stores rows with an empty tenant id,
-/// the same as a host that is not multi-tenant.
+/// The tenant Flatmate resolved for this circuit. Forum posts and EasyChatz direct messages
+/// both use it. Null stores rows with an empty tenant id, the same as a host that is not multi-tenant.
 /// </summary>
 public sealed class InfernoForumTenantScope(IServiceProvider services) : IForumTenantScope
 {

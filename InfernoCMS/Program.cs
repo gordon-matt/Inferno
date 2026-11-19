@@ -464,6 +464,7 @@ var routerAssemblies = DependoResolver.Instance
     .Distinct()
     .ToArray();
 
+app.MapNetForgeAssets();
 app.MapRazorComponents<InfernoCMS.App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(routerAssemblies);

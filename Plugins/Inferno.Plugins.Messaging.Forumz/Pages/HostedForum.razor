@@ -19,12 +19,6 @@
     case ForumPage.Messages:
         <Messages />
         break;
-    case ForumPage.NewMessage:
-        <Message />
-        break;
-    case ForumPage.Message:
-        <MessageRead MessageId="id" />
-        break;
     case ForumPage.Profile:
         <Profile />
         break;
@@ -62,9 +56,7 @@
             ["search"] => (ForumPage.Search, 0),
             ["subscriptions"] => (ForumPage.Subscriptions, 0),
             ["messages"] => (ForumPage.Messages, 0),
-            ["messages", "new"] => (ForumPage.NewMessage, 0),
             ["profile"] => (ForumPage.Profile, 0),
-            ["messages", var text] when Number(text, out int messageId) => (ForumPage.Message, messageId),
             ["forum", var text] when Number(text, out int forumId) => (ForumPage.Forum, forumId),
             ["forum", var text, "new"] when Number(text, out int forumId) => (ForumPage.NewTopic, forumId),
             ["topic", var text] when Number(text, out int topicId) => (ForumPage.Topic, topicId),
@@ -82,8 +74,6 @@
         Search,
         Subscriptions,
         Messages,
-        NewMessage,
-        Message,
         Profile,
         Forum,
         NewTopic,

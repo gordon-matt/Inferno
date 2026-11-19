@@ -19,6 +19,10 @@
     <Project Path="Inferno.Web/Inferno.Web.csproj" />
     <Project Path="Inferno/Inferno.csproj" />
   </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="../../Libraries/Forumz/Forumz.Data.Sql/Forumz.Data.Sql.csproj" />
+    <Project Path="../../Libraries/Forumz/Forumz/Forumz.csproj" />
+  </Folder>
   <Folder Name="/Plugins/">
     <Project Path="Plugins/Inferno.Plugins.GoogleAnalytics/Inferno.Plugins.GoogleAnalytics.csproj" />
     <Project Path="Plugins/Inferno.Plugins.Messaging.Forumz/Inferno.Plugins.Messaging.Forumz.csproj" />

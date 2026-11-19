@@ -1,16 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Title>Forums</Title>
-		<Description>A Blazor forum mounted at /forums. Groups, topics, posts, subscriptions and private messages.</Description>
+		<Description>A Blazor forum mounted at /forums. Groups, topics, posts, subscriptions and direct messages.</Description>
 		<Version>1.0.0</Version>
 		<Authors>Inferno</Authors>
 		<IsPluginzPlugin>true</IsPluginzPlugin>
 		<PluginzSystemName>Inferno.Plugins.Messaging.Forumz</PluginzSystemName>
 		<PluginzGroup>Messaging</PluginzGroup>
+		<!-- Class libraries do not copy NuGet assemblies. The filter below keeps EasyChatz.Data.Sql beside the plugin. -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -26,18 +28,20 @@
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.5">
+		<PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.6">
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>runtime</ExcludeAssets>
 			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Pluginz.Core" Version="1.0.1">
+		<PackageReference Include="Pluginz.Core" Version="1.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>runtime</ExcludeAssets>
+			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Pluginz.Web" Version="1.0.1">
+		<PackageReference Include="Pluginz.Web" Version="1.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>runtime</ExcludeAssets>
+			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
@@ -61,7 +65,8 @@
 	<Target Name="DropHostAssemblies" BeforeTargets="_CopyFilesMarkedCopyLocal">
 		<ItemGroup>
 			<!-- Forumz is not part of the host, so its assemblies stay beside the plugin. -->
-			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != '$(AssemblyName)' AND !$([System.String]::Copy('%(Filename)').StartsWith('Forumz'))" />
+			<!-- Forumz and EasyChatz are not part of the host, so their assemblies stay beside the plugin. -->
+			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' != '$(AssemblyName)' AND !$([System.String]::Copy('%(Filename)').StartsWith('Forumz')) AND !$([System.String]::Copy('%(Filename)').StartsWith('EasyChatz'))" />
 		</ItemGroup>
 	</Target>
 
