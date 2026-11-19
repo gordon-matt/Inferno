@@ -27,7 +27,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="GridKrafter.Components" Version="1.0.0" />
+		<PackageReference Include="GridKrafter.Components" Version="1.0.1" />
 		<PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.6">
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>runtime</ExcludeAssets>

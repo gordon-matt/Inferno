@@ -13,7 +13,7 @@
     <PackageReference Include="Dependo.Autofac" Version="1.3.0" />
     <PackageReference Include="Flatmate" Version="1.0.1" />
     <PackageReference Include="Fluid.Core" Version="2.41.1" />
-    <PackageReference Include="GridKrafter.Components" Version="1.0.0" />
+    <PackageReference Include="GridKrafter.Components" Version="1.0.1" />
     <PackageReference Include="Heroicsoft.NetForge.Components" Version="1.2.6" />
     <PackageReference Include="Localize.Core" Version="1.0.3" />
     <PackageReference Include="Localize.Data.Sql" Version="1.0.3" />
