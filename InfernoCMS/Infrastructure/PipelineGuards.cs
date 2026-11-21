@@ -56,6 +56,14 @@ public static class PipelineGuards
             bool isBrowser = path.Equals(BROWSER_PATH, StringComparison.OrdinalIgnoreCase);
             bool isApi = path.StartsWithSegments(apiPrefix);
 
+            // These are the editor and picker scripts, not the media store. A forum member can post
+            // without the media permission, and the editor cannot start while these return 401.
+            if (path.StartsWithSegments("/pickstack/assets"))
+            {
+                await next();
+                return;
+            }
+
             if (!isBrowser && !isApi && !path.StartsWithSegments("/pickstack"))
             {
                 await next();
