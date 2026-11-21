@@ -1,0 +1,59 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="BlogKrafter" Version="1.0.6" />
+    <PackageVersion Include="BlogKrafter.Data" Version="1.0.6" />
+    <PackageVersion Include="BlogKrafter.Data.Sql" Version="1.0.6" />
+    <PackageVersion Include="BlogKrafter.Services" Version="1.0.6" />
+    <PackageVersion Include="Dependo.Autofac" Version="1.3.0" />
+    <PackageVersion Include="EPPlus" Version="8.7.2" />
+    <PackageVersion Include="Extenso.AspNetCore.Mvc" Version="10.2.2" />
+    <PackageVersion Include="Extenso.Core" Version="10.2.2" />
+    <PackageVersion Include="Extenso.Data.Entity" Version="10.2.2" />
+    <PackageVersion Include="Flatmate" Version="1.0.2" />
+    <PackageVersion Include="Fluid.Core" Version="2.41.1" />
+    <PackageVersion Include="GridKrafter.Components" Version="1.0.2" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.25" />
+    <PackageVersion Include="Hangfire.SqlServer" Version="1.8.25" />
+    <PackageVersion Include="Heroicsoft.NetForge.Components" Version="1.2.8" />
+    <PackageVersion Include="IdentityNexus" Version="1.1.3" />
+    <PackageVersion Include="Kameleon" Version="1.0.4" />
+    <PackageVersion Include="Kameleon.Data.Sql" Version="1.0.4" />
+    <PackageVersion Include="Localize.Components" Version="1.0.4" />
+    <PackageVersion Include="Localize.Core" Version="1.0.4" />
+    <PackageVersion Include="Localize.Data" Version="1.0.4" />
+    <PackageVersion Include="Localize.Data.Sql" Version="1.0.4" />
+    <PackageVersion Include="Localize.Services" Version="1.0.4" />
+    <PackageVersion Include="LogVue" Version="1.1.7" />
+    <PackageVersion Include="LogVue.Data.Sql" Version="1.1.7" />
+    <PackageVersion Include="LogVue.Providers.Serilog" Version="1.1.7" />
+    <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.3" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="PageKrafter.Components" Version="1.0.7" />
+    <PackageVersion Include="Pickstack" Version="1.0.10" />
+    <PackageVersion Include="Pickstack.FileManager.WebFilez" Version="1.0.10" />
+    <PackageVersion Include="Pickstack.RichTextEditor.TinyMce8" Version="1.0.10" />
+    <PackageVersion Include="Pluginz.Components" Version="1.0.3" />
+    <PackageVersion Include="Pluginz.Core" Version="1.0.3" />
+    <PackageVersion Include="Pluginz.NuGet" Version="1.0.3" />
+    <PackageVersion Include="Pluginz.Services" Version="1.0.3" />
+    <PackageVersion Include="Pluginz.Web" Version="1.0.3" />
+    <PackageVersion Include="WebFilez.Plugins.Video" Version="1.1.2" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+</Project>

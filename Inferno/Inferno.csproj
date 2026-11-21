@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="8.7.2" />
-    <PackageReference Include="Extenso.Core" Version="10.2.1" />
+    <PackageReference Include="EPPlus" />
+    <PackageReference Include="Extenso.Core" />
   </ItemGroup>
 </Project>

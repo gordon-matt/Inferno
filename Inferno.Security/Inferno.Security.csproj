@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Extenso.Data.Entity" Version="10.2.1" />
+    <PackageReference Include="Extenso.Data.Entity" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno\Inferno.csproj" />

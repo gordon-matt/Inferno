@@ -13,40 +13,40 @@
     <None Remove="Areas\Admin\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BlogKrafter" Version="1.0.5" />
-    <PackageReference Include="BlogKrafter.Data.Sql" Version="1.0.5" />
-    <PackageReference Include="Dependo.Autofac" Version="1.3.0" />
-    <PackageReference Include="PageKrafter.Components" Version="1.0.6" />
-    <PackageReference Include="EPPlus" Version="8.7.2" />
-    <PackageReference Include="Extenso.AspNetCore.Mvc" Version="10.2.1" />
-    <PackageReference Include="Flatmate" Version="1.0.1" />
-    <PackageReference Include="IdentityNexus" Version="1.1.2" />
-    <PackageReference Include="Kameleon" Version="1.0.3" />
-    <PackageReference Include="Kameleon.Data.Sql" Version="1.0.3" />
-    <PackageReference Include="Localize.Components" Version="1.0.3" />
-    <PackageReference Include="LogVue" Version="1.1.6" />
-    <PackageReference Include="LogVue.Data.Sql" Version="1.1.6" />
-    <PackageReference Include="LogVue.Providers.Serilog" Version="1.1.6" />
-    <PackageReference Include="Pickstack.FileManager.WebFilez" Version="1.0.8" />
-    <PackageReference Include="Pickstack.RichTextEditor.TinyMce8" Version="1.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.14" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.14" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14">
+    <PackageReference Include="BlogKrafter" />
+    <PackageReference Include="BlogKrafter.Data.Sql" />
+    <PackageReference Include="Dependo.Autofac" />
+    <PackageReference Include="PageKrafter.Components" />
+    <PackageReference Include="EPPlus" />
+    <PackageReference Include="Extenso.AspNetCore.Mvc" />
+    <PackageReference Include="Flatmate" />
+    <PackageReference Include="IdentityNexus" />
+    <PackageReference Include="Kameleon" />
+    <PackageReference Include="Kameleon.Data.Sql" />
+    <PackageReference Include="Localize.Components" />
+    <PackageReference Include="LogVue" />
+    <PackageReference Include="LogVue.Data.Sql" />
+    <PackageReference Include="LogVue.Providers.Serilog" />
+    <PackageReference Include="Pickstack.FileManager.WebFilez" />
+    <PackageReference Include="Pickstack.RichTextEditor.TinyMce8" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.3" />
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Pluginz.Components" Version="1.0.2" />
-    <PackageReference Include="Pluginz.NuGet" Version="1.0.2" />
-    <PackageReference Include="Pluginz.Web" Version="1.0.2" />
-    <PackageReference Include="WebFilez.Plugins.Video" Version="1.1.1" />
+    <PackageReference Include="Pluginz.Components" />
+    <PackageReference Include="Pluginz.NuGet" />
+    <PackageReference Include="Pluginz.Web" />
+    <PackageReference Include="WebFilez.Plugins.Video" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Caching.Abstractions\Inferno.Caching.Abstractions.csproj" />

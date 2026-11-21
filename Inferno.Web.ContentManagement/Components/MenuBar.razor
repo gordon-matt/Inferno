@@ -1,23 +1,31 @@
 @using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@implements IDisposable
 
-<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+@if (OwnsBar && Bar.IsActive)
+{
+    <div class="public-menu-scrim" @onclick="Bar.Close"></div>
+}
+<ul class="navbar-nav me-auto mb-2 mb-lg-0 public-menu-bar" @onkeydown="OnKeyDown">
     @foreach (var item in Roots)
     {
         var children = Items.Where(x => x.ParentId == item.Id && x.Enabled).OrderBy(x => x.Position).ThenBy(x => x.Text).ToList();
         if (children.Count == 0)
         {
-            <li class="nav-item">
+            <li class="nav-item" @onpointerenter="e => OnEnter(e, null)">
                 <a class="nav-link" href="@item.Url" target="@NewTab(item)" rel="@NoOpener(item)" data-enhance-nav="@FullLoad(item)">@item.Text</a>
             </li>
         }
         else
         {
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">@item.Text</a>
-                <ul class="dropdown-menu">
+            var open = Bar.IsOpen(item);
+            <li class="nav-item dropdown" @onpointerenter="e => OnEnter(e, item)">
+                <a class="nav-link dropdown-toggle" href="#" role="button" aria-haspopup="menu" aria-expanded="@open" @onclick="() => Bar.Toggle(item)" @onclick:preventDefault>@item.Text</a>
+                <ul class="dropdown-menu @(open ? "show" : null)">
                     @foreach (var child in children)
                     {
-                        <li><a class="dropdown-item" href="@child.Url" target="@NewTab(child)" rel="@NoOpener(child)" data-enhance-nav="@FullLoad(child)">@child.Text</a></li>
+                        <li><a class="dropdown-item" href="@child.Url" target="@NewTab(child)" rel="@NoOpener(child)" data-enhance-nav="@FullLoad(child)" @onclick="Bar.Close">@child.Text</a></li>
                     }
                 </ul>
             </li>
@@ -26,13 +34,68 @@
 </ul>
 
 @code {
+    private readonly PublicMenuBar ownedBar = new();
+    private PublicMenuBar subscribed;
+
     [Parameter]
     public IEnumerable<MenuItem> Items { get; set; } = [];
+
+    /// <summary>Set when this menu shares a bar with the links beside it, such as the account links.</summary>
+    [CascadingParameter]
+    public PublicMenuBar SharedBar { get; set; }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+
+    private PublicMenuBar Bar => SharedBar ?? ownedBar;
+
+    private bool OwnsBar => SharedBar == null;
 
     private IEnumerable<MenuItem> Roots => (Items ?? [])
         .Where(x => x.Enabled && x.ParentId == null)
         .OrderBy(x => x.Position)
         .ThenBy(x => x.Text);
+
+    protected override void OnInitialized() => Navigation.LocationChanged += OnLocationChanged;
+
+    protected override void OnParametersSet()
+    {
+        if (ReferenceEquals(subscribed, Bar))
+        {
+            return;
+        }
+
+        if (subscribed != null)
+        {
+            subscribed.Changed -= OnBarChanged;
+        }
+
+        subscribed = Bar;
+        subscribed.Changed += OnBarChanged;
+    }
+
+    private void OnEnter(PointerEventArgs args, MenuItem item)
+    {
+        if (!string.Equals(args.PointerType, "mouse", StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        Bar.Hover(item);
+    }
+
+    private void OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Escape")
+        {
+            Bar.Close();
+        }
+    }
+
+    private void OnBarChanged() => InvokeAsync(StateHasChanged);
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs e) =>
+        InvokeAsync(() => Bar.Close());
 
     // A separate document is not a route in this circuit. Null omits the attribute.
     private static string FullLoad(MenuItem item) => item.IsExternalUrl || item.OpenInNewTab ? "false" : null;
@@ -40,4 +103,13 @@
     private static string NewTab(MenuItem item) => item.OpenInNewTab ? "_blank" : null;
 
     private static string NoOpener(MenuItem item) => item.OpenInNewTab ? "noopener noreferrer" : null;
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
+        if (subscribed != null)
+        {
+            subscribed.Changed -= OnBarChanged;
+        }
+    }
 }

@@ -33,6 +33,8 @@ public sealed class ForumzPlugin : PluginBase, IWebPlugin
             options.LogoutPath = "/Identity/Account/LogOut";
             // PublicSiteLayout is the site's top bar. The forum's own links render under it.
             options.PublicLayout = typeof(PublicSiteLayout);
+            // Inferno's other editors keep WebFilez. Forum posts do not open it.
+            options.UseFileManager = false;
         });
 
         if (!string.IsNullOrWhiteSpace(installed.ConnectionString))

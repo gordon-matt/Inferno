@@ -1,23 +1,74 @@
 @using Inferno.Web.ContentManagement.Components
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@implements IDisposable
 
 @* The public menu, the search form and the account links, for the primary navigation region. *@
-<AutoMenu />
-<ContentZone Name="SearchForm" />
-<ul class="navbar-nav ms-auto">
-    <AuthorizeView>
-        <Authorized>
-            <li class="nav-item"><a class="nav-link" href="/account/profile">@context.User.Identity?.Name</a></li>
-            <AuthorizeView Policy="@StandardPolicies.AdminAccess" Context="admin">
-                <li class="nav-item"><a class="nav-link" href="/admin">@T[InfernoWebLocalizableStrings.Dashboard.Administration]</a></li>
-            </AuthorizeView>
-            <li class="nav-item">
-                <form method="post" action="/Identity/Account/LogOut" data-enhance="false">
-                    <button type="submit" class="nav-link btn btn-link">Log out</button>
-                </form>
-            </li>
-        </Authorized>
-        <NotAuthorized>
-            <li class="nav-item"><a class="nav-link" href="/Identity/Account/Login">Log in</a></li>
-        </NotAuthorized>
-    </AuthorizeView>
-</ul>
+@if (bar.IsActive)
+{
+    <div class="public-menu-scrim" @onclick="bar.Close"></div>
+}
+<CascadingValue Value="bar" IsFixed="true">
+    <AutoMenu />
+    <ContentZone Name="SearchForm" />
+    <ul class="navbar-nav ms-auto public-menu-bar" @onpointerenter="OnPlainEnter" @onkeydown="OnKeyDown">
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item"><a class="nav-link" href="/account/profile">@context.User.Identity?.Name</a></li>
+                <AuthorizeView Policy="@StandardPolicies.AdminAccess" Context="admin">
+                    <li class="nav-item"><a class="nav-link" href="/admin">@T[InfernoWebLocalizableStrings.Dashboard.Administration]</a></li>
+                </AuthorizeView>
+                <li class="nav-item">
+                    <form method="post" action="/Identity/Account/LogOut" data-enhance="false">
+                        <button type="submit" class="nav-link btn btn-link">Log out</button>
+                    </form>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                <li class="nav-item"><a class="nav-link" href="/Identity/Account/Login">Log in</a></li>
+            </NotAuthorized>
+        </AuthorizeView>
+    </ul>
+</CascadingValue>
+
+@code {
+    private readonly PublicMenuBar bar = new();
+
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+
+    protected override void OnInitialized()
+    {
+        bar.Changed += OnBarChanged;
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnPlainEnter(PointerEventArgs args)
+    {
+        if (!string.Equals(args.PointerType, "mouse", StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        bar.Hover(null);
+    }
+
+    private void OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Escape")
+        {
+            bar.Close();
+        }
+    }
+
+    private void OnBarChanged() => InvokeAsync(StateHasChanged);
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs e) =>
+        InvokeAsync(() => bar.Close());
+
+    public void Dispose()
+    {
+        bar.Changed -= OnBarChanged;
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
+}

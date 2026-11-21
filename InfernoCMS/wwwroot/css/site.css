@@ -66,6 +66,18 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+/* The public menu bar stays above its scrim, so a hover can reach the next item while a menu is armed. */
+.inferno-public .public-menu-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 1020;
+}
+
+.inferno-public .public-menu-bar {
+    position: relative;
+    z-index: 1030;
+}
+
 /* The footer menu runs along a line instead of down a column. */
 .footer-menu .navbar-nav {
     flex-direction: row;

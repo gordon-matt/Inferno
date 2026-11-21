@@ -1,0 +1,10 @@
+.public-menu-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 1020;
+}
+
+.public-menu-bar {
+    position: relative;
+    z-index: 1030;
+}
