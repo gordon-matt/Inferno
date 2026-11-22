@@ -92,6 +92,12 @@ else
                         <button type="button" class="nf-icon-button" title="@T[InfernoCmsLocalizableStrings.Pages.Design]" @onclick="() => EditAsync(item)">
                             <Icon Name="edit" Size="16" />
                         </button>
+                        @if (canWrite)
+                        {
+                            <button type="button" class="nf-icon-button" title="@T[InfernoCmsLocalizableStrings.Pages.Translate]" @onclick="() => OpenTranslator(item)">
+                                <Icon Name="translate" Size="16" />
+                            </button>
+                        }
                         <ActionMenu Label="@T[InfernoWebLocalizableStrings.General.Actions]">
                             @if (version is not null && version.Status == VersionStatus.Published && item.IsEnabled)
                             {
@@ -151,3 +157,5 @@ else
         </button>
     </Footer>
 </Drawer>
+
+<PageTranslator Item="translating" OnClose="CloseTranslator" />

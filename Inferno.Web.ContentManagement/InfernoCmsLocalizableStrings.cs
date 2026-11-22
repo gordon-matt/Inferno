@@ -418,6 +418,13 @@ public static class InfernoCmsLocalizableStrings
         public const string HistoryEmpty = "Inferno.Web.ContentManagement/Pages.HistoryEmpty";
         public const string NoTranslationYet = "Inferno.Web.ContentManagement/Pages.NoTranslationYet";
         public const string CreateTranslation = "Inferno.Web.ContentManagement/Pages.CreateTranslation";
+        public const string Translate = "Inferno.Web.ContentManagement/Pages.Translate";
+        public const string TranslationsTitleFormat = "Inferno.Web.ContentManagement/Pages.TranslationsTitleFormat";
+        public const string ChooseLanguage = "Inferno.Web.ContentManagement/Pages.ChooseLanguage";
+        public const string NoLanguages = "Inferno.Web.ContentManagement/Pages.NoLanguages";
+        public const string TranslationHint = "Inferno.Web.ContentManagement/Pages.TranslationHint";
+        public const string RemoveTranslation = "Inferno.Web.ContentManagement/Pages.RemoveTranslation";
+        public const string TranslationRemoved = "Inferno.Web.ContentManagement/Pages.TranslationRemoved";
         public const string SaveChanges = "Inferno.Web.ContentManagement/Pages.SaveChanges";
         public const string Saved = "Inferno.Web.ContentManagement/Pages.Saved";
         public const string PageNotFound = "Inferno.Web.ContentManagement/Pages.PageNotFound";

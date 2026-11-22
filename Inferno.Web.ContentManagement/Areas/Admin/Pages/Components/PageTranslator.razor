@@ -1,0 +1,74 @@
+@inherits AdminPage
+@using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities
+
+<Drawer Open="Item is not null" Scrim="true" Width="min(480px, 100vw)" OnClose="CloseAsync"
+        Title="@(Item is null ? string.Empty : T[InfernoCmsLocalizableStrings.Pages.TranslationsTitleFormat, Item.Name].Value)">
+    <ChildContent>
+        @if (Item is not null)
+        {
+            @if (!ready)
+            {
+                <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+            }
+            else if (languages.Count == 0)
+            {
+                <EmptyState Icon="translate" Title="@T[InfernoCmsLocalizableStrings.Pages.NoLanguages]" />
+            }
+            else
+            {
+                <Field Label="@T[InfernoCmsLocalizableStrings.Pages.Language]" For="page-translation-culture">
+                    <select id="page-translation-culture" class="nf-select nf-select-block" value="@(culture ?? string.Empty)" @onchange="CultureChangedAsync">
+                        <option value="">@T[InfernoCmsLocalizableStrings.Pages.ChooseLanguage]</option>
+                        @foreach (var language in languages)
+                        {
+                            <option value="@language.CultureCode">@language.Name (@language.CultureCode)@(IsTranslated(language.CultureCode) ? " ✓" : string.Empty)</option>
+                        }
+                    </select>
+                    <span class="nf-hint">@T[InfernoCmsLocalizableStrings.Pages.TranslationHint]</span>
+                </Field>
+
+                @if (loadingCulture)
+                {
+                    <p class="nf-muted">@T[InfernoWebLocalizableStrings.General.Loading]</p>
+                }
+                else if (current is not null)
+                {
+                    <p><strong>@current.Title</strong> <span class="nf-muted">/@current.Slug</span></p>
+                    @if (current.Status == VersionStatus.Published)
+                    {
+                        <span class="nf-badge nf-badge-success">@T[InfernoCmsLocalizableStrings.Pages.Published]</span>
+                    }
+                    else
+                    {
+                        <span class="nf-badge nf-badge-warning">@T[InfernoCmsLocalizableStrings.Pages.Draft]</span>
+                    }
+                }
+                else if (culture is not null)
+                {
+                    <p class="nf-hint">@T[InfernoCmsLocalizableStrings.Pages.NoTranslationYet]</p>
+                }
+            }
+        }
+    </ChildContent>
+    <Footer>
+        <button type="button" class="nf-button" @onclick="CloseAsync">@T[InfernoWebLocalizableStrings.General.Close]</button>
+        @if (ready && canWrite && current is not null && !loadingCulture)
+        {
+            <button type="button" class="nf-button nf-button-danger" disabled="@busy" @onclick="RemoveAsync">
+                <Icon Name="trash" Size="16" /> @T[InfernoCmsLocalizableStrings.Pages.RemoveTranslation]
+            </button>
+        }
+        @if (ready && current is not null && !loadingCulture)
+        {
+            <button type="button" class="nf-button nf-button-primary" disabled="@busy" @onclick="OpenCurrentAsync">
+                <Icon Name="edit" Size="16" /> @T[InfernoCmsLocalizableStrings.Pages.Design]
+            </button>
+        }
+        else if (ready && canWrite && culture is not null && !loadingCulture)
+        {
+            <button type="button" class="nf-button nf-button-primary" disabled="@busy" @onclick="CreateAsync">
+                <Icon Name="translate" Size="16" /> @T[InfernoCmsLocalizableStrings.Pages.CreateTranslation]
+            </button>
+        }
+    </Footer>
+</Drawer>

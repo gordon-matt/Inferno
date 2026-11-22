@@ -111,6 +111,21 @@ public interface IPageAuthoringService
     /// <returns>The new draft, or a failure key.</returns>
     Task<PageAuthoringResult> CreateTranslationAsync(Guid pageId, string cultureCode);
 
+    /// <summary>Lists the languages a page already has its own version in. The default language is not included.</summary>
+    /// <param name="pageId">The page.</param>
+    /// <returns>The culture codes, in culture-code order. Empty when the page has only the default language.</returns>
+    Task<IReadOnlyList<string>> ListTranslationCulturesAsync(Guid pageId);
+
+    /// <summary>
+    /// Removes one language from a page, including the earlier saves of that language.
+    /// Those saves have to go as well, or a public request would still prefer an archived translation over the default page.
+    /// The default language is not a translation and is left as it is.
+    /// </summary>
+    /// <param name="pageId">The page.</param>
+    /// <param name="cultureCode">The culture. Whitespace is rejected, because that means the default language.</param>
+    /// <returns>Success, or a failure key when the caller cannot write, the page is missing, or that language has no version.</returns>
+    Task<PageAuthoringResult> DeleteTranslationAsync(Guid pageId, string cultureCode);
+
     /// <summary>Saves the title, address, status and search settings.</summary>
     /// <param name="details">The values to save. An unchanged page is not archived.</param>
     /// <returns>The updated version, or a failure key when the title, slug, or permission check fails.</returns>
@@ -448,6 +463,65 @@ public class PageAuthoringService : IPageAuthoringService
         });
 
         return PageAuthoringResult.Success(version);
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<string>> ListTranslationCulturesAsync(Guid pageId)
+    {
+        int? tenantId = workContext.CurrentTenant?.Id;
+
+        List<string> cultures;
+        using (var connection = versionService.OpenConnection())
+        {
+            cultures = connection
+                .Query(version =>
+                    version.TenantId == tenantId &&
+                    version.PageId == pageId &&
+                    version.CultureCode != null &&
+                    version.Status != VersionStatus.Archived)
+                .Select(version => version.CultureCode)
+                .Distinct()
+                .ToList();
+        }
+
+        return await Task.FromResult(cultures
+            .OrderBy(culture => culture, StringComparer.OrdinalIgnoreCase)
+            .ToList());
+    }
+
+    /// <inheritdoc />
+    public async Task<PageAuthoringResult> DeleteTranslationAsync(Guid pageId, string cultureCode)
+    {
+        if (!await CanWriteAsync())
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotAllowed);
+        }
+
+        cultureCode = NormalizeCulture(cultureCode);
+        if (cultureCode is null)
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotFound);
+        }
+
+        var page = await pageService.FindOneAsync(pageId);
+        if (page is null)
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotFound);
+        }
+
+        if (page.TenantId != workContext.CurrentTenant.Id)
+        {
+            return PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotAllowed);
+        }
+
+        int deleted = await versionService.DeleteAsync(version =>
+            version.TenantId == page.TenantId &&
+            version.PageId == pageId &&
+            version.CultureCode == cultureCode);
+
+        return deleted == 0
+            ? PageAuthoringResult.Failure(InfernoCmsLocalizableStrings.Pages.ErrorNotFound)
+            : PageAuthoringResult.Success();
     }
 
     /// <inheritdoc />

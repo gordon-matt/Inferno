@@ -25,6 +25,7 @@ public partial class Design
     private bool publishing;
     private bool showDetails;
     private bool showHistory;
+    private bool showTranslator;
     private bool savingDetails;
     private bool restoring;
     private string detailsError;
@@ -90,6 +91,7 @@ public partial class Design
             loadedVersionId = VersionId;
             showDetails = false;
             showHistory = false;
+            showTranslator = false;
             savedAt = null;
             await LoadAsync();
         }
@@ -333,6 +335,33 @@ public partial class Design
         finally
         {
             restoring = false;
+        }
+    }
+
+    /// <summary>Leaves the editor when the open version was the translation just removed, so the designer is not left on a version that no longer exists.</summary>
+    private async Task TranslationChangedAsync()
+    {
+        PageVersion version;
+        using (var connection = PageVersionService.OpenConnection())
+        {
+            version = connection.Query(candidate => candidate.Id == VersionId && candidate.TenantId == TenantId).FirstOrDefault();
+        }
+
+        if (version is not null && version.Status != VersionStatus.Archived)
+        {
+            return;
+        }
+
+        var ensured = await Authoring.EnsureFirstVersionAsync(pageId);
+        if (!ensured.Succeeded)
+        {
+            Toasts.Error(T[ensured.ErrorKey]);
+            return;
+        }
+
+        if (ensured.Version.Id != VersionId)
+        {
+            NavigationManager.NavigateTo($"/admin/pages/design/{ensured.Version.Id}");
         }
     }
 

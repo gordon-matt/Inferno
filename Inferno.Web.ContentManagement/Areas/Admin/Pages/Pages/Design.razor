@@ -36,6 +36,9 @@ else
             }
         </div>
         <div class="inferno-design-actions">
+            <button type="button" class="nf-button" @onclick="() => showTranslator = true">
+                <Icon Name="translate" Size="16" /> @T[InfernoCmsLocalizableStrings.Pages.Translate]
+            </button>
             @if (cultures.Count > 1)
             {
                 <select class="nf-select" aria-label="@T[InfernoCmsLocalizableStrings.Pages.Language]" value="@CultureValue" @onchange="args => ChangeCultureAsync(args.Value?.ToString())">
@@ -177,6 +180,8 @@ else
                     </div>
                 </li>
             }
-        </ol>
+            </ol>
     }
 </Drawer>
+
+<PageTranslator Item="@(showTranslator ? page : null)" SelectedCulture="@cultureCode" OnClose="() => showTranslator = false" OnChanged="TranslationChangedAsync" />

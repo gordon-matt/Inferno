@@ -29,6 +29,7 @@ public partial class Index
 
     private bool creating;
     private bool saving;
+    private Page translating;
     private NewPageForm newPage = new();
     private string createError;
     private List<(Page Page, int Depth)> parentOptions = [];
@@ -131,6 +132,10 @@ public partial class Index
     }
 
     private void CancelCreate() => creating = false;
+
+    private void OpenTranslator(Page page) => translating = page;
+
+    private void CloseTranslator() => translating = null;
 
     private void ParentChanged(ChangeEventArgs args) =>
         newPage.ParentId = Guid.TryParse(args.Value?.ToString(), out var parentId) ? parentId : null;
