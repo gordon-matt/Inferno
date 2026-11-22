@@ -10,7 +10,10 @@ namespace Inferno.Web.Security.Permissions;
 public sealed record PermissionRequirement(string Permission) : IAuthorizationRequirement;
 
 /// <summary>Succeeds a <see cref="PermissionRequirement"/> when the user's grants cover it.</summary>
-public sealed class PermissionAuthorizationHandler(IPermissionStore store, IPermissionCatalog catalog)
+public sealed class PermissionAuthorizationHandler(
+    IPermissionStore store,
+    IPermissionCatalog catalog,
+    Inferno.Web.Tenants.TenantAdminImpersonation impersonation)
     : AuthorizationHandler<PermissionRequirement>
 {
     /// <summary>
@@ -29,6 +32,11 @@ public sealed class PermissionAuthorizationHandler(IPermissionStore store, IPerm
         }
 
         var granted = await store.GetGrantedAsync(userId);
+        if (impersonation.IsActive)
+        {
+            granted = granted.AsTenantAdministrator();
+        }
+
         if (catalog.IsGranted(requirement.Permission, granted))
         {
             context.Succeed(requirement);

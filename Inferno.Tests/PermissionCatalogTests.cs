@@ -69,6 +69,18 @@ public class PermissionCatalogTests
     }
 
     [Fact]
+    public void AsTenantAdministrator_DropsHostAccess()
+    {
+        var host = new GrantedPermissions(true, true, new HashSet<string> { StandardPolicies.FullAccess });
+        var view = host.AsTenantAdministrator();
+
+        Assert.True(view.IsAdministrator);
+        Assert.False(view.IsHostAdministrator);
+        Assert.False(Catalog.IsGranted(StandardPolicies.FullAccess, view));
+        Assert.True(Catalog.IsGranted(WRITE, view));
+    }
+
+    [Fact]
     public void IsGranted_HostAdministrator_GetsFullAccess()
     {
         var granted = new GrantedPermissions(true, true, new HashSet<string>());

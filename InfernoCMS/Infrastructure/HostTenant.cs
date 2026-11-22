@@ -3,6 +3,7 @@ using Flatmate;
 using Inferno.Tenants.Entities;
 using Inferno.Tenants.Services;
 using Inferno.Web.Security.Permissions;
+using Inferno.Web.Tenants;
 
 namespace InfernoCMS.Infrastructure;
 
@@ -71,7 +72,9 @@ public static class HostTenantMiddleware
     /// <returns>The same <paramref name="app"/>, so further middleware can be chained.</returns>
     public static IApplicationBuilder UseHostTenant(this IApplicationBuilder app) => app.Use(async (context, next) =>
     {
+        int? hostTenantId = context.GetTenant<Tenant>()?.Id;
         bool hostAdministrator = await HostTenantGate.IsHostAdministratorAsync(context);
+        bool impersonating = false;
         if (hostAdministrator
             && context.Request.Cookies.TryGetValue(HostTenantCookie.Name, out string raw)
             && int.TryParse(raw, out int tenantId))
@@ -83,6 +86,8 @@ public static class HostTenantMiddleware
             }
             else
             {
+                // A different tenant is viewed as that tenant's administrator, not as the host.
+                impersonating = tenant.Id != hostTenantId;
                 context.SetTenantContext(new TenantContext<Tenant>(tenant));
             }
         }
@@ -90,6 +95,9 @@ public static class HostTenantMiddleware
         {
             HostTenantCookie.Clear(context);
         }
+
+        context.Items[TenantAdminImpersonation.ItemKey] = impersonating;
+        context.RequestServices.GetRequiredService<TenantAdminImpersonation>().IsActive = impersonating;
 
         if (context.GetTenant<Tenant>() is null
             && hostAdministrator

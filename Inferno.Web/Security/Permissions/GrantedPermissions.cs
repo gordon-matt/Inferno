@@ -1,3 +1,5 @@
+using Inferno.Security;
+
 namespace Inferno.Web.Security.Permissions;
 
 /// <summary>What a user holds right now: their own grants plus those of their roles.</summary>
@@ -8,6 +10,24 @@ public sealed record GrantedPermissions(bool IsAdministrator, bool IsHostAdminis
 {
     /// <summary>No grants and neither administrator flag.</summary>
     public static GrantedPermissions None { get; } = new(false, false, new HashSet<string>(StringComparer.Ordinal));
+
+    /// <summary>
+    /// The same grants a tenant administrator holds. Host-wide access is removed.
+    /// A caller who is not a host administrator is returned unchanged.
+    /// </summary>
+    /// <returns>The tenant-administrator view of these grants.</returns>
+    public GrantedPermissions AsTenantAdministrator()
+    {
+        if (!IsHostAdministrator)
+        {
+            return this;
+        }
+
+        var permissions = Permissions
+            .Where(name => name != StandardPolicies.FullAccess)
+            .ToHashSet(StringComparer.Ordinal);
+        return new GrantedPermissions(IsAdministrator: true, IsHostAdministrator: false, permissions);
+    }
 }
 
 /// <summary>The permissions one role gives its members.</summary>

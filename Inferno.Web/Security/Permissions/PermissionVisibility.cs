@@ -7,7 +7,10 @@ namespace Inferno.Web.Security.Permissions;
 /// and the menu is drawn synchronously, so the last answer for this circuit is kept.
 /// A link with no policies is shown. A link whose grants cannot be read is hidden.
 /// </summary>
-public sealed class PermissionVisibility(IPermissionStore store, IPermissionCatalog catalog)
+public sealed class PermissionVisibility(
+    IPermissionStore store,
+    IPermissionCatalog catalog,
+    Inferno.Web.Tenants.TenantAdminImpersonation impersonation = null)
 {
     private readonly Dictionary<string, GrantedPermissions> remembered = new(StringComparer.Ordinal);
 
@@ -41,7 +44,7 @@ public sealed class PermissionVisibility(IPermissionStore store, IPermissionCata
             return;
         }
 
-        remembered[userId] = await store.GetGrantedAsync(userId, cancellationToken);
+        remembered[userId] = ForView(await store.GetGrantedAsync(userId, cancellationToken));
     }
 
     private bool TryGet(ClaimsPrincipal user, out GrantedPermissions granted)
@@ -55,12 +58,16 @@ public sealed class PermissionVisibility(IPermissionStore store, IPermissionCata
 
         if (store.TryGetCached(userId, out granted))
         {
+            granted = ForView(granted);
             remembered[userId] = granted;
             return true;
         }
 
         return remembered.TryGetValue(userId, out granted);
     }
+
+    private GrantedPermissions ForView(GrantedPermissions granted) =>
+        impersonation is { IsActive: true } ? granted.AsTenantAdministrator() : granted;
 
     private static string[] Required(IEnumerable<string> policies) =>
         (policies ?? [])

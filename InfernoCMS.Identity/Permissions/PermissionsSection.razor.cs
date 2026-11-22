@@ -5,6 +5,7 @@ using IdentityNexus.Services.Extensibility;
 using Inferno.Security;
 using Inferno.Web.Security;
 using Inferno.Web.Security.Permissions;
+using Inferno.Web.Tenants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -19,6 +20,9 @@ public partial class PermissionsSection : IdentityNexusSection
 
     [Inject]
     private IPermissionStore Store { get; set; } = default!;
+
+    [Inject]
+    private TenantAdminImpersonation Impersonation { get; set; } = default!;
 
     [Inject]
     private IAuthorizationService Authorization { get; set; } = default!;
@@ -48,6 +52,10 @@ public partial class PermissionsSection : IdentityNexusSection
         var state = await Authentication.GetAuthenticationStateAsync();
         canEdit = (await Authorization.AuthorizeAsync(state.User, InfernoWebPolicies.MembershipPermissionsWrite)).Succeeded;
         mine = await Store.GetGrantedAsync(state.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        if (Impersonation.IsActive)
+        {
+            mine = mine.AsTenantAdministrator();
+        }
 
         if (Subject.Id is not null)
         {

@@ -27,6 +27,7 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
         builder.Register<IWebHelper, WebHelper>(ServiceLifetime.Scoped);
         builder.Register<IWorkContext, WorkContext>(ServiceLifetime.Scoped);
+        builder.RegisterSelf<Tenants.TenantAdminImpersonation>(ServiceLifetime.Scoped);
 
         // Security
         builder.Register<Security.Permissions.IPermissionProvider, Security.Permissions.InfernoWebPermissionProvider>(ServiceLifetime.Singleton);

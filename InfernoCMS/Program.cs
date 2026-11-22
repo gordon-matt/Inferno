@@ -41,6 +41,7 @@ using Localize.Components.Pages;
 using LogVue;
 using LogVue.Data.Sql;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -186,6 +187,7 @@ services.AddRouting(routeOptions =>
 services.AddFlatmate<Tenant, InfernoTenantResolver>();
 services.AddFlatmateCircuit<Tenant>();
 services.AddCurrentTenantCircuit();
+services.AddScoped<CircuitHandler, TenantAdminImpersonationCircuitHandler>();
 
 #region Themes
 
@@ -397,6 +399,12 @@ app.Use(async (context, next) =>
 app.UseRouting();
 
 app.UseAuthentication();
+if (databaseInstalled)
+{
+    // Before authorization, so a switched tenant is judged as that tenant's administrator.
+    app.UseHostTenant();
+}
+
 app.UseAuthorization();
 app.UseAntiforgery();
 
@@ -405,7 +413,6 @@ app.UseInferno();
 if (databaseInstalled)
 {
     app.UseSecurityHeaders();
-    app.UseHostTenant();
     app.UseKnownTenant();
     app.UseMediaGuard();
 
