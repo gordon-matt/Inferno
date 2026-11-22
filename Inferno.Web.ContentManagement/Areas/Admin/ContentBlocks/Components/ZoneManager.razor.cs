@@ -23,9 +23,11 @@ public partial class ZoneManager
     private bool saving;
     private bool wasOpen;
 
+    /// <summary>Whether the drawer is open. Zones are loaded when it opens.</summary>
     [Parameter]
     public bool Open { get; set; }
 
+    /// <summary>Raised when the drawer asks to close.</summary>
     [Parameter]
     public EventCallback OnClose { get; set; }
 

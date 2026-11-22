@@ -4,17 +4,22 @@ using Pluginz.Registry;
 
 namespace Inferno.Web.Events;
 
+/// <inheritdoc cref="IEventPublisher" />
 public class EventPublisher : IEventPublisher
 {
     private readonly ISubscriptionService subscriptionService;
     private readonly IPluginRegistry plugins;
 
+    /// <summary>Creates the publisher.</summary>
+    /// <param name="subscriptionService">Resolves the handlers for an event type.</param>
+    /// <param name="plugins">Used to skip a handler whose plugin is inactive.</param>
     public EventPublisher(ISubscriptionService subscriptionService, IPluginRegistry plugins)
     {
         this.subscriptionService = subscriptionService;
         this.plugins = plugins;
     }
 
+    /// <inheritdoc />
     public virtual void Publish<T>(T eventMessage)
     {
         // A subscriber that ships inside a plugin runs only while that plugin is active. Host subscribers always run.

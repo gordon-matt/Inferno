@@ -5,12 +5,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Inferno.Web.Messaging.Entities;
 
+/// <summary>The subject and body of a <see cref="MessageTemplate"/> for one culture.</summary>
 public class MessageTemplateVersion : BaseEntity<int>
 {
+    /// <summary>The template this version belongs to.</summary>
     public int MessageTemplateId { get; set; }
 
+    /// <summary>The culture of this version. <see langword="null"/> is the fallback when the requested culture has no version.</summary>
     public string CultureCode { get; set; }
 
+    /// <summary>The subject. Liquid tokens are filled without HTML encoding when the message is queued.</summary>
     public string Subject { get; set; }
 
     /// <summary>
@@ -18,10 +22,13 @@ public class MessageTemplateVersion : BaseEntity<int>
     /// </summary>
     public string Data { get; set; }
 
+    /// <summary>When this version was created, in UTC.</summary>
     public DateTime DateCreatedUtc { get; set; }
 
+    /// <summary>When this version was last changed, in UTC.</summary>
     public DateTime DateModifiedUtc { get; set; }
 
+    /// <summary>The template this version belongs to.</summary>
     public virtual MessageTemplate MessageTemplate { get; set; }
 }
 

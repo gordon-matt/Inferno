@@ -1,7 +1,9 @@
 ﻿namespace Inferno.Web.Configuration;
 
+/// <summary>A settings document stored as JSON and edited in the admin.</summary>
 public interface ISettings
 {
+    /// <summary>The label stored with the setting and shown in the admin.</summary>
     string Name { get; }
 
     /// <summary>
@@ -10,5 +12,6 @@ public interface ISettings
     /// </summary>
     bool IsTenantRestricted { get; }
 
+    /// <summary>The component that edits this settings type.</summary>
     Type EditorType { get; }
 }

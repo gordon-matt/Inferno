@@ -8,20 +8,24 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Inferno.Plugins.Messaging.Forumz;
 
 /// <summary>
-/// Reading stays public. Writing and moderating use Inferno permissions, which already treat
-/// an administrator as holding every permission.
+/// Reading stays public. Writing uses the forum write permission. Moderating and managing both use
+/// the forum moderate permission. An administrator holds every permission.
 /// </summary>
 public sealed class InfernoForumAccess(
     IAuthorizationService authorization,
     IHttpContextAccessor httpContextAccessor,
     IServiceProvider services) : IForumAccess
 {
+    /// <inheritdoc />
     public bool CanRead() => true;
 
+    /// <inheritdoc />
     public bool CanWrite() => Allows(ForumzPolicies.Write);
 
+    /// <inheritdoc />
     public bool CanModerate() => Allows(ForumzPolicies.Moderate);
 
+    /// <inheritdoc />
     public bool CanManage() => Allows(ForumzPolicies.Moderate);
 
     private bool Allows(string policy)

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
+/// <summary>Shows an authenticator key and turns two-factor authentication on when the code matches.</summary>
 public class EnableAuthenticatorModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -17,6 +18,10 @@ public class EnableAuthenticatorModel : PageModel
 
     private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
+    /// <summary>Creates the page with the authenticator services.</summary>
+    /// <param name="userManager">Loads and resets the key, verifies the code, and enables two-factor authentication.</param>
+    /// <param name="logger">Records a successful enable.</param>
+    /// <param name="urlEncoder">Encodes the issuer and email in the authenticator URI.</param>
     public EnableAuthenticatorModel(
         UserManager<ApplicationUser> userManager,
         ILogger<EnableAuthenticatorModel> logger,
@@ -27,49 +32,28 @@ public class EnableAuthenticatorModel : PageModel
         _urlEncoder = urlEncoder;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The authenticator key, grouped and shown in lower case.</summary>
     public string SharedKey { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The otpauth URI for the QR code. The issuer is the Identity UI name.</summary>
     public string AuthenticatorUri { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>Ten new recovery codes, set only when the account had none.</summary>
     [TempData]
     public string[] RecoveryCodes { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>A message that the authenticator was verified, shown on the next page.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The verification code posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The code from the authenticator app.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The verification code. Spaces and hyphens are removed before it is checked.</summary>
         [Required]
         [StringLength(7, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Text)]
@@ -77,6 +61,8 @@ public class EnableAuthenticatorModel : PageModel
         public string Code { get; set; }
     }
 
+    /// <summary>Loads the shared key and QR code. A missing key is reset before it is shown.</summary>
+    /// <returns>This page, or not found when the user is gone.</returns>
     public async Task<IActionResult> OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -90,6 +76,14 @@ public class EnableAuthenticatorModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Turns two-factor authentication on when the code matches.
+    /// Generates ten recovery codes when the account has none.
+    /// </summary>
+    /// <returns>
+    /// The recovery-code page when new codes were generated, the two-factor page when codes already exist,
+    /// this page when the code is invalid, or not found when the user is gone.
+    /// </returns>
     public async Task<IActionResult> OnPostAsync()
     {
         var user = await _userManager.GetUserAsync(User);

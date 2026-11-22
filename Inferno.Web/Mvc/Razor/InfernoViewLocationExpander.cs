@@ -7,12 +7,22 @@ using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace Inferno.Web.Mvc.Razor;
 
+/// <summary>
+/// Adds view locations from the <see cref="ILocationFormatProvider"/> that lives in the controller's assembly.
+/// A view name that contains a dot is also looked up as <c>/{name}.cshtml</c>.
+/// </summary>
 public class InfernoViewLocationExpander : IViewLocationExpander
 {
+    /// <summary>Providers resolved the first time an expander is constructed. Later instances reuse them.</summary>
     protected static IEnumerable<ILocationFormatProvider> locationFormatProviders;
+
+    /// <summary>View, partial, and layout formats keyed by the provider assembly's full name.</summary>
     protected static Dictionary<string, List<string>> allViewLocationFormats;
+
+    /// <summary>Area view, partial, and layout formats keyed by the provider assembly's full name.</summary>
     protected static Dictionary<string, List<string>> allAreaViewLocationFormats;
 
+    /// <summary>Resolves the location providers once and caches their formats by assembly name.</summary>
     public InfernoViewLocationExpander()
     {
         if (locationFormatProviders == null)
@@ -23,10 +33,19 @@ public class InfernoViewLocationExpander : IViewLocationExpander
         }
     }
 
+    /// <summary>Adds no values. The locations do not vary per request.</summary>
+    /// <param name="context">The expander context. It is not read.</param>
     public virtual void PopulateValues(ViewLocationExpanderContext context)
     {
     }
 
+    /// <summary>
+    /// Prepends <c>/{view name}.cshtml</c> when the view name contains a dot, then appends the formats
+    /// registered for the controller's assembly.
+    /// </summary>
+    /// <param name="context">The view being located. Used for the view name and the controller type.</param>
+    /// <param name="viewLocations">The locations already proposed.</param>
+    /// <returns>The locations, with this expander's formats appended.</returns>
     public virtual IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)
     {
         if (context.ViewName.Contains('.'))

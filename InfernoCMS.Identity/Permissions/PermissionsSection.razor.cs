@@ -66,6 +66,17 @@ public partial class PermissionsSection : IdentityNexusSection
         loaded = true;
     }
 
+    /// <summary>
+    /// Replaces the user or role grants with the boxes that are ticked.
+    /// Succeeds without writing when the caller cannot edit, the role is Administrators, or nothing changed.
+    /// </summary>
+    /// <param name="id">The user or role id the editor just saved.</param>
+    /// <param name="cancellationToken">Observed by the permission save. Not observed when the section has nothing to write.</param>
+    /// <returns>
+    /// A successful <see cref="Result"/> when nothing is written or the save succeeds.
+    /// A forbidden result when a newly ticked permission is one the caller does not hold.
+    /// Otherwise the result from <see cref="IPermissionStore"/>.
+    /// </returns>
     public override async Task<Result> SaveAsync(string id, CancellationToken cancellationToken = default)
     {
         if (!canEdit || IsAdministratorsRole || selected.SetEquals(saved))

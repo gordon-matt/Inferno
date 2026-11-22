@@ -6,7 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Inferno.Caching;
 
 /// <summary>
-/// Represents a MemoryCache
+/// <see cref="IMemoryCache"/> wrapper that keeps its own key list, because the memory cache cannot be enumerated.
+/// A replaced entry stays on that list. Removal, expiry, and <see cref="Clear"/> take it off.
+/// <see cref="Dispose"/> disposes the <see cref="IMemoryCache"/> resolved from the provider, which is the shared cache when that registration is a singleton.
 /// </summary>
 public class MemoryCacheManager : ICacheManager, IDisposable
 {
@@ -14,26 +16,18 @@ public class MemoryCacheManager : ICacheManager, IDisposable
     private readonly ConcurrentDictionary<string, byte> keys;
     private bool isDisposed;
 
+    /// <summary>Reads <see cref="IMemoryCache"/> from <paramref name="serviceProvider"/>.</summary>
+    /// <param name="serviceProvider">The provider that holds the memory cache. The cache must be registered.</param>
     public MemoryCacheManager(IServiceProvider serviceProvider)
     {
         keys = new ConcurrentDictionary<string, byte>();
         cache = serviceProvider.GetService<IMemoryCache>();
     }
 
-    /// <summary>
-    /// Gets or sets the value associated with the specified key.
-    /// </summary>
-    /// <typeparam name="T">Type</typeparam>
-    /// <param name="key">The key of the value to get.</param>
-    /// <returns>The value associated with the specified key.</returns>
+    /// <inheritdoc />
     public virtual T Get<T>(string key) => cache.Get<T>(key);
 
-    /// <summary>
-    /// Adds the specified key and object to the cache.
-    /// </summary>
-    /// <param name="key">key</param>
-    /// <param name="data">Data</param>
-    /// <param name="cacheTimeInMinutes">Cache time</param>
+    /// <inheritdoc />
     public virtual void Set(string key, object data, int cacheTimeInMinutes)
     {
         if (data == null)
@@ -56,11 +50,7 @@ public class MemoryCacheManager : ICacheManager, IDisposable
         keys.TryAdd(key, 0);
     }
 
-    /// <summary>
-    /// Gets a value indicating whether the value associated with the specified key is cached
-    /// </summary>
-    /// <param name="key">key</param>
-    /// <returns>Result</returns>
+    /// <inheritdoc />
     public virtual bool IsSet(string key)
     {
         // It might be set in "keys", but expired (set to null) in the actual cache!
@@ -77,20 +67,14 @@ public class MemoryCacheManager : ICacheManager, IDisposable
         return isSet;
     }
 
-    /// <summary>
-    /// Removes the value with the specified key from the cache
-    /// </summary>
-    /// <param name="key">/key</param>
+    /// <inheritdoc />
     public virtual void Remove(string key)
     {
         cache.Remove(key);
         keys.TryRemove(key, out _);
     }
 
-    /// <summary>
-    /// Removes items by pattern
-    /// </summary>
-    /// <param name="pattern">pattern</param>
+    /// <inheritdoc />
     public virtual void RemoveByPattern(string pattern)
     {
         var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -110,9 +94,7 @@ public class MemoryCacheManager : ICacheManager, IDisposable
         }
     }
 
-    /// <summary>
-    /// Clear all cache data
-    /// </summary>
+    /// <inheritdoc />
     public virtual void Clear()
     {
         foreach (string key in keys.Keys)
@@ -125,6 +107,8 @@ public class MemoryCacheManager : ICacheManager, IDisposable
 
     #region IDisposable Implementation
 
+    /// <summary>Disposes the resolved memory cache when <paramref name="disposing"/> is <see langword="true"/>.</summary>
+    /// <param name="disposing"><see langword="true"/> when called from <see cref="Dispose()"/>.</param>
     protected virtual void Dispose(bool disposing)
     {
         if (!isDisposed)
@@ -147,6 +131,7 @@ public class MemoryCacheManager : ICacheManager, IDisposable
     //     Dispose(disposing: false);
     // }
 
+    /// <summary>Disposes the resolved memory cache.</summary>
     public void Dispose()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

@@ -8,57 +8,139 @@ using Microsoft.Extensions.Logging;
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 
 /// <summary>A kind of block an editor can add. <see cref="TypeName"/> is what gets stored on the block.</summary>
+/// <param name="TypeName">The type name stored on the block.</param>
+/// <param name="Name">The name shown to the editor.</param>
+/// <param name="EditorType">The editor component for this type.</param>
 public sealed record BlockTypeOption(string TypeName, string Name, Type EditorType);
 
+/// <summary>A zone an editor can assign a block to.</summary>
+/// <param name="Id">The zone identifier.</param>
+/// <param name="Name">The zone name.</param>
 public sealed record ZoneOption(Guid Id, string Name);
 
 /// <summary>A zone with how many blocks sit in it, so a zone that is still in use is not removed by mistake.</summary>
+/// <param name="Id">The zone identifier.</param>
+/// <param name="Name">The zone name.</param>
+/// <param name="BlockCount">How many blocks are in the zone, including blocks assigned to pages.</param>
 public sealed record ZoneSummary(Guid Id, string Name, int BlockCount);
 
 /// <summary>A block's values in one culture. <see cref="Exists"/> is false when the block has not been translated yet and the values are the default ones.</summary>
+/// <param name="CultureCode">The culture the values belong to.</param>
+/// <param name="BlockValues">The serialized values for that culture, or the default values when <paramref name="Exists"/> is <see langword="false"/>.</param>
+/// <param name="Exists"><see langword="true"/> when a translation is stored for the culture.</param>
 public sealed record BlockTranslation(string CultureCode, string BlockValues, bool Exists);
 
+/// <summary>Edits zones, content blocks, and block translations for one tenant.</summary>
 public interface IContentBlockAdminService
 {
+    /// <summary>Lists the registered block types, one per stored type name, ordered by display name.</summary>
+    /// <returns>The types an editor can add.</returns>
     IReadOnlyList<BlockTypeOption> GetBlockTypes();
 
+    /// <summary>Lists the tenant's zones by name.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <returns>The zones.</returns>
     Task<Result<IReadOnlyList<ZoneOption>>> ListZonesAsync(int tenantId);
 
+    /// <summary>Lists the tenant's zones with how many blocks each one holds.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <returns>The zones and their block counts.</returns>
     Task<Result<IReadOnlyList<ZoneSummary>>> ListZoneSummariesAsync(int tenantId);
 
     /// <summary>Adds a zone when <paramref name="id"/> is empty, otherwise renames it. Names are unique within the tenant.</summary>
+    /// <param name="tenantId">The tenant that owns the zone.</param>
+    /// <param name="id"><see cref="Guid.Empty"/> adds a zone. Any other id renames that zone.</param>
+    /// <param name="name">The zone name. Leading and trailing whitespace is removed.</param>
+    /// <returns>
+    /// The saved zone. Invalid when the name is missing, longer than 255 characters, or already used.
+    /// Not found when the zone is missing or belongs to another tenant.
+    /// </returns>
     Task<Result<ZoneOption>> SaveZoneAsync(int tenantId, Guid id, string name);
 
     /// <summary>Removes an empty zone. A zone that still holds blocks is refused.</summary>
+    /// <param name="tenantId">The tenant that owns the zone.</param>
+    /// <param name="id">The zone to remove.</param>
+    /// <returns>Success, not found, or a conflict when the zone still has blocks.</returns>
     Task<Result> DeleteZoneAsync(int tenantId, Guid id);
 
     /// <summary>
-    /// Blocks in the tenant's zones: the site-wide ones when <paramref name="pageId"/> is null,
+    /// Lists blocks in the tenant's zones: the site-wide ones when <paramref name="pageId"/> is <see langword="null"/>,
     /// otherwise only the ones assigned to that page.
     /// </summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="search">Matches the title or block name. Whitespace lists every block in the filter.</param>
+    /// <param name="zoneId">When set, limits the list to that zone. A zone from another tenant yields no blocks.</param>
+    /// <param name="pageId">The page, or <see langword="null"/> for blocks that are not assigned to a page.</param>
+    /// <returns>The blocks, ordered by position and then title.</returns>
     Task<Result<IReadOnlyList<ContentBlock>>> ListAsync(int tenantId, string search, Guid? zoneId, Guid? pageId = null);
 
-    /// <summary>The name of a page in the tenant, for headings on the page's block list.</summary>
+    /// <summary>Gets the name of a page in the tenant, for headings on the page's block list.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="pageId">The page. <see cref="Guid.Empty"/> is not found.</param>
+    /// <returns>The page name, or not found when the page is missing or belongs to another tenant.</returns>
     Task<Result<string>> GetPageNameAsync(int tenantId, Guid pageId);
 
-    /// <summary>The block's values for a culture, or its default values when there is no translation yet.</summary>
+    /// <summary>Gets the block's values for a culture, or its default values when there is no translation yet.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="blockId">The block.</param>
+    /// <param name="cultureCode">The culture. An unknown or empty culture is invalid.</param>
+    /// <returns>The translation. <see cref="BlockTranslation.Exists"/> is <see langword="false"/> when the values are the block's defaults.</returns>
     Task<Result<BlockTranslation>> GetTranslationAsync(int tenantId, Guid blockId, string cultureCode);
 
+    /// <summary>Lists the cultures the block has been translated into, in culture-code order.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="blockId">The block.</param>
+    /// <returns>The culture codes, or not found when the block is missing.</returns>
     Task<Result<IReadOnlyList<string>>> ListTranslationCulturesAsync(int tenantId, Guid blockId);
 
+    /// <summary>Stores the block's values for one culture and drops the cached block lists.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="blockId">The block.</param>
+    /// <param name="cultureCode">The culture. An unknown or empty culture is invalid.</param>
+    /// <param name="blockValues">The serialized values. Empty is stored as an empty JSON object.</param>
+    /// <returns>Success, not found, invalid, or an error when the translation cannot be saved.</returns>
     Task<Result> SaveTranslationAsync(int tenantId, Guid blockId, string cultureCode, string blockValues);
 
     /// <summary>Removes a translation, so the block shows its default values in that culture again.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="blockId">The block.</param>
+    /// <param name="cultureCode">The culture. An unknown or empty culture is invalid.</param>
+    /// <returns>Success, not found, invalid, or an error when the translation cannot be deleted.</returns>
     Task<Result> DeleteTranslationAsync(int tenantId, Guid blockId, string cultureCode);
 
+    /// <summary>Loads a block that belongs to one of the tenant's zones.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The block. <see cref="Guid.Empty"/> is not found.</param>
+    /// <returns>The block, or not found.</returns>
     Task<Result<ContentBlock>> GetAsync(int tenantId, Guid id);
 
     /// <summary>Inserts when <see cref="ContentBlock.Id"/> is empty, otherwise updates.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="block">The values to save.</param>
+    /// <returns>
+    /// The saved block. Invalid when the title, type, or zone is missing.
+    /// Not found when an existing block is missing, or when a new block names a page the tenant does not have.
+    /// </returns>
+    /// <remarks>
+    /// An update changes the title, zone, order, enabled flag, custom template path, and values.
+    /// The block type and page stay as they were. A new block stores an empty JSON object for its values.
+    /// </remarks>
     Task<Result<ContentBlock>> SaveAsync(int tenantId, ContentBlock block);
 
+    /// <summary>Deletes the block and its translations.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The block.</param>
+    /// <returns>Success, not found, or an error when the block cannot be deleted.</returns>
     Task<Result> DeleteAsync(int tenantId, Guid id);
 }
 
+/// <inheritdoc cref="IContentBlockAdminService" />
+/// <param name="blockTypes">The registered block types an editor can add.</param>
+/// <param name="zoneService">Loads and saves zones.</param>
+/// <param name="contentBlockService">Loads, saves, and deletes blocks, and clears their cache.</param>
+/// <param name="pageService">Resolves a page name and checks that a page belongs to the tenant.</param>
+/// <param name="localization">Reads and writes translated block values.</param>
+/// <param name="logger">Records save and delete failures.</param>
 public class ContentBlockAdminService(
     IEnumerable<IContentBlock> blockTypes,
     IZoneService zoneService,
@@ -72,12 +154,14 @@ public class ContentBlockAdminService(
 
     private static readonly string BlockEntityType = typeof(ContentBlock).FullName;
 
+    /// <inheritdoc />
     public IReadOnlyList<BlockTypeOption> GetBlockTypes() => blockTypes
         .Select(block => new BlockTypeOption(block.GetType().FullName, block.Name, block.EditorType))
         .DistinctBy(option => option.TypeName)
         .OrderBy(option => option.Name)
         .ToList();
 
+    /// <inheritdoc />
     public Task<Result<IReadOnlyList<ZoneOption>>> ListZonesAsync(int tenantId)
     {
         IReadOnlyList<ZoneOption> zones = TenantZones(tenantId)
@@ -87,6 +171,7 @@ public class ContentBlockAdminService(
         return Task.FromResult(Result.Success(zones));
     }
 
+    /// <inheritdoc />
     public Task<Result<IReadOnlyList<ZoneSummary>>> ListZoneSummariesAsync(int tenantId)
     {
         var zones = TenantZones(tenantId);
@@ -113,6 +198,7 @@ public class ContentBlockAdminService(
         return Task.FromResult(Result.Success(summaries));
     }
 
+    /// <inheritdoc />
     public async Task<Result<ZoneOption>> SaveZoneAsync(int tenantId, Guid id, string name)
     {
         string trimmed = name?.Trim();
@@ -157,6 +243,7 @@ public class ContentBlockAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result> DeleteZoneAsync(int tenantId, Guid id)
     {
         var zone = await zoneService.FindOneAsync(id);
@@ -185,6 +272,7 @@ public class ContentBlockAdminService(
         }
     }
 
+    /// <inheritdoc />
     public Task<Result<IReadOnlyList<ContentBlock>>> ListAsync(int tenantId, string search, Guid? zoneId, Guid? pageId = null)
     {
         var zoneIds = ZoneFilter(tenantId, zoneId);
@@ -201,18 +289,21 @@ public class ContentBlockAdminService(
         return Task.FromResult(Result.Success(blocks));
     }
 
+    /// <inheritdoc />
     public async Task<Result<string>> GetPageNameAsync(int tenantId, Guid pageId)
     {
         var page = pageId == Guid.Empty ? null : await pageService.FindOneAsync(pageId);
         return page is null || page.TenantId != tenantId ? Result<string>.NotFound() : Result.Success(page.Name);
     }
 
+    /// <inheritdoc />
     public async Task<Result<ContentBlock>> GetAsync(int tenantId, Guid id)
     {
         var block = await FindBlockAsync(tenantId, id);
         return block is null ? Result<ContentBlock>.NotFound() : Result.Success(block);
     }
 
+    /// <inheritdoc />
     public async Task<Result<ContentBlock>> SaveAsync(int tenantId, ContentBlock block)
     {
         var errors = Validate(tenantId, block.Title, block.BlockType, block.ZoneId, out var blockType);
@@ -269,6 +360,7 @@ public class ContentBlockAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result> DeleteAsync(int tenantId, Guid id)
     {
         var block = await FindBlockAsync(tenantId, id);
@@ -290,6 +382,7 @@ public class ContentBlockAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result<BlockTranslation>> GetTranslationAsync(int tenantId, Guid blockId, string cultureCode)
     {
         var block = await FindBlockAsync(tenantId, blockId);
@@ -308,6 +401,7 @@ public class ContentBlockAdminService(
         return Result.Success(new BlockTranslation(culture, stored ?? block.BlockValues ?? EMPTY_BLOCK_VALUES, stored is not null));
     }
 
+    /// <inheritdoc />
     public async Task<Result<IReadOnlyList<string>>> ListTranslationCulturesAsync(int tenantId, Guid blockId)
     {
         var block = await FindBlockAsync(tenantId, blockId);
@@ -319,6 +413,7 @@ public class ContentBlockAdminService(
         return Result.Success(localization.ListBlockCultures(BlockEntityType, block.Id.ToString()));
     }
 
+    /// <inheritdoc />
     public async Task<Result> SaveTranslationAsync(int tenantId, Guid blockId, string cultureCode, string blockValues)
     {
         var block = await FindBlockAsync(tenantId, blockId);
@@ -346,6 +441,7 @@ public class ContentBlockAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result> DeleteTranslationAsync(int tenantId, Guid blockId, string cultureCode)
     {
         var block = await FindBlockAsync(tenantId, blockId);

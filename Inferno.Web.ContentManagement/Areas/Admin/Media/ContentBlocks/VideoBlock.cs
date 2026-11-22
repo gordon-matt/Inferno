@@ -4,14 +4,18 @@ using Inferno.Web.ContentManagement.Areas.Admin.Media.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks;
 
+/// <summary>
+/// Settings for a video element. The display reads <see cref="ControlId"/>, <see cref="Source"/>, <see cref="Poster"/>,
+/// <see cref="Controls"/>, <see cref="AutoPlay"/>, <see cref="Muted"/>, <see cref="ResetOnEnd"/>, <see cref="DisableContextMenu"/>,
+/// and <see cref="Ratio"/>. The other values are stored with the block.
+/// </summary>
 public class VideoBlock : ContentBlockBase
 {
+    /// <summary>The id of the video element.</summary>
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ControlId)]
     public string ControlId { get; set; }
 
-    /// <summary>
-    /// Gets or sets the current source for the player.
-    /// </summary>
+    /// <summary>The media URL assigned to the video element's src.</summary>
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Source)]
     public string Source { get; set; }
 
@@ -29,9 +33,7 @@ public class VideoBlock : ContentBlockBase
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPause)]
     public bool AutoPause { get; set; }
 
-    /// <summary>
-    /// Gets or sets the autoplay state of the player.
-    /// </summary>
+    /// <summary>Whether the video element starts playback on its own.</summary>
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.AutoPlay)]
     public bool AutoPlay { get; set; }
 
@@ -41,14 +43,13 @@ public class VideoBlock : ContentBlockBase
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ClickToPlay)]
     public bool ClickToPlay { get; set; }
 
-    /// <summary>
-    /// Gets or sets the controls visibility of the player.
-    /// </summary>
+    /// <summary>Whether the video element shows its controls.</summary>
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Controls)]
     public bool Controls { get; set; }
 
     /// <summary>
-    /// Gets or sets the list of controls that are rendered by the player. Possible list of values are contained in VideoControlsType
+    /// Control identifiers an editor selected. Values come from <see cref="VideoControlsType"/>.
+    /// The HTML5 player does not render this list.
     /// </summary>
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.ControlsList)]
     public IEnumerable<string> ControlsList { get; set; }
@@ -71,9 +72,7 @@ public class VideoBlock : ContentBlockBase
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Muted)]
     public bool Muted { get; set; }
 
-    /// <summary>
-    /// Gets or sets the current poster image for the player.
-    /// </summary>
+    /// <summary>The image shown before playback. Assigned to the video element's poster.</summary>
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.VideoBlock.Poster)]
     public string Poster { get; set; }
 
@@ -136,10 +135,13 @@ public class VideoBlock : ContentBlockBase
 
     #region IContentBlock Members
 
+    /// <inheritdoc />
     public override string Name => "Video Block";
 
+    /// <inheritdoc />
     public override Type EditorType => typeof(VideoBlockEditor);
 
+    /// <inheritdoc />
     public override Type DisplayType => typeof(VideoBlockDisplay);
 
     #endregion IContentBlock Members

@@ -8,12 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace InfernoCMS.Identity.Infrastructure;
 
+/// <summary>Registers Inferno Identity and permission authorization.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Authorizes with permissions: every permission a module declares becomes a policy, and grants are read
     /// from the Identity claim tables. Administrators hold every permission without being granted any.
     /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The same <paramref name="services"/>, so registration can be chained.</returns>
     public static IServiceCollection AddInfernoAuthorization(this IServiceCollection services)
     {
         services.AddMemoryCache();
@@ -23,6 +26,11 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Registers application users and roles with confirmed accounts, a password and lockout policy, and the Inferno stores.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The Identity builder, so token providers and UI can be added.</returns>
     public static IdentityBuilder AddInfernoIdentity(this IServiceCollection services) =>
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
         {

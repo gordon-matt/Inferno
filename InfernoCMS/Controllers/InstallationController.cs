@@ -7,15 +7,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InfernoCMS.Controllers;
 
+/// <summary>Collects a connection string, migrates the database, and saves the first administrator.</summary>
 public class InstallationController : Controller
 {
     private readonly IWebHelper webHelper;
 
+    /// <summary>Creates the controller with <paramref name="webHelper"/>.</summary>
+    /// <param name="webHelper">Restarts the application after installation is saved.</param>
     public InstallationController(IWebHelper webHelper)
     {
         this.webHelper = webHelper;
     }
 
+    /// <summary>Shows the installation form, or sends the browser home when a connection string is already saved.</summary>
+    /// <returns>The installation form, or a redirect to the site root.</returns>
     [HttpGet("/installation")]
     public IActionResult Index()
     {
@@ -27,6 +32,16 @@ public class InstallationController : Controller
         return View(new InstallationModel());
     }
 
+    /// <summary>
+    /// Validates the form, migrates the database, saves the data settings, and seeds a default tenant when none exists.
+    /// The application restarts after the response completes.
+    /// </summary>
+    /// <param name="model">The posted installation choices.</param>
+    /// <returns>
+    /// A redirect to the site root when installation is already complete.
+    /// The form again when validation fails or migration throws.
+    /// Otherwise the completion view.
+    /// </returns>
     [HttpPost("/installation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(InstallationModel model)

@@ -1,5 +1,6 @@
 ﻿namespace Inferno.Identity;
 
+/// <summary>Catalog keys for Inferno Identity text.</summary>
 public static class InfernoIdentityLocalizableStrings
 {
     public const string ConfirmNewPassword = "Inferno.Identity/ConfirmNewPassword";

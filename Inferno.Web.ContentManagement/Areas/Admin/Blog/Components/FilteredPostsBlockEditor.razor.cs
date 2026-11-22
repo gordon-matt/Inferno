@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Components;
 
+/// <summary>Editor for a <see cref="Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks.FilteredPostsBlock"/>. Loads the tenant's categories and tags.</summary>
 public partial class FilteredPostsBlockEditor
 {
     private IReadOnlyList<CategoryDto> categories = [];

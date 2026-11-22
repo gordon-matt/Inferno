@@ -20,6 +20,9 @@ public static class CurrentTenantId
     /// Makes <paramref name="services"/> the scope tenant lookups use until the result is disposed.
     /// The circuit handler calls this, because a circuit's services are not the root container.
     /// </summary>
+    /// <param name="services">The scope whose tenant is visible until the result is disposed.</param>
+    /// <returns>A handle that restores the previous scope when disposed.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public static IDisposable Use(IServiceProvider services)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -33,6 +36,7 @@ public static class CurrentTenantId
     /// The current tenant, or null when this scope has none. Startup and a circuit with no request
     /// are both in that position, and guessing a tenant would show the wrong site.
     /// </summary>
+    /// <returns>The current tenant id, or <see langword="null"/> when the scope has none.</returns>
     public static int? Resolve()
     {
         var services = Ambient.Value;
@@ -65,6 +69,9 @@ public static class CurrentTenantId
     }
 
     /// <summary>The tenant visible to <paramref name="services"/>, or null when that scope has none.</summary>
+    /// <param name="services">The scope to read.</param>
+    /// <returns>The tenant id visible to <paramref name="services"/>, or <see langword="null"/> when that scope has none.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is <see langword="null"/>.</exception>
     public static int? Resolve(IServiceProvider services)
     {
         ArgumentNullException.ThrowIfNull(services);

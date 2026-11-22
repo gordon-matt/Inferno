@@ -10,6 +10,7 @@ namespace Inferno.Plugins.Messaging.Forumz;
 /// </summary>
 public sealed class InfernoForumTenantScope(IServiceProvider services) : IForumTenantScope
 {
+    /// <inheritdoc />
     public string? TenantId
     {
         get

@@ -8,6 +8,15 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages;
 /// </summary>
 public static class PageVersionSelector
 {
+    /// <summary>
+    /// Picks the version to render from <paramref name="versions"/>.
+    /// </summary>
+    /// <param name="versions">The versions that share a slug. <see langword="null"/> is treated as none.</param>
+    /// <param name="cultureCode">The culture to try first. Compared exactly, so <see langword="null"/> matches versions whose culture is <see langword="null"/>.</param>
+    /// <returns>
+    /// The newest published version for the culture, then its newest archived version,
+    /// then the same two steps for a <see langword="null"/> culture. <see langword="null"/> when nothing matches.
+    /// </returns>
     public static PageVersion Select(IEnumerable<PageVersion> versions, string cultureCode)
     {
         var matches = versions?.ToList() ?? [];

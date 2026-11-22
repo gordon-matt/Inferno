@@ -1,5 +1,6 @@
 namespace Inferno.Web.ContentManagement;
 
+/// <summary>Catalog keys for CMS text. Each value is a resource key, not the text shown to a visitor.</summary>
 public static class InfernoCmsLocalizableStrings
 {
     public static class Blog

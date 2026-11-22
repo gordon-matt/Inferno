@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Identity;
 
+/// <summary>Signed-in account management for <typeparamref name="TUser"/>: profile, password, external logins, and two-factor authentication.</summary>
+/// <typeparam name="TUser">The Identity user type.</typeparam>
 [Authorize]
 public abstract class InfernoManageController<TUser> : Controller
     where TUser : InfernoIdentityUser, new()
@@ -25,6 +27,13 @@ public abstract class InfernoManageController<TUser> : Controller
 
     private const string AuthenicatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
+    /// <summary>Stores the Identity services used by the management actions.</summary>
+    /// <param name="userManager">Loads and updates the signed-in user.</param>
+    /// <param name="signInManager">Refreshes the sign-in and lists external schemes.</param>
+    /// <param name="emailSender">Sends the verification email.</param>
+    /// <param name="logger">Records password and two-factor changes.</param>
+    /// <param name="urlEncoder">Encodes the site name and email in the authenticator URI.</param>
+    /// <param name="siteSettings">Supplies the site name used as the authenticator issuer.</param>
     public InfernoManageController(
       UserManager<TUser> userManager,
       SignInManager<TUser> signInManager,
@@ -41,9 +50,13 @@ public abstract class InfernoManageController<TUser> : Controller
         this.siteSettings = siteSettings;
     }
 
+    /// <summary>A message from the previous management action, shown on the next page.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
+    /// <summary>Shows the signed-in user's name, email, phone number, and confirmation state.</summary>
+    /// <returns>The profile view.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> Index()
     {
@@ -65,6 +78,10 @@ public abstract class InfernoManageController<TUser> : Controller
         return View(model);
     }
 
+    /// <summary>Saves a changed email or phone number, then returns to the profile page.</summary>
+    /// <param name="model">The posted email and phone number.</param>
+    /// <returns>A redirect to the profile page, or the form again when the model is invalid.</returns>
+    /// <exception cref="ApplicationException">The user cannot be loaded, or Identity rejects the email or phone update.</exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> Index(IndexViewModel model)
@@ -104,6 +121,10 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>Emails an address-confirmation link to the signed-in user.</summary>
+    /// <param name="model">The posted profile. It is not used when the model is valid.</param>
+    /// <returns>A redirect to the profile page, or the form again when the model is invalid.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> SendVerificationEmail(IndexViewModel model)
@@ -128,6 +149,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>Shows the change-password form, or the set-password page when the account has no password.</summary>
+    /// <returns>The change-password view, or a redirect to set a password.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> ChangePassword()
     {
@@ -147,6 +171,10 @@ public abstract class InfernoManageController<TUser> : Controller
         return View(model);
     }
 
+    /// <summary>Changes the password, then signs the user in again.</summary>
+    /// <param name="model">The current password and the replacement.</param>
+    /// <returns>A redirect back to this page after success, or the form with the Identity errors.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -176,6 +204,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(ChangePassword));
     }
 
+    /// <summary>Shows the set-password form, or the change-password page when the account already has a password.</summary>
+    /// <returns>The set-password view, or a redirect to change the password.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> SetPassword()
     {
@@ -196,6 +227,10 @@ public abstract class InfernoManageController<TUser> : Controller
         return View(model);
     }
 
+    /// <summary>Adds a password to an account that does not have one, then signs the user in again.</summary>
+    /// <param name="model">The password to add.</param>
+    /// <returns>A redirect back to this page after success, or the form with the Identity errors.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> SetPassword(SetPasswordViewModel model)
@@ -224,6 +259,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(SetPassword));
     }
 
+    /// <summary>Lists the external logins already linked and the schemes that are still available.</summary>
+    /// <returns>The external-logins view. Remove is offered when the account has a password or more than one login.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> ExternalLogins()
     {
@@ -243,6 +281,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return View(model);
     }
 
+    /// <summary>Clears the external cookie and challenges <paramref name="provider"/> to link it to the signed-in user.</summary>
+    /// <param name="provider">The authentication scheme name.</param>
+    /// <returns>The challenge result for <paramref name="provider"/>.</returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> LinkLogin(string provider)
@@ -256,6 +297,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return new ChallengeResult(provider, properties);
     }
 
+    /// <summary>Stores the external login returned by the provider and clears the external cookie.</summary>
+    /// <returns>A redirect to the external-logins page.</returns>
+    /// <exception cref="ApplicationException">The user cannot be loaded, the provider returned no login, or Identity rejects the link.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> LinkLoginCallback()
     {
@@ -284,6 +328,10 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(ExternalLogins));
     }
 
+    /// <summary>Unlinks the posted external login and signs the user in again.</summary>
+    /// <param name="model">The scheme name and provider key to remove.</param>
+    /// <returns>A redirect to the external-logins page.</returns>
+    /// <exception cref="ApplicationException">The user cannot be loaded, or Identity rejects the removal.</exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> RemoveLogin(RemoveLoginViewModel model)
@@ -305,6 +353,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(ExternalLogins));
     }
 
+    /// <summary>Shows whether an authenticator is configured, whether two-factor is on, and how many recovery codes remain.</summary>
+    /// <returns>The two-factor view.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> TwoFactorAuthentication()
     {
@@ -324,6 +375,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return View(model);
     }
 
+    /// <summary>Shows the warning before two-factor authentication is turned off.</summary>
+    /// <returns>The disable warning view.</returns>
+    /// <exception cref="ApplicationException">The user cannot be loaded, or two-factor authentication is already off.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> Disable2faWarning()
     {
@@ -335,6 +389,9 @@ public abstract class InfernoManageController<TUser> : Controller
             : (IActionResult)View(nameof(Disable2fa));
     }
 
+    /// <summary>Turns two-factor authentication off for the signed-in user.</summary>
+    /// <returns>A redirect to the two-factor page.</returns>
+    /// <exception cref="ApplicationException">The user cannot be loaded, or Identity rejects the change.</exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> Disable2fa()
@@ -355,6 +412,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(TwoFactorAuthentication));
     }
 
+    /// <summary>Shows the authenticator key and QR code. A missing key is reset before it is shown.</summary>
+    /// <returns>The authenticator setup view.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> EnableAuthenticator()
     {
@@ -380,6 +440,10 @@ public abstract class InfernoManageController<TUser> : Controller
         return View(model);
     }
 
+    /// <summary>Turns two-factor authentication on when the verification code matches. Spaces and hyphens are removed first.</summary>
+    /// <param name="model">The verification code from the authenticator app.</param>
+    /// <returns>A redirect to the recovery-code page after success, or the form when the code is invalid.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> EnableAuthenticator(EnableAuthenticatorViewModel model)
@@ -412,9 +476,14 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(GenerateRecoveryCodes));
     }
 
+    /// <summary>Shows the warning before the authenticator key is reset.</summary>
+    /// <returns>The reset warning view.</returns>
     [HttpGet]
     public virtual IActionResult ResetAuthenticatorWarning() => View(nameof(ResetAuthenticator));
 
+    /// <summary>Turns two-factor authentication off and replaces the authenticator key.</summary>
+    /// <returns>A redirect to authenticator setup.</returns>
+    /// <exception cref="ApplicationException">The signed-in user cannot be loaded.</exception>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> ResetAuthenticator()
@@ -432,6 +501,9 @@ public abstract class InfernoManageController<TUser> : Controller
         return RedirectToAction(nameof(EnableAuthenticator));
     }
 
+    /// <summary>Replaces the recovery codes with ten new ones.</summary>
+    /// <returns>The recovery-code view.</returns>
+    /// <exception cref="ApplicationException">The user cannot be loaded, or two-factor authentication is off.</exception>
     [HttpGet]
     public virtual async Task<IActionResult> GenerateRecoveryCodes()
     {

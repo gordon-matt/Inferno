@@ -5,52 +5,88 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Plugins.GoogleAnalytics;
 
+/// <summary>Users and page views for one day.</summary>
+/// <param name="Date">The day. <see cref="DateTime.MinValue"/> is dropped when the report date cannot be parsed.</param>
+/// <param name="Users">Active users.</param>
+/// <param name="Views">Page views.</param>
 public sealed record AnalyticsDay(DateTime Date, int Users, int Views);
 
+/// <summary>One ranked label, such as a page, source, or device.</summary>
+/// <param name="Label">The primary text. Missing dimension values become a fallback such as "Untitled" or "Unknown".</param>
+/// <param name="Value">The metric used to rank the row.</param>
+/// <param name="Detail">Optional secondary text, such as a page path. <see langword="null"/> when the report has no second dimension.</param>
 public sealed record AnalyticsRank(string Label, int Value, string? Detail = null);
 
+/// <summary>The dashboard's visitor, page, source, and device numbers for one tenant.</summary>
 public sealed class AnalyticsBundle
 {
+    /// <summary>Whether a property id and a readable service-account key were both present.</summary>
     public bool IsConfigured { get; init; }
 
+    /// <summary>Why the report is empty. <see langword="null"/> when the numbers were loaded.</summary>
     public string? Error { get; init; }
 
+    /// <summary>Where the user edits the missing settings. Defaults to the plugin settings page.</summary>
     public string SettingsUrl { get; init; } = GoogleAnalyticsPlugin.SettingsUrl;
 
+    /// <summary>Active users today.</summary>
     public int TodayUsers { get; init; }
 
+    /// <summary>Active users over the last 7 days.</summary>
     public int WeekUsers { get; init; }
 
+    /// <summary>Active users over the last 28 days.</summary>
     public int MonthUsers { get; init; }
 
+    /// <summary>Page views today.</summary>
     public int TodayViews { get; init; }
 
+    /// <summary>Page views over the last 7 days.</summary>
     public int WeekViews { get; init; }
 
+    /// <summary>Page views over the last 28 days.</summary>
     public int MonthViews { get; init; }
 
+    /// <summary>Daily users and views for up to the last 90 days. Days whose date did not parse are omitted.</summary>
     public IReadOnlyList<AnalyticsDay> Days { get; init; } = [];
 
+    /// <summary>The most viewed pages over the last 28 days, at most 8.</summary>
     public IReadOnlyList<AnalyticsRank> TopPages { get; init; } = [];
 
+    /// <summary>Session channel groups over the last 28 days, at most 6.</summary>
     public IReadOnlyList<AnalyticsRank> Sources { get; init; } = [];
 
+    /// <summary>Device categories over the last 28 days, at most 6.</summary>
     public IReadOnlyList<AnalyticsRank> Devices { get; init; } = [];
 
+    /// <summary>A bundle that tells the widget to ask for a property id and a service-account key.</summary>
+    /// <returns>A bundle with <see cref="IsConfigured"/> false.</returns>
     public static AnalyticsBundle NotConfigured() => new()
     {
         IsConfigured = false,
         Error = "Add a GA4 property ID and a service account key to show visitor numbers.",
     };
 
+    /// <summary>A configured bundle whose reports failed.</summary>
+    /// <param name="error">The message to show.</param>
+    /// <returns>A bundle with <see cref="IsConfigured"/> true and <see cref="Error"/> set.</returns>
     public static AnalyticsBundle Failed(string error) => new() { IsConfigured = true, Error = error };
 }
 
+/// <summary>
+/// Builds the dashboard bundle from the Data API. A successful bundle is cached for 10 minutes per tenant, property, and settings timestamp.
+/// Calls that miss the cache share one in-flight request.
+/// </summary>
 public interface IAnalyticsQueryService
 {
+    /// <summary>The current tenant's bundle.</summary>
+    /// <param name="refresh"><see langword="true"/> ignores the cache and any request already running.</param>
+    /// <param name="cancellationToken">Observed by a new report request. A cached result, or a request already running, does not use it.</param>
+    /// <returns>The bundle. Missing credentials return <see cref="AnalyticsBundle.NotConfigured"/>.</returns>
     Task<AnalyticsBundle> GetAsync(bool refresh, CancellationToken cancellationToken = default);
 }
 
+/// <inheritdoc cref="IAnalyticsQueryService" />
 public sealed class AnalyticsQueryService(
     IGoogleAnalyticsSettingsStore store,
     IGoogleAnalyticsClient client,
@@ -60,6 +96,7 @@ public sealed class AnalyticsQueryService(
 {
     private readonly Dictionary<string, Task<AnalyticsBundle>> inflight = [];
 
+    /// <inheritdoc />
     public Task<AnalyticsBundle> GetAsync(bool refresh, CancellationToken cancellationToken = default)
     {
         var settings = store.Get();

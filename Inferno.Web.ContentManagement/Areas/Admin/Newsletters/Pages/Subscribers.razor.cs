@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Pages;
 
+/// <summary>Lists newsletter subscribers and opts one out. The CSV download is a separate request.</summary>
 public partial class Subscribers
 {
     private IReadOnlyList<Subscriber> subscribers;

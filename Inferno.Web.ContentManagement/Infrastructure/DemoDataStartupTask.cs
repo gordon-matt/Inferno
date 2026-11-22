@@ -43,8 +43,13 @@ public class DemoDataStartupTask : IStartupTask
 
     private static readonly char[] Separators = [' ', '\r', '\n', '\t'];
 
+    /// <summary>Runs after startup tasks with a lower order, including the one that creates the host administrator.</summary>
     public int Order => 50;
 
+    /// <summary>
+    /// Creates the sample sites when sample data was requested, then clears that request and marks theme choices as pending.
+    /// </summary>
+    /// <remarks>A tenant that fails is logged and skipped. A tenant that already has pages is left unchanged.</remarks>
     public async Task ExecuteAsync()
     {
         var dataSettings = DependoResolver.Instance.Resolve<DataSettings>();

@@ -15,12 +15,15 @@ public partial class ContentBlockFields
     [Parameter]
     public bool IsNew { get; set; }
 
+    /// <summary>Block types offered when <see cref="IsNew"/> is <see langword="true"/>. The stored value is <see cref="BlockTypeOption.TypeName"/>.</summary>
     [Parameter]
     public IReadOnlyList<BlockTypeOption> BlockTypes { get; set; } = [];
 
+    /// <summary>Zones the block can be assigned to.</summary>
     [Parameter]
     public IReadOnlyList<ZoneOption> Zones { get; set; } = [];
 
+    /// <summary>Validation messages keyed by field name, such as Title, BlockType, and ZoneId.</summary>
     [Parameter]
     public IReadOnlyDictionary<string, string> Errors { get; set; }
 }

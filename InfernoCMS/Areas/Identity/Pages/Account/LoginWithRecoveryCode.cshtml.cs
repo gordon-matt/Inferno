@@ -6,12 +6,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Completes sign-in with a recovery code after the password has been accepted.</summary>
 public class LoginWithRecoveryCodeModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
+    /// <summary>Creates the page with the sign-in services.</summary>
+    /// <param name="signInManager">Loads the two-factor user and checks the recovery code.</param>
+    /// <param name="userManager">The user manager. This page does not call it.</param>
+    /// <param name="logger">Records success, lockout, and a rejected code.</param>
     public LoginWithRecoveryCodeModel(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
@@ -22,29 +27,17 @@ public class LoginWithRecoveryCodeModel : PageModel
         _logger = logger;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The recovery code posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The URL to open after sign-in. May be <see langword="null"/> until the form is posted.</summary>
     public string ReturnUrl { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The field posted by the recovery-code form.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The recovery code. Spaces are removed before it is checked.</summary>
         [BindProperty]
         [Required]
         [DataType(DataType.Text)]
@@ -52,6 +45,10 @@ public class LoginWithRecoveryCodeModel : PageModel
         public string RecoveryCode { get; set; }
     }
 
+    /// <summary>Shows the recovery-code form for the user who passed the password check.</summary>
+    /// <param name="returnUrl">The URL to open after sign-in. May be <see langword="null"/>.</param>
+    /// <returns>This page.</returns>
+    /// <exception cref="InvalidOperationException">No two-factor user is in progress.</exception>
     public async Task<IActionResult> OnGetAsync(string returnUrl = null)
     {
         // Ensure the user has gone through the username & password screen first
@@ -66,6 +63,10 @@ public class LoginWithRecoveryCodeModel : PageModel
         return Page();
     }
 
+    /// <summary>Signs in with the recovery code.</summary>
+    /// <param name="returnUrl">The local URL to open after sign-in. <see langword="null"/> becomes the site root.</param>
+    /// <returns>A local redirect after success, the lockout page, or this page when the code is rejected or the model is invalid.</returns>
+    /// <exception cref="InvalidOperationException">No two-factor user is in progress.</exception>
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
         if (!ModelState.IsValid)

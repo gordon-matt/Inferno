@@ -5,12 +5,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InfernoCMS.Data.Entities;
 
+/// <summary>One profile value stored for a user in a tenant.</summary>
 public class UserProfileEntry : TenantEntity<int>
 {
+    /// <summary>The Identity user id this value belongs to.</summary>
     public string UserId { get; set; }
 
+    /// <summary>The profile field name.</summary>
     public string Key { get; set; }
 
+    /// <summary>The stored field value.</summary>
     public string Value { get; set; }
 }
 

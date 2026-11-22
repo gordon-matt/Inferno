@@ -18,10 +18,11 @@ namespace Inferno.Plugins.Messaging.Forumz;
 /// <summary>
 /// Draws the forum at /forums. By default it sits under Inferno's menu. A tenant can open it in a
 /// new tab with the forum's own top bar. The library owns the pages; this plugin supplies Inferno's
-/// tenant, permissions and database.
+/// tenant, permissions and database. Endpoints cover the feeds, the stylesheet, and the forum document.
 /// </summary>
 public sealed class ForumzPlugin : PluginBase, IWebPlugin
 {
+    /// <inheritdoc />
     public override void ConfigureServices(IServiceCollection services, PluginContext context)
     {
         var installed = DataSettingsManager.LoadSettings();
@@ -52,7 +53,7 @@ public sealed class ForumzPlugin : PluginBase, IWebPlugin
         services.AddSingleton<IAutoMenuProvider, ForumzAutoMenuProvider>();
     }
 
-    /// <summary>Feeds, the stylesheet, and the forum document. A tenant that stays in the site layout does not use the document.</summary>
+    /// <inheritdoc />
     public void MapEndpoints(IEndpointRouteBuilder endpoints, PluginRuntimeContext context) =>
         endpoints.MapForumz();
 }

@@ -5,12 +5,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
+/// <summary>Turns two-factor authentication off and replaces the authenticator key.</summary>
 public class ResetAuthenticatorModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<ResetAuthenticatorModel> _logger;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Clears two-factor authentication and resets the key.</param>
+    /// <param name="signInManager">Refreshes the sign-in after the reset.</param>
+    /// <param name="logger">Records the reset.</param>
     public ResetAuthenticatorModel(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -21,19 +26,20 @@ public class ResetAuthenticatorModel : PageModel
         _logger = logger;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>A message that the key was reset, shown on the setup page.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
+    /// <summary>Shows the reset warning.</summary>
+    /// <returns>This page, or not found when the user is gone.</returns>
     public async Task<IActionResult> OnGet()
     {
         var user = await _userManager.GetUserAsync(User);
         return user == null ? NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.") : Page();
     }
 
+    /// <summary>Disables two-factor authentication, resets the authenticator key, and refreshes the sign-in.</summary>
+    /// <returns>A redirect to authenticator setup, or not found when the user is gone.</returns>
     public async Task<IActionResult> OnPostAsync()
     {
         var user = await _userManager.GetUserAsync(User);

@@ -8,7 +8,14 @@ using Microsoft.Extensions.Logging;
 namespace Inferno.Web.Scheduling;
 
 /// <summary>One installed job and the schedule Hangfire currently has for it.</summary>
-/// <param name="StoredMinutes">The minutes Hangfire is using, when the cron is one this site writes. Null when the job is missing or its cron was set by hand.</param>
+/// <param name="Id">The Hangfire job id.</param>
+/// <param name="Name">The task name.</param>
+/// <param name="Minutes">The interval shown in the editor: the stored minutes when the cron is one this site writes, otherwise the task default, and at least one.</param>
+/// <param name="StoredMinutes">The minutes Hangfire is using, when the cron is one this site writes. <see langword="null"/> when the job is missing or its cron was set by hand.</param>
+/// <param name="IsScheduled"><see langword="false"/> when Hangfire has no recurring job for this task.</param>
+/// <param name="CronIsCustom"><see langword="true"/> when a job exists and its cron is not a minute interval this site writes.</param>
+/// <param name="Cron">The cron Hangfire has stored. <see langword="null"/> when the job is missing.</param>
+/// <param name="NextExecutionUtc">The next run Hangfire reports, in UTC. <see langword="null"/> when the job is missing.</param>
 public sealed record ScheduledJobState(
     string Id,
     string Name,
@@ -19,22 +26,33 @@ public sealed record ScheduledJobState(
     string Cron,
     DateTime? NextExecutionUtc);
 
+/// <summary>Reads and changes the Hangfire schedule of installed tasks.</summary>
 public interface IScheduledJobService
 {
+    /// <summary>Reads every installed task and its Hangfire job.</summary>
+    /// <returns>The jobs, or an error when Hangfire cannot be read.</returns>
     Task<Result<IReadOnlyList<ScheduledJobState>>> ListAsync();
 
-    /// <summary>Creates the job when it is missing, so a deleted job comes back without a restart.</summary>
+    /// <summary>Creates the job when it is missing, so a deleted job comes back without a restart. Less than one minute is rejected.</summary>
+    /// <param name="id">The Hangfire job id.</param>
+    /// <param name="minutes">The new interval, in minutes.</param>
+    /// <returns>Success, not found when no installed task has <paramref name="id"/>, or invalid when <paramref name="minutes"/> is below 1.</returns>
     Task<Result> UpdateAsync(string id, int minutes);
 
+    /// <summary>Triggers the job now. The saved interval is left as it is.</summary>
+    /// <param name="id">The Hangfire job id.</param>
+    /// <returns>Success, not found when no installed task has <paramref name="id"/>, or an error when Hangfire refuses the trigger.</returns>
     Task<Result> RunNowAsync(string id);
 }
 
+/// <inheritdoc cref="IScheduledJobService" />
 public class ScheduledJobService(
     IServiceProvider services,
     IRecurringJobManager jobs,
     IWorkContext workContext,
     ILogger<ScheduledJobService> logger) : IScheduledJobService
 {
+    /// <inheritdoc />
     public Task<Result<IReadOnlyList<ScheduledJobState>>> ListAsync()
     {
         try
@@ -70,6 +88,7 @@ public class ScheduledJobService(
         }
     }
 
+    /// <inheritdoc />
     public Task<Result> UpdateAsync(string id, int minutes)
     {
         var definition = Discover().FirstOrDefault(task => task.Id == id);
@@ -98,6 +117,7 @@ public class ScheduledJobService(
         return Task.FromResult(Result.Success());
     }
 
+    /// <inheritdoc />
     public Task<Result> RunNowAsync(string id)
     {
         var definition = Discover().FirstOrDefault(task => task.Id == id);

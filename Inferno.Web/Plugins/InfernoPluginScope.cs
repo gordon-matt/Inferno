@@ -8,11 +8,12 @@ using Pluginz.Models;
 namespace Inferno.Web.Plugins;
 
 /// <summary>
-/// The tenant and roles Pluginz uses when a plugin is limited to some of them. A missing tenant is the global
-/// scope, which sees every plugin.
+/// The tenant and roles Pluginz uses when a plugin is limited to some of them. A missing tenant, including id 0, is the global
+/// scope, which sees every plugin. An anonymous request has no roles.
 /// </summary>
 public sealed class InfernoPluginScope(IHttpContextAccessor httpContextAccessor) : IPluginScope
 {
+    /// <inheritdoc />
     public string? TenantId
     {
         get
@@ -22,6 +23,7 @@ public sealed class InfernoPluginScope(IHttpContextAccessor httpContextAccessor)
         }
     }
 
+    /// <inheritdoc />
     public IReadOnlyCollection<string> Roles
     {
         get

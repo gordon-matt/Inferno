@@ -4,12 +4,15 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Inferno.Web.Security.Permissions;
 
+/// <summary>Registers permission policies.</summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Makes every permission from a registered <see cref="IPermissionProvider"/> usable as a policy.
     /// The host still registers an <see cref="IPermissionStore"/>, which knows its Identity tables.
     /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The same collection, so calls can be chained.</returns>
     public static IServiceCollection AddInfernoPermissions(this IServiceCollection services)
     {
         services.AddAuthorization();

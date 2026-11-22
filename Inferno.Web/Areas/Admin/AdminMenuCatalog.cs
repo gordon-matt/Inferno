@@ -12,12 +12,20 @@ namespace Inferno.Web.Areas.Admin;
 /// </summary>
 public sealed class AdminMenuCatalog(INavigationManager navigation, PermissionVisibility visibility) : INetForgeMenuCatalog
 {
+    /// <summary>The menu name this catalog serves.</summary>
     public const string MenuName = "Admin";
 
     private NetForgeMenuModel? admin;
 
+    /// <inheritdoc />
     public IReadOnlyCollection<string> Names { get; } = [MenuName];
 
+    /// <summary>
+    /// Returns the admin menu, built once and then reused. Any other <paramref name="name"/> returns an empty menu.
+    /// Font Awesome class lists are translated to the shell's icon names; a name that is already a shell icon is kept.
+    /// </summary>
+    /// <param name="name">The menu name. Compared without case after trimming.</param>
+    /// <returns>The admin menu, or an empty menu.</returns>
     public NetForgeMenuModel Get(string? name) =>
         string.Equals(name?.Trim(), MenuName, StringComparison.OrdinalIgnoreCase)
             ? admin ??= Build()

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Signs in with an external provider, or creates a local account when the login is new.</summary>
 [AllowAnonymous]
 public class ExternalLoginModel : PageModel
 {
@@ -22,6 +23,13 @@ public class ExternalLoginModel : PageModel
     private readonly IEmailSender _emailSender;
     private readonly ILogger<ExternalLoginModel> _logger;
 
+    /// <summary>Creates the page with the external-login services.</summary>
+    /// <param name="signInManager">Challenges the provider and signs an existing login in.</param>
+    /// <param name="userManager">Creates the local account and the confirmation token.</param>
+    /// <param name="userStore">Stores the user name. It must also support email.</param>
+    /// <param name="logger">Records an external sign-in and a created account.</param>
+    /// <param name="emailSender">Sends the confirmation message for a new account.</param>
+    /// <exception cref="NotSupportedException">The user store does not support email.</exception>
     public ExternalLoginModel(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
@@ -37,49 +45,37 @@ public class ExternalLoginModel : PageModel
         _emailSender = emailSender;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email address posted when a new local account is needed.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The provider name shown on the confirmation form.</summary>
     public string ProviderDisplayName { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The local URL to open after sign-in. A missing value becomes the site root.</summary>
     public string ReturnUrl { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>An error from the provider or from a missing login, shown on the login page.</summary>
     [TempData]
     public string ErrorMessage { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email collected for a new local account.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The email address. It is also stored as the user name.</summary>
         [Required]
         [EmailAddress]
         public string Email { get; set; }
     }
 
+    /// <summary>Sends a GET request to the login page. External login starts from a POST.</summary>
+    /// <returns>A redirect to the login page.</returns>
     public IActionResult OnGet() => RedirectToPage("./Login");
 
+    /// <summary>Challenges <paramref name="provider"/> and returns to the callback handler.</summary>
+    /// <param name="provider">The authentication scheme name.</param>
+    /// <param name="returnUrl">The URL to carry through the callback. May be <see langword="null"/>.</param>
+    /// <returns>The challenge result for <paramref name="provider"/>.</returns>
     public IActionResult OnPost(string provider, string returnUrl = null)
     {
         // Request a redirect to the external login provider.
@@ -88,6 +84,10 @@ public class ExternalLoginModel : PageModel
         return new ChallengeResult(provider, properties);
     }
 
+    /// <summary>Signs in an existing external login, or shows the confirmation form when the login is new.</summary>
+    /// <param name="returnUrl">The local URL to open after sign-in. <see langword="null"/> becomes the site root.</param>
+    /// <param name="remoteError">An error reported by the provider. A non-<see langword="null"/> value returns to the login page.</param>
+    /// <returns>A redirect after sign-in, lockout, or a provider error. Otherwise the confirmation form.</returns>
     public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
     {
         returnUrl ??= Url.Content("~/");
@@ -130,6 +130,10 @@ public class ExternalLoginModel : PageModel
         }
     }
 
+    /// <summary>Creates a local account for the external login, emails a confirmation link, and signs in when confirmation is not required.</summary>
+    /// <param name="returnUrl">The local URL to open after sign-in. <see langword="null"/> becomes the site root.</param>
+    /// <returns>A redirect after the account is created, or this page when the model is invalid or Identity rejects the account.</returns>
+    /// <exception cref="InvalidOperationException"><see cref="ApplicationUser"/> cannot be constructed.</exception>
     public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
     {
         returnUrl ??= Url.Content("~/");

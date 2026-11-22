@@ -14,8 +14,10 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Newsletters;
 /// </summary>
 public class NewsletterTemplateStartupTask : IStartupTask
 {
+    /// <summary>Runs after startup tasks with a lower order.</summary>
     public int Order => 200;
 
+    /// <summary>Creates the subscribe and unsubscribe message templates for every tenant that does not already have them.</summary>
     public async Task ExecuteAsync()
     {
         var tenantService = DependoResolver.Instance.Resolve<ITenantService>();

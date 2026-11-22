@@ -14,6 +14,7 @@ namespace Inferno.Plugins.Messaging.Forumz;
 /// </summary>
 public sealed class ForumzNavigationProvider : INavigationProvider
 {
+    /// <summary>Resolves the localizer used for the Messaging caption.</summary>
     public ForumzNavigationProvider()
     {
         Localizer = DependoResolver.Instance.Resolve<IStringLocalizer>();
@@ -21,6 +22,7 @@ public sealed class ForumzNavigationProvider : INavigationProvider
 
     private IStringLocalizer Localizer { get; }
 
+    /// <inheritdoc />
     public string MenuName => InfernoWebConstants.Areas.Admin;
 
     private static bool OwnTopBar()
@@ -29,6 +31,7 @@ public sealed class ForumzNavigationProvider : INavigationProvider
         return http.HttpContext?.RequestServices.GetService<IForumPresentation>()?.UseOwnTopBar == true;
     }
 
+    /// <inheritdoc />
     public void GetNavigation(NavigationBuilder builder)
     {
         builder.Add(Localizer[InfernoCmsLocalizableStrings.Messaging.Title].Value, "2", menu =>

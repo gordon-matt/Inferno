@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Pages;
 
+/// <summary>Lists the tenant's menus and edits a menu's name and URL filter.</summary>
 public partial class Index
 {
     private IReadOnlyList<MenuSummary> menus;

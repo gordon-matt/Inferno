@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Pages;
 
+/// <summary>Lists and edits the items of one menu.</summary>
 public partial class Items
 {
     private sealed record ParentOption(Guid Id, string Text, int Depth);
@@ -23,6 +24,7 @@ public partial class Items
     private IReadOnlyDictionary<string, string> errors;
     private bool saving;
 
+    /// <summary>The menu whose items are shown.</summary>
     [Parameter]
     public Guid MenuId { get; set; }
 

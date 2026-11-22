@@ -1,5 +1,6 @@
 ﻿namespace Inferno.Security;
 
+/// <summary>Permission names used by the authorization policies.</summary>
 public static class StandardPolicies
 {
     /// <summary>Opens the admin area. Every admin permission brings it along, so it rarely needs granting on its own.</summary>

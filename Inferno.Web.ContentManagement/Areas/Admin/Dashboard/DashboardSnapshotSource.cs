@@ -14,6 +14,15 @@ using Microsoft.Extensions.Logging;
 namespace Inferno.Web.ContentManagement.Areas.Admin.Dashboard;
 
 /// <summary>Loads the current tenant once per circuit refresh and shares it with every widget.</summary>
+/// <param name="workContext">Supplies the current tenant.</param>
+/// <param name="authorization">Checks page, blog, and membership permissions.</param>
+/// <param name="authentication">Supplies the user those checks use.</param>
+/// <param name="siteSettings">Says whether the blog is enabled.</param>
+/// <param name="pages">Loads the tenant's pages.</param>
+/// <param name="versions">Loads the tenant's page versions.</param>
+/// <param name="membership">Loads the tenant's users and roles.</param>
+/// <param name="services">Opens a scope for the blog repositories.</param>
+/// <param name="logger">Records a load failure.</param>
 public sealed class DashboardSnapshotSource(
     IWorkContext workContext,
     IAuthorizationService authorization,
@@ -27,6 +36,9 @@ public sealed class DashboardSnapshotSource(
 {
     private Task<DashboardSnapshot> current;
 
+    /// <summary>Returns the snapshot for this circuit, loading it on the first call.</summary>
+    /// <param name="refresh"><see langword="true"/> to drop the remembered snapshot and load again.</param>
+    /// <returns>The snapshot. A load failure is returned as <see cref="DashboardSnapshot.Failed"/> rather than thrown.</returns>
     public Task<DashboardSnapshot> GetAsync(bool refresh)
     {
         if (refresh)

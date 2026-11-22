@@ -7,12 +7,20 @@ using Microsoft.Extensions.Options;
 
 namespace InfernoCMS.Areas.Identity;
 
+/// <summary>
+/// Revalidates the Identity security stamp and loads permission grants before the circuit renders.
+/// </summary>
+/// <typeparam name="TUser">The Identity user type.</typeparam>
 public class RevalidatingIdentityAuthenticationStateProvider<TUser>
     : RevalidatingServerAuthenticationStateProvider where TUser : class
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IdentityOptions _options;
 
+    /// <summary>Creates a provider that revalidates users of type <typeparamref name="TUser"/>.</summary>
+    /// <param name="loggerFactory">Passed to the base provider.</param>
+    /// <param name="scopeFactory">Opens a scope for the user manager and the permission store.</param>
+    /// <param name="optionsAccessor">Supplies the security-stamp claim type.</param>
     public RevalidatingIdentityAuthenticationStateProvider(
         ILoggerFactory loggerFactory,
         IServiceScopeFactory scopeFactory,
@@ -29,6 +37,7 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
     /// The admin menu decides what to show while it renders, so the grants have to be cached
     /// before the shell is drawn. This runs before any page in the circuit.
     /// </summary>
+    /// <returns>The authentication state, after the user's grants have been cached when the principal has a user id.</returns>
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         AuthenticationState state = await base.GetAuthenticationStateAsync();

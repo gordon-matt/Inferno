@@ -10,16 +10,19 @@ public sealed class PublicMenuBar
     /// <summary>Raised when the open item or the armed state changes.</summary>
     public event Action Changed;
 
-    /// <summary>The open top-level item, or null when no dropdown panel is showing.</summary>
+    /// <summary>The open top-level item, or <see langword="null"/> when no dropdown panel is showing.</summary>
     public object OpenItem { get; private set; }
 
     /// <summary>True from the click that opens a menu until the bar is dismissed.</summary>
     public bool IsActive { get; private set; }
 
-    /// <summary>Whether <paramref name="item"/> is the open dropdown.</summary>
+    /// <summary>Reports whether <paramref name="item"/> is the open dropdown.</summary>
+    /// <param name="item">The top-level item to test.</param>
+    /// <returns><see langword="true"/> when <paramref name="item"/> is <see cref="OpenItem"/>.</returns>
     public bool IsOpen(object item) => ReferenceEquals(OpenItem, item);
 
     /// <summary>Opens <paramref name="item"/>, or closes it and disarms the bar when it is already open.</summary>
+    /// <param name="item">The top-level item to open or close.</param>
     public void Toggle(object item)
     {
         if (ReferenceEquals(OpenItem, item))
@@ -40,6 +43,7 @@ public sealed class PublicMenuBar
     /// Switches the open dropdown to <paramref name="item"/>. A null item hides the panel but leaves the bar armed.
     /// Does nothing while the bar is idle.
     /// </summary>
+    /// <param name="item">The top-level item to open. <see langword="null"/> hides the panel and leaves the bar armed.</param>
     public void Hover(object item)
     {
         if (!IsActive || ReferenceEquals(OpenItem, item))

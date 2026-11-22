@@ -10,39 +10,39 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Emails a password-reset link without revealing whether the address matches a confirmed account.</summary>
 public class ForgotPasswordModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Finds the user and creates the reset token.</param>
+    /// <param name="emailSender">Sends the reset message.</param>
     public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
     {
         _userManager = userManager;
         _emailSender = emailSender;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email address posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The address that should receive a reset link.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The account email.</summary>
         [Required]
         [EmailAddress]
         public string Email { get; set; }
     }
 
+    /// <summary>
+    /// Emails a reset link when the address belongs to a confirmed user.
+    /// A missing or unconfirmed account is sent to the same confirmation page.
+    /// </summary>
+    /// <returns>The confirmation page, or this page again when the model is invalid.</returns>
     public async Task<IActionResult> OnPostAsync()
     {
         if (ModelState.IsValid)

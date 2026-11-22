@@ -5,10 +5,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities;
 
+/// <summary>A named menu for one tenant.</summary>
 public class Menu : TenantEntity<Guid>
 {
+    /// <summary>The menu name.</summary>
     public string Name { get; set; }
 
+    /// <summary>When set, the menu is used only on pages whose URL contains this text.</summary>
     public string UrlFilter { get; set; }
 }
 

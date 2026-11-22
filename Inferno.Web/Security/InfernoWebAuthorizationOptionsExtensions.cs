@@ -19,6 +19,8 @@ public static class InfernoWebAuthorizationOptionsExtensions
     /// <summary>Kameleon's policy for the application-wide catalog: themes on or off for everyone and per tenant.</summary>
     public const string ThemeManageCatalog = "Kameleon.ManageCatalog";
 
+    /// <summary>Registers the Kameleon theme policies so the matching Inferno permissions satisfy them.</summary>
+    /// <param name="options">The authorization options.</param>
     /// <remarks>
     /// Defining the policies here, rather than leaving Kameleon's role-based ones, makes the theme permissions
     /// grantable like every other permission. The catalog changes what every tenant can use, so it needs full

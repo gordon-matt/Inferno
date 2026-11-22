@@ -6,8 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 
+/// <summary>Chooses the current draft or published version of a page.</summary>
 public interface IPageVersionService : IGenericDataService<PageVersion>
 {
+    /// <summary>
+    /// Gets the current version of one page: the newest published version for <paramref name="cultureCode"/>,
+    /// then its newest draft, then the same two steps for the invariant culture. Archived versions are skipped.
+    /// </summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="pageId">The page.</param>
+    /// <param name="cultureCode">The culture to try first. Empty or <see langword="null"/> uses only the invariant culture.</param>
+    /// <param name="enabledOnly"><see langword="true"/> to require the page to be enabled.</param>
+    /// <param name="shownOnMenusOnly"><see langword="true"/> to require the page to be shown on menus.</param>
+    /// <returns>The chosen version, or <see langword="null"/> when none matches.</returns>
     PageVersion GetCurrentVersion(
         int tenantId,
         Guid pageId,
@@ -15,6 +26,14 @@ public interface IPageVersionService : IGenericDataService<PageVersion>
         bool enabledOnly = true,
         bool shownOnMenusOnly = true);
 
+    /// <summary>Gets <see cref="GetCurrentVersion"/> for each page that matches the filters.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="cultureCode">The culture to try first. Empty or <see langword="null"/> uses only the invariant culture.</param>
+    /// <param name="enabledOnly"><see langword="true"/> to include only enabled pages.</param>
+    /// <param name="shownOnMenusOnly"><see langword="true"/> to include only pages shown on menus.</param>
+    /// <param name="topLevelOnly"><see langword="true"/> to include only pages with no parent. When set, <paramref name="parentId"/> is ignored.</param>
+    /// <param name="parentId">When <paramref name="topLevelOnly"/> is <see langword="false"/> and this is set, includes only children of this page.</param>
+    /// <returns>One current version per matching page. A page with no current version is omitted.</returns>
     IEnumerable<PageVersion> GetCurrentVersions(
         int tenantId,
         string cultureCode = null,
@@ -24,10 +43,15 @@ public interface IPageVersionService : IGenericDataService<PageVersion>
         Guid? parentId = null);
 }
 
+/// <inheritdoc cref="IPageVersionService" />
 public class PageVersionService : GenericDataService<PageVersion>, IPageVersionService
 {
     private readonly IRepository<Page> pageRepository;
 
+    /// <summary>Stores the cache, the version repository, and the page repository.</summary>
+    /// <param name="cacheManager">The cache used by the generic data service.</param>
+    /// <param name="repository">The page-version store.</param>
+    /// <param name="pageRepository">Loads pages when listing current versions.</param>
     public PageVersionService(
         ICacheManager cacheManager,
         IRepository<PageVersion> repository,
@@ -39,6 +63,7 @@ public class PageVersionService : GenericDataService<PageVersion>, IPageVersionS
 
     #region IPageVersionService Members
 
+    /// <inheritdoc />
     public PageVersion GetCurrentVersion(
         int tenantId,
         Guid pageId,
@@ -62,6 +87,7 @@ public class PageVersionService : GenericDataService<PageVersion>, IPageVersionS
         return GetCurrentVersionInternal(pageId, query, cultureCode);
     }
 
+    /// <inheritdoc />
     public IEnumerable<PageVersion> GetCurrentVersions(
         int tenantId,
         string cultureCode = null,

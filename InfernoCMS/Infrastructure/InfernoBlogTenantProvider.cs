@@ -7,6 +7,8 @@ namespace InfernoCMS.Infrastructure;
 /// <summary>The blog stores the current Inferno tenant as text, because that is the key it indexes on.</summary>
 public sealed class InfernoBlogTenantProvider : IBlogTenantProvider
 {
+    /// <inheritdoc />
+    /// <remarks>Returns an empty string when <see cref="CurrentTenantId.Resolve"/> has no tenant.</remarks>
     public string GetTenantId()
     {
         int? tenantId = CurrentTenantId.Resolve();

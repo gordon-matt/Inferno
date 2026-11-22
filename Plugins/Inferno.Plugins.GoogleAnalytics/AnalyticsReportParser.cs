@@ -2,18 +2,34 @@ using System.Text.Json;
 
 namespace Inferno.Plugins.GoogleAnalytics;
 
+/// <summary>One row from a Data API report.</summary>
+/// <param name="Dimensions">Dimension values, in header order.</param>
+/// <param name="Metrics">Metric values, in header order, still as text.</param>
 public sealed record AnalyticsTableRow(IReadOnlyList<string> Dimensions, IReadOnlyList<string> Metrics);
 
+/// <summary>A parsed Data API report, or the error Google returned.</summary>
+/// <param name="Dimensions">Dimension header names.</param>
+/// <param name="Metrics">Metric header names.</param>
+/// <param name="Rows">The data rows. Empty when the report failed.</param>
+/// <param name="Error">The failure message. <see langword="null"/> when the report was read.</param>
 public sealed record AnalyticsTable(
     IReadOnlyList<string> Dimensions,
     IReadOnlyList<string> Metrics,
     IReadOnlyList<AnalyticsTableRow> Rows,
     string? Error)
 {
+    /// <summary>Whether <see cref="Error"/> is <see langword="null"/>.</summary>
     public bool Succeeded => Error is null;
 
+    /// <summary>A table whose only content is <paramref name="error"/>.</summary>
+    /// <param name="error">The failure message.</param>
+    /// <returns>A failed table.</returns>
     public static AnalyticsTable Failed(string error) => new([], [], [], error);
 
+    /// <summary>The integer metric named <paramref name="name"/> on <paramref name="row"/>.</summary>
+    /// <param name="row">The row to read.</param>
+    /// <param name="name">The metric header. The match is ordinal.</param>
+    /// <returns>The parsed integer, or 0 when the metric is missing or not an integer.</returns>
     public int Metric(AnalyticsTableRow row, string name)
     {
         int index = Metrics.ToList().FindIndex(metric => string.Equals(metric, name, StringComparison.Ordinal));
@@ -26,8 +42,15 @@ public sealed record AnalyticsTable(
     }
 }
 
+/// <summary>Reads a Data API runReport JSON payload.</summary>
 public static class AnalyticsReportParser
 {
+    /// <summary>
+    /// Parses <paramref name="json"/>. An empty body, a Google <c>error</c> object, and JSON that does not parse
+    /// all return a failed table.
+    /// </summary>
+    /// <param name="json">The response body.</param>
+    /// <returns>The table. Failures are stored on <see cref="AnalyticsTable.Error"/> rather than thrown.</returns>
     public static AnalyticsTable Parse(string? json)
     {
         if (string.IsNullOrWhiteSpace(json))

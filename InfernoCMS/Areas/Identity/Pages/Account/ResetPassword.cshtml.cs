@@ -8,62 +8,50 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Sets a new password from the token in the reset link.</summary>
 public class ResetPasswordModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
+    /// <summary>Creates the page with <paramref name="userManager"/>.</summary>
+    /// <param name="userManager">Finds the user and resets the password.</param>
     public ResetPasswordModel(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email, new password, and reset token posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The fields posted by the reset form.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The account email.</summary>
         [Required]
         [EmailAddress]
         public string Email { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The new password.</summary>
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The new password typed a second time. It must match <see cref="Password"/>.</summary>
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The password-reset token, decoded from the link.</summary>
         [Required]
         public string Code { get; set; }
     }
 
+    /// <summary>Decodes <paramref name="code"/> onto the form.</summary>
+    /// <param name="code">The Base64Url-encoded reset token from the email link.</param>
+    /// <returns>This page, or a bad request when <paramref name="code"/> is <see langword="null"/>.</returns>
     public IActionResult OnGet(string code = null)
     {
         if (code == null)
@@ -80,6 +68,8 @@ public class ResetPasswordModel : PageModel
         }
     }
 
+    /// <summary>Resets the password. A missing account is sent to the confirmation page.</summary>
+    /// <returns>The confirmation page after success or a missing account. Otherwise this page with the Identity errors.</returns>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)

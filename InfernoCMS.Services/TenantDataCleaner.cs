@@ -20,17 +20,33 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace InfernoCMS.Services;
 
+/// <summary>
+/// Deletes one tenant's content, messages, settings, accounts, upload folder, and sitemap file.
+/// Blog rows are removed when a blog database is registered.
+/// </summary>
+/// <remarks>
+/// Any failure while deleting localization rows is ignored. A missing blog factory leaves blog rows in place.
+/// </remarks>
 public class TenantDataCleaner : ITenantDataCleaner
 {
     private readonly ApplicationDbContext dbContext;
     private readonly IServiceProvider services;
 
+    /// <summary>Creates a cleaner that uses <paramref name="dbContext"/> and resolves extra services from <paramref name="services"/>.</summary>
+    /// <param name="dbContext">The application database.</param>
+    /// <param name="services">Resolves the sitemap path and, when it is registered, the blog database factory.</param>
     public TenantDataCleaner(ApplicationDbContext dbContext, IServiceProvider services)
     {
         this.dbContext = dbContext;
         this.services = services;
     }
 
+    /// <summary>
+    /// Deletes the tenant's menus, pages, content blocks, message templates, queued mail, settings, localization rows,
+    /// profiles, users, roles, upload folder, and sitemap file.
+    /// </summary>
+    /// <param name="tenantId">The tenant to remove.</param>
+    /// <returns>A task that completes when that tenant's data has been deleted.</returns>
     public async Task CleanAsync(int tenantId)
     {
         await CleanBlogAsync(tenantId);

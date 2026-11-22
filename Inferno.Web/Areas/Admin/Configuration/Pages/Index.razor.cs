@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.Areas.Admin.Configuration.Pages;
 
+/// <summary>The settings screen. Tiles open a settings editor or a <see cref="ISettingsSection"/> page.</summary>
 public partial class Index
 {
     private IReadOnlyList<SettingsGroup> groups;

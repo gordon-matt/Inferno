@@ -1,5 +1,6 @@
 namespace Inferno.Web;
 
+/// <summary>Resource keys for Inferno.Web. Each value is a catalog key, not the translated text.</summary>
 public static class InfernoWebLocalizableStrings
 {
     public static class Admin

@@ -4,112 +4,77 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
-/// <summary>
-///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-///     directly from your code. This API may change or be removed in future releases.
-/// </summary>
+/// <summary>Page names and active-link classes for the account-management navigation.</summary>
 public static class ManageNavPages
 {
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The profile page name.</summary>
     public static string Index => "Index";
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email page name.</summary>
     public static string Email => "Email";
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The change-password page name.</summary>
     public static string ChangePassword => "ChangePassword";
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The download page name.</summary>
     public static string DownloadPersonalData => "DownloadPersonalData";
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The delete page name.</summary>
     public static string DeletePersonalData => "DeletePersonalData";
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The external-logins page name.</summary>
     public static string ExternalLogins => "ExternalLogins";
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The personal-data page name.</summary>
     public static string PersonalData => "PersonalData";
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The two-factor page name.</summary>
     public static string TwoFactorAuthentication => "TwoFactorAuthentication";
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for the profile link.</summary>
+    /// <param name="viewContext">The current view.</param>
+    /// <returns>The text active when the profile page is current. Otherwise <see langword="null"/>.</returns>
     public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for the email link.</summary>
+    /// <param name="viewContext">The current view.</param>
+    /// <returns>The text active when the email page is current. Otherwise <see langword="null"/>.</returns>
     public static string EmailNavClass(ViewContext viewContext) => PageNavClass(viewContext, Email);
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for the change-password link.</summary>
+    /// <param name="viewContext">The current view.</param>
+    /// <returns>The text active when the change-password page is current. Otherwise <see langword="null"/>.</returns>
     public static string ChangePasswordNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangePassword);
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for the download link.</summary>
+    /// <param name="viewContext">The current view.</param>
+    /// <returns>The text active when the download page is current. Otherwise <see langword="null"/>.</returns>
     public static string DownloadPersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, DownloadPersonalData);
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for the delete link.</summary>
+    /// <param name="viewContext">The current view.</param>
+    /// <returns>The text active when the delete page is current. Otherwise <see langword="null"/>.</returns>
     public static string DeletePersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, DeletePersonalData);
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for the external-logins link.</summary>
+    /// <param name="viewContext">The current view.</param>
+    /// <returns>The text active when the external-logins page is current. Otherwise <see langword="null"/>.</returns>
     public static string ExternalLoginsNavClass(ViewContext viewContext) => PageNavClass(viewContext, ExternalLogins);
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for the personal-data link.</summary>
+    /// <param name="viewContext">The current view.</param>
+    /// <returns>The text active when the personal-data page is current. Otherwise <see langword="null"/>.</returns>
     public static string PersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, PersonalData);
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for the two-factor link.</summary>
+    /// <param name="viewContext">The current view.</param>
+    /// <returns>The text active when the two-factor page is current. Otherwise <see langword="null"/>.</returns>
     public static string TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The CSS class for one management link.</summary>
+    /// <param name="viewContext">The current view. Its ActivePage value wins over the page file name.</param>
+    /// <param name="page">The page name to compare.</param>
+    /// <returns>The text active when <paramref name="page"/> is the current page. Otherwise <see langword="null"/>.</returns>
     public static string PageNavClass(ViewContext viewContext, string page)
     {
         string activePage = viewContext.ViewData["ActivePage"] as string

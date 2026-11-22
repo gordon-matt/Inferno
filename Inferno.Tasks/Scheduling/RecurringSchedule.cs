@@ -6,6 +6,12 @@ namespace Inferno.Tasks.Scheduling;
 /// </summary>
 public static class RecurringSchedule
 {
+    /// <summary>
+    /// Builds a five-field cron expression for <paramref name="seconds"/>.
+    /// Sixty seconds or less is every minute. Longer values round to minutes, then to a step that divides an hour, a day, or 28 days.
+    /// </summary>
+    /// <param name="seconds">The requested interval, in seconds.</param>
+    /// <returns>A cron expression Hangfire can run without the job drifting inside the hour.</returns>
     public static string FromSeconds(int seconds)
     {
         if (seconds <= 60)
@@ -39,8 +45,10 @@ public static class RecurringSchedule
 
     /// <summary>
     /// The interval, in minutes, of a cron expression <see cref="FromSeconds"/> would write.
-    /// Anything else, including a cron typed by hand in Hangfire, returns null.
+    /// Anything else, including a cron typed by hand in Hangfire, returns <see langword="null"/>.
     /// </summary>
+    /// <param name="cron">A five-field cron expression. <see langword="null"/>, blank, or any shape <see cref="FromSeconds"/> does not write returns <see langword="null"/>.</param>
+    /// <returns>The interval in minutes, or <see langword="null"/> when <paramref name="cron"/> is not one of those shapes. Every minute is 1.</returns>
     public static int? TryToMinutes(string cron)
     {
         if (string.IsNullOrWhiteSpace(cron))

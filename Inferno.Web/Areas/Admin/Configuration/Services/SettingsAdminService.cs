@@ -9,18 +9,40 @@ using Microsoft.Extensions.Logging;
 namespace Inferno.Web.Areas.Admin.Configuration.Services;
 
 /// <summary>A registered settings group and, when one has been saved, its stored row.</summary>
+/// <param name="Type">The settings type's full name.</param>
+/// <param name="Name">The label from <see cref="ISettings.Name"/>.</param>
+/// <param name="EditorType">The editor component.</param>
+/// <param name="Stored">The saved row, or <see langword="null"/> when this tenant has not saved one.</param>
 public sealed record SettingsGroup(string Type, string Name, Type EditorType, Setting Stored);
 
+/// <summary>Lists and saves the settings documents shown on the settings screen.</summary>
 public interface ISettingsAdminService
 {
-    /// <summary>Every registered settings group, saved or not, so a new site can configure all of them.</summary>
+    /// <summary>
+    /// Every registered settings group, saved or not, so a new site can configure all of them.
+    /// Two registrations of the same type keep the first. The list is ordered by name.
+    /// </summary>
+    /// <param name="tenantId">The tenant whose stored rows are attached.</param>
+    /// <returns>The groups.</returns>
     Task<Result<IReadOnlyList<SettingsGroup>>> ListAsync(int tenantId);
 
     /// <summary>The stored row for <paramref name="type"/>, or an unsaved one the editor can start from.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="type">The settings type's full name.</param>
+    /// <returns>The row, or not found when no registered settings type has that name.</returns>
     Task<Result<Setting>> GetAsync(int tenantId, string type);
 
+    /// <summary>
+    /// Stores <paramref name="value"/> for <paramref name="type"/>. Saving site settings also drops the cached default culture.
+    /// </summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="type">The settings type's full name.</param>
+    /// <param name="value">The JSON to store.</param>
+    /// <returns>Success, not found when the type is not registered, or an error when the save throws.</returns>
     Task<Result> SaveAsync(int tenantId, string type, string value);
 }
+
+/// <inheritdoc cref="ISettingsAdminService" />
 
 public class SettingsAdminService(
     IEnumerable<ISettings> registeredSettings,
@@ -31,6 +53,7 @@ public class SettingsAdminService(
 {
     private static readonly string SiteSettingsType = typeof(SiteSettings).FullName;
 
+    /// <inheritdoc />
     public Task<Result<IReadOnlyList<SettingsGroup>>> ListAsync(int tenantId)
     {
         Dictionary<string, Setting> stored;
@@ -56,6 +79,7 @@ public class SettingsAdminService(
         return Task.FromResult(Result.Success(groups));
     }
 
+    /// <inheritdoc />
     public async Task<Result<Setting>> GetAsync(int tenantId, string type)
     {
         var settings = registeredSettings.FirstOrDefault(candidate => candidate.GetType().FullName == type);
@@ -72,6 +96,7 @@ public class SettingsAdminService(
         return Result.Success(stored ?? new Setting { TenantId = tenantId, Name = settings.Name, Type = type });
     }
 
+    /// <inheritdoc />
     public Task<Result> SaveAsync(int tenantId, string type, string value)
     {
         if (!registeredSettings.Any(candidate => candidate.GetType().FullName == type))

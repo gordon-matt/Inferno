@@ -7,6 +7,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 /// </summary>
 public static class ContentBlockTypes
 {
+    /// <summary>Finds the block type named by a stored value.</summary>
+    /// <param name="typeName">The stored type name, which may be assembly-qualified. Whitespace returns <see langword="null"/>.</param>
+    /// <returns>The type, or <see langword="null"/> when it is blank or not loaded.</returns>
     public static Type Resolve(string typeName)
     {
         if (string.IsNullOrWhiteSpace(typeName))

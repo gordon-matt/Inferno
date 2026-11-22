@@ -14,10 +14,13 @@ namespace Inferno.Web.Messaging;
 /// </summary>
 public class ProcessQueuedMailTask : ITask
 {
+    /// <inheritdoc />
     public string Name => "Process Queued Mail Task";
 
+    /// <inheritdoc />
     public int DefaultInterval => 600;
 
+    /// <inheritdoc />
     public void Execute()
     {
         var providers = DependoResolver.Instance.ResolveAll<IQueuedMessageProvider>();

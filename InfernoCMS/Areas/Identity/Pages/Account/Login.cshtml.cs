@@ -7,73 +7,56 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Signs in with a password. A failed password counts toward lockout.</summary>
 public class LoginModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ILogger<LoginModel> _logger;
 
+    /// <summary>Creates the page with the sign-in services.</summary>
+    /// <param name="signInManager">Checks the password and lists external schemes.</param>
+    /// <param name="logger">Records a successful sign-in and a lockout.</param>
     public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
     {
         _signInManager = signInManager;
         _logger = logger;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email, password, and remember-me choice posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>External authentication schemes offered on the form.</summary>
     public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The local URL to open after sign-in. A missing value becomes the site root.</summary>
     public string ReturnUrl { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>An error carried from another page, such as an external login failure.</summary>
     [TempData]
     public string ErrorMessage { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The fields posted by the login form.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The account email used to sign in.</summary>
         [Required]
         [EmailAddress]
         public string Email { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The account password.</summary>
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>Whether the sign-in cookie should persist after the browser closes.</summary>
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
     }
 
+    /// <summary>Clears the external-login cookie and prepares the form.</summary>
+    /// <param name="returnUrl">The URL to open after sign-in. <see langword="null"/> becomes the site root.</param>
+    /// <returns>A task that completes when the external cookie has been cleared and the schemes have been loaded.</returns>
     public async Task OnGetAsync(string returnUrl = null)
     {
         if (!string.IsNullOrEmpty(ErrorMessage))
@@ -91,6 +74,9 @@ public class LoginModel : PageModel
         ReturnUrl = returnUrl;
     }
 
+    /// <summary>Signs in with the posted password. A failed password counts toward lockout.</summary>
+    /// <param name="returnUrl">The local URL to open after sign-in. <see langword="null"/> becomes the site root.</param>
+    /// <returns>A local redirect after success, the two-factor page, the lockout page, or this page again when sign-in fails.</returns>
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
         returnUrl ??= Url.Content("~/");

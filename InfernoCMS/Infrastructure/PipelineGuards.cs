@@ -16,6 +16,8 @@ public static class PipelineGuards
     private const string BROWSER_PATH = "/pickstack/webfilez";
 
     /// <summary>Headers that cost nothing and close off content sniffing and framing by other sites.</summary>
+    /// <param name="app">The application pipeline.</param>
+    /// <returns>The same <paramref name="app"/>, so further middleware can be chained.</returns>
     public static IApplicationBuilder UseSecurityHeaders(this IApplicationBuilder app) => app.Use(async (context, next) =>
     {
         var headers = context.Response.Headers;
@@ -30,6 +32,8 @@ public static class PipelineGuards
     /// <summary>
     /// Answers 404 when no tenant owns the host, rather than serving whichever tenant happens to be first.
     /// </summary>
+    /// <param name="app">The application pipeline.</param>
+    /// <returns>The same <paramref name="app"/>, so further middleware can be chained.</returns>
     public static IApplicationBuilder UseKnownTenant(this IApplicationBuilder app) => app.Use(async (context, next) =>
     {
         if (context.GetTenant<Tenant>() is null)
@@ -46,6 +50,8 @@ public static class PipelineGuards
     /// scope token reaches the whole media folder. This requires the media permissions, and keeps everyone but the
     /// host administrator inside their own tenant's folder.
     /// </summary>
+    /// <param name="app">The web application. Its options supply the file-manager API prefix.</param>
+    /// <returns>The same <paramref name="app"/>, so further middleware can be chained.</returns>
     public static IApplicationBuilder UseMediaGuard(this WebApplication app)
     {
         string apiPrefix = "/" + app.Services.GetRequiredService<IOptions<WebFilezOptions>>().Value.ApiPrefix.Trim('/');

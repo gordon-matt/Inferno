@@ -5,22 +5,40 @@ using Inferno.Web.Messaging.Services;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Messaging.Services;
 
+/// <summary>A template row for the list, using the default-language subject.</summary>
+/// <param name="Id">The template identifier.</param>
+/// <param name="Name">The template name.</param>
+/// <param name="Subject">The default-language subject, or <see langword="null"/> when that version does not exist.</param>
+/// <param name="Enabled">Whether the template may be sent.</param>
+/// <param name="DateModifiedUtc">When the default-language version was last saved, in UTC.</param>
 public sealed record MessageTemplateSummary(int Id, string Name, string Subject, bool Enabled, DateTime? DateModifiedUtc);
 
 /// <summary>The template's name, subject and switch; the message itself is edited on the design page.</summary>
 public sealed class MessageTemplateDetails
 {
+    /// <summary>The template identifier. Zero inserts a template.</summary>
     public int Id { get; set; }
 
+    /// <summary>The template name. It must be unique for the tenant.</summary>
     public string Name { get; set; }
 
+    /// <summary>The default-language subject.</summary>
     public string Subject { get; set; }
 
+    /// <summary>Whether the template may be sent.</summary>
     public bool Enabled { get; set; } = true;
 
+    /// <summary>Token names stored with the template.</summary>
     public List<string> Tokens { get; set; } = [];
 }
 
+/// <summary>The default-language document opened by the design page.</summary>
+/// <param name="Id">The template identifier.</param>
+/// <param name="Name">The template name.</param>
+/// <param name="Subject">The default-language subject.</param>
+/// <param name="Enabled">Whether the template may be sent.</param>
+/// <param name="Body">A PageKrafter email document the editor can open.</param>
+/// <param name="Tokens">Token names stored with the template.</param>
 public sealed record MessageTemplateDocument(int Id, string Name, string Subject, bool Enabled, string Body, IReadOnlyList<string> Tokens);
 
 /// <summary>
@@ -29,23 +47,52 @@ public sealed record MessageTemplateDocument(int Id, string Name, string Subject
 /// </summary>
 public interface IMessageTemplateAdminService
 {
+    /// <summary>Lists the tenant's templates, ordered by name, with the default-language subject.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="search">Matches the template name. Whitespace lists every template.</param>
+    /// <returns>The templates.</returns>
     Task<IReadOnlyList<MessageTemplateSummary>> ListAsync(int tenantId, string search);
 
+    /// <summary>Loads a template's name, subject, enabled flag, and tokens.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The template.</param>
+    /// <returns>The details, or not found.</returns>
     Task<Result<MessageTemplateDetails>> GetDetailsAsync(int tenantId, int id);
 
+    /// <summary>Loads the default-language document for the design page.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The template.</param>
+    /// <returns>The document, or not found. Raw HTML is wrapped so the editor can open it.</returns>
     Task<Result<MessageTemplateDocument>> GetDocumentAsync(int tenantId, int id);
 
+    /// <summary>Inserts a template when <see cref="MessageTemplateDetails.Id"/> is zero, otherwise updates its name, subject, enabled flag, and tokens.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="details">The values to save. The name is required and must be unique for the tenant.</param>
+    /// <returns>The saved details, invalid when the name or tokens are rejected, or not found when an existing template is missing.</returns>
     Task<Result<MessageTemplateDetails>> SaveDetailsAsync(int tenantId, MessageTemplateDetails details);
 
+    /// <summary>Saves the default-language body, creating that version the first time.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The template.</param>
+    /// <param name="body">The stored body. <see langword="null"/> is stored as empty.</param>
+    /// <returns>Success, or not found.</returns>
     Task<Result> SaveBodyAsync(int tenantId, int id, string body);
 
+    /// <summary>Deletes the template and every language version.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The template.</param>
+    /// <returns>Success, or not found.</returns>
     Task<Result> DeleteAsync(int tenantId, int id);
 }
 
+/// <inheritdoc cref="IMessageTemplateAdminService" />
+/// <param name="templateService">Loads and saves templates.</param>
+/// <param name="versionService">Loads and saves the default-language version.</param>
 public class MessageTemplateAdminService(
     IMessageTemplateService templateService,
     IMessageTemplateVersionService versionService) : IMessageTemplateAdminService
 {
+    /// <inheritdoc />
     public Task<IReadOnlyList<MessageTemplateSummary>> ListAsync(int tenantId, string search)
     {
         List<MessageTemplate> templates;
@@ -83,6 +130,7 @@ public class MessageTemplateAdminService(
         return Task.FromResult(summaries);
     }
 
+    /// <inheritdoc />
     public async Task<Result<MessageTemplateDetails>> GetDetailsAsync(int tenantId, int id)
     {
         var template = await FindAsync(tenantId, id);
@@ -102,6 +150,7 @@ public class MessageTemplateAdminService(
         });
     }
 
+    /// <inheritdoc />
     public async Task<Result<MessageTemplateDocument>> GetDocumentAsync(int tenantId, int id)
     {
         var template = await FindAsync(tenantId, id);
@@ -120,6 +169,7 @@ public class MessageTemplateAdminService(
             MessageTemplateTokens.Read(template.Tokens)));
     }
 
+    /// <inheritdoc />
     public async Task<Result<MessageTemplateDetails>> SaveDetailsAsync(int tenantId, MessageTemplateDetails details)
     {
         string name = details.Name?.Trim();
@@ -181,6 +231,7 @@ public class MessageTemplateAdminService(
         return Result<MessageTemplateDetails>.Success(details);
     }
 
+    /// <inheritdoc />
     public async Task<Result> SaveBodyAsync(int tenantId, int id, string body)
     {
         var template = await FindAsync(tenantId, id);
@@ -193,6 +244,7 @@ public class MessageTemplateAdminService(
         return Result.Success();
     }
 
+    /// <inheritdoc />
     public async Task<Result> DeleteAsync(int tenantId, int id)
     {
         var template = await FindAsync(tenantId, id);

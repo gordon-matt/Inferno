@@ -6,8 +6,10 @@ using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks;
 
+/// <summary>A tag cloud. <see cref="GetOptions"/> emits the settings that differ from the defaults.</summary>
 public class TagCloudBlock : ContentBlockBase
 {
+    /// <summary>Sets auto-resize off, ten steps, the <c>w{n}</c> class pattern, an elliptic shape, overflow removal, and URI encoding.</summary>
     public TagCloudBlock()
     {
         //Width = 100;
@@ -86,7 +88,7 @@ public class TagCloudBlock : ContentBlockBase
     public byte? Delay { get; set; }
 
     /// <summary>
-    /// Cloud shape
+    /// The shape the cloud is laid out in. <see cref="CloudShape.Elliptic"/> is omitted from <see cref="GetOptions"/>.
     /// </summary>
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.Shape)]
     public CloudShape Shape { get; set; }
@@ -103,6 +105,7 @@ public class TagCloudBlock : ContentBlockBase
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.EncodeURI)]
     public bool EncodeURI { get; set; }
 
+    /// <summary>Comma-separated colors. Included in <see cref="GetOptions"/> when set.</summary>
     [LocalizedDisplayName(InfernoCmsLocalizableStrings.ContentBlocks.TagCloudBlock.Colors)]
     public string Colors { get; set; }
 
@@ -120,14 +123,19 @@ public class TagCloudBlock : ContentBlockBase
 
     #region ContentBlockBase Overrides
 
+    /// <inheritdoc />
     public override string Name => "Blog: Tag Cloud";
 
+    /// <inheritdoc />
     public override Type EditorType => typeof(TagCloudBlockEditor);
 
+    /// <inheritdoc />
     public override Type DisplayType => typeof(TagCloudBlockDisplay);
 
     #endregion ContentBlockBase Overrides
 
+    /// <summary>Builds a JavaScript object literal of the settings that differ from the constructor defaults.</summary>
+    /// <returns>The object literal, including the braces.</returns>
     public string GetOptions()
     {
         var sb = new StringBuilder(512);
@@ -189,8 +197,12 @@ public class TagCloudBlock : ContentBlockBase
     }
 }
 
+/// <summary>Shapes a <see cref="TagCloudBlock"/> can lay its tags out in.</summary>
 public enum CloudShape : byte
 {
+    /// <summary>An ellipse. This is the default and is omitted from <see cref="TagCloudBlock.GetOptions"/>.</summary>
     Elliptic = 0,
+
+    /// <summary>A rectangle. Sent to the script as <c>rectangular</c>.</summary>
     Rectangular = 1
 }

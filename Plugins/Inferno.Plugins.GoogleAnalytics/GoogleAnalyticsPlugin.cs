@@ -8,12 +8,16 @@ using Pluginz;
 
 namespace Inferno.Plugins.GoogleAnalytics;
 
+/// <summary>Registers the Analytics content block, permissions, dashboard widgets, settings page, and the Data API client.</summary>
 public sealed class GoogleAnalyticsPlugin : PluginBase
 {
+    /// <summary>The admin page that edits the measurement id, property, and service account.</summary>
     public const string SettingsUrl = "/admin/google-analytics";
 
+    /// <inheritdoc />
     public override string? ConfigurationUrl => SettingsUrl;
 
+    /// <inheritdoc />
     public override void ConfigureServices(IServiceCollection services, PluginContext context)
     {
         services.AddTransient<IContentBlock, GoogleAnalyticsBlock>();

@@ -7,24 +7,30 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Confirms a new email address and copies it to the user name.</summary>
 public class ConfirmEmailChangeModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Changes the email and the user name.</param>
+    /// <param name="signInManager">Refreshes the sign-in after both changes succeed.</param>
     public ConfirmEmailChangeModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The result of the email change, shown on this page.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
+    /// <summary>Changes the email to <paramref name="email"/> and, when that succeeds, sets the user name to the same address.</summary>
+    /// <param name="userId">The user id. <see langword="null"/> redirects to the site root.</param>
+    /// <param name="email">The new email address. <see langword="null"/> redirects to the site root.</param>
+    /// <param name="code">The Base64Url-encoded change token. <see langword="null"/> redirects to the site root.</param>
+    /// <returns>This page after the change is attempted, a redirect when a value is missing, or not found when the user is gone.</returns>
     public async Task<IActionResult> OnGetAsync(string userId, string email, string code)
     {
         if (userId == null || email == null || code == null)

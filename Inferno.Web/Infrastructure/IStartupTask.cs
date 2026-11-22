@@ -14,25 +14,29 @@ using Microsoft.EntityFrameworkCore;
 namespace Inferno.Web.Infrastructure;
 
 /// <summary>
-/// Interface which should be implemented by tasks run on startup
+/// Work run from <see cref="ApplicationBuilderExtensions.UseInferno"/> after a connection string has been saved,
+/// unless <see cref="InfernoWebOptions.IgnoreStartupTasks"/> is set.
+/// Each task needs a public parameterless constructor. Lower <see cref="Order"/> values run first.
 /// </summary>
 public interface IStartupTask
 {
-    /// <summary>
-    /// Executes a task
-    /// </summary>
+    /// <summary>Runs this task.</summary>
+    /// <returns>A task that completes when the work has finished.</returns>
     Task ExecuteAsync();
 
-    /// <summary>
-    /// Gets order of this startup task implementation
-    /// </summary>
+    /// <summary>Sort key. Lower values run first.</summary>
     int Order { get; }
 }
 
+/// <summary>
+/// Ensures a default tenant and its media folder, an administrator from <see cref="DataSettings"/> when the membership
+/// store is empty, and a settings row for every registered <see cref="ISettings"/>.
+/// </summary>
 public class StartupTask : IStartupTask
 {
     #region IStartupTask Members
 
+    /// <inheritdoc />
     public async Task ExecuteAsync()
     {
         await EnsureTenantAsync();
@@ -51,6 +55,7 @@ public class StartupTask : IStartupTask
         await EnsureSettingsAsync(tenantIds);
     }
 
+    /// <inheritdoc />
     public int Order => 1;
 
     #endregion IStartupTask Members

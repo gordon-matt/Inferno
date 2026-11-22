@@ -14,6 +14,9 @@ namespace InfernoCMS.Identity.Permissions;
 /// Grants live in the Identity role and user claim tables. Each check reads them through a short cache instead of
 /// the sign-in cookie, so revoking a permission takes effect without the user signing out.
 /// </summary>
+/// <param name="contextFactory">Opens a context for the claim and role queries.</param>
+/// <param name="cache">Holds each user's grants for five minutes.</param>
+/// <param name="logger">Records a failed read and each successful replacement of grants.</param>
 public sealed class PermissionStore(
     IDbContextFactory contextFactory,
     IMemoryCache cache,
@@ -24,6 +27,7 @@ public sealed class PermissionStore(
     // Bumping the generation retires every cached entry at once; the old ones expire on their own.
     private int generation;
 
+    /// <inheritdoc />
     public async Task<GrantedPermissions> GetGrantedAsync(string userId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(userId))
@@ -61,6 +65,7 @@ public sealed class PermissionStore(
         }
     }
 
+    /// <inheritdoc />
     public async Task<IReadOnlySet<string>> GetUserPermissionsAsync(string userId, CancellationToken cancellationToken = default)
     {
         await using var context = contextFactory.GetContext();
@@ -72,6 +77,7 @@ public sealed class PermissionStore(
         return values.Where(value => !string.IsNullOrEmpty(value)).ToHashSet(StringComparer.Ordinal);
     }
 
+    /// <inheritdoc />
     public async Task<IReadOnlyList<RolePermissions>> GetUserRolePermissionsAsync(string userId, CancellationToken cancellationToken = default)
     {
         await using var context = contextFactory.GetContext();
@@ -97,6 +103,10 @@ public sealed class PermissionStore(
                     .ToHashSet(StringComparer.Ordinal)))];
     }
 
+    /// <summary>Permissions granted directly to the role, ignoring empty claim values.</summary>
+    /// <param name="roleId">The role id.</param>
+    /// <param name="cancellationToken">Cancels the claim query.</param>
+    /// <returns>The permission names stored on the role. Empty when the role has none.</returns>
     public async Task<IReadOnlySet<string>> GetRolePermissionsAsync(string roleId, CancellationToken cancellationToken = default)
     {
         await using var context = contextFactory.GetContext();
@@ -108,6 +118,7 @@ public sealed class PermissionStore(
         return values.Where(value => !string.IsNullOrEmpty(value)).ToHashSet(StringComparer.Ordinal);
     }
 
+    /// <inheritdoc />
     public async Task<Result> SetUserPermissionsAsync(string userId, IEnumerable<string> permissions, CancellationToken cancellationToken = default)
     {
         await using var context = contextFactory.GetContext();
@@ -133,6 +144,7 @@ public sealed class PermissionStore(
         return Result.Success();
     }
 
+    /// <inheritdoc />
     public async Task<Result> SetRolePermissionsAsync(string roleId, IEnumerable<string> permissions, CancellationToken cancellationToken = default)
     {
         await using var context = contextFactory.GetContext();
@@ -158,6 +170,7 @@ public sealed class PermissionStore(
         return Result.Success();
     }
 
+    /// <inheritdoc />
     public bool TryGetCached(string userId, out GrantedPermissions granted)
     {
         if (string.IsNullOrEmpty(userId))
@@ -169,6 +182,7 @@ public sealed class PermissionStore(
         return cache.TryGetValue(CacheKey(userId), out granted);
     }
 
+    /// <inheritdoc />
     public void Invalidate(string userId)
     {
         if (!string.IsNullOrEmpty(userId))
@@ -177,6 +191,7 @@ public sealed class PermissionStore(
         }
     }
 
+    /// <inheritdoc />
     public void InvalidateAll() => Interlocked.Increment(ref generation);
 
     private async Task<List<ApplicationRole>> AdministratorRolesAsync(IEnumerable<string> roleIds, CancellationToken cancellationToken)

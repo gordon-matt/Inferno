@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InfernoCMS.Identity.Services;
 
+/// <inheritdoc cref="IMembershipService" />
 public abstract class IdentityMembershipService : IMembershipService
 {
     private readonly IDbContextFactory contextFactory;
@@ -25,6 +26,11 @@ public abstract class IdentityMembershipService : IMembershipService
         cachedUserRoles = [];
     }
 
+    /// <summary>Stores the Identity managers, the context factory, and the profile repository.</summary>
+    /// <param name="contextFactory">Opens a context for the role-link and user queries.</param>
+    /// <param name="userManager">Creates, updates, and deletes users.</param>
+    /// <param name="roleManager">Creates, updates, and deletes roles.</param>
+    /// <param name="userProfileRepository">Reads and writes profile entries.</param>
     public IdentityMembershipService(
         IDbContextFactory contextFactory,
         UserManager<ApplicationUser> userManager,
@@ -39,6 +45,7 @@ public abstract class IdentityMembershipService : IMembershipService
 
     #region IMembershipService Members
 
+    /// <inheritdoc />
     public async Task<string> GenerateEmailConfirmationTokenAsync(object userId)
     {
         string id = userId.ToString();
@@ -46,6 +53,7 @@ public abstract class IdentityMembershipService : IMembershipService
         return await userManager.GenerateEmailConfirmationTokenAsync(user);
     }
 
+    /// <inheritdoc />
     public async Task ConfirmEmailAsync(object userId, string token)
     {
         string id = userId.ToString();
@@ -72,12 +80,14 @@ public abstract class IdentityMembershipService : IMembershipService
             });
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoUser>> GetAllUsersAsync(int? tenantId)
     {
         using var context = contextFactory.GetContext();
         return await GetAllUsersAsQueryable(context, tenantId).ToHashSetAsync();
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoUser>> GetUsersAsync(int? tenantId, Expression<Func<InfernoUser, bool>> predicate)
     {
         using var context = contextFactory.GetContext();
@@ -86,6 +96,7 @@ public abstract class IdentityMembershipService : IMembershipService
             .ToHashSetAsync();
     }
 
+    /// <inheritdoc />
     public async Task<InfernoUser> GetUserByIdAsync(object userId)
     {
         using var context = contextFactory.GetContext();
@@ -103,6 +114,7 @@ public abstract class IdentityMembershipService : IMembershipService
             });
     }
 
+    /// <inheritdoc />
     public async Task<InfernoUser> GetUserByEmailAsync(int? tenantId, string email)
     {
         ApplicationUser user;
@@ -124,6 +136,7 @@ public abstract class IdentityMembershipService : IMembershipService
             };
     }
 
+    /// <inheritdoc />
     public async Task<InfernoUser> GetUserByNameAsync(int? tenantId, string userName)
     {
         ApplicationUser user;
@@ -145,6 +158,7 @@ public abstract class IdentityMembershipService : IMembershipService
             };
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoRole>> GetRolesForUserAsync(object userId)
     {
         string id = userId.ToString();
@@ -186,6 +200,7 @@ public abstract class IdentityMembershipService : IMembershipService
         return roles;
     }
 
+    /// <inheritdoc />
     public async Task<bool> DeleteUserAsync(object userId)
     {
         string id = userId.ToString();
@@ -200,6 +215,7 @@ public abstract class IdentityMembershipService : IMembershipService
         return false;
     }
 
+    /// <inheritdoc />
     public async Task InsertUserAsync(InfernoUser user, string password)
     {
         // Check for spaces in UserName above, because of this:
@@ -237,6 +253,7 @@ public abstract class IdentityMembershipService : IMembershipService
         }
     }
 
+    /// <inheritdoc />
     public async Task UpdateUserAsync(InfernoUser user)
     {
         string userId = user.Id.ToString();
@@ -257,6 +274,7 @@ public abstract class IdentityMembershipService : IMembershipService
         }
     }
 
+    /// <inheritdoc />
     public async Task AssignUserToRolesAsync(int? tenantId, object userId, IEnumerable<object> roleIds)
     {
         string uId = userId.ToString();
@@ -321,6 +339,7 @@ public abstract class IdentityMembershipService : IMembershipService
         cachedUserRoles.Remove(uId);
     }
 
+    /// <inheritdoc />
     public async Task ChangePasswordAsync(object userId, string newPassword)
     {
         //TODO: This doesn't seem to be working very well; no errors, but can't login with the given password
@@ -347,6 +366,7 @@ public abstract class IdentityMembershipService : IMembershipService
         //userManager.UpdateSecurityStamp(id);
     }
 
+    /// <inheritdoc />
     public async Task<string> GetUserDisplayNameAsync(InfernoUser user)
     {
         var profile = await GetProfileAsync(user.Id);
@@ -379,6 +399,7 @@ public abstract class IdentityMembershipService : IMembershipService
 
     #region Set<ApplicationRole>()
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoRole>> GetAllRolesAsync(int? tenantId)
     {
         var query = roleManager.Roles;
@@ -395,6 +416,7 @@ public abstract class IdentityMembershipService : IMembershipService
             .ToListAsync();
     }
 
+    /// <inheritdoc />
     public async Task<InfernoRole> GetRoleByIdAsync(object roleId)
     {
         string id = roleId.ToString();
@@ -407,6 +429,7 @@ public abstract class IdentityMembershipService : IMembershipService
         };
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoRole>> GetRolesByIdsAsync(IEnumerable<object> roleIds)
     {
         var ids = roleIds.ToListOf<string>();
@@ -425,6 +448,7 @@ public abstract class IdentityMembershipService : IMembershipService
         });
     }
 
+    /// <inheritdoc />
     public async Task<InfernoRole> GetRoleByNameAsync(int? tenantId, string roleName)
     {
         var role = tenantId.HasValue
@@ -439,6 +463,7 @@ public abstract class IdentityMembershipService : IMembershipService
             };
     }
 
+    /// <inheritdoc />
     public async Task<bool> DeleteRoleAsync(object roleId)
     {
         string id = roleId.ToString();
@@ -453,6 +478,7 @@ public abstract class IdentityMembershipService : IMembershipService
         return false;
     }
 
+    /// <inheritdoc />
     public async Task InsertRoleAsync(InfernoRole role)
     {
         var entity = new ApplicationRole
@@ -481,6 +507,7 @@ public abstract class IdentityMembershipService : IMembershipService
         }
     }
 
+    /// <inheritdoc />
     public async Task UpdateRoleAsync(InfernoRole role)
     {
         string id = role.Id.ToString();
@@ -499,12 +526,14 @@ public abstract class IdentityMembershipService : IMembershipService
         }
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoUser>> GetUsersByRoleIdAsync(object roleId)
     {
         string rId = roleId.ToString();
         return await UsersInRoleAsync(context => context.Set<IdentityUserRole<string>>().Where(x => x.RoleId == rId));
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoUser>> GetUsersByRoleNameAsync(int? tenantId, string roleName)
     {
         return await UsersInRoleAsync(context =>
@@ -542,12 +571,14 @@ public abstract class IdentityMembershipService : IMembershipService
 
     #region Profile
 
+    /// <inheritdoc />
     public async Task<IDictionary<string, string>> GetProfileAsync(string userId)
     {
         using var connection = userProfileRepository.OpenConnection();
         return await connection.Query(x => x.UserId == userId).ToDictionaryAsync(k => k.Key, v => v.Value);
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<UserProfile>> GetProfilesAsync(IEnumerable<string> userIds)
     {
         using var connection = userProfileRepository.OpenConnection();
@@ -559,6 +590,7 @@ public abstract class IdentityMembershipService : IMembershipService
         });
     }
 
+    /// <inheritdoc />
     public async Task UpdateProfileAsync(string userId, IDictionary<string, string> profile, bool deleteExisting = false)
     {
         List<UserProfileEntry> entries = null;
@@ -617,6 +649,7 @@ public abstract class IdentityMembershipService : IMembershipService
         }
     }
 
+    /// <inheritdoc />
     public async Task<string> GetProfileEntryAsync(string userId, string key)
     {
         var entry = await userProfileRepository.FindOneAsync(new SearchOptions<UserProfileEntry>
@@ -629,6 +662,7 @@ public abstract class IdentityMembershipService : IMembershipService
         return entry?.Value;
     }
 
+    /// <inheritdoc />
     public async Task SaveProfileEntryAsync(string userId, string key, string value)
     {
         var entry = await userProfileRepository.FindOneAsync(new SearchOptions<UserProfileEntry>
@@ -654,6 +688,7 @@ public abstract class IdentityMembershipService : IMembershipService
         }
     }
 
+    /// <inheritdoc />
     public async Task DeleteProfileEntryAsync(string userId, string key)
     {
         var entry = await userProfileRepository.FindOneAsync(new SearchOptions<UserProfileEntry>
@@ -669,6 +704,7 @@ public abstract class IdentityMembershipService : IMembershipService
         }
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoUserProfileEntry>> GetProfileEntriesByKeyAsync(int? tenantId, string key)
     {
         using var connection = userProfileRepository.OpenConnection();
@@ -688,6 +724,7 @@ public abstract class IdentityMembershipService : IMembershipService
             });
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<InfernoUserProfileEntry>> GetProfileEntriesByKeyAndValueAsync(int? tenantId, string key, string value)
     {
         using var connection = userProfileRepository.OpenConnection();
@@ -707,6 +744,7 @@ public abstract class IdentityMembershipService : IMembershipService
             });
     }
 
+    /// <inheritdoc />
     public async Task<bool> ProfileEntryExistsAsync(int? tenantId, string key, string value, string userId = null)
     {
         using var connection = userProfileRepository.OpenConnection();
@@ -722,6 +760,7 @@ public abstract class IdentityMembershipService : IMembershipService
 
     #endregion Profile
 
+    /// <inheritdoc />
     public async Task EnsureAdminRoleForTenantAsync(int? tenantId)
     {
         var administratorsRole = await GetRoleByNameAsync(tenantId, InfernoSecurityConstants.Roles.Administrators);

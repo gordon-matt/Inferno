@@ -9,22 +9,49 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 
+/// <summary>Loads stored content blocks and turns them into <see cref="IContentBlock"/> instances.</summary>
 public interface IContentBlockService : IGenericDataService<ContentBlock>
 {
+    /// <summary>Loads the blocks stored for a page and applies that culture's translations.</summary>
+    /// <param name="pageId">The page whose blocks to load.</param>
+    /// <param name="cultureCode">The culture whose translations replace the stored values. An empty culture keeps the stored values.</param>
+    /// <returns>The deserialized blocks. A block whose type cannot be resolved, or whose values cannot be read, is omitted.</returns>
     IEnumerable<IContentBlock> GetContentBlocks(Guid pageId, string cultureCode);
 
+    /// <summary>
+    /// Loads the blocks in a named zone and applies that culture's translations.
+    /// Creates the zone when it does not exist, and then returns no blocks.
+    /// </summary>
+    /// <param name="zoneName">The zone name.</param>
+    /// <param name="cultureCode">The culture whose translations replace the stored values. An empty culture keeps the stored values.</param>
+    /// <param name="pageId">
+    /// When disabled blocks are included, limits the result to this page, or to zone-wide blocks when <see langword="null"/>.
+    /// When disabled blocks are excluded, zone-wide blocks are always included and this page's blocks are added when it is set.
+    /// </param>
+    /// <param name="includeDisabled">
+    /// <see langword="true"/> to include disabled blocks.
+    /// <see langword="false"/> to return only enabled blocks.
+    /// </param>
+    /// <returns>The deserialized blocks. A block whose type cannot be resolved, or whose values cannot be read, is omitted.</returns>
     IEnumerable<IContentBlock> GetContentBlocks(string zoneName, string cultureCode, Guid? pageId = null, bool includeDisabled = false);
 
     /// <summary>Drops the cached block lists, for changes that do not go through this service, such as a translation.</summary>
     void ResetCache();
 }
 
+/// <inheritdoc cref="IContentBlockService" />
 public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlockService
 {
     private readonly Lazy<IRepository<Zone>> zoneRepository;
     private readonly ContentLocalization localization;
     private readonly IWorkContext workContext;
 
+    /// <summary>Stores the cache, repositories, localization store, and work context.</summary>
+    /// <param name="cacheManager">The cache used by the generic data service and the block lists.</param>
+    /// <param name="repository">The content-block store.</param>
+    /// <param name="zoneRepository">The zone store, used when loading a zone by name.</param>
+    /// <param name="localization">Reads and deletes translated block values.</param>
+    /// <param name="workContext">Supplies the current tenant.</param>
     public ContentBlockService(
         ICacheManager cacheManager,
         IRepository<ContentBlock> repository,
@@ -40,6 +67,8 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
 
     #region GenericDataService<ContentBlock> Overrides
 
+    /// <inheritdoc />
+    /// <remarks>Also deletes translations stored for the removed blocks.</remarks>
     public override int Delete(Expression<Func<ContentBlock, bool>> filterExpression)
     {
         string entityType = typeof(ContentBlock).FullName;
@@ -51,6 +80,8 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
         return rowsAffected;
     }
 
+    /// <inheritdoc />
+    /// <remarks>Also deletes translations stored for the block.</remarks>
     public override int Delete(ContentBlock entity)
     {
         string entityType = typeof(ContentBlock).FullName;
@@ -62,6 +93,7 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
         return rowsAffected;
     }
 
+    /// <inheritdoc />
     public void ResetCache() => ClearCache();
 
     protected override void ClearCache()
@@ -75,6 +107,7 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
 
     #region IContentBlockService Members
 
+    /// <inheritdoc />
     public IEnumerable<IContentBlock> GetContentBlocks(Guid pageId, string cultureCode)
     {
         string key = string.Format(
@@ -90,6 +123,7 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
         return GetContentBlocks(records, cultureCode);
     }
 
+    /// <inheritdoc />
     public IEnumerable<IContentBlock> GetContentBlocks(string zoneName, string cultureCode, Guid? pageId = null, bool includeDisabled = false)
     {
         int tenantId = GetTenantId();

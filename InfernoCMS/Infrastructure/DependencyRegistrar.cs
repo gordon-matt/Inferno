@@ -5,10 +5,13 @@ using InfernoCMS.Identity.Services;
 
 namespace InfernoCMS.Infrastructure;
 
+/// <summary>Registers the CMS database factory, repositories, membership service, tenant cleaner, and invariant language pack.</summary>
 public class DependencyRegistrar : IDependencyRegistrar
 {
+    /// <inheritdoc />
     public int Order => 1;
 
+    /// <inheritdoc />
     public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
         builder.Register<IDbContextFactory, InfernoCMS.Services.DataSettingsDbContextFactory>(ServiceLifetime.Singleton);

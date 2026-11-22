@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Entities;
 
+/// <summary>A named region of a tenant's layout that holds content blocks.</summary>
 public class Zone : TenantEntity<Guid>
 {
+    /// <summary>The zone name a layout asks for.</summary>
     public string Name { get; set; }
 }
 

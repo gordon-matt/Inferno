@@ -1,7 +1,13 @@
 ﻿namespace Inferno.Web.Navigation;
 
+/// <summary>
+/// Orders menu positions segment by segment on <c>.</c> and <c>:</c>.
+/// <see langword="null"/> sorts as <c>before</c>, an empty string sorts as <c>0</c>, <c>before</c> sorts first, and <c>after</c> sorts last.
+/// A longer position sorts after a shorter one that shares its prefix.
+/// </summary>
 internal class FlatPositionComparer : IComparer<string>
 {
+    /// <inheritdoc />
     public int Compare(string x, string y)
     {
         if (x == y)

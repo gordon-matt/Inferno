@@ -4,31 +4,53 @@ using Inferno.Web.ContentManagement.Areas.Admin.Pages.Entities;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Dashboard;
 
+/// <summary>The rows and permissions <see cref="DashboardSnapshotBuilder"/> turns into a snapshot.</summary>
 public sealed class DashboardSnapshotInput
 {
+    /// <summary>Whether page rows are included. When <see langword="false"/>, page counts stay at zero.</summary>
     public bool CanReadPages { get; init; }
 
+    /// <summary>Whether post rows may be counted. They are also skipped when <see cref="BlogEnabled"/> is <see langword="false"/>.</summary>
     public bool CanReadPosts { get; init; }
 
+    /// <summary>Whether users, roles, and locked-account attention are included.</summary>
     public bool CanReadUsers { get; init; }
 
+    /// <summary>Whether the tenant has the blog switched on.</summary>
     public bool BlogEnabled { get; init; }
 
+    /// <summary>The UTC time used for stale drafts and scheduled posts.</summary>
     public DateTime UtcNow { get; init; }
 
+    /// <summary>The tenant's pages.</summary>
     public IReadOnlyList<DashboardPageRow> Pages { get; init; } = [];
 
+    /// <summary>The tenant's page versions.</summary>
     public IReadOnlyList<DashboardVersionRow> Versions { get; init; } = [];
 
+    /// <summary>The tenant's posts. Counted only when <see cref="CanReadPosts"/> and <see cref="BlogEnabled"/> are both set.</summary>
     public IReadOnlyList<DashboardPostRow> Posts { get; init; } = [];
 
+    /// <summary>The tenant's accounts.</summary>
     public IReadOnlyList<DashboardUserRow> Users { get; init; } = [];
 
+    /// <summary>The tenant's roles and how many accounts are in each.</summary>
     public IReadOnlyList<DashboardRoleRow> Roles { get; init; } = [];
 }
 
+/// <summary>A page row for the dashboard.</summary>
+/// <param name="Id">The page identifier.</param>
+/// <param name="Name">The admin name, used when a version has no title.</param>
+/// <param name="IsEnabled">Whether the page is switched on. A published page that is off is counted as needing attention instead of as published.</param>
 public sealed record DashboardPageRow(Guid Id, string Name, bool IsEnabled);
 
+/// <summary>A page version row for the dashboard.</summary>
+/// <param name="Id">The version identifier. Recent and attention links open this version.</param>
+/// <param name="PageId">The page the version belongs to.</param>
+/// <param name="Status">Draft, published, or archived.</param>
+/// <param name="Title">The version title.</param>
+/// <param name="Fields">The stored page fields, read for the meta description.</param>
+/// <param name="DateModifiedUtc">When the version was last saved, in UTC.</param>
 public sealed record DashboardVersionRow(
     Guid Id,
     Guid PageId,
@@ -37,6 +59,17 @@ public sealed record DashboardVersionRow(
     string Fields,
     DateTime DateModifiedUtc);
 
+/// <summary>A blog post row for the dashboard.</summary>
+/// <param name="Id">The post identifier.</param>
+/// <param name="Title">The post title.</param>
+/// <param name="IsDraft">Whether the post is still a draft.</param>
+/// <param name="PublishedAt">The publish time. A future time counts as scheduled.</param>
+/// <param name="UpdatedAt">When the post was last updated, in UTC.</param>
+/// <param name="AuthorName">The author shown on the recent list.</param>
+/// <param name="MetaTitle">The SEO title. Blank published posts are marked as needing attention.</param>
+/// <param name="MetaDescription">The meta description. Blank published posts are marked as needing attention.</param>
+/// <param name="CoverImageUrl">The cover image. When set, a blank alt text is marked as needing attention.</param>
+/// <param name="CoverImageAlt">The cover image's alt text.</param>
 public sealed record DashboardPostRow(
     int Id,
     string Title,
@@ -49,72 +82,130 @@ public sealed record DashboardPostRow(
     string CoverImageUrl,
     string CoverImageAlt);
 
+/// <summary>An account row for the dashboard.</summary>
+/// <param name="Name">The display name. Blank falls back to <paramref name="Email"/>.</param>
+/// <param name="Email">The email address.</param>
+/// <param name="Locked">Whether the account is locked. Locked accounts are marked as needing attention.</param>
 public sealed record DashboardUserRow(string Name, string Email, bool Locked);
 
+/// <summary>A role and how many accounts are in it.</summary>
+/// <param name="Name">The role name.</param>
+/// <param name="Count">How many accounts are in the role.</param>
 public sealed record DashboardRoleRow(string Name, int Count);
 
+/// <summary>Something the dashboard asks an editor to look at.</summary>
+/// <param name="Title">The page, post, or account name.</param>
+/// <param name="Reason">Why it needs attention.</param>
+/// <param name="Href">Where the item opens.</param>
 public sealed record AttentionItem(string Title, string Reason, string Href);
 
+/// <summary>A recently edited page or post.</summary>
+/// <param name="Title">The title.</param>
+/// <param name="Kind">Page or Post.</param>
+/// <param name="Href">Where the item opens.</param>
+/// <param name="WhenUtc">When it was last saved, in UTC.</param>
+/// <param name="By">The author for a post. <see langword="null"/> for a page.</param>
 public sealed record RecentItem(string Title, string Kind, string Href, DateTime WhenUtc, string By);
 
+/// <summary>A post that will be published later.</summary>
+/// <param name="Title">The post title.</param>
+/// <param name="Href">Where the post opens.</param>
+/// <param name="PublishAtUtc">The publish time, in UTC.</param>
 public sealed record ScheduledItem(string Title, string Href, DateTime PublishAtUtc);
 
+/// <summary>Edits in one Monday-start week.</summary>
+/// <param name="WeekStart">The Monday, as a date.</param>
+/// <param name="Pages">How many pages were last saved in the week.</param>
+/// <param name="Posts">How many posts were last updated in the week.</param>
 public sealed record WeekActivity(DateTime WeekStart, int Pages, int Posts);
 
+/// <summary>An account on the accounts widget.</summary>
+/// <param name="Name">The display name, or the email when the name is blank.</param>
+/// <param name="Email">The email address.</param>
+/// <param name="Locked">Whether the account is locked.</param>
 public sealed record AccountItem(string Name, string Email, bool Locked);
 
+/// <summary>The numbers and lists the dashboard widgets show.</summary>
 public sealed class DashboardSnapshot
 {
+    /// <summary>Why the snapshot could not be loaded. <see langword="null"/> when it was built.</summary>
     public string Error { get; init; }
 
+    /// <summary>Whether page counts were included.</summary>
     public bool CanReadPages { get; init; }
 
+    /// <summary>Whether the caller may read posts. Post counts also require <see cref="BlogEnabled"/>.</summary>
     public bool CanReadPosts { get; init; }
 
+    /// <summary>Whether accounts and roles were included.</summary>
     public bool CanReadUsers { get; init; }
 
+    /// <summary>Whether the tenant has the blog switched on.</summary>
     public bool BlogEnabled { get; init; }
 
+    /// <summary>Enabled pages that have a published version.</summary>
     public int PublishedPages { get; init; }
 
+    /// <summary>Pages that have a draft and no published version.</summary>
     public int DraftPages { get; init; }
 
+    /// <summary>Pages that have versions, all of them archived.</summary>
     public int ArchivedPages { get; init; }
 
+    /// <summary>Posts that are published and not scheduled for later.</summary>
     public int PublishedPosts { get; init; }
 
+    /// <summary>Posts that are still drafts.</summary>
     public int DraftPosts { get; init; }
 
+    /// <summary>Posts whose publish time is still in the future.</summary>
     public int ScheduledPosts { get; init; }
 
+    /// <summary>How many accounts were loaded. Zero when the caller cannot read accounts.</summary>
     public int Users { get; init; }
 
+    /// <summary>How many attention items were found, including ones past <see cref="DashboardSnapshotBuilder.ListLimit"/>.</summary>
     public int AttentionCount { get; init; }
 
+    /// <summary>The last <see cref="DashboardSnapshotBuilder.ActivityWeeks"/> weeks, oldest first, starting on Monday.</summary>
     public IReadOnlyList<WeekActivity> Activity { get; init; } = [];
 
+    /// <summary>The most recently edited pages and posts, newest first, limited to <see cref="DashboardSnapshotBuilder.ListLimit"/>.</summary>
     public IReadOnlyList<RecentItem> Recent { get; init; } = [];
 
+    /// <summary>Scheduled posts, soonest first, limited to <see cref="DashboardSnapshotBuilder.ListLimit"/>.</summary>
     public IReadOnlyList<ScheduledItem> Scheduled { get; init; } = [];
 
+    /// <summary>Attention items, most urgent first, limited to <see cref="DashboardSnapshotBuilder.ListLimit"/>.</summary>
     public IReadOnlyList<AttentionItem> Attention { get; init; } = [];
 
+    /// <summary>Roles ordered by count, then name. Empty when the caller cannot read accounts.</summary>
     public IReadOnlyList<DashboardRoleRow> Roles { get; init; } = [];
 
+    /// <summary>Accounts ordered by name, limited to <see cref="DashboardSnapshotBuilder.ListLimit"/>. Empty when the caller cannot read accounts.</summary>
     public IReadOnlyList<AccountItem> Accounts { get; init; } = [];
 
+    /// <summary>Creates a snapshot that failed to load.</summary>
+    /// <param name="error">The message to show.</param>
+    /// <returns>A snapshot whose <see cref="Error"/> is set and whose lists are empty.</returns>
     public static DashboardSnapshot Failed(string error) => new() { Error = error };
 }
 
 /// <summary>Turns the rows the dashboard loaded into the numbers and lists the widgets show.</summary>
 public static class DashboardSnapshotBuilder
 {
+    /// <summary>A draft older than this many days is marked as needing attention.</summary>
     public const int StaleDraftDays = 30;
 
+    /// <summary>How many Monday-start weeks <see cref="Build"/> includes.</summary>
     public const int ActivityWeeks = 8;
 
+    /// <summary>How many recent, scheduled, attention, and account rows <see cref="Build"/> keeps.</summary>
     public const int ListLimit = 8;
 
+    /// <summary>Counts pages and posts and builds the lists the widgets show.</summary>
+    /// <param name="input">The loaded rows and the caller's permissions.</param>
+    /// <returns>The snapshot. Page and post rows the caller cannot read are ignored.</returns>
     public static DashboardSnapshot Build(DashboardSnapshotInput input)
     {
         var now = input.UtcNow;

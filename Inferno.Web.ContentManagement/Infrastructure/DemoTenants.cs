@@ -1,12 +1,32 @@
 namespace Inferno.Web.ContentManagement.Infrastructure;
 
 /// <summary>A page and the pages under it. The HTML is the body only: the page's name is its heading.</summary>
+/// <param name="Name">The page name, also used as its heading.</param>
+/// <param name="Slug">The URL slug.</param>
+/// <param name="Html">The body HTML, without a heading.</param>
+/// <param name="Children">Pages nested under this one.</param>
 public sealed record DemoPage(string Name, string Slug, string Html, params DemoPage[] Children);
 
+/// <summary>One entry in a <see cref="DemoMenu"/>.</summary>
+/// <param name="Text">The link text.</param>
+/// <param name="Url">The link address.</param>
+/// <param name="Children">Items nested under this one.</param>
 public sealed record DemoMenuItem(string Text, string Url, params DemoMenuItem[] Children);
 
+/// <summary>A named menu and its items.</summary>
+/// <param name="Name">The menu name, such as Main or Footer.</param>
+/// <param name="Items">The top-level items.</param>
 public sealed record DemoMenu(string Name, params DemoMenuItem[] Items);
 
+/// <summary>A published blog post for a demo tenant that has a blog.</summary>
+/// <param name="Title">The post title.</param>
+/// <param name="Slug">The URL slug.</param>
+/// <param name="Summary">The summary and excerpt.</param>
+/// <param name="Html">The post body.</param>
+/// <param name="Category">The category name. It must be one of the tenant's categories.</param>
+/// <param name="Tags">The tag names.</param>
+/// <param name="DaysAgo">How many days before seeding the post is dated.</param>
+/// <param name="IsFeatured"><see langword="true"/> to mark the post as featured.</param>
 public sealed record DemoPost(
     string Title,
     string Slug,
@@ -17,6 +37,10 @@ public sealed record DemoPost(
     int DaysAgo,
     bool IsFeatured = false);
 
+/// <summary>An account created for a demo tenant.</summary>
+/// <param name="Email">The sign-in address. It is also the user name.</param>
+/// <param name="GivenName">The given name stored on the profile.</param>
+/// <param name="FamilyName">The family name stored on the profile.</param>
 /// <param name="IsManager">Holds every permission a tenant can hold, through the tenant's own Site Managers role. Not a host administrator.</param>
 public sealed record DemoUser(string Email, string GivenName, string FamilyName, bool IsManager);
 
@@ -24,6 +48,21 @@ public sealed record DemoUser(string Email, string GivenName, string FamilyName,
 /// One fake site. Each demo tenant has its own host name, theme, pages, menus, content blocks and, when
 /// <see cref="EnableBlog"/> is on, blog. <see cref="ThemeId"/> names a theme in the host's Themes folder.
 /// </summary>
+/// <param name="Name">The tenant name. The installer tenant is matched by <see cref="DemoTenants.DefaultTenantName"/>.</param>
+/// <param name="Url">The tenant URL.</param>
+/// <param name="Hosts">Host names that resolve to this tenant, separated by commas.</param>
+/// <param name="SiteName">The site name stored in the tenant's settings.</param>
+/// <param name="HomePageTitle">The home page title stored in the tenant's settings.</param>
+/// <param name="EnableBlog"><see langword="true"/> to seed a blog and a latest-posts block.</param>
+/// <param name="ThemeId">The theme folder name. Applied after the theme tables exist.</param>
+/// <param name="ThemeAccent">Optional accent stored with the theme. Empty leaves the theme's own accent.</param>
+/// <param name="HomeHtml">HTML for the home-page content zone.</param>
+/// <param name="FooterHtml">HTML for the footer zone.</param>
+/// <param name="Pages">The pages to create, including nested pages.</param>
+/// <param name="Menus">The menus to create.</param>
+/// <param name="Categories">Blog category names. Unused when <paramref name="EnableBlog"/> is <see langword="false"/>.</param>
+/// <param name="Posts">Blog posts. Unused when <paramref name="EnableBlog"/> is <see langword="false"/>.</param>
+/// <param name="Users">Accounts created for the tenant. Managers are the blog authors.</param>
 public sealed record DemoTenant(
     string Name,
     string Url,
@@ -53,6 +92,7 @@ public static class DemoTenants
     /// <summary>The first tenant. The installer creates it, so the demo fills it in rather than adding it.</summary>
     public const string DefaultTenantName = "Default";
 
+    /// <summary>The corporate site, the coffee shop, and the design studio.</summary>
     public static IReadOnlyList<DemoTenant> All { get; } = [Corporate(), Coffee(), Studio()];
 
     private static DemoTenant Corporate() => new(

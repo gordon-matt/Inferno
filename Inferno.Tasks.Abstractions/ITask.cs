@@ -7,6 +7,7 @@
 /// </summary>
 public partial interface ITask
 {
+    /// <summary>The name shown for this job.</summary>
     string Name { get; }
 
     /// <summary>
@@ -16,5 +17,6 @@ public partial interface ITask
     /// </summary>
     int DefaultInterval { get; }
 
+    /// <summary>Does the job's work. The caller has already opened a dependency-injection scope.</summary>
     void Execute();
 }

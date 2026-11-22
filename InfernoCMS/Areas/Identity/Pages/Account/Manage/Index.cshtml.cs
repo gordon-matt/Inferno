@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
+/// <summary>Shows the signed-in user's name and saves a changed phone number.</summary>
 public class IndexModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Loads the user and saves the phone number.</param>
+    /// <param name="signInManager">Refreshes the sign-in after a successful save.</param>
     public IndexModel(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager)
@@ -19,36 +23,21 @@ public class IndexModel : PageModel
         _signInManager = signInManager;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The account's sign-in name.</summary>
     public string Username { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>A message from the previous save, shown on the next request.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The phone number posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The phone number edited on this page.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The account phone number.</summary>
         [Phone]
         [Display(Name = "Phone number")]
         public string PhoneNumber { get; set; }
@@ -67,6 +56,8 @@ public class IndexModel : PageModel
         };
     }
 
+    /// <summary>Loads the signed-in user's name and phone number.</summary>
+    /// <returns>This page, or not found when the user cannot be loaded.</returns>
     public async Task<IActionResult> OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -79,6 +70,8 @@ public class IndexModel : PageModel
         return Page();
     }
 
+    /// <summary>Saves the phone number when it changed, then refreshes the sign-in.</summary>
+    /// <returns>A redirect back to this page, or this page again when the model is invalid. Not found when the user is gone.</returns>
     public async Task<IActionResult> OnPostAsync()
     {
         var user = await _userManager.GetUserAsync(User);

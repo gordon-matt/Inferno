@@ -3,10 +3,21 @@
 namespace Inferno.Security;
 
 // http://stackoverflow.com/questions/38995379/alternative-to-system-web-security-membership-generatepassword-in-aspnetcore-ne
+/// <summary>Builds a random password from digits, letters, and a fixed set of punctuation.</summary>
 public static class Password
 {
     private static readonly char[] Punctuations = "!@#$%^&*()_-+=[{]};:>|./?".ToCharArray();
 
+    /// <summary>
+    /// Builds a password of <paramref name="length"/> characters.
+    /// The first pass uses a cryptographic generator. When that pass has fewer punctuation characters than requested, later positions are replaced using <see cref="Random"/>.
+    /// </summary>
+    /// <param name="length">How many characters to return. Must be from 1 to 128.</param>
+    /// <param name="numberOfNonAlphanumericCharacters">How many punctuation characters the result must contain. Must be from 0 to <paramref name="length"/>.</param>
+    /// <returns>The generated password.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// <paramref name="length"/> is outside 1 to 128, or <paramref name="numberOfNonAlphanumericCharacters"/> is negative or greater than <paramref name="length"/>.
+    /// </exception>
     public static string Generate(int length, int numberOfNonAlphanumericCharacters)
     {
         if (length is < 1 or > 128)

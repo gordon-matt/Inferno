@@ -9,6 +9,7 @@ using PageKrafter.Rendering;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Pages;
 
+/// <summary>Edits one page version: its content, details, publication, and history.</summary>
 public partial class Design
 {
     /// <summary>The language select cannot hold null, so the default language is the empty string.</summary>
@@ -53,6 +54,7 @@ public partial class Design
         set => pageEdit.ParentId = Guid.TryParse(value, out var id) ? id : null;
     }
 
+    /// <summary>The version being edited.</summary>
     [Parameter]
     public Guid VersionId { get; set; }
 

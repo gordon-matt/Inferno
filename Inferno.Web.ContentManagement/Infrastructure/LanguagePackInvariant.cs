@@ -2,12 +2,15 @@ using Localize;
 
 namespace Inferno.Web.ContentManagement.Infrastructure;
 
+/// <summary>English text for the CMS catalog keys. Registered as the invariant language pack.</summary>
 public class LanguagePackInvariant : ILanguagePack
 {
     #region ILanguagePack Members
 
+    /// <summary>Always <see langword="null"/>, so these strings belong to the invariant culture.</summary>
     public string CultureCode => null;
 
+    /// <summary>English text for the CMS resource keys. A new dictionary is created on each read.</summary>
     public IDictionary<string, string> LocalizedStrings => new Dictionary<string, string>
     {
         { InfernoCmsLocalizableStrings.Blog.Categories, "Categories" },

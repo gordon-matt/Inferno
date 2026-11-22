@@ -7,20 +7,32 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Services;
 
+/// <summary>Lists and unsubscribes newsletter subscribers for a tenant.</summary>
 public interface ISubscriberAdminService
 {
-    /// <summary>Users of the tenant who have opted in to newsletters, matching <paramref name="search"/> when given.</summary>
+    /// <summary>Lists users of the tenant who have opted in to newsletters, matching <paramref name="search"/> when given.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="search">Matches the display name or email. Whitespace lists everyone who is subscribed.</param>
+    /// <returns>The subscribers, ordered by name and then email, or an error when they cannot be loaded.</returns>
     Task<Result<IReadOnlyList<Subscriber>>> ListAsync(int tenantId, string search);
 
     /// <summary>Opts the user out of newsletters. Their account is left alone.</summary>
+    /// <param name="tenantId">The tenant that owns the user.</param>
+    /// <param name="userId">The user. Empty, missing, or another tenant's user is not found.</param>
+    /// <returns>Success, not found, or an error when the profile cannot be saved.</returns>
     Task<Result> UnsubscribeAsync(int tenantId, string userId);
 }
 
+/// <inheritdoc cref="ISubscriberAdminService" />
+/// <param name="membershipService">Reads users and writes the subscribe profile entry.</param>
+/// <param name="eventPublisher">Publishes <see cref="NewsletterUnsubscribedEvent"/> after a successful opt-out.</param>
+/// <param name="logger">Records list and unsubscribe failures.</param>
 public class SubscriberAdminService(
     IMembershipService membershipService,
     IEventPublisher eventPublisher,
     ILogger<SubscriberAdminService> logger) : ISubscriberAdminService
 {
+    /// <inheritdoc />
     public async Task<Result<IReadOnlyList<Subscriber>>> ListAsync(int tenantId, string search)
     {
         try
@@ -67,6 +79,7 @@ public class SubscriberAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result> UnsubscribeAsync(int tenantId, string userId)
     {
         var user = string.IsNullOrEmpty(userId) ? null : await membershipService.GetUserByIdAsync(userId);

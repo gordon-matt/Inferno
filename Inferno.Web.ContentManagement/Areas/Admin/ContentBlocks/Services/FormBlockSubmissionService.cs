@@ -10,11 +10,25 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 
+/// <summary>Accepts a public form-block post.</summary>
 public interface IFormBlockSubmissionService
 {
+    /// <summary>
+    /// Accepts a form-block post. A configured form URL is called when it is a public http or https address;
+    /// otherwise the fields are emailed to the address sealed in the form token.
+    /// </summary>
+    /// <param name="form">The posted fields. Settings are read from the sealed token, not from visitor-supplied copies.</param>
+    /// <param name="referrer">The page to send the visitor back to when the post cannot be completed.</param>
+    /// <returns>Whether the post was accepted, the message to show, and where to send the visitor.</returns>
+    /// <remarks>
+    /// An empty redirect in the token sends the visitor to the site root. Registered <see cref="IFormBlockProcessor"/>
+    /// instances may change the mail message; a processor that throws is logged and the email is still sent.
+    /// The service then replaces the recipients with the sealed address.
+    /// </remarks>
     Task<SaveResultModel> SubmitAsync(IFormCollection form, string referrer);
 }
 
+/// <inheritdoc cref="IFormBlockSubmissionService" />
 public class FormBlockSubmissionService : IFormBlockSubmissionService
 {
     private static readonly HashSet<string> ReservedKeys = new(StringComparer.OrdinalIgnoreCase)
@@ -37,6 +51,12 @@ public class FormBlockSubmissionService : IFormBlockSubmissionService
     private readonly ILogger<FormBlockSubmissionService> logger;
     private readonly IDataProtectionProvider dataProtection;
 
+    /// <summary>Stores the mail sender, processors, HTTP client, logger, and data-protection provider.</summary>
+    /// <param name="emailSender">Sends the form email.</param>
+    /// <param name="processors">May adjust the mail message before it is sent.</param>
+    /// <param name="httpClientFactory">Creates the client used when the form is forwarded to a URL.</param>
+    /// <param name="logger">Records refused, failed, and processor errors.</param>
+    /// <param name="dataProtection">Opens the sealed form settings.</param>
     public FormBlockSubmissionService(
         IEmailSender emailSender,
         IEnumerable<IFormBlockProcessor> processors,
@@ -51,6 +71,7 @@ public class FormBlockSubmissionService : IFormBlockSubmissionService
         this.dataProtection = dataProtection;
     }
 
+    /// <inheritdoc />
     public async Task<SaveResultModel> SubmitAsync(IFormCollection form, string referrer)
     {
         // Only the sealed settings are trusted. Anything a visitor posts for the destination

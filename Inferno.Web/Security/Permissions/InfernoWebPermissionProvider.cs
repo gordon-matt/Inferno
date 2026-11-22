@@ -2,6 +2,7 @@ using Inferno.Security;
 
 namespace Inferno.Web.Security.Permissions;
 
+/// <summary>The permissions defined by Inferno.Web.</summary>
 public sealed class InfernoWebPermissionProvider : IPermissionProvider
 {
     private const string General = "General";
@@ -9,6 +10,7 @@ public sealed class InfernoWebPermissionProvider : IPermissionProvider
     private const string Membership = "Membership";
     private const string Configuration = "Configuration";
 
+    /// <inheritdoc />
     public IEnumerable<Permission> GetPermissions() =>
     [
         new(StandardPolicies.AdminAccess, General, "Admin area")

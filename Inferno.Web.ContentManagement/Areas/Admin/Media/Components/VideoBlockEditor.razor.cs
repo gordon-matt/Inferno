@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Media.Components;
 
+/// <summary>Editor for a <see cref="Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks.VideoBlock"/>, including which <see cref="Inferno.Web.ContentManagement.Areas.Admin.Media.ContentBlocks.VideoControlsType"/> values are selected.</summary>
 public partial class VideoBlockEditor
 {
     private static readonly IReadOnlyList<IdNamePair<string>> availableControls =

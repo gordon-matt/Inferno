@@ -1,5 +1,6 @@
 ﻿namespace InfernoCMS;
 
+/// <summary>Catalog keys for Inferno CMS text.</summary>
 public static class LocalizableStrings
 {
     public static class Dashboard

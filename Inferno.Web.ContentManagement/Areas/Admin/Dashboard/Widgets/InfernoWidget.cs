@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Dashboard.Widgets;
 
+/// <summary>A dashboard widget that reads the shared <see cref="DashboardSnapshot"/> and reloads it on refresh.</summary>
 public abstract class InfernoWidget : WidgetComponentBase
 {
     [Inject]

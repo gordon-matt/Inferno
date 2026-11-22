@@ -14,12 +14,15 @@ namespace Inferno.Web.Components;
 /// </summary>
 public abstract class AdminPage : ComponentBase
 {
+    /// <summary>The current tenant and user.</summary>
     [Inject]
     protected IWorkContext WorkContext { get; set; }
 
+    /// <summary>Toasts for saved, failed, and forbidden actions.</summary>
     [Inject]
     protected ToastService Toasts { get; set; }
 
+    /// <summary>Confirmation dialogs.</summary>
     [Inject]
     protected DialogService Dialogs { get; set; }
 
@@ -32,8 +35,12 @@ public abstract class AdminPage : ComponentBase
     [Inject]
     private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
+    /// <summary>The current tenant id.</summary>
     protected int TenantId => WorkContext.CurrentTenant.Id;
 
+    /// <summary>Whether the signed-in user satisfies <paramref name="policy"/>.</summary>
+    /// <param name="policy">The policy name.</param>
+    /// <returns><see langword="true"/> when authorization succeeds.</returns>
     protected async Task<bool> HasPolicyAsync(string policy)
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -42,6 +49,8 @@ public abstract class AdminPage : ComponentBase
     }
 
     /// <summary>Checks <paramref name="policy"/> before a write and tells the user when it fails.</summary>
+    /// <param name="policy">The policy required for the write.</param>
+    /// <returns><see langword="true"/> when the user holds <paramref name="policy"/>.</returns>
     protected async Task<bool> EnsurePolicyAsync(string policy)
     {
         if (await HasPolicyAsync(policy))

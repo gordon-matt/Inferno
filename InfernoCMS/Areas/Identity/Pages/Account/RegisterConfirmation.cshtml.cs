@@ -9,36 +9,35 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Shows the address that was registered and a confirmation link for that account.</summary>
 [AllowAnonymous]
 public class RegisterConfirmationModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _sender;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Finds the user and creates the confirmation token.</param>
+    /// <param name="sender">The email sender. This page does not send mail. It builds a confirmation link instead.</param>
     public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender sender)
     {
         _userManager = userManager;
         _sender = sender;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email address that was just registered.</summary>
     public string Email { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>Whether the page should show <see cref="EmailConfirmationUrl"/>. This handler always sets it to <see langword="true"/>.</summary>
     public bool DisplayConfirmAccountLink { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>A link that confirms the account. Filled whenever the user exists.</summary>
     public string EmailConfirmationUrl { get; set; }
 
+    /// <summary>Loads the confirmation link for <paramref name="email"/>.</summary>
+    /// <param name="email">The address that was registered. <see langword="null"/> redirects to the site root.</param>
+    /// <param name="returnUrl">Carried into the confirmation link. <see langword="null"/> becomes the site root.</param>
+    /// <returns>This page, a redirect when <paramref name="email"/> is missing, or not found when no user has that email.</returns>
     public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
     {
         if (email == null)

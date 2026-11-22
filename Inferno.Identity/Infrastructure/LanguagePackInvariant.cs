@@ -2,12 +2,15 @@
 
 namespace Inferno.Identity.Infrastructure;
 
+/// <inheritdoc cref="ILanguagePack" />
 public class LanguagePackInvariant : ILanguagePack
 {
     #region ILanguagePack Members
 
+    /// <inheritdoc />
     public string CultureCode => null;
 
+    /// <inheritdoc />
     public IDictionary<string, string> LocalizedStrings => new Dictionary<string, string>
     {
         { InfernoIdentityLocalizableStrings.ConfirmNewPassword, "Confirm New Password" },

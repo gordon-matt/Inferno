@@ -10,13 +10,18 @@ public sealed class ScheduledTasksSection(IStringLocalizer localizer) : ISetting
     /// <summary>Route of the scheduled-task page. The page's route attribute uses this value.</summary>
     public const string Path = "/admin/configuration/scheduled-tasks";
 
+    /// <inheritdoc />
     public string Title => localizer[InfernoWebLocalizableStrings.ScheduledTasks.Title];
 
+    /// <inheritdoc />
     public string Description => localizer[InfernoWebLocalizableStrings.ScheduledTasks.CardDescription];
 
+    /// <inheritdoc />
     public string Icon => "clock";
 
+    /// <inheritdoc />
     public string Url => Path;
 
+    /// <inheritdoc />
     public string Permission => StandardPolicies.FullAccess;
 }

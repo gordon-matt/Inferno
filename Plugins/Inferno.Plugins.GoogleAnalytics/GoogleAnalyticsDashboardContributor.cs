@@ -6,10 +6,13 @@ using Inferno.Web.Dashboard;
 
 namespace Inferno.Plugins.GoogleAnalytics;
 
+/// <summary>Adds the visitor, traffic, top-page, source, and device widgets, and an Analytics section on a new dashboard.</summary>
 public sealed class GoogleAnalyticsDashboardContributor : IDashboardContributor
 {
+    /// <inheritdoc />
     public int Order => 100;
 
+    /// <inheritdoc />
     public IReadOnlyList<WidgetDefinition> Widgets { get; } =
     [
         WidgetDefinition.For<VisitorWidget>("ga.visitors", "Visitors").With(definition =>
@@ -52,6 +55,7 @@ public sealed class GoogleAnalyticsDashboardContributor : IDashboardContributor
         Breakdown("ga.devices", "Devices", "Desktop, mobile and tablet over the last 28 days.", "monitor", "devices"),
     ];
 
+    /// <inheritdoc />
     public void AddDefaults(DashboardBoard board)
     {
         board.Sections.Add(new DashboardSection { Id = "analytics", Title = "Analytics", Icon = "chart" });
@@ -95,8 +99,13 @@ public sealed class GoogleAnalyticsDashboardContributor : IDashboardContributor
         };
 }
 
+/// <summary>Lets a widget definition be changed and then returned from the same call.</summary>
 internal static class WidgetDefinitionExtensions
 {
+    /// <summary>Runs <paramref name="configure"/> and returns <paramref name="definition"/>.</summary>
+    /// <param name="definition">The definition to change.</param>
+    /// <param name="configure">The changes to apply.</param>
+    /// <returns>The same definition.</returns>
     public static WidgetDefinition With(this WidgetDefinition definition, Action<WidgetDefinition> configure)
     {
         configure(definition);

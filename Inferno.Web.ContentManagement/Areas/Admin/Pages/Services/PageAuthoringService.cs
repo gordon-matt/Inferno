@@ -11,29 +11,44 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Services;
 /// The outcome of an authoring operation. <see cref="ErrorKey"/> is a localisation key from
 /// <see cref="InfernoCmsLocalizableStrings.Pages"/>, ready to show to the user.
 /// </summary>
+/// <param name="Succeeded"><see langword="true"/> when the operation was accepted.</param>
+/// <param name="ErrorKey">A localization key from <see cref="InfernoCmsLocalizableStrings.Pages"/> when <paramref name="Succeeded"/> is <see langword="false"/>.</param>
+/// <param name="Version">The version the operation produced, when it has one.</param>
 public sealed record PageAuthoringResult(bool Succeeded, string ErrorKey = null, PageVersion Version = null)
 {
+    /// <summary>Creates a successful result.</summary>
+    /// <param name="version">The version to return. Omitted when the operation does not produce one.</param>
+    /// <returns>A result with <see cref="Succeeded"/> set.</returns>
     public static PageAuthoringResult Success(PageVersion version = null) => new(true, null, version);
 
+    /// <summary>Creates a failed result.</summary>
+    /// <param name="errorKey">A localization key from <see cref="InfernoCmsLocalizableStrings.Pages"/>.</param>
+    /// <returns>A result with <see cref="Succeeded"/> clear.</returns>
     public static PageAuthoringResult Failure(string errorKey) => new(false, errorKey);
 }
 
-/// <summary>What the page screen edits for one version. Null members are left unchanged.</summary>
+/// <summary>The title, address, published flag, and search fields saved for one version.</summary>
 public sealed class PageVersionDetails
 {
+    /// <summary>The version to update.</summary>
     public Guid VersionId { get; set; }
 
+    /// <summary>The title. Blank is rejected.</summary>
     public string Title { get; set; }
 
+    /// <summary>The URL slug, without surrounding slashes. Blank is rejected, and a slug used by another page is rejected.</summary>
     public string Slug { get; set; }
 
+    /// <summary><see langword="true"/> to publish the version. <see langword="false"/> returns it to draft.</summary>
     public bool Published { get; set; }
 
-    /// <summary>Search settings.</summary>
+    /// <summary>The document-head title. Blank clears the stored value.</summary>
     public string MetaTitle { get; set; }
 
+    /// <summary>The meta keywords. Blank clears the stored value.</summary>
     public string MetaKeywords { get; set; }
 
+    /// <summary>The meta description. Blank clears the stored value.</summary>
     public string MetaDescription { get; set; }
 }
 
@@ -43,49 +58,79 @@ public sealed class PageVersionDetails
 /// </summary>
 public interface IPageAuthoringService
 {
-    /// <summary>Creates a page together with its first (draft) version in the default language. A page with a parent becomes a sub-page.</summary>
+    /// <summary>Creates a page together with its first draft version in the default language. A page with a parent becomes a sub-page.</summary>
+    /// <param name="name">The page name. It is trimmed, and blank is rejected. The first slug is derived from it.</param>
+    /// <param name="parentId">The parent page. <see langword="null"/> creates a top-level page. A parent that would form a loop is rejected.</param>
+    /// <returns>The first version, or a failure key when the caller cannot write, the name is blank, or the parent is invalid.</returns>
     Task<PageAuthoringResult> CreatePageAsync(string name, Guid? parentId = null);
 
     /// <summary>
     /// Saves the page's own settings: name, order, where it sits in the page tree, whether it is switched on
     /// and shown on menus, and which roles may see it.
     /// </summary>
+    /// <param name="page">The page to update. The name is trimmed, and a parent that would form a loop is rejected.</param>
+    /// <returns>Success, or a failure key when the caller cannot write, the page is missing, or the parent is invalid.</returns>
     Task<PageAuthoringResult> SavePageAsync(Page page);
 
     /// <summary>Deletes a page with its versions and content blocks. Its sub-pages move up to its parent.</summary>
+    /// <param name="pageId">The page.</param>
+    /// <returns>Success, or a failure key when the caller cannot write or the page is missing.</returns>
     Task<PageAuthoringResult> DeletePageAsync(Guid pageId);
 
     /// <summary>
     /// Puts a save point's title, address and content back into the version being edited. The state it replaces
     /// is kept as a new save point, so a restore can itself be undone.
     /// </summary>
+    /// <param name="archivedVersionId">An archived version. Any other status is not found.</param>
+    /// <returns>The edited version. A slug that another page has taken since the save point was made is left as it is.</returns>
     Task<PageAuthoringResult> RestoreVersionAsync(Guid archivedVersionId);
 
     /// <summary>
-    /// The default-language version of a page, created from the page name if the page has none yet
+    /// Gets the default-language version of a page, creating one from the page name if the page has none yet
     /// (for example a page added before versions were handled automatically).
     /// </summary>
+    /// <param name="pageId">The page.</param>
+    /// <returns>The current or newly created version, or a failure key when a missing version cannot be created.</returns>
     Task<PageAuthoringResult> EnsureFirstVersionAsync(Guid pageId);
 
-    /// <summary>The version being edited for a language: the published one, or else the draft.</summary>
+    /// <summary>Gets the version being edited for a language: the published one, or else the newest draft. Archived versions are skipped.</summary>
+    /// <param name="pageId">The page.</param>
+    /// <param name="cultureCode">The culture. Whitespace uses the default language, whose culture is <see langword="null"/>.</param>
+    /// <returns>The version, or <see langword="null"/> when the current tenant has none.</returns>
     Task<PageVersion> FindCurrentVersionAsync(Guid pageId, string cultureCode = null);
 
-    /// <summary>The kept earlier versions for a language, newest first.</summary>
+    /// <summary>Lists the kept earlier versions for a language, newest first.</summary>
+    /// <param name="pageId">The page.</param>
+    /// <param name="cultureCode">The culture. Whitespace uses the default language.</param>
+    /// <returns>The archived versions for the current tenant.</returns>
     Task<IReadOnlyList<PageVersion>> ListHistoryAsync(Guid pageId, string cultureCode = null);
 
-    /// <summary>Adds a language to a page, starting from the default language's content.</summary>
+    /// <summary>Adds a language to a page, starting from the default language's content, as a draft.</summary>
+    /// <param name="pageId">The page.</param>
+    /// <param name="cultureCode">The culture. Whitespace, or a culture that already has a version, is rejected.</param>
+    /// <returns>The new draft, or a failure key.</returns>
     Task<PageAuthoringResult> CreateTranslationAsync(Guid pageId, string cultureCode);
 
     /// <summary>Saves the title, address, status and search settings.</summary>
+    /// <param name="details">The values to save. An unchanged page is not archived.</param>
+    /// <returns>The updated version, or a failure key when the title, slug, or permission check fails.</returns>
     Task<PageAuthoringResult> SaveDetailsAsync(PageVersionDetails details);
 
-    /// <summary>Makes a version visible to visitors, or turns it back into a draft.</summary>
+    /// <summary>Makes a version visible to visitors, or turns it back into a draft. Changing only the status does not archive the previous state.</summary>
+    /// <param name="versionId">The version. An archived version is not found.</param>
+    /// <param name="published"><see langword="true"/> to publish it. <see langword="false"/> to make it a draft.</param>
+    /// <returns>The updated version, or a failure key.</returns>
     Task<PageAuthoringResult> SetPublishedAsync(Guid versionId, bool published);
 
-    /// <summary>Saves the designed content (the editor document and the HTML visitors see).</summary>
+    /// <summary>Saves the designed content: the editor document and the HTML visitors see.</summary>
+    /// <param name="versionId">The version. An archived version is not found.</param>
+    /// <param name="documentJson">The page-builder document.</param>
+    /// <param name="html">The HTML visitors see. Media URLs that start at <c>Media</c> are rooted.</param>
+    /// <returns>The updated version, or a failure key. A change to content archives the previous state first.</returns>
     Task<PageAuthoringResult> SaveContentAsync(Guid versionId, string documentJson, string html);
 }
 
+/// <inheritdoc cref="IPageAuthoringService" />
 public class PageAuthoringService : IPageAuthoringService
 {
     private readonly IPageService pageService;
@@ -96,6 +141,14 @@ public class PageAuthoringService : IPageAuthoringService
     private readonly AuthenticationStateProvider authenticationStateProvider;
     private readonly PageSettings settings;
 
+    /// <summary>Stores the page, version, block, authorization, and settings services.</summary>
+    /// <param name="pageService">Loads and saves pages.</param>
+    /// <param name="versionService">Loads and saves versions.</param>
+    /// <param name="contentBlockService">Deletes a page's blocks when the page is deleted.</param>
+    /// <param name="workContext">Supplies the current tenant.</param>
+    /// <param name="authorizationService">Checks the pages write permission.</param>
+    /// <param name="authenticationStateProvider">Supplies the current user for that permission check.</param>
+    /// <param name="settings">How many archived versions to keep.</param>
     public PageAuthoringService(
         IPageService pageService,
         IPageVersionService versionService,
@@ -116,6 +169,7 @@ public class PageAuthoringService : IPageAuthoringService
 
     #region IPageAuthoringService Members
 
+    /// <inheritdoc />
     public async Task<PageAuthoringResult> CreatePageAsync(string name, Guid? parentId = null)
     {
         if (!await CanWriteAsync())
@@ -164,6 +218,7 @@ public class PageAuthoringService : IPageAuthoringService
         }
     }
 
+    /// <inheritdoc />
     public async Task<PageAuthoringResult> SavePageAsync(Page page)
     {
         if (!await CanWriteAsync())
@@ -204,6 +259,7 @@ public class PageAuthoringService : IPageAuthoringService
         return PageAuthoringResult.Success();
     }
 
+    /// <inheritdoc />
     public async Task<PageAuthoringResult> DeletePageAsync(Guid pageId)
     {
         if (!await CanWriteAsync())
@@ -235,6 +291,7 @@ public class PageAuthoringService : IPageAuthoringService
         return PageAuthoringResult.Success();
     }
 
+    /// <inheritdoc />
     public async Task<PageAuthoringResult> RestoreVersionAsync(Guid archivedVersionId)
     {
         var saved = await versionService.FindOneAsync(archivedVersionId);
@@ -269,6 +326,7 @@ public class PageAuthoringService : IPageAuthoringService
         });
     }
 
+    /// <inheritdoc />
     public async Task<PageAuthoringResult> EnsureFirstVersionAsync(Guid pageId)
     {
         var existing = await FindCurrentVersionAsync(pageId, null);
@@ -308,6 +366,7 @@ public class PageAuthoringService : IPageAuthoringService
         });
     }
 
+    /// <inheritdoc />
     public async Task<PageVersion> FindCurrentVersionAsync(Guid pageId, string cultureCode = null)
     {
         cultureCode = NormalizeCulture(cultureCode);
@@ -329,6 +388,7 @@ public class PageAuthoringService : IPageAuthoringService
             .FirstOrDefault());
     }
 
+    /// <inheritdoc />
     public async Task<IReadOnlyList<PageVersion>> ListHistoryAsync(Guid pageId, string cultureCode = null)
     {
         cultureCode = NormalizeCulture(cultureCode);
@@ -347,6 +407,7 @@ public class PageAuthoringService : IPageAuthoringService
         return await Task.FromResult(history);
     }
 
+    /// <inheritdoc />
     public async Task<PageAuthoringResult> CreateTranslationAsync(Guid pageId, string cultureCode)
     {
         if (!await CanWriteAsync())
@@ -389,6 +450,7 @@ public class PageAuthoringService : IPageAuthoringService
         return PageAuthoringResult.Success(version);
     }
 
+    /// <inheritdoc />
     public Task<PageAuthoringResult> SaveDetailsAsync(PageVersionDetails details) =>
         ApplyAsync(details.VersionId, edited =>
         {
@@ -428,6 +490,7 @@ public class PageAuthoringService : IPageAuthoringService
             return null;
         });
 
+    /// <inheritdoc />
     public Task<PageAuthoringResult> SetPublishedAsync(Guid versionId, bool published) =>
         ApplyAsync(versionId, edited =>
         {
@@ -435,6 +498,7 @@ public class PageAuthoringService : IPageAuthoringService
             return null;
         });
 
+    /// <inheritdoc />
     public Task<PageAuthoringResult> SaveContentAsync(Guid versionId, string documentJson, string html) =>
         ApplyAsync(versionId, edited =>
         {

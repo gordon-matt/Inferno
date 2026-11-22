@@ -6,12 +6,20 @@ namespace Inferno.Tasks.Scheduling;
 
 /// <summary>
 /// Hangfire calls this. The task itself is created in a fresh scope, so a scoped dependency it asks
-/// the container for is disposed when the run ends. The same task does not run twice at once.
+/// the container for is disposed when the run ends. Hangfire waits up to one hour for a previous run of the same job to finish.
 /// </summary>
+/// <param name="scopes">Creates the scope the task is resolved in.</param>
+/// <param name="logger">Receives the start line, and a warning when the type cannot be run.</param>
 public sealed class ScheduledTaskRunner(IServiceScopeFactory scopes, ILogger<ScheduledTaskRunner> logger)
 {
     private const int LockTimeoutSeconds = 60 * 60;
 
+    /// <summary>
+    /// Runs one scheduled task. A blank type, a missing type, or a type that is not an <see cref="ITask"/> is skipped.
+    /// A registered service of that exact type is used; otherwise the type is constructed from the scope.
+    /// </summary>
+    /// <param name="taskType">The <see cref="ScheduledJobs.TypeKey"/> stored on the job. A blank value is skipped.</param>
+    /// <param name="cancellationToken">Observed before the task is resolved. A cancelled job throws and does not run.</param>
     [DisableConcurrentExecution(LockTimeoutSeconds)]
     public void Run(string taskType, IJobCancellationToken cancellationToken)
     {

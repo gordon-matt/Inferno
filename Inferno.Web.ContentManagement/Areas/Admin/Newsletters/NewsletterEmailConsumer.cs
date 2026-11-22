@@ -8,25 +8,39 @@ using Inferno.Web.Messaging.Services;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Newsletters;
 
+/// <summary>
+/// Sends the subscribe or unsubscribe email. A missing template is created for the current tenant first.
+/// Nothing is sent when the user, the email, or the current tenant is missing.
+/// </summary>
 public class NewsletterEmailConsumer :
     IConsumer<NewsletterSubscribedEvent>,
     IConsumer<NewsletterUnsubscribedEvent>
 {
+    /// <summary>The name of the message template sent after a subscription.</summary>
     public const string SubscribedTemplate = "Newsletter: Subscribed";
+
+    /// <summary>The name of the message template sent after an opt-out.</summary>
     public const string UnsubscribedTemplate = "Newsletter: Unsubscribed";
 
     private readonly IMessageService messageService;
     private readonly IWorkContext workContext;
 
+    /// <summary>Stores the message service and the work context.</summary>
+    /// <param name="messageService">Sends the email.</param>
+    /// <param name="workContext">Supplies the current tenant and culture. A missing tenant skips the send.</param>
     public NewsletterEmailConsumer(IMessageService messageService, IWorkContext workContext)
     {
         this.messageService = messageService;
         this.workContext = workContext;
     }
 
+    /// <summary>Sends <see cref="SubscribedTemplate"/>, including <see cref="NewsletterSubscribedEvent.Password"/> as a token.</summary>
+    /// <param name="eventMessage">The subscription. A null user or blank email is ignored.</param>
     public void HandleEvent(NewsletterSubscribedEvent eventMessage) =>
         Send(SubscribedTemplate, eventMessage.User, eventMessage.Password);
 
+    /// <summary>Sends <see cref="UnsubscribedTemplate"/> with an empty password token.</summary>
+    /// <param name="eventMessage">The opt-out. A null user or blank email is ignored.</param>
     public void HandleEvent(NewsletterUnsubscribedEvent eventMessage) =>
         Send(UnsubscribedTemplate, eventMessage.User, string.Empty);
 

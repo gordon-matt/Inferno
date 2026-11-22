@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
+/// <summary>Downloads the signed-in user's personal data as JSON. A GET is refused.</summary>
 public class DownloadPersonalDataModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<DownloadPersonalDataModel> _logger;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Loads the user, external logins, and authenticator key.</param>
+    /// <param name="logger">Records the download request.</param>
     public DownloadPersonalDataModel(
         UserManager<ApplicationUser> userManager,
         ILogger<DownloadPersonalDataModel> logger)
@@ -19,8 +23,14 @@ public class DownloadPersonalDataModel : PageModel
         _logger = logger;
     }
 
+    /// <summary>Refuses a GET. Personal data is downloaded only from a POST.</summary>
+    /// <returns>A not-found result.</returns>
     public IActionResult OnGet() => NotFound();
 
+    /// <summary>
+    /// Downloads properties marked as personal data, each external login key, and the authenticator key.
+    /// </summary>
+    /// <returns>A JSON file named PersonalData.json, or not found when the user is gone.</returns>
     public async Task<IActionResult> OnPostAsync()
     {
         var user = await _userManager.GetUserAsync(User);

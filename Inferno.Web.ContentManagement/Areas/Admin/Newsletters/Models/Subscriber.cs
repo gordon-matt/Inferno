@@ -9,7 +9,9 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Models;
 /// </summary>
 public class Subscriber : BaseEntity<string>
 {
+    /// <summary>The name shown for the subscriber.</summary>
     public string Name { get; set; }
 
+    /// <summary>The subscriber's email address.</summary>
     public string Email { get; set; }
 }

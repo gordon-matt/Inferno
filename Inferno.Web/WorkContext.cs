@@ -12,6 +12,10 @@ using Inferno.Web.Navigation;
 
 namespace Inferno.Web;
 
+/// <summary>
+/// Resolves <see cref="IWebHelper"/> and the state providers from Dependo.
+/// <see cref="CurrentTenant"/> stays cached until <see cref="ActAsTenant"/> replaces it.
+/// </summary>
 public partial class WorkContext : IWorkContext
 {
     private Tenant cachedTenant;
@@ -20,6 +24,7 @@ public partial class WorkContext : IWorkContext
     private readonly ConcurrentDictionary<string, Func<object>> stateResolvers = new();
     private readonly IEnumerable<IWorkContextStateProvider> workContextStateProviders;
 
+    /// <summary>Resolves the web helper and state providers, and starts with an empty breadcrumb list.</summary>
     public WorkContext()
     {
         webHelper = DependoResolver.Instance.Resolve<IWebHelper>();
@@ -29,20 +34,26 @@ public partial class WorkContext : IWorkContext
 
     #region IWorkContext Members
 
+    /// <inheritdoc />
     public T GetState<T>(string name)
     {
         var resolver = stateResolvers.GetOrAdd(name, FindResolverForState<T>);
         return (T)resolver();
     }
 
+    /// <inheritdoc />
     public void SetState<T>(string name, T value) => stateResolvers[name] = () => value;
 
+    /// <inheritdoc />
     public BreadcrumbCollection Breadcrumbs { get; set; }
 
+    /// <inheritdoc />
     public string CurrentCultureCode => GetState<string>(InfernoWebConstants.StateProviders.CurrentCultureCode);
 
+    /// <inheritdoc />
     public InfernoUser CurrentUser => GetState<InfernoUser>(InfernoWebConstants.StateProviders.CurrentUser);
 
+    /// <inheritdoc />
     public virtual Tenant CurrentTenant
     {
         get
@@ -98,6 +109,7 @@ public partial class WorkContext : IWorkContext
         }
     }
 
+    /// <inheritdoc />
     public IDisposable ActAsTenant(Tenant tenant)
     {
         ArgumentNullException.ThrowIfNull(tenant);

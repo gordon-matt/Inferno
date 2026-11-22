@@ -27,9 +27,11 @@ public partial class BlockTranslator
     [Parameter]
     public ContentBlock Block { get; set; }
 
+    /// <summary>The editor component used for the selected culture. Its instance must implement <see cref="IContentBlockEditor"/>.</summary>
     [Parameter]
     public Type EditorType { get; set; }
 
+    /// <summary>Raised when the translator asks to close.</summary>
     [Parameter]
     public EventCallback OnClose { get; set; }
 

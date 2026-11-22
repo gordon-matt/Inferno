@@ -66,6 +66,7 @@
     private void OnLocationChanged(object sender, LocationChangedEventArgs e) =>
         InvokeAsync(() => bar.Close());
 
+    /// <summary>Stops listening to the menu bar and to navigation changes.</summary>
     public void Dispose()
     {
         bar.Changed -= OnBarChanged;

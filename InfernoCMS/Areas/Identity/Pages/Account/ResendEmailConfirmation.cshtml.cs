@@ -11,35 +11,30 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Sends another confirmation email, and shows the same message when the address is unknown.</summary>
 [AllowAnonymous]
 public class ResendEmailConfirmationModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Finds the user and creates the confirmation token.</param>
+    /// <param name="emailSender">Sends the confirmation message.</param>
     public ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
     {
         _userManager = userManager;
         _emailSender = emailSender;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email address posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The address that should receive another confirmation message.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The account email.</summary>
         [Required]
         [EmailAddress]
         public string Email { get; set; }
@@ -49,6 +44,8 @@ public class ResendEmailConfirmationModel : PageModel
     {
     }
 
+    /// <summary>Sends a confirmation link, or shows the same success text when no account has that email.</summary>
+    /// <returns>This page. An invalid model is shown again without sending mail.</returns>
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)

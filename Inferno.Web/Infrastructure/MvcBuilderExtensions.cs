@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Inferno.Web.Infrastructure;
 
+/// <summary>MVC application-part registration for Inferno.</summary>
 public static class MvcBuilderExtensions
 {
     /// <summary>
@@ -12,6 +13,8 @@ public static class MvcBuilderExtensions
     /// The marker list comes from the Dependo catalog when the host was compiled with it, which
     /// avoids loading every DLL in the output folder. Plugin assemblies are added separately.
     /// </summary>
+    /// <param name="builder">The MVC builder.</param>
+    /// <returns>The same builder, so calls can be chained.</returns>
     public static IMvcBuilder AddInfernoApplicationParts(this IMvcBuilder builder)
     {
         var typeFinder = new WebAppTypeFinder();

@@ -10,12 +10,17 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
+/// <summary>Shows the current email and sends a link to change it or to confirm it.</summary>
 public class EmailModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IEmailSender _emailSender;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Loads the email and creates change and confirmation tokens.</param>
+    /// <param name="signInManager">The sign-in manager. This page does not call it.</param>
+    /// <param name="emailSender">Sends the change and verification messages.</param>
     public EmailModel(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -26,42 +31,24 @@ public class EmailModel : PageModel
         _emailSender = emailSender;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email address currently stored on the account.</summary>
     public string Email { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>Whether that email address has been confirmed.</summary>
     public bool IsEmailConfirmed { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>A message from the previous send, shown on the next request.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The new email address posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The address the user wants to switch to.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The proposed email address. It starts as the current address.</summary>
         [Required]
         [EmailAddress]
         [Display(Name = "New email")]
@@ -81,6 +68,8 @@ public class EmailModel : PageModel
         IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
     }
 
+    /// <summary>Loads the current email and whether it is confirmed.</summary>
+    /// <returns>This page, or not found when the user cannot be loaded.</returns>
     public async Task<IActionResult> OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -93,6 +82,8 @@ public class EmailModel : PageModel
         return Page();
     }
 
+    /// <summary>Emails a change link when the posted address differs from the stored one.</summary>
+    /// <returns>A redirect back to this page, or this page again when the model is invalid. Not found when the user is gone.</returns>
     public async Task<IActionResult> OnPostChangeEmailAsync()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -131,6 +122,8 @@ public class EmailModel : PageModel
         return RedirectToPage();
     }
 
+    /// <summary>Emails a confirmation link for the address already stored on the account.</summary>
+    /// <returns>A redirect back to this page, or this page again when the model is invalid. Not found when the user is gone.</returns>
     public async Task<IActionResult> OnPostSendVerificationEmailAsync()
     {
         var user = await _userManager.GetUserAsync(User);

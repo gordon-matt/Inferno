@@ -9,6 +9,7 @@ namespace Inferno.Web.Messaging;
 /// </summary>
 public static class MessageTemplateTokens
 {
+    /// <summary>The longest canonical token that <see cref="Normalize"/> accepts.</summary>
     public const int MaxLength = 200;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -16,6 +17,9 @@ public static class MessageTemplateTokens
         WriteIndented = false,
     };
 
+    /// <summary>Reads a JSON array of token strings. Blank JSON, invalid JSON, and a null array all return an empty list.</summary>
+    /// <param name="json">The stored JSON.</param>
+    /// <returns>The tokens, or an empty list.</returns>
     public static IReadOnlyList<string> Read(string json)
     {
         if (string.IsNullOrWhiteSpace(json))
@@ -33,9 +37,19 @@ public static class MessageTemplateTokens
         }
     }
 
+    /// <summary>Writes <paramref name="tokens"/> as a JSON array. <see langword="null"/> is written as an empty array.</summary>
+    /// <param name="tokens">The tokens to store.</param>
+    /// <returns>The JSON.</returns>
     public static string Write(IReadOnlyList<string> tokens) =>
         JsonSerializer.Serialize(tokens ?? [], JsonOptions);
 
+    /// <summary>
+    /// Trims each token, drops blanks, and stores a bare name or a <c>{{ }}</c> tag as <c>{{ name }}</c>.
+    /// A filter after the name, such as <c>{{ FirstName | upcase }}</c>, is kept inside the tag.
+    /// Duplicates, tokens longer than <see cref="MaxLength"/>, and anything that is not a Liquid identifier are invalid.
+    /// </summary>
+    /// <param name="tokens">The tokens an author entered. <see langword="null"/> normalizes to an empty list.</param>
+    /// <returns>The canonical tokens, or invalid with the token identifier.</returns>
     public static Result<IReadOnlyList<string>> Normalize(IEnumerable<string> tokens)
     {
         var normalized = new List<string>();

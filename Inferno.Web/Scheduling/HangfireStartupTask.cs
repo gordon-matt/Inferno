@@ -16,8 +16,10 @@ namespace Inferno.Web.Scheduling;
 /// </summary>
 public class HangfireStartupTask : IStartupTask
 {
+    /// <inheritdoc />
     public int Order => 100;
 
+    /// <inheritdoc />
     public Task ExecuteAsync()
     {
         var services = DependoResolver.Instance.Resolve<IServiceProvider>();

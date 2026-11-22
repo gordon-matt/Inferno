@@ -3,11 +3,14 @@ using Policies = Inferno.Web.ContentManagement.CmsConstants.Policies;
 
 namespace Inferno.Web.ContentManagement.Security;
 
+/// <summary>Declares the CMS permissions, grouped as Content and Marketing, including which ones imply another.</summary>
 public sealed class CmsPermissionProvider : IPermissionProvider
 {
     private const string Content = "Content";
     private const string Marketing = "Marketing";
 
+    /// <summary>Returns the page, block, menu, media, blog, newsletter, messaging, and sitemap permissions.</summary>
+    /// <returns>The permissions, with imply links where a write or restore permission includes its read permission.</returns>
     public IEnumerable<Permission> GetPermissions() =>
     [
         new(Policies.PagesRead, Content, "View pages"),

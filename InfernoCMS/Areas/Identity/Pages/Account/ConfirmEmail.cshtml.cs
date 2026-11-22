@@ -7,22 +7,26 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Confirms an email address from the link in the confirmation message.</summary>
 public class ConfirmEmailModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
+    /// <summary>Creates the page with <paramref name="userManager"/>.</summary>
+    /// <param name="userManager">Finds the user and confirms the email.</param>
     public ConfirmEmailModel(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The confirmation result, shown on this page.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
+    /// <summary>Confirms the email for <paramref name="userId"/> with the decoded <paramref name="code"/>.</summary>
+    /// <param name="userId">The user id. <see langword="null"/> redirects to the site root.</param>
+    /// <param name="code">The Base64Url-encoded confirmation token. <see langword="null"/> redirects to the site root.</param>
+    /// <returns>This page after the token is checked, a redirect when either value is missing, or not found when the user is gone.</returns>
     public async Task<IActionResult> OnGetAsync(string userId, string code)
     {
         if (userId == null || code == null)

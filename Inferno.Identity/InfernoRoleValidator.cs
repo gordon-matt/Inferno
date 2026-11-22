@@ -4,9 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inferno.Identity;
 
+/// <summary>Rejects a blank role name and a name already used by another role in the same tenant.</summary>
+/// <typeparam name="TRole">The role type.</typeparam>
 public abstract class InfernoRoleValidator<TRole> : RoleValidator<TRole>
     where TRole : InfernoIdentityRole
 {
+    /// <summary>Creates a validator that uses <paramref name="errors"/> to describe failures.</summary>
+    /// <param name="errors">The error describer. <see langword="null"/> creates a new <see cref="IdentityErrorDescriber"/>.</param>
     public InfernoRoleValidator(IdentityErrorDescriber errors = null)
         : base(errors)
     {
@@ -15,6 +19,13 @@ public abstract class InfernoRoleValidator<TRole> : RoleValidator<TRole>
 
     private IdentityErrorDescriber Describer { get; set; }
 
+    /// <summary>
+    /// Accepts the role when its name is not blank and no other role in the same tenant has that name as its normalized name.
+    /// </summary>
+    /// <param name="manager">The role manager whose roles are searched.</param>
+    /// <param name="role">The role to validate. Its tenant selects the scope of the duplicate check.</param>
+    /// <returns>A failed result when the name is blank or already used in that tenant. Otherwise success.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="manager"/> or <paramref name="role"/> is <see langword="null"/>.</exception>
     public override async Task<IdentityResult> ValidateAsync(RoleManager<TRole> manager, TRole role)
     {
         if (manager == null)

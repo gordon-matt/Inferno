@@ -10,6 +10,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Inferno.Web.ContentManagement.Components;
 
+/// <summary>Builds the public main menu and the submenu for the current page.</summary>
 public class CmsMenuBuilder
 {
     private readonly IPageVersionService pageVersionService;
@@ -18,6 +19,12 @@ public class CmsMenuBuilder
     private readonly IStringLocalizer localizer;
     private readonly SiteSettings siteSettings;
 
+    /// <summary>Stores the page, menu-provider, tenant, localization, and site settings used to build menus.</summary>
+    /// <param name="pageVersionService">Loads the current page versions.</param>
+    /// <param name="menuProviders">Extra items added after the pages.</param>
+    /// <param name="workContext">Supplies the current tenant and culture.</param>
+    /// <param name="localizer">Supplies the Home and Blog captions.</param>
+    /// <param name="siteSettings">Decides whether the blog link is included.</param>
     public CmsMenuBuilder(
         IPageVersionService pageVersionService,
         IEnumerable<IAutoMenuProvider> menuProviders,
@@ -32,6 +39,13 @@ public class CmsMenuBuilder
         this.siteSettings = siteSettings;
     }
 
+    /// <summary>
+    /// Builds the main menu: an optional home link, enabled pages shown on menus that <paramref name="user"/> may view,
+    /// the blog link when the site has a blog, then each provider's main items.
+    /// </summary>
+    /// <param name="user">The visitor. Pages they cannot view are omitted.</param>
+    /// <param name="includeHomePageLink"><see langword="true"/> to add a home link at position -1.</param>
+    /// <returns>The items, ordered by position and then text.</returns>
     public async Task<IReadOnlyList<MenuItem>> BuildMainMenuAsync(ClaimsPrincipal user, bool includeHomePageLink)
     {
         var menuItems = new List<MenuItem>();
@@ -89,6 +103,13 @@ public class CmsMenuBuilder
             .ToList();
     }
 
+    /// <summary>
+    /// Builds the submenu for the current slug: top-level pages when the slug is empty, otherwise the current page's children.
+    /// Provider submenu items are included when the slug starts with the provider's root slug.
+    /// </summary>
+    /// <param name="user">The visitor. Pages they cannot view are omitted.</param>
+    /// <param name="currentUrlSlug">The current slug, without a leading slash. <see langword="null"/> is treated as empty.</param>
+    /// <returns>The items, ordered by position and then text. Empty when the slug is not a CMS page and no provider contributes.</returns>
     public async Task<IReadOnlyList<MenuItem>> BuildSubMenuAsync(ClaimsPrincipal user, string currentUrlSlug)
     {
         var menuItems = new List<MenuItem>();

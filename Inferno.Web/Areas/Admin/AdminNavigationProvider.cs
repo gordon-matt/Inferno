@@ -7,19 +7,24 @@ using Microsoft.Extensions.Localization;
 
 namespace Inferno.Web.Areas.Admin;
 
+/// <summary>Builds the admin menu: Dashboard, Membership, Configuration, and Maintenance.</summary>
 public class AdminNavigationProvider : INavigationProvider
 {
+    /// <summary>Resolves the localizer used for the menu captions.</summary>
     public AdminNavigationProvider()
     {
         T = DependoResolver.Instance.Resolve<IStringLocalizer>();
     }
 
+    /// <summary>The localizer used for the menu captions. Set by the constructor.</summary>
     public IStringLocalizer T { get; set; }
 
     #region INavigationProvider Members
 
+    /// <inheritdoc />
     public string MenuName => InfernoWebConstants.Areas.Admin;
 
+    /// <inheritdoc />
     public void GetNavigation(NavigationBuilder builder)
     {
         builder.Add(T[InfernoWebLocalizableStrings.Dashboard.Title], "0", BuildDashboardMenu);

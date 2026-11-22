@@ -18,6 +18,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Identity;
 
+/// <summary>Account sign-in, registration, password reset, external login, and profile pages for <typeparamref name="TUser"/>.</summary>
+/// <typeparam name="TUser">The Identity user type.</typeparam>
 [Authorize]
 public abstract class InfernoAccountController<TUser> : InfernoController
     where TUser : InfernoIdentityUser, new()
@@ -29,6 +31,13 @@ public abstract class InfernoAccountController<TUser> : InfernoController
     private readonly IMembershipService membershipService;
     private readonly Lazy<IEnumerable<IUserProfileProvider>> userProfileProviders;
 
+    /// <summary>Stores the Identity services used by the account actions.</summary>
+    /// <param name="userManager">Creates users and confirms email and passwords.</param>
+    /// <param name="signInManager">Signs users in and out, including external and two-factor sign-in.</param>
+    /// <param name="emailSender">Sends confirmation and password-reset mail.</param>
+    /// <param name="logger">Records sign-in, lockout, and registration.</param>
+    /// <param name="membershipService">Loads users shown on the profile pages.</param>
+    /// <param name="userProfileProviders">Supplies the profile fields posted by the update form.</param>
     public InfernoAccountController(
         UserManager<TUser> userManager,
         SignInManager<TUser> signInManager,
@@ -45,9 +54,13 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         this.userProfileProviders = userProfileProviders;
     }
 
+    /// <summary>An error from an external login, shown on the next login page.</summary>
     [TempData]
     public string ErrorMessage { get; set; }
 
+    /// <summary>Clears the external-login cookie and shows the login form.</summary>
+    /// <param name="returnUrl">The URL to open after sign-in. May be <see langword="null"/>.</param>
+    /// <returns>The login view.</returns>
     [HttpGet]
     [AllowAnonymous]
     public virtual async Task<IActionResult> Login(string returnUrl = null)
@@ -59,6 +72,10 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View();
     }
 
+    /// <summary>Signs in with the posted email and password. A failed password does not count toward lockout.</summary>
+    /// <param name="model">The posted email, password, and remember-me choice.</param>
+    /// <param name="returnUrl">The local URL to open after sign-in. A non-local or <see langword="null"/> value opens the home page.</param>
+    /// <returns>A redirect after success, two-factor, or lockout. Otherwise the login view with the validation errors.</returns>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -95,6 +112,11 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View(model);
     }
 
+    /// <summary>Shows the authenticator-code form for a user who has already passed the password check.</summary>
+    /// <param name="rememberMe">Whether the sign-in cookie should persist. Copied onto the form.</param>
+    /// <param name="returnUrl">The URL to open after sign-in. May be <see langword="null"/>.</param>
+    /// <returns>The authenticator form.</returns>
+    /// <exception cref="ApplicationException">No two-factor user is in progress.</exception>
     [HttpGet]
     [AllowAnonymous]
     public virtual async Task<IActionResult> LoginWith2fa(bool rememberMe, string returnUrl = null)
@@ -113,6 +135,12 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View(model);
     }
 
+    /// <summary>Signs in with the authenticator code. Spaces and hyphens are removed before it is checked.</summary>
+    /// <param name="model">The authenticator code and remember-machine choice.</param>
+    /// <param name="rememberMe">Whether the sign-in cookie should persist.</param>
+    /// <param name="returnUrl">The local URL to open after sign-in. A non-local or <see langword="null"/> value opens the home page.</param>
+    /// <returns>A redirect after success or lockout. Otherwise the form, including when the model is invalid.</returns>
+    /// <exception cref="ApplicationException">No two-factor user is in progress.</exception>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -151,6 +179,10 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         }
     }
 
+    /// <summary>Shows the recovery-code form for a user who has already passed the password check.</summary>
+    /// <param name="returnUrl">The URL to open after sign-in. May be <see langword="null"/>.</param>
+    /// <returns>The recovery-code form.</returns>
+    /// <exception cref="ApplicationException">No two-factor user is in progress.</exception>
     [HttpGet]
     [AllowAnonymous]
     public virtual async Task<IActionResult> LoginWithRecoveryCode(string returnUrl = null)
@@ -167,6 +199,11 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View();
     }
 
+    /// <summary>Signs in with a recovery code. Spaces are removed before it is checked.</summary>
+    /// <param name="model">The posted recovery code.</param>
+    /// <param name="returnUrl">The local URL to open after sign-in. A non-local or <see langword="null"/> value opens the home page.</param>
+    /// <returns>A redirect after success or lockout. Otherwise the form, including when the model is invalid.</returns>
+    /// <exception cref="ApplicationException">No two-factor user is in progress.</exception>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -205,10 +242,15 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         }
     }
 
+    /// <summary>Shows the lockout page.</summary>
+    /// <returns>The lockout view.</returns>
     [HttpGet]
     [AllowAnonymous]
     public virtual IActionResult Lockout() => View();
 
+    /// <summary>Shows the registration form.</summary>
+    /// <param name="returnUrl">The URL to open after registration. May be <see langword="null"/>.</param>
+    /// <returns>The registration view.</returns>
     [HttpGet]
     [AllowAnonymous]
     public virtual IActionResult Register(string returnUrl = null)
@@ -217,6 +259,13 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View();
     }
 
+    /// <summary>
+    /// Creates an account from the posted email, sends a confirmation link, and signs the user in.
+    /// The email is stored as both the user name and the email address.
+    /// </summary>
+    /// <param name="model">The posted email and password.</param>
+    /// <param name="returnUrl">The local URL to open after sign-in. A non-local or <see langword="null"/> value opens the home page.</param>
+    /// <returns>A redirect after the account is created. Otherwise the registration view with the Identity errors.</returns>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -246,6 +295,8 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View(model);
     }
 
+    /// <summary>Signs the current user out and opens the home page.</summary>
+    /// <returns>A redirect to the home page.</returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public virtual async Task<IActionResult> Logout()
@@ -255,6 +306,10 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return RedirectToAction("Index", "Home");
     }
 
+    /// <summary>Challenges <paramref name="provider"/> and returns to the external-login callback.</summary>
+    /// <param name="provider">The authentication scheme name.</param>
+    /// <param name="returnUrl">The URL to carry through the callback. May be <see langword="null"/>.</param>
+    /// <returns>The challenge result for <paramref name="provider"/>.</returns>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -266,6 +321,10 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return Challenge(properties, provider);
     }
 
+    /// <summary>Signs in an existing external login, or shows the confirmation form when the login is new.</summary>
+    /// <param name="returnUrl">The local URL to open after sign-in. A non-local or <see langword="null"/> value opens the home page.</param>
+    /// <param name="remoteError">An error reported by the provider. A non-<see langword="null"/> value returns to the login page.</param>
+    /// <returns>A redirect after sign-in, lockout, or a provider error. Otherwise the external-login confirmation view.</returns>
     [HttpGet]
     [AllowAnonymous]
     public virtual async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
@@ -302,6 +361,11 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         }
     }
 
+    /// <summary>Creates a local account for the external login and signs it in.</summary>
+    /// <param name="model">The email address for the new account.</param>
+    /// <param name="returnUrl">The local URL to open after sign-in. A non-local or <see langword="null"/> value opens the home page.</param>
+    /// <returns>A redirect after the account is created. Otherwise the confirmation view with the Identity errors.</returns>
+    /// <exception cref="ApplicationException">The external login information is no longer available.</exception>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -334,6 +398,11 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View(nameof(ExternalLogin), model);
     }
 
+    /// <summary>Confirms the email address for <paramref name="userId"/> with <paramref name="code"/>.</summary>
+    /// <param name="userId">The user id. A <see langword="null"/> value opens the home page.</param>
+    /// <param name="code">The confirmation token. A <see langword="null"/> value opens the home page.</param>
+    /// <returns>The confirmation view when the token is accepted, the error view when it is not, or a redirect home when either value is missing.</returns>
+    /// <exception cref="ApplicationException">No user has <paramref name="userId"/>.</exception>
     [HttpGet]
     [AllowAnonymous]
     public virtual async Task<IActionResult> ConfirmEmail(string userId, string code)
@@ -351,10 +420,18 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View(result.Succeeded ? "ConfirmEmail" : "Error");
     }
 
+    /// <summary>Shows the forgot-password form.</summary>
+    /// <returns>The forgot-password view.</returns>
     [HttpGet]
     [AllowAnonymous]
     public virtual IActionResult ForgotPassword() => View();
 
+    /// <summary>
+    /// Emails a reset link when the address belongs to a confirmed user.
+    /// A missing or unconfirmed account is sent to the same confirmation page.
+    /// </summary>
+    /// <param name="model">The posted email address.</param>
+    /// <returns>The confirmation page, or the form again when the model is invalid.</returns>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -382,10 +459,16 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View(model);
     }
 
+    /// <summary>Shows the page that follows a reset request.</summary>
+    /// <returns>The confirmation view.</returns>
     [HttpGet]
     [AllowAnonymous]
     public virtual IActionResult ForgotPasswordConfirmation() => View();
 
+    /// <summary>Shows the reset form for <paramref name="code"/>.</summary>
+    /// <param name="code">The password-reset token. It is copied onto the form.</param>
+    /// <returns>The reset view.</returns>
+    /// <exception cref="ApplicationException"><paramref name="code"/> is <see langword="null"/>.</exception>
     [HttpGet]
     [AllowAnonymous]
     public virtual IActionResult ResetPassword(string code = null)
@@ -398,6 +481,9 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View(model);
     }
 
+    /// <summary>Resets the password for the posted email. A missing account is sent to the confirmation page.</summary>
+    /// <param name="model">The email, new password, and reset token.</param>
+    /// <returns>The confirmation page after success or a missing account. Otherwise the form with the Identity errors.</returns>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
@@ -422,15 +508,25 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View();
     }
 
+    /// <summary>Shows the page that follows a password reset.</summary>
+    /// <returns>The confirmation view.</returns>
     [HttpGet]
     [AllowAnonymous]
     public virtual IActionResult ResetPasswordConfirmation() => View();
 
+    /// <summary>Shows the access-denied page.</summary>
+    /// <returns>The access-denied view.</returns>
     [HttpGet]
     public virtual IActionResult AccessDenied() => View();
 
     #region User Profile
 
+    /// <summary>
+    /// Shows the profile for <paramref name="userId"/>.
+    /// The current user and a caller with full access can edit it. Anyone else can view it.
+    /// </summary>
+    /// <param name="userId">The user id to show.</param>
+    /// <returns>The profile view.</returns>
     public virtual async Task<ActionResult> ViewProfile(string userId)
     {
         WorkContext.Value.Breadcrumbs.Add(T[InfernoIdentityLocalizableStrings.Title].Value);
@@ -459,8 +555,13 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View("Profile", model: userId);
     }
 
+    /// <summary>Shows the signed-in user's profile.</summary>
+    /// <returns>The profile view for the current user.</returns>
     public virtual async Task<ActionResult> ViewMyProfile() => await ViewProfile(WorkContext.Value.CurrentUser.Id);
 
+    /// <summary>Shows the profile editor for the current user, or for <paramref name="userId"/> when the caller has full access.</summary>
+    /// <param name="userId">The user id to edit.</param>
+    /// <returns>The editor, or an unauthorized result when the caller is neither that user nor a full-access caller.</returns>
     public virtual async Task<ActionResult> EditProfile(string userId)
     {
         WorkContext.Value.Breadcrumbs.Add(T[InfernoIdentityLocalizableStrings.Title].Value);
@@ -486,8 +587,14 @@ public abstract class InfernoAccountController<TUser> : InfernoController
         return View("ProfileEdit", model: userId);
     }
 
+    /// <summary>Shows the editor for the signed-in user's profile.</summary>
+    /// <returns>The profile editor for the current user.</returns>
     public virtual async Task<ActionResult> EditMyProfile() => await EditProfile(WorkContext.Value.CurrentUser.Id);
 
+    /// <summary>
+    /// Saves the posted profile fields. A checkbox value of true,false is stored as true.
+    /// </summary>
+    /// <returns>A redirect to the current user's profile, carrying another user's id when the form edited someone else.</returns>
     [HttpPost]
     public virtual async Task<ActionResult> UpdateProfile()
     {

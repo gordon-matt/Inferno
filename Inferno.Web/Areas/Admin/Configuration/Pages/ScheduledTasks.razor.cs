@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.Areas.Admin.Configuration.Pages;
 
+/// <summary>Edits the interval of each installed Hangfire job and can start one now.</summary>
 public partial class ScheduledTasks
 {
     private IReadOnlyList<ScheduledJobState> jobs;

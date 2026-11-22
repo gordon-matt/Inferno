@@ -17,10 +17,15 @@ namespace InfernoCMS.Infrastructure;
 /// Besides choosing each tenant's theme, it limits the extra themes to the tenants named for them, so the
 /// theme catalog shows how a host decides who may use what.
 /// </remarks>
+/// <param name="scopes">Creates a scope for the theme store, tenants, and change notifier.</param>
+/// <param name="logger">Records a missing demo tenant and a successful apply.</param>
 public sealed class DemoThemeSeeder(IServiceScopeFactory scopes, ILogger<DemoThemeSeeder> logger) : IHostedService
 {
     private const string DEFAULT_THEME = "default";
 
+    /// <summary>Applies the pending demo themes, then clears the pending flag. Does nothing when no demo themes are waiting.</summary>
+    /// <param name="cancellationToken">Observed while saving catalog, tenant theme, and tenant settings records. Not observed when no demo themes are pending.</param>
+    /// <returns>A task that completes when the demo themes have been saved or skipped.</returns>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var dataSettings = DependoResolver.Instance.Resolve<DataSettings>();
@@ -65,6 +70,9 @@ public sealed class DemoThemeSeeder(IServiceScopeFactory scopes, ILogger<DemoThe
         logger.LogInformation("Demo themes applied.");
     }
 
+    /// <summary>Does nothing. Stopping the host does not roll back themes that were already applied.</summary>
+    /// <param name="cancellationToken">Not observed.</param>
+    /// <returns>A completed task.</returns>
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
     private static int? FindTenantId(ITenantService tenants, DemoTenant demo)

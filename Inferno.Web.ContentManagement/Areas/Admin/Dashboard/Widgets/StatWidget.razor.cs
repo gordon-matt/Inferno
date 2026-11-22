@@ -2,6 +2,7 @@ using Inferno.Web.ContentManagement.Areas.Admin.Dashboard;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Dashboard.Widgets;
 
+/// <summary>Shows one <see cref="DashboardMetrics"/> count from the shared snapshot.</summary>
 public partial class StatWidget
 {
     private string Metric => Option("metric", DashboardMetrics.PublishedPages) ?? DashboardMetrics.PublishedPages;

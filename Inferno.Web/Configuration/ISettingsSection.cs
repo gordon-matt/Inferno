@@ -6,13 +6,16 @@ namespace Inferno.Web.Configuration;
 /// </summary>
 public interface ISettingsSection
 {
+    /// <summary>Text on the tile.</summary>
     string Title { get; }
 
+    /// <summary>Secondary text on the tile.</summary>
     string Description { get; }
 
     /// <summary>Icon name from the same set as the other settings tiles.</summary>
     string Icon { get; }
 
+    /// <summary>Address the tile opens.</summary>
     string Url { get; }
 
     /// <summary>Policy required to see the tile. Empty when anyone who can open settings may see it.</summary>

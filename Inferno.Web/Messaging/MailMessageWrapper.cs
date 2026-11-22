@@ -10,18 +10,28 @@ namespace Inferno.Web.Messaging;
 /// </summary>
 public class MailMessageWrapper
 {
+    /// <summary>The From address. Empty when the message had none.</summary>
     public string FromAddress { get; set; }
 
+    /// <summary>The From display name.</summary>
     public string FromName { get; set; }
 
+    /// <summary>Recipient addresses. Attachments are not stored.</summary>
     public List<string> To { get; set; } = [];
 
+    /// <summary>The subject.</summary>
     public string Subject { get; set; }
 
+    /// <summary>The body.</summary>
     public string Body { get; set; }
 
+    /// <summary>Whether <see cref="Body"/> is HTML.</summary>
     public bool IsBodyHtml { get; set; }
 
+    /// <summary>Copies the fields the queue resends. Attachments are omitted.</summary>
+    /// <param name="mailMessage">The message to copy.</param>
+    /// <returns>The wrapper.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="mailMessage"/> is <see langword="null"/>.</exception>
     public static MailMessageWrapper FromMailMessage(MailMessage mailMessage)
     {
         ArgumentNullException.ThrowIfNull(mailMessage);
@@ -37,11 +47,16 @@ public class MailMessageWrapper
         };
     }
 
+    /// <summary>Deserializes <paramref name="json"/>. Blank JSON, or JSON that deserializes to null, returns an empty wrapper.</summary>
+    /// <param name="json">The stored JSON.</param>
+    /// <returns>The wrapper.</returns>
     public static MailMessageWrapper FromJson(string json) =>
         string.IsNullOrWhiteSpace(json)
             ? new MailMessageWrapper()
             : JsonSerializer.Deserialize<MailMessageWrapper>(json) ?? new MailMessageWrapper();
 
+    /// <summary>Builds a UTF-8 mail message. A blank From address is left unset, and blank recipients are skipped.</summary>
+    /// <returns>The mail message.</returns>
     public MailMessage ToMailMessage()
     {
         var message = new MailMessage
@@ -69,5 +84,7 @@ public class MailMessageWrapper
         return message;
     }
 
+    /// <summary>Serializes this wrapper to JSON.</summary>
+    /// <returns>The JSON.</returns>
     public override string ToString() => JsonSerializer.Serialize(this);
 }

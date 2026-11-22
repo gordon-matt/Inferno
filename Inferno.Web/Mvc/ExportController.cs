@@ -8,9 +8,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Inferno.Web.Mvc;
 
+/// <summary>Writes an entity query as a delimited file or an Excel workbook.</summary>
+/// <typeparam name="T">The entity type. Its name is used in the file name.</typeparam>
 public partial class ExportController<T> : InfernoController
      where T : class, IEntity
 {
+    /// <summary>
+    /// Writes <paramref name="query"/> in the format <paramref name="options"/> names.
+    /// The file name is the entity type and the local time.
+    /// </summary>
+    /// <param name="query">The rows to export.</param>
+    /// <param name="options">The format and, for a delimited file, the separator and quoting.</param>
+    /// <returns>The file.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><see cref="DownloadOptions.FileFormat"/> is not a known format.</exception>
     [NonAction]
     public FileResult Download(IQueryable<T> query, DownloadOptions options)
     {
@@ -66,6 +76,11 @@ public partial class ExportController<T> : InfernoController
         }
     }
 
+    /// <summary>Writes <paramref name="data"/> as UTF-8 JSON. <c>.json</c> is appended when <paramref name="fileName"/> does not end with it.</summary>
+    /// <typeparam name="TData">The value being serialized.</typeparam>
+    /// <param name="data">The value to serialize.</param>
+    /// <param name="fileName">The download name.</param>
+    /// <returns>The JSON file.</returns>
     [NonAction]
     public FileResult DownloadJson<TData>(TData data, string fileName)
     {

@@ -11,6 +11,13 @@ public sealed class PermissionVisibility(IPermissionStore store, IPermissionCata
 {
     private readonly Dictionary<string, GrantedPermissions> remembered = new(StringComparer.Ordinal);
 
+    /// <summary>
+    /// Whether every policy on the link is granted. A link with no policies is shown.
+    /// <see langword="false"/> when the grants are not loaded or do not cover a required policy.
+    /// </summary>
+    /// <param name="user">The current user.</param>
+    /// <param name="policies">Policy names required by the link. Blank names are ignored. <see langword="null"/> allows the link.</param>
+    /// <returns><see langword="true"/> when the link should be shown.</returns>
     public bool Allows(ClaimsPrincipal user, IEnumerable<string> policies)
     {
         string[] required = Required(policies);
@@ -23,6 +30,9 @@ public sealed class PermissionVisibility(IPermissionStore store, IPermissionCata
     }
 
     /// <summary>Reads the grants into the circuit memory. Call this before drawing links that cannot wait.</summary>
+    /// <param name="user">The current user. A user with no id is ignored.</param>
+    /// <param name="cancellationToken">Passed to <see cref="IPermissionStore.GetGrantedAsync"/>.</param>
+    /// <returns>A task that completes when the grants are stored, or immediately when <paramref name="user"/> has no id.</returns>
     public async Task EnsureLoadedAsync(ClaimsPrincipal user, CancellationToken cancellationToken = default)
     {
         string userId = user?.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.Navigation;
 
+/// <inheritdoc cref="INavigationManager" />
 public class NavigationManager : INavigationManager
 {
     private readonly IEnumerable<INavigationProvider> providers;
@@ -12,6 +13,12 @@ public class NavigationManager : INavigationManager
     private readonly IWebHelper webHelper;
     private readonly IWorkContext workContext;
 
+    /// <summary>Creates the manager.</summary>
+    /// <param name="providers">Providers filtered by menu name.</param>
+    /// <param name="httpContextAccessor">The request used to mark the selected item. A missing context selects nothing.</param>
+    /// <param name="loggerFactory">Logs a provider that throws while building.</param>
+    /// <param name="webHelper">Supplies the web root for relative URLs.</param>
+    /// <param name="workContext">Passed through while the merged items are copied.</param>
     public NavigationManager(
         IEnumerable<INavigationProvider> providers,
         IHttpContextAccessor httpContextAccessor,
@@ -28,6 +35,7 @@ public class NavigationManager : INavigationManager
 
     #region INavigationManager Members
 
+    /// <inheritdoc />
     public IEnumerable<MenuItem> BuildMenu(string menuName)
     {
         var httpContext = httpContextAccessor.HttpContext;
@@ -152,6 +160,7 @@ public class NavigationManager : INavigationManager
                         : comparer.Compare(agg, pos) < 0 ? agg : pos);
     }
 
+    /// <inheritdoc />
     public string GetUrl(string menuItemUrl)
     {
         if (string.IsNullOrEmpty(menuItemUrl))

@@ -42,29 +42,26 @@ internal class PropertyHelper
     /// Initializes a fast <see cref="PropertyHelper"/>.
     /// This constructor does not cache the helper. For caching, use <see cref="GetProperties(Type)"/>.
     /// </summary>
+    /// <param name="property">The property to read and write.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="property"/> is <see langword="null"/>.</exception>
     public PropertyHelper(PropertyInfo property)
     {
         Property = property ?? throw new ArgumentNullException(nameof(property));
         Name = property.Name;
     }
 
-    /// <summary>
-    /// Gets the backing <see cref="PropertyInfo"/>.
-    /// </summary>
+    /// <summary>The reflected property this helper reads and writes.</summary>
     public PropertyInfo Property { get; }
 
-    /// <summary>
-    /// Gets (or sets in derived types) the property name.
-    /// </summary>
+    /// <summary>The name callers use for this property. A derived helper may replace it.</summary>
     public virtual string Name { get; protected set; }
 
-    /// <summary>
-    /// Gets the property value getter.
-    /// </summary>
+    /// <summary>A delegate that reads <see cref="Property"/>. The first access builds it and later accesses reuse it.</summary>
     public Func<object, object> ValueGetter => field ??= MakeFastPropertyGetter(Property);
 
     /// <summary>
-    /// Gets the property value setter.
+    /// A delegate that writes <see cref="Property"/>. The first access builds it and later accesses reuse it.
+    /// Only reference types are supported, matching <see cref="MakeFastPropertySetter"/>.
     /// </summary>
     public Action<object, object> ValueSetter => field ??= MakeFastPropertySetter(Property);
 
@@ -106,7 +103,7 @@ internal class PropertyHelper
     /// on the specified type.
     /// </para>
     /// <para>
-    /// <see cref="M:GetVisibleProperties"/> excludes properties defined on base types that have been
+    /// <see cref="GetVisibleProperties(Type)"/> excludes properties defined on base types that have been
     /// hidden by definitions using the <c>new</c> keyword.
     /// </para>
     /// </summary>
@@ -122,7 +119,7 @@ internal class PropertyHelper
     /// on the specified type.
     /// </para>
     /// <para>
-    /// <see cref="M:GetVisibleProperties"/> excludes properties defined on base types that have been
+    /// <see cref="GetVisibleProperties(Type)"/> excludes properties defined on base types that have been
     /// hidden by definitions using the <c>new</c> keyword.
     /// </para>
     /// </summary>
@@ -236,7 +233,7 @@ internal class PropertyHelper
     /// Creates a single fast property setter for reference types. The result is not cached.
     /// </summary>
     /// <param name="propertyInfo">propertyInfo to extract the setter for.</param>
-    /// <returns>a fast getter.</returns>
+    /// <returns>A fast setter.</returns>
     /// <remarks>
     /// This method is more memory efficient than a dynamically compiled lambda, and about the
     /// same speed. This only works for reference types.
@@ -278,6 +275,8 @@ internal class PropertyHelper
     /// If the object is already an <see cref="IDictionary{String, Object}"/> instance, then a copy
     /// is returned.
     /// </summary>
+    /// <param name="value">The object to copy. A dictionary is copied. <see langword="null"/> yields an empty dictionary.</param>
+    /// <returns>A case-insensitive dictionary of property names and values.</returns>
     /// <remarks>
     /// The implementation of PropertyHelper will cache the property accessors per-type. This is
     /// faster when the same type is used multiple times with ObjectToDictionary.
@@ -342,6 +341,15 @@ internal class PropertyHelper
         object target,
         object value) => setter((TDeclaringType)target, (TValue)value);
 
+    /// <summary>
+    /// Returns helpers for properties that are not hidden by a closer declaration of the same name.
+    /// When every property is declared on <paramref name="type"/>, the unfiltered list is reused.
+    /// </summary>
+    /// <param name="type">The type whose visible properties are returned.</param>
+    /// <param name="createPropertyHelper">Builds a helper for one property.</param>
+    /// <param name="allPropertiesCache">Cache of every interesting property, shared with the unfiltered property lookup.</param>
+    /// <param name="visiblePropertiesCache">Cache of the filtered list.</param>
+    /// <returns>The cached visible helpers.</returns>
     protected static PropertyHelper[] GetVisibleProperties(
         Type type,
         Func<PropertyInfo, PropertyHelper> createPropertyHelper,
@@ -415,6 +423,15 @@ internal class PropertyHelper
         return result;
     }
 
+    /// <summary>
+    /// Returns helpers for every interesting property of <paramref name="type"/>, using <paramref name="cache"/>.
+    /// <see cref="Nullable{T}"/> is unwrapped, so its <c>Value</c> and <c>HasValue</c> properties are not included.
+    /// An interface also includes properties from the interfaces it implements.
+    /// </summary>
+    /// <param name="type">The type to inspect. A nullable type is replaced by its underlying type.</param>
+    /// <param name="createPropertyHelper">Builds a helper for one property.</param>
+    /// <param name="cache">Cache keyed by the unwrapped type.</param>
+    /// <returns>The cached helpers.</returns>
     protected static PropertyHelper[] GetProperties(
         Type type,
         Func<PropertyInfo, PropertyHelper> createPropertyHelper,

@@ -6,6 +6,7 @@ using PageKrafter.Editing;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Messaging.Pages;
 
+/// <summary>Edits the default-language body of one message template.</summary>
 public partial class TemplateDesign
 {
     private MessageTemplateDocument template;
@@ -15,6 +16,7 @@ public partial class TemplateDesign
     private string savedAt;
     private bool canWrite;
 
+    /// <summary>The template being designed.</summary>
     [Parameter]
     public int TemplateId { get; set; }
 

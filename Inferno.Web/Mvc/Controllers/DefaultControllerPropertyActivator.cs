@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Inferno.Web.Mvc.Controllers;
 
+/// <inheritdoc cref="IControllerPropertyActivator" />
 internal class DefaultControllerPropertyActivator : IControllerPropertyActivator
 {
     private static readonly Func<Type, PropertyActivator<ControllerContext>[]> _getPropertiesToActivate =
@@ -13,6 +14,7 @@ internal class DefaultControllerPropertyActivator : IControllerPropertyActivator
     private bool _initialized;
     private ConcurrentDictionary<Type, PropertyActivator<ControllerContext>[]> _activateActions;
 
+    /// <inheritdoc />
     public void Activate(ControllerContext context, object controller)
     {
         LazyInitializer.EnsureInitialized(
@@ -32,6 +34,7 @@ internal class DefaultControllerPropertyActivator : IControllerPropertyActivator
         }
     }
 
+    /// <inheritdoc />
     public Action<ControllerContext, object> GetActivatorDelegate(ControllerActionDescriptor actionDescriptor)
     {
         if (actionDescriptor == null)

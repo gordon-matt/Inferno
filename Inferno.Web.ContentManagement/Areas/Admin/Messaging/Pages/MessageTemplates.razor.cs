@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Messaging.Pages;
 
+/// <summary>Lists message templates and edits a template's name, subject, tokens, and enabled flag.</summary>
 public partial class MessageTemplates
 {
     private IReadOnlyList<MessageTemplateSummary> templates;

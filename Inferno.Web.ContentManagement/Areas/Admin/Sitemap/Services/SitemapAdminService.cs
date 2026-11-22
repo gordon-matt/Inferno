@@ -14,23 +14,44 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Services;
 
+/// <summary>Keeps sitemap settings for the current page versions and writes the sitemap file.</summary>
 public interface ISitemapAdminService
 {
     /// <summary>
-    /// One entry per current page. Entries are added for new pages and removed for deleted ones first,
-    /// so the list always matches the site.
+    /// Lists one entry per current page version. Entries are added for new versions and removed for ones that are no longer current,
+    /// so the list matches the site. New entries use a weekly frequency and a priority of 0.5.
     /// </summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <returns>The rows, ordered by slug, or an error when they cannot be loaded.</returns>
     Task<Result<IReadOnlyList<SitemapConfigModel>>> ListAsync(int tenantId);
 
+    /// <summary>Saves the frequency and priority of one row. The priority is stored to one decimal place.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The configuration row.</param>
+    /// <param name="changeFrequency">The frequency to store.</param>
+    /// <param name="priority">A value from 0 to 1. Anything outside that range is invalid.</param>
+    /// <returns>Success, invalid, or not found.</returns>
     Task<Result> UpdateAsync(int tenantId, int id, ChangeFrequency changeFrequency, float priority);
 
-    /// <summary>Writes the tenant's sitemap.xml, using <paramref name="requestBaseUrl"/> when the tenant has no public URL of its own.</summary>
+    /// <summary>Writes the tenant's sitemap file, using <paramref name="requestBaseUrl"/> when the tenant has no public URL of its own.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="requestBaseUrl">The request base URL used when the tenant has no public URL.</param>
+    /// <returns>Success, or an error when the file cannot be written. A site with more than one language writes an alternate link for each language.</returns>
     Task<Result> GenerateAsync(int tenantId, string requestBaseUrl);
 
     /// <summary>Where the tenant's generated sitemap is stored. Always absolute, because the file writer cannot create a file in the current directory from a bare file name.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <returns>The absolute path of <c>sitemap-{tenantId}.xml</c> under the content root.</returns>
     string GetFilePath(int tenantId);
 }
 
+/// <inheritdoc cref="ISitemapAdminService" />
+/// <param name="repository">Stores the sitemap rows.</param>
+/// <param name="pageVersionService">Loads the current page versions.</param>
+/// <param name="languageService">Lists languages so a multilingual site can write alternate links.</param>
+/// <param name="workContext">Supplies the tenant's public base URL.</param>
+/// <param name="hostEnvironment">Supplies the content root the file is written under.</param>
+/// <param name="logger">Records load, write, and generation failures.</param>
 public class SitemapAdminService(
     IRepository<SitemapConfig> repository,
     IPageVersionService pageVersionService,
@@ -41,6 +62,7 @@ public class SitemapAdminService(
 {
     private const float DEFAULT_PRIORITY = .5f;
 
+    /// <inheritdoc />
     public async Task<Result<IReadOnlyList<SitemapConfigModel>>> ListAsync(int tenantId)
     {
         try
@@ -70,6 +92,7 @@ public class SitemapAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result> UpdateAsync(int tenantId, int id, ChangeFrequency changeFrequency, float priority)
     {
         if (priority is < 0f or > 1f)
@@ -89,6 +112,7 @@ public class SitemapAdminService(
         return Result.Success();
     }
 
+    /// <inheritdoc />
     public async Task<Result> GenerateAsync(int tenantId, string requestBaseUrl)
     {
         try
@@ -159,6 +183,7 @@ public class SitemapAdminService(
         }
     }
 
+    /// <inheritdoc />
     public string GetFilePath(int tenantId) => Path.Combine(hostEnvironment.ContentRootPath, $"sitemap-{tenantId}.xml");
 
     private async Task<IReadOnlyList<SitemapConfig>> SyncAsync(int tenantId, IReadOnlyList<PageVersion> pageVersions)

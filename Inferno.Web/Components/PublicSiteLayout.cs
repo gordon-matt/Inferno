@@ -13,6 +13,11 @@ public class PublicSiteLayout : LayoutComponentBase
     [Inject]
     private InfernoWebOptions Options { get; set; }
 
+    /// <summary>
+    /// Renders <see cref="LayoutComponentBase.Body"/> inside <see cref="InfernoWebOptions.PublicLayout"/>.
+    /// A null layout renders the body alone.
+    /// </summary>
+    /// <param name="builder">The render tree.</param>
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (Options.PublicLayout is null)

@@ -15,9 +15,15 @@ namespace Inferno.Web.Areas.Tenants.Controllers;
 [Route("admin/tenants")]
 public class TenantController(ITenantAdminService tenantAdminService) : ExportController<Tenant>
 {
+    /// <summary>Downloads the tenants matching <paramref name="search"/> as CSV.</summary>
+    /// <param name="search">Text matched against the name, URL, or hosts. Whitespace exports every tenant.</param>
+    /// <returns>The file, or a problem result when the list cannot be read.</returns>
     [HttpGet("export/csv")]
     public Task<IActionResult> ExportToCsv(string search) => ExportAsync(search, DownloadFileFormat.Delimited);
 
+    /// <summary>Downloads the tenants matching <paramref name="search"/> as an Excel workbook.</summary>
+    /// <param name="search">Text matched against the name, URL, or hosts. Whitespace exports every tenant.</param>
+    /// <returns>The file, or a problem result when the list cannot be read.</returns>
     [HttpGet("export/excel")]
     public Task<IActionResult> ExportToExcel(string search) => ExportAsync(search, DownloadFileFormat.XLSX);
 

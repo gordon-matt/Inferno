@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Pages.Pages;
 
+/// <summary>Lists the tenant's pages and creates a page or sub-page.</summary>
 public partial class Index
 {
     private sealed class NewPageForm

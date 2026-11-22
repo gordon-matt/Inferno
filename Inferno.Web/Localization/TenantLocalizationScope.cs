@@ -8,6 +8,7 @@ namespace Inferno.Web.Localization;
 /// <summary>One localization catalog per tenant. The scope id is the tenant id as text.</summary>
 public sealed class TenantLocalizationScope : ILocalizationScope
 {
+    /// <inheritdoc />
     public string? GetScopeId()
     {
         try

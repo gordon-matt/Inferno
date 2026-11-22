@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account;
 
+/// <summary>Creates an account when the tenant allows self-registration, then sends a confirmation email.</summary>
 public class RegisterModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -21,6 +22,14 @@ public class RegisterModel : PageModel
     private readonly IEmailSender _emailSender;
     private readonly Inferno.Web.Configuration.SiteSettings _siteSettings;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Creates the account and the confirmation token.</param>
+    /// <param name="userStore">Stores the user name. It must also support email.</param>
+    /// <param name="signInManager">Lists external schemes and signs the user in when confirmation is not required.</param>
+    /// <param name="logger">Records a created account.</param>
+    /// <param name="emailSender">Sends the confirmation message.</param>
+    /// <param name="siteSettings">Decides whether this tenant allows self-registration.</param>
+    /// <exception cref="NotSupportedException">The user store does not support email.</exception>
     public RegisterModel(
         UserManager<ApplicationUser> userManager,
         IUserStore<ApplicationUser> userStore,
@@ -38,60 +47,42 @@ public class RegisterModel : PageModel
         _emailSender = emailSender;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The email and password posted by the form.</summary>
     [BindProperty]
     public InputModel Input { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The URL to open after registration. May be <see langword="null"/> on the initial request.</summary>
     public string ReturnUrl { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>External authentication schemes offered on the form.</summary>
     public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The fields posted by the registration form.</summary>
     public class InputModel
     {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The email address, which is also stored as the user name.</summary>
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The password for the new account.</summary>
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        /// <summary>The password typed a second time. It must match <see cref="Password"/>.</summary>
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
+    /// <summary>Shows the form when this tenant allows registration.</summary>
+    /// <param name="returnUrl">The URL to open after registration. May be <see langword="null"/>.</param>
+    /// <returns>This page, or not found when self-registration is off.</returns>
     public async Task<IActionResult> OnGetAsync(string returnUrl = null)
     {
         // Accounts are made by an administrator unless this tenant has opted in to self-registration.
@@ -105,6 +96,12 @@ public class RegisterModel : PageModel
         return Page();
     }
 
+    /// <summary>
+    /// Creates the account, emails a confirmation link, and either signs the user in or opens the confirmation page.
+    /// </summary>
+    /// <param name="returnUrl">The local URL to open when confirmation is not required. <see langword="null"/> becomes the site root.</param>
+    /// <returns>Not found when registration is off. Otherwise the confirmation page, a local redirect, or this page with the Identity errors.</returns>
+    /// <exception cref="InvalidOperationException"><see cref="ApplicationUser"/> cannot be constructed.</exception>
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
         if (!_siteSettings.AllowRegistration)

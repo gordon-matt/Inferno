@@ -8,9 +8,12 @@ namespace Inferno.Caching;
 /// </summary>
 public class ClearCacheTask : ITask
 {
+    /// <summary>The name shown for this job.</summary>
     public string Name => "Clear Cache Task";
 
+    /// <summary>Ten minutes, until an administrator changes it.</summary>
     public int DefaultInterval => 600;
 
+    /// <summary>Clears the shared <see cref="ICacheManager"/>.</summary>
     public void Execute() => DependoResolver.Instance.Resolve<ICacheManager>().Clear();
 }

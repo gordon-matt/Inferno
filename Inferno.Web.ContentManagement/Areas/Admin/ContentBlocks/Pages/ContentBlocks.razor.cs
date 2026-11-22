@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Pages;
 
+/// <summary>Lists and edits content blocks, either site-wide or for the page named in the query.</summary>
 public partial class ContentBlocks
 {
     private IReadOnlyList<ContentBlock> blocks;

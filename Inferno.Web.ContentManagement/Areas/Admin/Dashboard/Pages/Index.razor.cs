@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Dashboard.Pages;
 
+/// <summary>The admin dashboard. It loads each contributor's default layout, then the layout saved for the current user.</summary>
 public partial class Index : AdminPage, IDisposable
 {
     [Inject]
@@ -59,6 +60,7 @@ public partial class Index : AdminPage, IDisposable
         }
     }
 
+    /// <summary>Cancels a layout save that is still waiting.</summary>
     public void Dispose()
     {
         pendingSave?.Cancel();

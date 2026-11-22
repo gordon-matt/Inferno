@@ -4,29 +4,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
-/// <summary>
-///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-///     directly from your code. This API may change or be removed in future releases.
-/// </summary>
+/// <summary>Shows recovery codes that were just generated.</summary>
 public class ShowRecoveryCodesModel : PageModel
 {
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>The recovery codes carried from the page that generated them.</summary>
     [TempData]
     public string[] RecoveryCodes { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>A message from the page that generated the codes.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>Shows the codes, or returns to the two-factor page when none were carried here.</summary>
+    /// <returns>This page when <see cref="RecoveryCodes"/> has entries. Otherwise a redirect to the two-factor page.</returns>
     public IActionResult OnGet() => RecoveryCodes == null || RecoveryCodes.Length == 0 ? RedirectToPage("./TwoFactorAuthentication") : Page();
 }

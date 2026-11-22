@@ -1,5 +1,6 @@
 namespace Inferno.Web.ContentManagement.Areas.Admin.Blog.Components;
 
+/// <summary>Editor for a <see cref="Inferno.Web.ContentManagement.Areas.Admin.Blog.ContentBlocks.TagCloudBlock"/>.</summary>
 public partial class TagCloudBlockEditor
 {
     // InputNumber has no byte support, so the stored bytes are edited through ints.

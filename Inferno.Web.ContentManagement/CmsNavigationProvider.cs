@@ -4,19 +4,25 @@ using Microsoft.Extensions.Localization;
 
 namespace Inferno.Web.ContentManagement;
 
+/// <summary>Adds the CMS and messaging groups to the admin menu.</summary>
 public class CmsNavigationProvider : INavigationProvider
 {
+    /// <summary>Resolves <see cref="T"/> from the dependency container.</summary>
     public CmsNavigationProvider()
     {
         T = DependoResolver.Instance.Resolve<IStringLocalizer>();
     }
 
+    /// <summary>Localizer used for the menu captions.</summary>
     public IStringLocalizer T { get; set; }
 
     #region INavigationProvider Members
 
+    /// <summary>The admin menu these items belong to.</summary>
     public string MenuName => InfernoWebConstants.Areas.Admin;
 
+    /// <summary>Adds the CMS group and the messaging group.</summary>
+    /// <param name="builder">The admin menu being built.</param>
     public void GetNavigation(NavigationBuilder builder)
     {
         builder.Add(T[InfernoCmsLocalizableStrings.Navigation.CMS].Value, "2", BuildCmsMenu);

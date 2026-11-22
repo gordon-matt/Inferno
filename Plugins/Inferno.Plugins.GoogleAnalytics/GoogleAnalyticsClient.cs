@@ -7,34 +7,55 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Inferno.Plugins.GoogleAnalytics;
 
+/// <summary>One Data API runReport request. <see cref="Ranges"/> replaces <see cref="StartDate"/> and <see cref="EndDate"/> when it has entries.</summary>
 public sealed class AnalyticsQuery
 {
+    /// <summary>The start date when <see cref="Ranges"/> is empty. Defaults to the last 28 days.</summary>
     public string StartDate { get; init; } = "28daysAgo";
 
+    /// <summary>The end date when <see cref="Ranges"/> is empty. Defaults to today.</summary>
     public string EndDate { get; init; } = "today";
 
+    /// <summary>Named date ranges. <see langword="null"/> or empty uses <see cref="StartDate"/> and <see cref="EndDate"/>.</summary>
     public IReadOnlyList<(string Start, string End, string Name)>? Ranges { get; init; }
 
+    /// <summary>Dimension names. Empty omits the dimensions field.</summary>
     public IReadOnlyList<string> Dimensions { get; init; } = [];
 
+    /// <summary>Metric names.</summary>
     public IReadOnlyList<string> Metrics { get; init; } = [];
 
+    /// <summary>A metric to sort by, descending. <see langword="null"/> or empty leaves the API's order.</summary>
     public string? OrderByMetric { get; init; }
 
+    /// <summary>How many rows to ask for. <see langword="null"/> omits the limit.</summary>
     public int? Limit { get; init; }
 }
 
+/// <summary>Runs a GA4 Data API report with a service-account token. The token is cached per client email.</summary>
 public interface IGoogleAnalyticsClient
 {
+    /// <summary>
+    /// Posts <paramref name="query"/> to the property's runReport method.
+    /// A token request that is refused, or a key that cannot be signed, returns a failed table instead of throwing.
+    /// </summary>
+    /// <param name="key">The service account that signs the token.</param>
+    /// <param name="propertyId">The numeric property id.</param>
+    /// <param name="query">The report to run.</param>
+    /// <param name="cancellationToken">Observed by the token request and the report request.</param>
+    /// <returns>The parsed table, including a failure stored on the table.</returns>
     Task<AnalyticsTable> RunAsync(ServiceAccountKey key, string propertyId, AnalyticsQuery query, CancellationToken cancellationToken = default);
 }
 
+/// <inheritdoc cref="IGoogleAnalyticsClient" />
 public sealed class GoogleAnalyticsClient(IHttpClientFactory http, IMemoryCache cache) : IGoogleAnalyticsClient
 {
+    /// <summary>The named <see cref="HttpClient"/> registered for this plugin.</summary>
     public const string HttpClientName = "Inferno.GoogleAnalytics";
 
     private const string Scope = "https://www.googleapis.com/auth/analytics.readonly";
 
+    /// <inheritdoc />
     public async Task<AnalyticsTable> RunAsync(ServiceAccountKey key, string propertyId, AnalyticsQuery query, CancellationToken cancellationToken = default)
     {
         string token;

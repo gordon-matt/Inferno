@@ -6,8 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Inferno.Web.Infrastructure;
 
+/// <summary>Host pipeline helpers for Inferno.</summary>
 public static class ApplicationBuilderExtensions
 {
+    /// <summary>
+    /// Runs startup tasks unless <see cref="InfernoWebOptions.IgnoreStartupTasks"/> is set.
+    /// Tasks are skipped when no connection string has been saved.
+    /// </summary>
+    /// <param name="app">The application builder. Its services must include <see cref="InfernoWebOptions"/>.</param>
+    /// <returns>The same builder, so calls can be chained.</returns>
     public static IApplicationBuilder UseInferno(this IApplicationBuilder app)
     {
         var webOptions = app.ApplicationServices.GetService<InfernoWebOptions>();

@@ -6,46 +6,66 @@ using Inferno.Web.Dashboard;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Dashboard;
 
+/// <summary>Widget kind identifiers registered by <see cref="ContentDashboardContributor"/>.</summary>
 public static class DashboardKinds
 {
+    /// <summary>A single count.</summary>
     public const string Stat = "inferno.stat";
 
+    /// <summary>Pages and posts updated over recent weeks.</summary>
     public const string Activity = "inferno.activity";
 
+    /// <summary>How pages and posts are split by status.</summary>
     public const string Mix = "inferno.mix";
 
+    /// <summary>The pages and posts edited most recently.</summary>
     public const string Recent = "inferno.recent";
 
+    /// <summary>Posts that will be published later.</summary>
     public const string Scheduled = "inferno.scheduled";
 
+    /// <summary>Drafts, missing search text, switched-off pages, and locked accounts.</summary>
     public const string Attention = "inferno.attention";
 
+    /// <summary>How many accounts are in each role.</summary>
     public const string Roles = "inferno.roles";
 
+    /// <summary>Accounts on this site.</summary>
     public const string Accounts = "inferno.accounts";
 
+    /// <summary>Admin sections the account can open.</summary>
     public const string Shortcuts = "inferno.shortcuts";
 }
 
+/// <summary>Values of the statistic widget's metric option.</summary>
 public static class DashboardMetrics
 {
+    /// <summary>Enabled pages that have a published version.</summary>
     public const string PublishedPages = "published-pages";
 
+    /// <summary>Posts that are published and not scheduled for later.</summary>
     public const string PublishedPosts = "published-posts";
 
+    /// <summary>Page drafts and post drafts.</summary>
     public const string Drafts = "drafts";
 
+    /// <summary>Posts whose publish time is still in the future.</summary>
     public const string ScheduledPosts = "scheduled-posts";
 
+    /// <summary>Items the snapshot marks as needing attention.</summary>
     public const string Attention = "attention";
 
+    /// <summary>Accounts on the tenant.</summary>
     public const string Users = "users";
 }
 
+/// <summary>Registers the CMS dashboard widgets and the default Overview, Content, and People layout.</summary>
 public sealed class ContentDashboardContributor : IDashboardContributor
 {
+    /// <summary>Runs before contributors with a higher order.</summary>
     public int Order => 0;
 
+    /// <summary>The statistic, activity, mix, recent, attention, scheduled, shortcut, role, and account widgets.</summary>
     public IReadOnlyList<WidgetDefinition> Widgets { get; } =
     [
         WidgetDefinition.For<StatWidget>(DashboardKinds.Stat, "Statistic").With(definition =>
@@ -152,6 +172,8 @@ public sealed class ContentDashboardContributor : IDashboardContributor
         }),
     ];
 
+    /// <summary>Adds the Overview, Content, and People sections and their default widgets.</summary>
+    /// <param name="board">The board being filled. Existing items are left in place.</param>
     public void AddDefaults(DashboardBoard board)
     {
         board.Sections.Add(new DashboardSection { Id = "overview", Title = "Overview", Icon = "home" });

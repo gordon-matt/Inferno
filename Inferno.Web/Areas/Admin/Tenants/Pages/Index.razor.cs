@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.Areas.Admin.Tenants.Pages;
 
+/// <summary>Lists, edits, and deletes tenants, and links to the CSV and Excel exports.</summary>
 public partial class Index
 {
     private ListPage<Tenant> listing;

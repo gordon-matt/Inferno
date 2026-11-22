@@ -10,25 +10,44 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.Areas.Admin.Tenants.Services;
 
+/// <summary>Lists, saves, and deletes tenants for the admin screen.</summary>
 public interface ITenantAdminService
 {
+    /// <summary>
+    /// One page of tenants. <see cref="ListQuery.Search"/> matches the name, URL, or hosts.
+    /// Sort fields are URL, id, and name; anything else sorts by name.
+    /// </summary>
+    /// <param name="query">The search, sort, and page.</param>
+    /// <returns>The page and the filtered total.</returns>
     Task<Result<ListPage<Tenant>>> SearchAsync(ListQuery query);
 
-    /// <summary>Every tenant matching <paramref name="search"/>, for an export.</summary>
+    /// <summary>Every tenant matching <paramref name="search"/>, ordered by name, for an export.</summary>
+    /// <param name="search">Text matched against the name, URL, or hosts. Whitespace returns every tenant.</param>
+    /// <returns>The matching tenants.</returns>
     Task<Result<IReadOnlyList<Tenant>>> ListAsync(string search);
 
+    /// <summary>The tenant with <paramref name="id"/>.</summary>
+    /// <param name="id">The tenant id.</param>
+    /// <returns>The tenant, or not found.</returns>
     Task<Result<Tenant>> GetAsync(int id);
 
     /// <summary>
-    /// Inserts when <see cref="Tenant.Id"/> is 0, otherwise updates. A new tenant also gets its
+    /// Inserts when the id is 0, otherwise updates. A new tenant also gets its
     /// administrator role and media folder, which nothing else creates later.
+    /// Name and URL are required and trimmed. The host cache is cleared for the old and new host lists.
+    /// A failure is logged and returned as an error.
     /// </summary>
+    /// <param name="tenant">The values to save.</param>
+    /// <returns>The saved tenant, not found, invalid, or an error.</returns>
     Task<Result<Tenant>> SaveAsync(Tenant tenant);
 
-    /// <summary>Removes the tenant and everything stored for it.</summary>
+    /// <summary>Removes the tenant and everything stored for it, then clears the host cache.</summary>
+    /// <param name="id">The tenant id.</param>
+    /// <returns>Success, not found, or an error when the delete fails.</returns>
     Task<Result> DeleteAsync(int id);
 }
 
+/// <inheritdoc cref="ITenantAdminService" />
 public class TenantAdminService(
     ITenantService tenantService,
     IMembershipService membershipService,
@@ -47,6 +66,7 @@ public class TenantAdminService(
         }
     }
 
+    /// <inheritdoc />
     public Task<Result<ListPage<Tenant>>> SearchAsync(ListQuery query)
     {
         using var connection = tenantService.OpenConnection();
@@ -61,6 +81,7 @@ public class TenantAdminService(
         return Task.FromResult(Result.Success(new ListPage<Tenant>(items, total)));
     }
 
+    /// <inheritdoc />
     public Task<Result<IReadOnlyList<Tenant>>> ListAsync(string search)
     {
         using var connection = tenantService.OpenConnection();
@@ -68,12 +89,14 @@ public class TenantAdminService(
         return Task.FromResult(Result.Success(items));
     }
 
+    /// <inheritdoc />
     public async Task<Result<Tenant>> GetAsync(int id)
     {
         var tenant = await tenantService.FindOneAsync(id);
         return tenant is null ? Result<Tenant>.NotFound() : Result.Success(tenant);
     }
 
+    /// <inheritdoc />
     public async Task<Result<Tenant>> SaveAsync(Tenant tenant)
     {
         if (string.IsNullOrWhiteSpace(tenant.Name))
@@ -134,6 +157,7 @@ public class TenantAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result> DeleteAsync(int id)
     {
         var tenant = await tenantService.FindOneAsync(id);

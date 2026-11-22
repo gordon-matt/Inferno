@@ -6,15 +6,23 @@ using Microsoft.AspNetCore.Mvc;
 namespace Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Controllers;
 
 [Route("inferno-cms")]
+/// <summary>Receives public posts from a <see cref="Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.FormBlock"/>.</summary>
 public class FormBlockController : Controller
 {
     private readonly IFormBlockSubmissionService submissionService;
 
+    /// <summary>Stores the service that accepts the post.</summary>
+    /// <param name="submissionService">Validates the token and emails or forwards the fields.</param>
     public FormBlockController(IFormBlockSubmissionService submissionService)
     {
         this.submissionService = submissionService;
     }
 
+    /// <summary>
+    /// Accepts a form post from the same host. An Ajax post returns JSON; any other post returns a short HTML page.
+    /// </summary>
+    /// <param name="form">The posted fields and files.</param>
+    /// <returns>Bad request when the origin host differs. Otherwise the submission result as JSON or HTML.</returns>
     [HttpPost("form-content-block/save")]
     [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Save(IFormCollection form)

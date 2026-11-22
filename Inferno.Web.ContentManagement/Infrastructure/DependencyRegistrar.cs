@@ -27,10 +27,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Inferno.Web.ContentManagement.Infrastructure;
 
+/// <summary>Registers CMS services, content blocks, navigation, permissions, and the invariant language pack.</summary>
 public class DependencyRegistrar : IDependencyRegistrar
 {
     #region IDependencyRegistrar Members
 
+    /// <summary>Registers the CMS services and content blocks.</summary>
+    /// <param name="builder">The container-neutral builder.</param>
+    /// <param name="typeFinder">Not read.</param>
+    /// <param name="configuration">Not read.</param>
     public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
         builder.Register<IRouterAssemblyMarker, RouterAssemblyMarker>(ServiceLifetime.Singleton);
@@ -130,6 +135,7 @@ public class DependencyRegistrar : IDependencyRegistrar
         builder.Register<IMessageTemplateRenderer, PageKrafterMessageTemplateRenderer>(ServiceLifetime.Transient);
     }
 
+    /// <summary>Runs with the other registrars that use order 1. Lower orders run first.</summary>
     public int Order => 1;
 
     #endregion IDependencyRegistrar Members

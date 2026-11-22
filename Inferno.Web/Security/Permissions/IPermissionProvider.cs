@@ -6,5 +6,7 @@ namespace Inferno.Web.Security.Permissions;
 /// </summary>
 public interface IPermissionProvider
 {
+    /// <summary>The permissions this module defines.</summary>
+    /// <returns>The permissions to add to the catalog.</returns>
     IEnumerable<Permission> GetPermissions();
 }

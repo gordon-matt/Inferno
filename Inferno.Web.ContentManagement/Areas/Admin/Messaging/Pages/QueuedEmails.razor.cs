@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Messaging.Pages;
 
+/// <summary>Lists the tenant's queued email and opens or deletes a message.</summary>
 public partial class QueuedEmails
 {
     private ListPage<QueuedEmailSummary> listing;

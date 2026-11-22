@@ -7,15 +7,23 @@ using Module = Autofac.Module;
 
 namespace Inferno.Web.Configuration;
 
+/// <summary>Registers every concrete <see cref="ISettings"/> so resolving it loads the current tenant's stored copy.</summary>
 public class ConfigurationModule : Module
 {
+    /// <summary>Adds <see cref="SettingsSource"/> to the container.</summary>
+    /// <param name="builder">The Autofac builder.</param>
     protected override void Load(ContainerBuilder builder) => builder.RegisterSource(new SettingsSource());
 
+    /// <summary>Creates a per-scope registration for each concrete <see cref="ISettings"/> type that is requested.</summary>
     public class SettingsSource : IRegistrationSource
     {
         private static readonly MethodInfo buildMethod = typeof(SettingsSource).GetMethod("BuildRegistration",
             BindingFlags.Static | BindingFlags.NonPublic);
 
+        /// <summary>Yields one registration when <paramref name="service"/> is a concrete <see cref="ISettings"/> class.</summary>
+        /// <param name="service">The service being resolved.</param>
+        /// <param name="registrationAccessor">Unused. Required by <see cref="IRegistrationSource"/>.</param>
+        /// <returns>The settings registration, or none.</returns>
         public IEnumerable<IComponentRegistration> RegistrationsFor(
             Service service,
             Func<Service, IEnumerable<ServiceRegistration>> registrationAccessor)
@@ -47,6 +55,7 @@ public class ConfigurationModule : Module
                 .InstancePerLifetimeScope()
                 .CreateRegistration();
 
+        /// <summary>Always <see langword="false"/>. This source is not an adapter for one component.</summary>
         public bool IsAdapterForIndividualComponents => false;
     }
 }

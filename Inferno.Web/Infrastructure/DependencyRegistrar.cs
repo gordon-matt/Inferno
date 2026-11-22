@@ -13,10 +13,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Inferno.Web.Infrastructure;
 
+/// <summary>Registers Inferno.Web services, and the Autofac source that loads <see cref="ISettings"/> for the current tenant.</summary>
 public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegistrar
 {
     #region IDependencyRegistrar Members
 
+    /// <inheritdoc />
     public void Register(IContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration)
     {
         builder.RegisterInstance(DataSettingsManager.LoadSettings());
@@ -72,9 +74,11 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
         builder.Register<IScheduledJobService, ScheduledJobService>(ServiceLifetime.Scoped);
     }
 
+    /// <inheritdoc />
     public void Register(ContainerBuilder builder, ITypeFinder typeFinder, IConfiguration configuration) =>
         builder.RegisterModule<ConfigurationModule>();
 
+    /// <inheritdoc />
     public int Order => 0;
 
     #endregion IDependencyRegistrar Members

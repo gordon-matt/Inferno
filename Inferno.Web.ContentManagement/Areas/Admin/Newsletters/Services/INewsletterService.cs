@@ -7,11 +7,21 @@ using Microsoft.Extensions.Localization;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Newsletters.Services;
 
+/// <summary>Signs a visitor up to the current tenant's newsletter.</summary>
 public interface INewsletterService
 {
+    /// <summary>
+    /// Subscribes <paramref name="email"/>. An existing account is updated only when it is <paramref name="currentUser"/>.
+    /// A new account is created, and its generated password is included on the subscribed event.
+    /// </summary>
+    /// <param name="email">The address to subscribe. It is trimmed and must match <see cref="CmsConstants.RegexPatterns.Email"/>.</param>
+    /// <param name="name">The subscriber's name. A name with a space is split into given names and a family name; otherwise it is stored as the given name.</param>
+    /// <param name="currentUser">The signed-in user, or <see langword="null"/>. Only this user may subscribe an address that already has an account.</param>
+    /// <returns>Whether the subscription was accepted, and a message to show.</returns>
     Task<NewsletterSubscriptionResult> SubscribeAsync(string email, string name, InfernoUser currentUser);
 }
 
+/// <inheritdoc cref="INewsletterService" />
 public class NewsletterService : INewsletterService
 {
     private readonly IMembershipService membershipService;
@@ -20,6 +30,12 @@ public class NewsletterService : INewsletterService
     private readonly IWorkContext workContext;
     private readonly IStringLocalizer localizer;
 
+    /// <summary>Stores the membership, event, tenant, and localization services used to subscribe someone.</summary>
+    /// <param name="membershipService">Finds, creates, and updates the subscriber's account.</param>
+    /// <param name="membershipSettings">Supplies the length of a generated password.</param>
+    /// <param name="eventPublisher">Publishes <see cref="NewsletterSubscribedEvent"/> after a successful subscription.</param>
+    /// <param name="workContext">Supplies the current tenant.</param>
+    /// <param name="localizer">Supplies the success and failure messages.</param>
     public NewsletterService(
         IMembershipService membershipService,
         MembershipSettings membershipSettings,
@@ -34,6 +50,7 @@ public class NewsletterService : INewsletterService
         this.localizer = localizer;
     }
 
+    /// <inheritdoc />
     public async Task<NewsletterSubscriptionResult> SubscribeAsync(string email, string name, InfernoUser currentUser)
     {
         email = email?.Trim() ?? string.Empty;
@@ -109,6 +126,7 @@ public class NewsletterService : INewsletterService
     }
 }
 
+/// <summary>The outcome of a newsletter subscription.</summary>
 public sealed class NewsletterSubscriptionResult
 {
     private NewsletterSubscriptionResult(bool succeeded, string message)
@@ -117,11 +135,19 @@ public sealed class NewsletterSubscriptionResult
         Message = message;
     }
 
+    /// <summary><see langword="true"/> when the address was subscribed.</summary>
     public bool Succeeded { get; }
 
+    /// <summary>The message to show the visitor.</summary>
     public string Message { get; }
 
+    /// <summary>Creates a successful result.</summary>
+    /// <param name="message">The message to show.</param>
+    /// <returns>A result with <see cref="Succeeded"/> set.</returns>
     public static NewsletterSubscriptionResult Ok(string message) => new(true, message);
 
+    /// <summary>Creates a failed result.</summary>
+    /// <param name="message">The message to show.</param>
+    /// <returns>A result with <see cref="Succeeded"/> clear.</returns>
     public static NewsletterSubscriptionResult Fail(string message) => new(false, message);
 }

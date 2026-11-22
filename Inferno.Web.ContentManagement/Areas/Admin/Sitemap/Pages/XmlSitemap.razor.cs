@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Sitemap.Pages;
 
+/// <summary>Lists sitemap entries, edits frequency and priority, and generates the sitemap file.</summary>
 public partial class XmlSitemap
 {
     private IReadOnlyList<SitemapConfigModel> entries;

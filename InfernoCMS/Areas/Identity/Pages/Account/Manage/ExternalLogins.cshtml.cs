@@ -6,12 +6,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
+/// <summary>Lists, links, and removes external logins for the signed-in user.</summary>
 public class ExternalLoginsModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IUserStore<ApplicationUser> _userStore;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Loads logins and adds or removes a link.</param>
+    /// <param name="signInManager">Lists schemes, challenges a provider, and refreshes the sign-in.</param>
+    /// <param name="userStore">Reads the password hash that decides whether a login can be removed.</param>
     public ExternalLoginsModel(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -22,31 +27,21 @@ public class ExternalLoginsModel : PageModel
         _userStore = userStore;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>External logins already linked to the account.</summary>
     public IList<UserLoginInfo> CurrentLogins { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>Authentication schemes that are not yet linked.</summary>
     public IList<AuthenticationScheme> OtherLogins { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>Whether a linked login can be removed. True when the account has a password hash or more than one login.</summary>
     public bool ShowRemoveButton { get; set; }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>A message from the previous link or removal, shown on the next request.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
+    /// <summary>Loads the linked logins and the schemes that are still available.</summary>
+    /// <returns>This page, or not found when the user is gone.</returns>
     public async Task<IActionResult> OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -70,6 +65,10 @@ public class ExternalLoginsModel : PageModel
         return Page();
     }
 
+    /// <summary>Removes the external login and refreshes the sign-in.</summary>
+    /// <param name="loginProvider">The authentication scheme name.</param>
+    /// <param name="providerKey">The provider's user key.</param>
+    /// <returns>A redirect back to this page. Not found when the user is gone.</returns>
     public async Task<IActionResult> OnPostRemoveLoginAsync(string loginProvider, string providerKey)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -90,6 +89,9 @@ public class ExternalLoginsModel : PageModel
         return RedirectToPage();
     }
 
+    /// <summary>Clears the external cookie and challenges <paramref name="provider"/> to link it to the signed-in user.</summary>
+    /// <param name="provider">The authentication scheme name.</param>
+    /// <returns>The challenge result for <paramref name="provider"/>.</returns>
     public async Task<IActionResult> OnPostLinkLoginAsync(string provider)
     {
         // Clear the existing external cookie to ensure a clean login process
@@ -101,6 +103,9 @@ public class ExternalLoginsModel : PageModel
         return new ChallengeResult(provider, properties);
     }
 
+    /// <summary>Stores the external login returned by the provider and clears the external cookie.</summary>
+    /// <returns>A redirect back to this page. Not found when the user is gone.</returns>
+    /// <exception cref="InvalidOperationException">The provider returned no login information.</exception>
     public async Task<IActionResult> OnGetLinkLoginCallbackAsync()
     {
         var user = await _userManager.GetUserAsync(User);

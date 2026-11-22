@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InfernoCMS.Areas.Identity.Pages.Account.Manage;
 
+/// <summary>Turns two-factor authentication off for the signed-in user.</summary>
 public class Disable2faModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<Disable2faModel> _logger;
 
+    /// <summary>Creates the page with the account services.</summary>
+    /// <param name="userManager">Checks and clears the two-factor flag.</param>
+    /// <param name="logger">Records a successful disable.</param>
     public Disable2faModel(
         UserManager<ApplicationUser> userManager,
         ILogger<Disable2faModel> logger)
@@ -18,13 +22,13 @@ public class Disable2faModel : PageModel
         _logger = logger;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
+    /// <summary>A message that two-factor authentication was disabled, shown on the next page.</summary>
     [TempData]
     public string StatusMessage { get; set; }
 
+    /// <summary>Shows the warning when two-factor authentication is on.</summary>
+    /// <returns>This page, or not found when the user is gone.</returns>
+    /// <exception cref="InvalidOperationException">Two-factor authentication is already off.</exception>
     public async Task<IActionResult> OnGet()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -35,6 +39,9 @@ public class Disable2faModel : PageModel
             : (IActionResult)Page();
     }
 
+    /// <summary>Turns two-factor authentication off.</summary>
+    /// <returns>A redirect to the two-factor page, or not found when the user is gone.</returns>
+    /// <exception cref="InvalidOperationException">Identity rejects the change.</exception>
     public async Task<IActionResult> OnPostAsync()
     {
         var user = await _userManager.GetUserAsync(User);

@@ -4,34 +4,72 @@ using Microsoft.Extensions.Logging;
 
 namespace Inferno.Web.ContentManagement.Areas.Admin.Menus.Services;
 
+/// <summary>A menu and how many items it has.</summary>
+/// <param name="Id">The menu identifier.</param>
+/// <param name="Name">The menu name.</param>
+/// <param name="UrlFilter">The URL filter, which may be empty.</param>
+/// <param name="ItemCount">How many items the menu has.</param>
 public sealed record MenuSummary(Guid Id, string Name, string UrlFilter, int ItemCount);
 
+/// <summary>Edits a tenant's menus and their items.</summary>
 public interface IMenuAdminService
 {
+    /// <summary>Lists the tenant's menus, ordered by name.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="search">Matches the name or URL filter. Whitespace lists every menu.</param>
+    /// <returns>The menus and their item counts.</returns>
     Task<Result<IReadOnlyList<MenuSummary>>> ListMenusAsync(int tenantId, string search);
 
+    /// <summary>Loads one of the tenant's menus.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The menu. <see cref="Guid.Empty"/> is not found.</param>
+    /// <returns>The menu, or not found.</returns>
     Task<Result<Menu>> GetMenuAsync(int tenantId, Guid id);
 
     /// <summary>Inserts when <see cref="Menu.Id"/> is empty, otherwise updates.</summary>
+    /// <param name="tenantId">The tenant that owns the menu.</param>
+    /// <param name="menu">The name and URL filter to save. The name is required.</param>
+    /// <returns>The saved menu. Invalid when the name is missing, not found when an existing menu is missing, or an error when it cannot be saved.</returns>
     Task<Result<Menu>> SaveMenuAsync(int tenantId, Menu menu);
 
     /// <summary>Removes the menu together with all of its items.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The menu.</param>
+    /// <returns>Success, not found, or an error when it cannot be deleted.</returns>
     Task<Result> DeleteMenuAsync(int tenantId, Guid id);
 
+    /// <summary>Lists a menu's items, ordered by position and then text.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="menuId">The menu.</param>
+    /// <returns>The items, or not found when the menu is missing.</returns>
     Task<Result<IReadOnlyList<MenuItem>>> ListItemsAsync(int tenantId, Guid menuId);
 
     /// <summary>Inserts when <see cref="MenuItem.Id"/> is empty, otherwise updates. The parent must belong to the same menu.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="item">The item to save. Text and URL are required.</param>
+    /// <returns>
+    /// The saved item. Invalid when the text or URL is missing, or when the parent is the item itself or one of its children.
+    /// Not found when the menu or an existing item is missing.
+    /// </returns>
     Task<Result<MenuItem>> SaveItemAsync(int tenantId, MenuItem item);
 
     /// <summary>Removes the item and everything nested under it.</summary>
+    /// <param name="tenantId">The tenant.</param>
+    /// <param name="id">The item.</param>
+    /// <returns>Success, not found, or an error when it cannot be deleted.</returns>
     Task<Result> DeleteItemAsync(int tenantId, Guid id);
 }
 
+/// <inheritdoc cref="IMenuAdminService" />
+/// <param name="menuService">Loads and saves menus.</param>
+/// <param name="menuItemService">Loads and saves menu items.</param>
+/// <param name="logger">Records save and delete failures.</param>
 public class MenuAdminService(
     IMenuService menuService,
     IMenuItemService menuItemService,
     ILogger<MenuAdminService> logger) : IMenuAdminService
 {
+    /// <inheritdoc />
     public Task<Result<IReadOnlyList<MenuSummary>>> ListMenusAsync(int tenantId, string search)
     {
         using var menuConnection = menuService.OpenConnection();
@@ -58,12 +96,14 @@ public class MenuAdminService(
         return Task.FromResult(Result.Success(summaries));
     }
 
+    /// <inheritdoc />
     public async Task<Result<Menu>> GetMenuAsync(int tenantId, Guid id)
     {
         var menu = await FindMenuAsync(tenantId, id);
         return menu is null ? Result<Menu>.NotFound() : Result.Success(menu);
     }
 
+    /// <inheritdoc />
     public async Task<Result<Menu>> SaveMenuAsync(int tenantId, Menu menu)
     {
         if (string.IsNullOrWhiteSpace(menu.Name))
@@ -104,6 +144,7 @@ public class MenuAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result> DeleteMenuAsync(int tenantId, Guid id)
     {
         var menu = await FindMenuAsync(tenantId, id);
@@ -125,6 +166,7 @@ public class MenuAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result<IReadOnlyList<MenuItem>>> ListItemsAsync(int tenantId, Guid menuId)
     {
         if (await FindMenuAsync(tenantId, menuId) is null)
@@ -136,6 +178,7 @@ public class MenuAdminService(
         return Result.Success(items);
     }
 
+    /// <inheritdoc />
     public async Task<Result<MenuItem>> SaveItemAsync(int tenantId, MenuItem item)
     {
         if (await FindMenuAsync(tenantId, item.MenuId) is null)
@@ -192,6 +235,7 @@ public class MenuAdminService(
         }
     }
 
+    /// <inheritdoc />
     public async Task<Result> DeleteItemAsync(int tenantId, Guid id)
     {
         var item = await menuItemService.FindOneAsync(id);

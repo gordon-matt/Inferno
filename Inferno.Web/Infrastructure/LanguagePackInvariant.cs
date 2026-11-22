@@ -2,12 +2,15 @@ using Localize;
 
 namespace Inferno.Web.Infrastructure;
 
+/// <summary>The invariant-culture strings for Inferno.Web.</summary>
 public class LanguagePackInvariant : ILanguagePack
 {
     #region ILanguagePack Members
 
+    /// <inheritdoc />
     public string CultureCode => null;
 
+    /// <inheritdoc />
     public IDictionary<string, string> LocalizedStrings => new Dictionary<string, string>
     {
         { InfernoWebLocalizableStrings.Admin.Deleted, "Deleted." },

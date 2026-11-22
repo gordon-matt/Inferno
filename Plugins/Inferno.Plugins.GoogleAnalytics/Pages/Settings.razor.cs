@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Inferno.Plugins.GoogleAnalytics.Pages;
 
+/// <summary>Edits the measurement id, property id, and service-account key, and ensures the scripts zone exists.</summary>
 public partial class Settings : AdminPage
 {
     [Inject]
