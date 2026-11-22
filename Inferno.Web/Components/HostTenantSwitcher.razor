@@ -1,0 +1,82 @@
+@using System.Security.Claims
+@using Inferno.Tenants.Entities
+@using Inferno.Tenants.Services
+@using Inferno.Web
+@using Inferno.Web.Security.Permissions
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider Authentication
+@inject IPermissionStore Permissions
+@inject ITenantService Tenants
+@inject NavigationManager Navigation
+@inject IWorkContext Work
+
+@if (visible)
+{
+    <div class="inferno-host-tenant" style="position:sticky;top:0;z-index:2000;display:flex;gap:.75rem;align-items:center;padding:.4rem .75rem;background:#0f172a;color:#e2e8f0;font:13px/1.2 system-ui,sans-serif">
+        <span>Host view</span>
+        <label>
+            Site
+            <select @onchange="SwitchAsync" style="margin-left:.35rem;color:#0f172a">
+                <option value="">This host</option>
+                @foreach (var tenant in tenants)
+                {
+                    <option value="@tenant.Id" selected="@(tenant.Id == currentId)">@Label(tenant)</option>
+                }
+            </select>
+        </label>
+        @if (!string.IsNullOrEmpty(currentName))
+        {
+            <span>Showing @currentName</span>
+        }
+    </div>
+}
+
+@code {
+    private bool visible;
+    private int? currentId;
+    private string currentName;
+    private IReadOnlyList<Tenant> tenants = [];
+
+    /// <inheritdoc />
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Authentication.GetAuthenticationStateAsync();
+        if (state.User.Identity?.IsAuthenticated != true)
+        {
+            return;
+        }
+
+        string userId = state.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+
+        var granted = await Permissions.GetGrantedAsync(userId);
+        if (!granted.IsHostAdministrator)
+        {
+            return;
+        }
+
+        tenants = Tenants.Find(new Extenso.Data.Entity.SearchOptions<Tenant> { Query = tenant => true })
+            .OrderBy(tenant => tenant.Name)
+            .ToList();
+        var current = Work.CurrentTenant;
+        currentId = current?.Id;
+        currentName = current?.Name;
+        visible = true;
+    }
+
+    private void SwitchAsync(ChangeEventArgs change)
+    {
+        string value = change.Value?.ToString();
+        string returnUrl = Uri.EscapeDataString("/" + Navigation.ToBaseRelativePath(Navigation.Uri));
+        string target = string.IsNullOrEmpty(value)
+            ? $"/host/tenant/clear?returnUrl={returnUrl}"
+            : $"/host/tenant/use/{value}?returnUrl={returnUrl}";
+        Navigation.NavigateTo(target, forceLoad: true);
+    }
+
+    private static string Label(Tenant tenant) =>
+        string.IsNullOrWhiteSpace(tenant.Hosts) ? tenant.Name : $"{tenant.Name} ({tenant.Hosts})";
+}

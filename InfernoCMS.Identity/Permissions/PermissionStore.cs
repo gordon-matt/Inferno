@@ -1,5 +1,6 @@
 using Ardalis.Result;
 using Extenso.Data.Entity;
+using Inferno.Identity;
 using Inferno.Security;
 using Inferno.Web.Security.Permissions;
 using InfernoCMS.Data.Entities;
@@ -44,14 +45,17 @@ public sealed class PermissionStore(
         {
             var roles = await GetUserRolePermissionsAsync(userId, cancellationToken);
             var direct = await GetUserPermissionsAsync(userId, cancellationToken);
+            int? userTenantId = await UserTenantIdAsync(userId, cancellationToken);
             var administratorRoles = await AdministratorRolesAsync(roles.Select(role => role.RoleId), cancellationToken);
+            var ownAdministratorRoles = administratorRoles.Where(role => role.TenantId == userTenantId).ToList();
 
             var permissions = new HashSet<string>(direct, StringComparer.Ordinal);
             permissions.UnionWith(roles.SelectMany(role => role.Permissions));
 
+            // A tenant user who was added to the host Administrators role must not become a host administrator.
             var granted = new GrantedPermissions(
-                IsAdministrator: administratorRoles.Count > 0,
-                IsHostAdministrator: administratorRoles.Any(role => role.TenantId is null),
+                IsAdministrator: ownAdministratorRoles.Count > 0,
+                IsHostAdministrator: userTenantId is null && ownAdministratorRoles.Count > 0,
                 Permissions: permissions);
 
             cache.Set(CacheKey(userId), granted, CacheDuration);
@@ -122,7 +126,7 @@ public sealed class PermissionStore(
     public async Task<Result> SetUserPermissionsAsync(string userId, IEnumerable<string> permissions, CancellationToken cancellationToken = default)
     {
         await using var context = contextFactory.GetContext();
-        if (!await context.Set<ApplicationUser>().AnyAsync(user => user.Id == userId, cancellationToken))
+        if (!await UserInScopeAsync(context, userId, cancellationToken))
         {
             return Result.NotFound("That user no longer exists.");
         }
@@ -148,7 +152,7 @@ public sealed class PermissionStore(
     public async Task<Result> SetRolePermissionsAsync(string roleId, IEnumerable<string> permissions, CancellationToken cancellationToken = default)
     {
         await using var context = contextFactory.GetContext();
-        if (!await context.Set<ApplicationRole>().AnyAsync(role => role.Id == roleId, cancellationToken))
+        if (!await RoleInScopeAsync(context, roleId, cancellationToken))
         {
             return Result.NotFound("That role no longer exists.");
         }
@@ -193,6 +197,37 @@ public sealed class PermissionStore(
 
     /// <inheritdoc />
     public void InvalidateAll() => Interlocked.Increment(ref generation);
+
+    private async Task<int?> UserTenantIdAsync(string userId, CancellationToken cancellationToken)
+    {
+        await using var context = contextFactory.GetContext();
+        var user = await context.Set<ApplicationUser>()
+            .Where(candidate => candidate.Id == userId)
+            .Select(candidate => new { candidate.TenantId })
+            .FirstOrDefaultAsync(cancellationToken);
+        return user?.TenantId;
+    }
+
+    /// <summary>The request's tenant, or <see langword="null"/> when this request has no tenant and only host rows are in scope.</summary>
+    private static bool InRequestScope(int? tenantId) => tenantId == CurrentTenantId.Resolve();
+
+    private static async Task<bool> UserInScopeAsync(DbContext context, string userId, CancellationToken cancellationToken)
+    {
+        var user = await context.Set<ApplicationUser>()
+            .Where(candidate => candidate.Id == userId)
+            .Select(candidate => new { candidate.TenantId })
+            .FirstOrDefaultAsync(cancellationToken);
+        return user is not null && InRequestScope(user.TenantId);
+    }
+
+    private static async Task<bool> RoleInScopeAsync(DbContext context, string roleId, CancellationToken cancellationToken)
+    {
+        var role = await context.Set<ApplicationRole>()
+            .Where(candidate => candidate.Id == roleId)
+            .Select(candidate => new { candidate.TenantId })
+            .FirstOrDefaultAsync(cancellationToken);
+        return role is not null && InRequestScope(role.TenantId);
+    }
 
     private async Task<List<ApplicationRole>> AdministratorRolesAsync(IEnumerable<string> roleIds, CancellationToken cancellationToken)
     {

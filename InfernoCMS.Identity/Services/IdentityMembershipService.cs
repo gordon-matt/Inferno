@@ -2,6 +2,7 @@
 using Extenso.Collections;
 using Extenso.Data.Entity;
 using Inferno.Exceptions;
+using Inferno.Identity;
 using Inferno.Security;
 using Inferno.Security.Membership;
 using Inferno.Web.Security.Membership;
@@ -99,8 +100,7 @@ public abstract class IdentityMembershipService : IMembershipService
     /// <inheritdoc />
     public async Task<InfernoUser> GetUserByIdAsync(object userId)
     {
-        using var context = contextFactory.GetContext();
-        var user = context.Set<ApplicationUser>().Find(userId);
+        var user = await FindUserInScopeAsync(userId?.ToString());
 
         return user == null
             ? null
@@ -167,36 +167,20 @@ public abstract class IdentityMembershipService : IMembershipService
             return value;
         }
 
-        var user = await userManager.FindByIdAsync(id);
-        var roleNames = await userManager.GetRolesAsync(user);
-
-        var roles = new List<InfernoRole>();
-        foreach (string roleName in roleNames)
-        {
-            var superRole = await GetRoleByNameAsync(null, roleName);
-            if (superRole != null)
+        using var context = contextFactory.GetContext();
+        var roles = await (
+            from membership in context.Set<IdentityUserRole<string>>()
+            join role in context.Set<ApplicationRole>() on membership.RoleId equals role.Id
+            join user in context.Set<ApplicationUser>() on membership.UserId equals user.Id
+            where membership.UserId == id && role.TenantId == user.TenantId
+            select new InfernoRole
             {
-                roles.Add(new InfernoRole
-                {
-                    Id = superRole.Id,
-                    TenantId = null,
-                    Name = superRole.Name
-                });
-            }
+                Id = role.Id,
+                TenantId = role.TenantId,
+                Name = role.Name
+            }).ToListAsync();
 
-            var tenantRole = await GetRoleByNameAsync(user.TenantId, roleName);
-            if (tenantRole != null)
-            {
-                roles.Add(new InfernoRole
-                {
-                    Id = tenantRole.Id,
-                    TenantId = null,
-                    Name = tenantRole.Name
-                });
-            }
-        }
-
-        cachedUserRoles.Add(id, roles);
+        cachedUserRoles[id] = roles;
         return roles;
     }
 
@@ -204,8 +188,7 @@ public abstract class IdentityMembershipService : IMembershipService
     public async Task<bool> DeleteUserAsync(object userId)
     {
         string id = userId.ToString();
-        var user = await userManager.Users.FirstOrDefaultAsync(x => x.Id == id);
-
+        var user = await FindUserInScopeAsync(id);
         if (user != null)
         {
             var result = await userManager.DeleteAsync(user);
@@ -257,9 +240,8 @@ public abstract class IdentityMembershipService : IMembershipService
     public async Task UpdateUserAsync(InfernoUser user)
     {
         string userId = user.Id.ToString();
-        var existingUser = await userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
-
-        if (user != null)
+        var existingUser = await FindUserInScopeAsync(userId);
+        if (existingUser != null)
         {
             existingUser.UserName = user.UserName;
             existingUser.Email = user.Email;
@@ -283,6 +265,12 @@ public abstract class IdentityMembershipService : IMembershipService
 
         using (var context = contextFactory.GetContext())
         {
+            bool userInScope = await context.Set<ApplicationUser>().AnyAsync(user => user.Id == uId && user.TenantId == tenantId);
+            if (!userInScope)
+            {
+                throw new InfernoException("The user does not belong to this scope.");
+            }
+
             if (tenantId.HasValue)
             {
                 currentRoleIds = from ur in context.Set<IdentityUserRole<string>>()
@@ -344,7 +332,12 @@ public abstract class IdentityMembershipService : IMembershipService
     {
         //TODO: This doesn't seem to be working very well; no errors, but can't login with the given password
         string id = userId.ToString();
-        var user = await userManager.FindByIdAsync(id);
+        var user = await FindUserInScopeAsync(id);
+        if (user is null)
+        {
+            throw new InfernoException("The user does not belong to this scope.");
+        }
+
         var result = await userManager.RemovePasswordAsync(user);
 
         if (!result.Succeeded)
@@ -402,9 +395,8 @@ public abstract class IdentityMembershipService : IMembershipService
     /// <inheritdoc />
     public async Task<IEnumerable<InfernoRole>> GetAllRolesAsync(int? tenantId)
     {
-        var query = roleManager.Roles;
-
-        query = tenantId.HasValue ? query.Where(x => x.TenantId == tenantId) : query.Where(x => x.TenantId == null);
+        using var context = contextFactory.GetContext();
+        var query = context.Set<ApplicationRole>().Where(role => role.TenantId == tenantId);
 
         return await query
             .Select(x => new InfernoRole
@@ -419,41 +411,41 @@ public abstract class IdentityMembershipService : IMembershipService
     /// <inheritdoc />
     public async Task<InfernoRole> GetRoleByIdAsync(object roleId)
     {
-        string id = roleId.ToString();
-        var role = await roleManager.FindByIdAsync(id);
-
-        return new InfernoRole
-        {
-            Id = role.Id,
-            Name = role.Name
-        };
+        var role = await FindRoleInScopeAsync(roleId);
+        return role is null
+            ? null
+            : new InfernoRole
+            {
+                Id = role.Id,
+                TenantId = role.TenantId,
+                Name = role.Name
+            };
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<InfernoRole>> GetRolesByIdsAsync(IEnumerable<object> roleIds)
     {
         var ids = roleIds.ToListOf<string>();
-        var roles = new List<ApplicationRole>();
+        using var context = contextFactory.GetContext();
+        int? scope = CurrentTenantId.Resolve();
+        var roles = await context.Set<ApplicationRole>()
+            .Where(role => ids.Contains(role.Id) && role.TenantId == scope)
+            .ToListAsync();
 
-        foreach (string id in ids)
+        return roles.Select(role => new InfernoRole
         {
-            var role = await roleManager.FindByIdAsync(id);
-            roles.Add(role);
-        }
-
-        return roles.Select(x => new InfernoRole
-        {
-            Id = x.Id,
-            Name = x.Name
+            Id = role.Id,
+            TenantId = role.TenantId,
+            Name = role.Name
         });
     }
 
     /// <inheritdoc />
     public async Task<InfernoRole> GetRoleByNameAsync(int? tenantId, string roleName)
     {
-        var role = tenantId.HasValue
-            ? await roleManager.Roles.FirstOrDefaultAsync(x => x.TenantId == tenantId && x.Name == roleName)
-            : await roleManager.Roles.FirstOrDefaultAsync(x => x.TenantId == null && x.Name == roleName);
+        using var context = contextFactory.GetContext();
+        var role = await context.Set<ApplicationRole>()
+            .FirstOrDefaultAsync(candidate => candidate.TenantId == tenantId && candidate.Name == roleName);
         return role == null
             ? null
             : new InfernoRole
@@ -466,9 +458,7 @@ public abstract class IdentityMembershipService : IMembershipService
     /// <inheritdoc />
     public async Task<bool> DeleteRoleAsync(object roleId)
     {
-        string id = roleId.ToString();
-        var role = await roleManager.FindByIdAsync(id);
-
+        var role = await FindRoleInScopeAsync(roleId);
         if (role != null)
         {
             var result = await roleManager.DeleteAsync(role);
@@ -510,9 +500,7 @@ public abstract class IdentityMembershipService : IMembershipService
     /// <inheritdoc />
     public async Task UpdateRoleAsync(InfernoRole role)
     {
-        string id = role.Id.ToString();
-        var existingRole = await roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
-
+        var existingRole = await FindRoleInScopeAsync(role.Id);
         if (existingRole != null)
         {
             existingRole.Name = role.Name;
@@ -555,6 +543,8 @@ public abstract class IdentityMembershipService : IMembershipService
         var users = await (
             from userRole in userRoles(context)
             join user in context.Set<ApplicationUser>() on userRole.UserId equals user.Id
+            join role in context.Set<ApplicationRole>() on userRole.RoleId equals role.Id
+            where user.TenantId == role.TenantId
             select user).ToListAsync();
 
         return users.Select(x => new InfernoUser
@@ -603,9 +593,11 @@ public abstract class IdentityMembershipService : IMembershipService
         {
             await userProfileRepository.DeleteAsync(entries);
 
+            int? tenantId = await TenantIdForUserAsync(userId);
             var toInsert = profile.Select(x => new UserProfileEntry
             {
                 UserId = userId,
+                TenantId = tenantId,
                 Key = x.Key,
                 Value = x.Value
             }).ToList();
@@ -631,6 +623,7 @@ public abstract class IdentityMembershipService : IMembershipService
                     toInsert.Add(new UserProfileEntry
                     {
                         UserId = userId,
+                        TenantId = await TenantIdForUserAsync(userId),
                         Key = keyValue.Key,
                         Value = keyValue.Value
                     });
@@ -682,6 +675,7 @@ public abstract class IdentityMembershipService : IMembershipService
             await userProfileRepository.InsertAsync(new UserProfileEntry
             {
                 UserId = userId,
+                TenantId = await TenantIdForUserAsync(userId),
                 Key = key,
                 Value = value
             });
@@ -764,27 +758,64 @@ public abstract class IdentityMembershipService : IMembershipService
     public async Task EnsureAdminRoleForTenantAsync(int? tenantId)
     {
         var administratorsRole = await GetRoleByNameAsync(tenantId, InfernoSecurityConstants.Roles.Administrators);
-        if (administratorsRole == null && tenantId != null)
+        if (administratorsRole != null)
         {
-            // A host role (no tenant) is already visible to every tenant, and Identity rejects a second role of the same name.
-            administratorsRole = await GetRoleByNameAsync(null, InfernoSecurityConstants.Roles.Administrators);
+            return;
         }
 
-        if (administratorsRole == null)
+        // The user store stamps new rows with the request's tenant. Creating another tenant's
+        // role has to skip that store, or the role would be saved against the wrong site.
+        if (CurrentTenantId.Resolve() == tenantId)
         {
             await InsertRoleAsync(new InfernoRole { TenantId = tenantId, Name = InfernoSecurityConstants.Roles.Administrators });
-            administratorsRole = await GetRoleByNameAsync(tenantId, InfernoSecurityConstants.Roles.Administrators);
-
-            if (administratorsRole != null)
-            {
-                // Assign all super admin users (NULL TenantId) to this new admin role
-                var superAdminUsers = await GetUsersByRoleNameAsync(null, InfernoSecurityConstants.Roles.Administrators);
-                foreach (var user in superAdminUsers)
-                {
-                    await AssignUserToRolesAsync(tenantId, user.Id, new[] { administratorsRole.Id });
-                }
-            }
+            return;
         }
+
+        using var context = contextFactory.GetContext();
+        context.Set<ApplicationRole>().Add(new ApplicationRole
+        {
+            Id = Guid.NewGuid().ToString(),
+            TenantId = tenantId,
+            Name = InfernoSecurityConstants.Roles.Administrators,
+            NormalizedName = InfernoSecurityConstants.Roles.Administrators.ToUpperInvariant(),
+            ConcurrencyStamp = Guid.NewGuid().ToString()
+        });
+        await context.SaveChangesAsync();
+    }
+
+    /// <summary>The tenant stored on the user, or <see langword="null"/> when the user is a host account or is missing.</summary>
+    private async Task<int?> TenantIdForUserAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return null;
+        }
+
+        using var context = contextFactory.GetContext();
+        var user = await context.Set<ApplicationUser>().FirstOrDefaultAsync(candidate => candidate.Id == userId);
+        return user?.TenantId;
+    }
+
+    /// <summary>The user when their tenant is the tenant of this request. A request with no tenant matches host accounts.</summary>
+    private async Task<ApplicationUser> FindUserInScopeAsync(string userId)
+    {
+        using var context = contextFactory.GetContext();
+        int? scope = CurrentTenantId.Resolve();
+        return await context.Set<ApplicationUser>().FirstOrDefaultAsync(user => user.Id == userId && user.TenantId == scope);
+    }
+
+    /// <summary>The role when its tenant is the tenant of this request. A request with no tenant matches host roles.</summary>
+    private async Task<ApplicationRole> FindRoleInScopeAsync(object roleId)
+    {
+        string id = roleId?.ToString();
+        if (string.IsNullOrEmpty(id))
+        {
+            return null;
+        }
+
+        using var context = contextFactory.GetContext();
+        int? scope = CurrentTenantId.Resolve();
+        return await context.Set<ApplicationRole>().FirstOrDefaultAsync(role => role.Id == id && role.TenantId == scope);
     }
 
     #endregion IMembershipService Members

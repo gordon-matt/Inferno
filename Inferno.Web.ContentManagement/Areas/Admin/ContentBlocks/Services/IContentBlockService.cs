@@ -110,15 +110,30 @@ public class ContentBlockService : GenericDataService<ContentBlock>, IContentBlo
     /// <inheritdoc />
     public IEnumerable<IContentBlock> GetContentBlocks(Guid pageId, string cultureCode)
     {
+        int tenantId = GetTenantId();
         string key = string.Format(
-            "Repository_ContentBlocks_ByPageId_{0}_{1}",
+            "Repository_ContentBlocks_ByPageId_{0}_{1}_{2}",
+            tenantId,
             pageId,
             cultureCode);
 
-        var records = CacheManager.Get(key, () => Find(new SearchOptions<ContentBlock>
+        var records = CacheManager.Get(key, () =>
         {
-            Query = x => x.PageId == pageId
-        }));
+            var zoneIds = zoneRepository.Value.Find(new SearchOptions<Zone>
+            {
+                Query = zone => zone.TenantId == tenantId
+            }).Select(zone => zone.Id).ToList();
+
+            if (zoneIds.Count == 0)
+            {
+                return Enumerable.Empty<ContentBlock>();
+            }
+
+            return Find(new SearchOptions<ContentBlock>
+            {
+                Query = block => block.PageId == pageId && zoneIds.Contains(block.ZoneId)
+            });
+        });
 
         return GetContentBlocks(records, cultureCode);
     }

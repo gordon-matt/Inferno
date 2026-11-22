@@ -1,3 +1,4 @@
+using Inferno.Web;
 using Inferno.Web.ContentManagement.Areas.Admin.ContentBlocks.Services;
 using PageKrafter.Blocks;
 using PageKrafter.Documents;
@@ -10,7 +11,8 @@ namespace Inferno.Web.ContentManagement.Areas.Admin.Pages;
 /// <c>[[ContentZone:Name]]</c> token, which the page view replaces with those blocks.
 /// </summary>
 /// <param name="zones">Supplies the zone names shown in the block's zone field.</param>
-public sealed class PageContentZoneBlock(IZoneService zones) : BlockDefinition
+/// <param name="workContext">Supplies the current tenant, so another tenant's zone names are not listed.</param>
+public sealed class PageContentZoneBlock(IZoneService zones, IWorkContext workContext) : BlockDefinition
 {
     /// <summary>The block type stored in a page document.</summary>
     public const string TypeName = "cms.content-zone";
@@ -46,15 +48,21 @@ public sealed class PageContentZoneBlock(IZoneService zones) : BlockDefinition
         },
     ];
 
-    /// <summary>Lists every zone name, with an empty choice first.</summary>
+    /// <summary>Lists the current tenant's zone names, with an empty choice first. No current tenant lists only the empty choice.</summary>
     /// <param name="field">Not read.</param>
     /// <param name="node">Not read.</param>
     /// <param name="cancellationToken">Not observed.</param>
     /// <returns>The zone choices.</returns>
     public override Task<IReadOnlyList<FieldOption>> GetOptionsAsync(BlockField field, BlockNode node, CancellationToken cancellationToken = default)
     {
+        int? tenantId = workContext.CurrentTenant?.Id;
+        if (tenantId is null)
+        {
+            return Task.FromResult<IReadOnlyList<FieldOption>>([new FieldOption(string.Empty, "Choose a zone…")]);
+        }
+
         using var connection = zones.OpenConnection();
-        var names = connection.Query()
+        var names = connection.Query(zone => zone.TenantId == tenantId)
             .OrderBy(zone => zone.Name)
             .Select(zone => zone.Name)
             .ToList();

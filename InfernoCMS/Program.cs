@@ -281,7 +281,7 @@ services.AddHttpContextAccessor();
 
 services.AddHttpClient();
 
-services.ConfigureInferno(configuration, inferno => inferno.PublicLayout = typeof(KameleonLayout));
+services.ConfigureInferno(configuration, inferno => inferno.PublicLayout = typeof(InfernoCMS.Shared.InfernoPublicLayout));
 
 if (!string.IsNullOrWhiteSpace(connectionString))
 {
@@ -302,7 +302,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
     services.AddBlogKrafter(blog =>
     {
         blog.Title = "Blog";
-        blog.PublicLayout = typeof(KameleonLayout);
+        blog.PublicLayout = typeof(InfernoCMS.Shared.InfernoPublicLayout);
         blog.AdminLayout = typeof(Inferno.Web.Areas.Admin.Home.Shared.AdminLayout);
     });
     services.AddBlogKrafterSqlServer(connectionString);
@@ -405,6 +405,7 @@ app.UseInferno();
 if (databaseInstalled)
 {
     app.UseSecurityHeaders();
+    app.UseHostTenant();
     app.UseKnownTenant();
     app.UseMediaGuard();
 

@@ -7,8 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Inferno.Identity;
 
 /// <summary>
-/// An Identity role store limited to the current tenant and to host roles, whose <see cref="ITenantEntity.TenantId"/> is <see langword="null"/>.
-/// A new role with no tenant is stamped with the current tenant.
+/// An Identity role store for the current tenant. A request with no tenant sees host roles only.
+/// A host role is not a role of a tenant, so a tenant cannot be assigned the host Administrators role.
 /// </summary>
 /// <typeparam name="TRole">The role type.</typeparam>
 /// <typeparam name="TContext">The database context.</typeparam>
@@ -26,30 +26,47 @@ public abstract class InfernoRoleStore<TRole, TContext> : RoleStore<TRole, TCont
 
     private int? TenantId => CurrentTenantId.Resolve();
 
-    /// <summary>Roles in the current tenant, plus host roles.</summary>
+    /// <summary>Roles in the current tenant. A request with no tenant sees host roles only.</summary>
     public override IQueryable<TRole> Roles
     {
         get
         {
             int? tenantId = TenantId;
-            return base.Roles.Where(role => role.TenantId == tenantId || role.TenantId == null);
+            return base.Roles.Where(role => role.TenantId == tenantId);
         }
     }
 
-    /// <summary>Stamps a missing tenant with the current tenant, then creates the role.</summary>
-    /// <param name="role">The role to create. A <see langword="null"/> <see cref="ITenantEntity.TenantId"/> is replaced with the current tenant.</param>
+    /// <summary>
+    /// Stamps the role with the current tenant when this request has one, then creates the role.
+    /// A request with no tenant keeps the tenant already set on the role, including a host role.
+    /// </summary>
+    /// <param name="role">The role to create.</param>
     /// <param name="cancellationToken">Cancels before the tenant is stamped and while the base store creates the role.</param>
     /// <returns>The result from the base store.</returns>
     public override Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        role.TenantId ??= TenantId;
+        if (TenantId is not null)
+        {
+            role.TenantId = TenantId;
+        }
+
         return base.CreateAsync(role, cancellationToken);
+    }
+
+    /// <summary>The role when it belongs to this request's tenant.</summary>
+    /// <param name="id">The role id.</param>
+    /// <param name="cancellationToken">Cancels the role query.</param>
+    /// <returns>The role, or <see langword="null"/> when the id is missing or belongs to another tenant.</returns>
+    public override async Task<TRole> FindByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var role = await base.FindByIdAsync(id, cancellationToken);
+        return role is not null && role.TenantId == TenantId ? role : null;
     }
 
     protected override IdentityRoleClaim<string> CreateRoleClaim(TRole role, Claim claim) => new() { RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value };
 
-    /// <summary>Finds a current-tenant or host role by normalized name.</summary>
+    /// <summary>Finds a role in the current tenant by normalized name. A host role is not returned during a tenant request.</summary>
     /// <param name="normalizedName">The normalized role name.</param>
     /// <param name="cancellationToken">Cancels the role query.</param>
     /// <returns>The matching role, or <see langword="null"/> when none matches.</returns>
@@ -59,10 +76,9 @@ public abstract class InfernoRoleStore<TRole, TContext> : RoleStore<TRole, TCont
         cancellationToken.ThrowIfCancellationRequested();
         ThrowIfDisposed();
 
+        int? tenantId = TenantId;
         return Roles.FirstOrDefaultAsync(
-            r =>
-                r.NormalizedName == normalizedName
-                && (r.TenantId == TenantId || (r.TenantId == null)),
+            role => role.NormalizedName == normalizedName && role.TenantId == tenantId,
             cancellationToken);
     }
 }

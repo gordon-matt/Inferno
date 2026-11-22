@@ -1,0 +1,50 @@
+@model IReadOnlyList<Inferno.Tenants.Entities.Tenant>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Choose a site</title>
+    <style>
+        body { margin: 0; font: 16px/1.4 system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+        main { max-width: 40rem; margin: 4rem auto; padding: 0 1rem; }
+        h1 { font-size: 1.5rem; }
+        p { color: #475569; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 0 0 .5rem; }
+        a { display: block; padding: .75rem 1rem; background: white; border: 1px solid #e2e8f0; border-radius: .5rem; color: inherit; text-decoration: none; }
+        a:hover { border-color: #2563eb; }
+        small { display: block; color: #64748b; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Choose a site</h1>
+        <p>This host is not assigned to a tenant. Pick the site to open. The choice stays on this browser.</p>
+        @if (Model.Count == 0)
+        {
+            <p>No tenants have been created yet.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var tenant in Model)
+                {
+                    <li>
+                        <a href="/host/tenant/use/@tenant.Id?returnUrl=/">
+                            @tenant.Name
+                            @if (!string.IsNullOrWhiteSpace(tenant.Hosts))
+                            {
+                                <small>@tenant.Hosts</small>
+                            }
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </main>
+</body>
+</html>

@@ -7,7 +7,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IdentityNexus" />
+    <ProjectReference Include="..\..\..\Libraries\IdentityNexus\IdentityNexus\IdentityNexus.csproj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Security\Inferno.Security.csproj" />

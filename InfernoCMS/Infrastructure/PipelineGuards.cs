@@ -36,7 +36,7 @@ public static class PipelineGuards
     /// <returns>The same <paramref name="app"/>, so further middleware can be chained.</returns>
     public static IApplicationBuilder UseKnownTenant(this IApplicationBuilder app) => app.Use(async (context, next) =>
     {
-        if (context.GetTenant<Tenant>() is null)
+        if (context.GetTenant<Tenant>() is null && !HostTenantMiddleware.IsOpenWithoutTenant(context.Request.Path))
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             return;

@@ -499,8 +499,13 @@ namespace InfernoCMS.Data.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameHostIndex")
+                        .HasFilter("[TenantId] IS NULL AND [NormalizedName] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameTenantIndex")
+                        .HasFilter("[TenantId] IS NOT NULL AND [NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
                 });
@@ -568,12 +573,24 @@ namespace InfernoCMS.Data.Migrations
                     b.HasIndex("ApplicationRoleId");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                        .IsUnique()
+                        .HasDatabaseName("EmailHostIndex")
+                        .HasFilter("[TenantId] IS NULL AND [NormalizedEmail] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "NormalizedEmail")
+                        .IsUnique()
+                        .HasDatabaseName("EmailTenantIndex")
+                        .HasFilter("[TenantId] IS NOT NULL AND [NormalizedEmail] IS NOT NULL");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameHostIndex")
+                        .HasFilter("[TenantId] IS NULL AND [NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameTenantIndex")
+                        .HasFilter("[TenantId] IS NOT NULL AND [NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });

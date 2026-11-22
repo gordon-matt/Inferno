@@ -220,9 +220,8 @@ public interface IMembershipService
     #endregion Profile
 
     /// <summary>
-    /// Creates the Administrators role for <paramref name="tenantId"/> when neither that scope nor the host already has one.
-    /// A host Administrators role is left as the shared role and no tenant copy is created.
-    /// When a new role is created, every host administrator is assigned to it.
+    /// Creates the Administrators role for <paramref name="tenantId"/> when that scope does not already have one.
+    /// Each tenant has its own role. The host role is not reused, and host accounts are not added to it.
     /// </summary>
     /// <param name="tenantId">The tenant that should have an Administrators role, or <see langword="null"/> for the host.</param>
     Task EnsureAdminRoleForTenantAsync(int? tenantId);

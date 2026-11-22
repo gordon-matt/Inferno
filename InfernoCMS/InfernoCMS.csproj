@@ -20,7 +20,7 @@
     <PackageReference Include="EPPlus" />
     <PackageReference Include="Extenso.AspNetCore.Mvc" />
     <PackageReference Include="Flatmate" />
-    <PackageReference Include="IdentityNexus" />
+    <ProjectReference Include="..\..\..\Libraries\IdentityNexus\IdentityNexus\IdentityNexus.csproj" />
     <PackageReference Include="Kameleon" />
     <PackageReference Include="Kameleon.Data.Sql" />
     <PackageReference Include="Localize.Components" />

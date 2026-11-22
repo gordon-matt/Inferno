@@ -41,6 +41,7 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        ScopeIdentityNamesToTenant(modelBuilder);
 
         var configurations = DependoResolver.Instance.ResolveAll<IInfernoEntityTypeConfiguration>();
 
@@ -48,6 +49,45 @@ public abstract class InfernoIdentityDbContext<TUser, TRole>
         {
             modelBuilder.ApplyConfiguration(configuration);
         }
+    }
+
+    /// <summary>
+    /// User names, email addresses, and role names are unique inside one tenant, and unique among host accounts.
+    /// The same name can exist on two tenants. A host role is not forced to be the only role of that name.
+    /// </summary>
+    private static void ScopeIdentityNamesToTenant(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TUser>(user =>
+        {
+            user.HasIndex(entry => entry.NormalizedUserName)
+                .HasDatabaseName("UserNameHostIndex")
+                .IsUnique()
+                .HasFilter("[TenantId] IS NULL AND [NormalizedUserName] IS NOT NULL");
+            user.HasIndex(entry => new { entry.TenantId, entry.NormalizedUserName })
+                .HasDatabaseName("UserNameTenantIndex")
+                .IsUnique()
+                .HasFilter("[TenantId] IS NOT NULL AND [NormalizedUserName] IS NOT NULL");
+            user.HasIndex(entry => entry.NormalizedEmail)
+                .HasDatabaseName("EmailHostIndex")
+                .IsUnique()
+                .HasFilter("[TenantId] IS NULL AND [NormalizedEmail] IS NOT NULL");
+            user.HasIndex(entry => new { entry.TenantId, entry.NormalizedEmail })
+                .HasDatabaseName("EmailTenantIndex")
+                .IsUnique()
+                .HasFilter("[TenantId] IS NOT NULL AND [NormalizedEmail] IS NOT NULL");
+        });
+
+        modelBuilder.Entity<TRole>(role =>
+        {
+            role.HasIndex(entry => entry.NormalizedName)
+                .HasDatabaseName("RoleNameHostIndex")
+                .IsUnique()
+                .HasFilter("[TenantId] IS NULL AND [NormalizedName] IS NOT NULL");
+            role.HasIndex(entry => new { entry.TenantId, entry.NormalizedName })
+                .HasDatabaseName("RoleNameTenantIndex")
+                .IsUnique()
+                .HasFilter("[TenantId] IS NOT NULL AND [NormalizedName] IS NOT NULL");
+        });
     }
 
     /// <summary>Inserts a tenant named Default at my-domain.com and creates its media upload folder when that folder is missing.</summary>
