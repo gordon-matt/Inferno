@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "default",
   "name": "Default",
-  "version": "1.0.0",
-  "description": "The default Inferno theme.",
+  "version": "1.0.1",
+  "description": "A navy and gold corporate theme. The menu stays in a top bar.",
   "author": "Inferno",
   "stylesheets": [ "theme.css" ],
   "supportsRightToLeft": false

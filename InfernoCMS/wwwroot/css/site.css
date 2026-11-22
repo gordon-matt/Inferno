@@ -78,6 +78,28 @@ a, .btn-link {
     z-index: 1030;
 }
 
+.inferno-public .public-language {
+    display: flex;
+    align-items: center;
+    margin-inline-start: 0.35rem;
+    color: inherit;
+}
+
+/* The icon button otherwise uses the page text colour, which disappears on a dark bar. */
+.inferno-public .public-language .nf-icon-button {
+    color: inherit;
+    border-color: currentColor;
+    border-radius: 999px;
+}
+
+.inferno-public .public-language .nf-action-menu-list {
+    min-width: 14rem;
+}
+
+.inferno-public .public-language .nf-menu-item {
+    white-space: nowrap;
+}
+
 /* The footer menu runs along a line instead of down a column. */
 .footer-menu .navbar-nav {
     flex-direction: row;

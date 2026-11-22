@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Dependo.Autofac" />
     <PackageReference Include="Flatmate" />
+    <PackageReference Include="IdentityNexus" />
     <PackageReference Include="Localize.Core" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers">

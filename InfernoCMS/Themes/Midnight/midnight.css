@@ -23,8 +23,9 @@
     --bs-link-color: var(--midnight-accent);
 
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 17rem minmax(0, 1fr);
+    align-items: start;
     background:
         radial-gradient(900px 400px at 85% -10%, color-mix(in srgb, var(--midnight-accent) 22%, transparent), transparent 70%),
         #0b0f1a;
@@ -37,13 +38,75 @@
 .inferno-public h1, .inferno-public h2, .inferno-public h3 { color: #f4f7ff; letter-spacing: -0.01em; }
 .inferno-public h1 { font-weight: 700; }
 
+.inferno-public > header {
+    grid-row: 1 / -1;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-self: start;
+}
+
+.inferno-public > :not(header) { grid-column: 2; min-width: 0; }
+
 .inferno-public header .navbar {
-    background: rgb(11 15 26 / 0.85) !important;
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid #26324d !important;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0;
+    background: #10182b !important;
+    border-bottom: 0 !important;
+    border-right: 1px solid #26324d !important;
+}
+
+.inferno-public header .navbar > .container {
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    max-width: none;
+    padding: 1.25rem 0.9rem;
+}
+
+.inferno-public .navbar-toggler { display: none; }
+
+.inferno-public .navbar-collapse {
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.inferno-public .navbar-nav {
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0 !important;
+}
+
+.inferno-public .navbar-nav.ms-auto { margin-top: auto !important; }
+
+.inferno-public .navbar .nav-item { width: 100%; }
+
+.inferno-public .navbar .nav-link,
+.inferno-public .navbar .btn-link {
+    border-left: 3px solid transparent;
+    border-radius: 0;
+    padding: 0.55rem 0.75rem;
+    text-align: left;
+}
+
+.inferno-public .navbar .nav-link:hover,
+.inferno-public .navbar .nav-link:focus { border-left-color: var(--midnight-accent); }
+
+.inferno-public .navbar .dropdown-menu {
+    position: static;
+    float: none;
+    width: 100%;
+    margin: 0.15rem 0 0.35rem;
+    box-shadow: none;
 }
 
 .inferno-public .navbar-brand {
+    margin-bottom: 1.25rem;
     color: #fff !important;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -51,7 +114,8 @@
 }
 
 .inferno-public .navbar .nav-link,
-.inferno-public .navbar .btn-link { color: #b9c4dd !important; }
+.inferno-public .navbar .btn-link,
+.inferno-public .public-language { color: #b9c4dd !important; }
 .inferno-public .navbar .nav-link:hover,
 .inferno-public .navbar .nav-link:focus { color: var(--midnight-accent) !important; }
 .inferno-public .navbar .dropdown-menu { background: #131a2b; border-color: #26324d; }
@@ -104,4 +168,35 @@
     background: #080b14;
     border-top: 1px solid #26324d !important;
     color: #93a0bd !important;
+}
+
+@media (max-width: 52rem) {
+    .inferno-public {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .inferno-public > header {
+        position: static;
+        height: auto;
+    }
+
+    .inferno-public header .navbar {
+        height: auto;
+        border-right: 0 !important;
+        border-bottom: 1px solid #26324d !important;
+    }
+
+    .inferno-public header .navbar > .container {
+        height: auto;
+        max-width: 1140px;
+    }
+
+    .inferno-public .navbar-toggler { display: inline-flex; }
+
+    .inferno-public .navbar-collapse { display: none !important; }
+    .inferno-public .navbar-collapse.show { display: flex !important; }
+
+    .inferno-public .navbar-nav,
+    .inferno-public .navbar-nav.ms-auto { margin-top: 0 !important; }
 }

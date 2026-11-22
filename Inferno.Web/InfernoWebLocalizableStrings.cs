@@ -313,6 +313,8 @@ public static class InfernoWebLocalizableStrings
             public const string AdminLayoutPath = "Inferno.Web/Settings.Site.AdminLayoutPath";
             public const string DefaultGridPageSize = "Inferno.Web/Settings.Site.DefaultGridPageSize";
             public const string DefaultLanguage = "Inferno.Web/Settings.Site.DefaultLanguage";
+            public const string DefaultLanguageHint = "Inferno.Web/Settings.Site.DefaultLanguageHint";
+            public const string ShowLanguageSwitcher = "Inferno.Web/Settings.Site.ShowLanguageSwitcher";
             public const string DefaultMetaDescription = "Inferno.Web/Settings.Site.DefaultMetaDescription";
             public const string DefaultMetaKeywords = "Inferno.Web/Settings.Site.DefaultMetaKeywords";
             public const string EnableBlog = "Inferno.Web/Settings.Site.EnableBlog";

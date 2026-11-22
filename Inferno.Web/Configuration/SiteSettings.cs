@@ -12,6 +12,7 @@ public class SiteSettings : ISettings
         SiteName = "My Site";
         DefaultGridPageSize = 10;
         EnableBlog = true;
+        ShowLanguageSwitcher = true;
         //AdminLayoutPath = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
         HomePageTitle = "Home Page";
     }
@@ -57,6 +58,10 @@ public class SiteSettings : ISettings
     /// <summary>The culture code used when a visitor has not chosen one.</summary>
     [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage)]
     public string DefaultLanguage { get; set; }
+
+    /// <summary>Whether the public menu shows the language switch. Each tenant chooses for its own site.</summary>
+    [LocalizedDisplayName(InfernoWebLocalizableStrings.Settings.Site.ShowLanguageSwitcher)]
+    public bool ShowLanguageSwitcher { get; set; }
 
     #endregion Localization
 

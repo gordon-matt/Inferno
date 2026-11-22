@@ -1,0 +1,18 @@
+@using System.Globalization
+@using Heroicsoft.NetForge.Components.Menus
+@using Localize
+@using Localize.Languages
+
+@if (languages.Count > 0)
+{
+    <ActionMenu Icon="translate" Label="Language">
+        @foreach (var language in languages)
+        {
+            <ActionMenuItem Text="@language.Name"
+                            Icon="@(IsCurrent(language.CultureCode) ? "check" : null)"
+                            Class="@(IsCurrent(language.CultureCode) ? "is-active" : null)"
+                            Href="@Href(language.CultureCode)"
+                            data-enhance-nav="false" />
+        }
+    </ActionMenu>
+}

@@ -18,6 +18,7 @@ using Inferno.Tasks.Scheduling;
 using Inferno.Tenants;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
+using Inferno.Web.Components;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 using Inferno.Web.ContentManagement.Components;
 using Inferno.Web.ContentManagement.Security;
@@ -123,6 +124,7 @@ services.ConfigureApplicationCookie(options =>
 services.AddInfernoIdentity().AddDefaultUI();
 services.AddSingleton<IAuthProviderService>(new AuthProviderService(AuthProvider.Identity, null));
 services.AddNetForgeComponents(ui => ui.ThemeStorageKey = "inferno.theme");
+services.AddNetForgeToolbarItem<LanguageMenu>();
 services.AddLogVue(options => options.Title = "Inferno CMS");
 // The connection string comes from installation. Until then LogVue starts without a store.
 if (!string.IsNullOrWhiteSpace(connectionString))

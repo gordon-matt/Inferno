@@ -14,8 +14,20 @@
     </Tab>
     <Tab Id="localization" Title="@T[InfernoWebLocalizableStrings.Settings.Site.Tabs.Localization]">
         <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage]" For="site-language">
-            <input id="site-language" class="nf-input" @bind="Model.DefaultLanguage" placeholder="en-US" />
+            <select id="site-language" class="nf-select nf-select-block" value="@(Model.DefaultLanguage ?? string.Empty)" @onchange="LanguageChanged">
+                <option value="">@T[InfernoWebLocalizableStrings.General.SelectOption]</option>
+                @if (HasUnlistedLanguage)
+                {
+                    <option value="@Model.DefaultLanguage">@Model.DefaultLanguage</option>
+                }
+                @foreach (var language in languages)
+                {
+                    <option value="@language.CultureCode">@language.Label</option>
+                }
+            </select>
+            <span class="nf-hint">@T[InfernoWebLocalizableStrings.Settings.Site.DefaultLanguageHint]</span>
         </Field>
+        <Switch @bind-Value="Model.ShowLanguageSwitcher" Label="@T[InfernoWebLocalizableStrings.Settings.Site.ShowLanguageSwitcher]" />
     </Tab>
     <Tab Id="seo" Title="@T[InfernoWebLocalizableStrings.Settings.Site.Tabs.SEO]">
         <Field Label="@T[InfernoWebLocalizableStrings.Settings.Site.HomePageTitle]" For="site-home-title">

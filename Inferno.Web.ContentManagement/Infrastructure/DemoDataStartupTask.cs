@@ -182,6 +182,7 @@ public class DemoDataStartupTask : IStartupTask
         settings.SiteName = demo.SiteName;
         settings.HomePageTitle = demo.HomePageTitle;
         settings.EnableBlog = demo.EnableBlog;
+        settings.ShowLanguageSwitcher = true;
         settingService.SaveSettings(settings, tenantId);
     }
 

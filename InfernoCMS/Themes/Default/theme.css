@@ -1,11 +1,97 @@
-/* Every selector sits under .inferno-public, the root of the public layout, because the theme's stylesheet is
-   linked on every page of the document, including the admin screens. */
+/* Corporate: a navy bar, gold rule and cool grey page. Every rule sits under .inferno-public because the
+   stylesheet is linked on every page of the document, including the admin screens. */
 
 .inferno-public {
-    font-family: "Segoe UI", sans-serif;
+    --corp-navy: #0f2744;
+    --corp-gold: #c4a35a;
+    --nf-bg: #eef2f6;
+    --nf-surface: #ffffff;
+    --nf-border: #d5dee8;
+    --nf-text: #1c2834;
+    --nf-muted: #5c6b7a;
+    --nf-accent: var(--corp-navy);
+    --bs-body-color: #1c2834;
+    --bs-body-bg: #eef2f6;
+    --bs-link-color: #0f2744;
+
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #eef2f6;
+    color: #1c2834;
+    font-family: "Segoe UI", "Source Sans 3", sans-serif;
 }
+
+.inferno-public a { color: var(--corp-navy); }
+
+.inferno-public h1,
+.inferno-public h2,
+.inferno-public h3 { color: var(--corp-navy); letter-spacing: -0.02em; }
+
+.inferno-public header .navbar {
+    background: var(--corp-navy) !important;
+    border-bottom: 3px solid var(--corp-gold) !important;
+    padding-block: 0.7rem;
+}
+
+.inferno-public .navbar-brand {
+    color: #fff !important;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.inferno-public .navbar .nav-link,
+.inferno-public .navbar .btn-link,
+.inferno-public .public-language { color: #e4ebf3 !important; }
+.inferno-public .navbar .nav-link:hover,
+.inferno-public .navbar .nav-link:focus { color: var(--corp-gold) !important; }
+.inferno-public .navbar .dropdown-menu { background: #fff; border-color: #d5dee8; }
+.inferno-public .navbar .dropdown-item:hover { background: #eef2f6; color: var(--corp-navy); }
+.inferno-public .navbar-toggler { border-color: rgb(255 255 255 / 0.35); filter: invert(1); }
+
+.inferno-public main { flex: 1 0 auto; }
+
+.inferno-public .card,
+.inferno-public .list-group-item,
+.inferno-public .nf-card {
+    background: #fff;
+    border: 0;
+    border-top: 3px solid var(--corp-gold);
+    border-radius: 0;
+    box-shadow: 0 8px 24px rgb(15 39 68 / 0.06);
+}
+
+.inferno-public .btn-primary,
+.inferno-public .nf-btn-primary {
+    background: var(--corp-navy);
+    border-color: var(--corp-navy);
+    border-radius: 0;
+    color: #fff;
+    font-weight: 600;
+}
+
+.inferno-public .btn-outline-secondary {
+    color: var(--corp-navy);
+    border-color: var(--corp-navy);
+    border-radius: 0;
+}
+
+.inferno-public .form-control,
+.inferno-public .nf-input { border-radius: 0; border-color: #d5dee8; }
 
 .inferno-public .tag-cloud a {
     display: inline-block;
     margin: 0.15rem 0.35rem;
+    padding: 0.05rem 0.55rem;
+    background: #fff;
+    border-bottom: 2px solid var(--corp-gold);
 }
+
+.inferno-public footer.footer {
+    background: var(--corp-navy);
+    color: #d5deea !important;
+    border-top: 3px solid var(--corp-gold) !important;
+}
+
+.inferno-public footer.footer a { color: var(--corp-gold); }

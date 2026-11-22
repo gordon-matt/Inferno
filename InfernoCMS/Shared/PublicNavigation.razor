@@ -28,6 +28,12 @@
                 <li class="nav-item"><a class="nav-link" href="/Identity/Account/Login">Log in</a></li>
             </NotAuthorized>
         </AuthorizeView>
+        @if (SiteSettings.ShowLanguageSwitcher)
+        {
+            <li class="nav-item public-language">
+                <LanguageMenu />
+            </li>
+        }
     </ul>
 </CascadingValue>
 

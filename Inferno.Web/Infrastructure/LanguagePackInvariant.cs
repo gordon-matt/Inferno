@@ -215,6 +215,8 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoWebLocalizableStrings.Settings.Site.AdminLayoutPath, "Admin Layout Path" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultGridPageSize, "Default Grid Page Size" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultLanguage, "Default Language" },
+        { InfernoWebLocalizableStrings.Settings.Site.DefaultLanguageHint, "These are the languages configured for this site." },
+        { InfernoWebLocalizableStrings.Settings.Site.ShowLanguageSwitcher, "Show the language menu on the public site" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultMetaDescription, "Default Meta Description" },
         { InfernoWebLocalizableStrings.Settings.Site.DefaultMetaKeywords, "Default Meta Keywords" },
         { InfernoWebLocalizableStrings.Settings.Site.EnableBlog, "Enable the blog" },
