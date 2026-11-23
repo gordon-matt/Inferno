@@ -28,6 +28,8 @@
 			<ExcludeAssets>runtime</ExcludeAssets>
 			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Forumz" />
+		<PackageReference Include="Forumz.Data.Sql" />
 		<PackageReference Include="Heroicsoft.NetForge.Components">
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>runtime</ExcludeAssets>
@@ -58,8 +60,6 @@
 			<Private>false</Private>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\Libraries\Forumz\Forumz\Forumz.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Forumz\Forumz.Data.Sql\Forumz.Data.Sql.csproj" />
 	</ItemGroup>
 
 	<Target Name="DropHostAssemblies" BeforeTargets="_CopyFilesMarkedCopyLocal">

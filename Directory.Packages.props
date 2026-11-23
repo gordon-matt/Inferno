@@ -14,6 +14,8 @@
     <PackageVersion Include="Extenso.Data.Entity" Version="10.2.2" />
     <PackageVersion Include="Flatmate" Version="1.0.2" />
     <PackageVersion Include="Fluid.Core" Version="2.41.1" />
+    <PackageVersion Include="Forumz" Version="1.0.0" />
+    <PackageVersion Include="Forumz.Data.Sql" Version="1.0.0" />
     <PackageVersion Include="GridKrafter.Components" Version="1.0.2" />
     <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.25" />
     <PackageVersion Include="Hangfire.SqlServer" Version="1.8.25" />
