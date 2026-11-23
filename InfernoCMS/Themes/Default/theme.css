@@ -6,19 +6,30 @@
     --corp-gold: #c4a35a;
     --nf-bg: #eef2f6;
     --nf-surface: #ffffff;
+    --nf-surface-2: #f4f7fb;
+    --nf-hover: #e7eef6;
     --nf-border: #d5dee8;
+    --nf-border-soft: #e6edf4;
     --nf-text: #1c2834;
     --nf-muted: #5c6b7a;
     --nf-accent: var(--corp-navy);
+    --nf-accent-text: #ffffff;
+    --nf-accent-soft: color-mix(in srgb, var(--corp-navy) 12%, #ffffff);
+    --nf-selected: color-mix(in srgb, var(--corp-navy) 10%, #ffffff);
     --bs-body-color: #1c2834;
     --bs-body-bg: #eef2f6;
+    --bs-emphasis-color: #1c2834;
     --bs-link-color: #0f2744;
+    --bs-link-hover-color: #c4a35a;
+    --bs-primary: #0f2744;
+    --bs-primary-rgb: 15, 39, 68;
 
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     background: #eef2f6;
     color: #1c2834;
+    color-scheme: light;
     font-family: "Segoe UI", "Source Sans 3", sans-serif;
 }
 
@@ -63,13 +74,44 @@
 }
 
 .inferno-public .btn-primary,
+.inferno-public .btn-primary:hover,
+.inferno-public .btn-primary:focus,
+.inferno-public .btn-primary:active,
+.inferno-public .nf-button-primary,
+.inferno-public .nf-button-primary:hover,
 .inferno-public .nf-btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--corp-navy);
+    --bs-btn-border-color: var(--corp-navy);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #16375f;
+    --bs-btn-hover-border-color: #16375f;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #0c2038;
+    --bs-btn-active-border-color: #0c2038;
     background: var(--corp-navy);
     border-color: var(--corp-navy);
     border-radius: 0;
-    color: #fff;
+    color: #fff !important;
     font-weight: 600;
 }
+
+.inferno-public .table {
+    --bs-table-color: #1c2834;
+    --bs-table-bg: #fff;
+    --bs-table-hover-color: #1c2834;
+    --bs-table-hover-bg: #e7eef6;
+    --bs-table-striped-color: #1c2834;
+    --bs-table-striped-bg: #f4f7fb;
+    --bs-table-active-color: #1c2834;
+    --bs-table-active-bg: #e7eef6;
+}
+
+.inferno-public .nf-table,
+.inferno-public .nf-table th,
+.inferno-public .nf-table td { color: #1c2834; }
+
+.inferno-public .nf-table tbody tr:hover { background: #e7eef6; color: #1c2834; }
 
 .inferno-public .btn-outline-secondary {
     color: var(--corp-navy);

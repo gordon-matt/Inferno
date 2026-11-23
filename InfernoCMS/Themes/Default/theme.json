@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "default",
   "name": "Default",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A navy and gold corporate theme. The menu stays in a top bar.",
   "author": "Inferno",
   "stylesheets": [ "theme.css" ],

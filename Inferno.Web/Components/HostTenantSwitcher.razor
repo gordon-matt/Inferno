@@ -15,10 +15,10 @@
 @if (visible)
 {
     <div class="inferno-host-tenant" style="position:sticky;top:0;z-index:2000;display:flex;gap:.75rem;align-items:center;padding:.4rem .75rem;background:#0f172a;color:#e2e8f0;font:13px/1.2 system-ui,sans-serif">
-        <span>@(Impersonation.IsActive ? "Tenant admin view" : "Host view")</span>
-        <label>
+        <span style="color:#e2e8f0">@(Impersonation.IsActive ? "Tenant admin view" : "Host view")</span>
+        <label style="color:#e2e8f0">
             Site
-            <select @onchange="SwitchAsync" style="margin-left:.35rem;color:#0f172a">
+            <select @onchange="SwitchAsync" style="margin-left:.35rem;background:#fff;color:#0f172a;color-scheme:light;border:1px solid #cbd5e1;border-radius:4px;padding:.15rem .35rem">
                 <option value="">This host</option>
                 @foreach (var tenant in tenants)
                 {
