@@ -1,3 +1,4 @@
+@using Inferno.Web.ContentManagement
 @using Inferno.Web.ContentManagement.Areas.Admin.Menus.Entities
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -20,9 +21,14 @@
         else
         {
             var open = Bar.IsOpen(item);
+            var menuId = $"public-menu-{item.Id:N}";
             <li class="nav-item dropdown" @onpointerenter="e => OnEnter(e, item)">
-                <a class="nav-link dropdown-toggle" href="#" role="button" aria-haspopup="menu" aria-expanded="@open" @onclick="() => Bar.Toggle(item)" @onclick:preventDefault>@item.Text</a>
-                <ul class="dropdown-menu @(open ? "show" : null)">
+                @* The label follows the page. The caret only opens the submenu, including on a touch screen where there is no hover. *@
+                <div class="public-menu-parent">
+                    <a class="nav-link" href="@item.Url" target="@NewTab(item)" rel="@NoOpener(item)" data-enhance-nav="@FullLoad(item)" @onclick="Bar.Close">@item.Text</a>
+                    <button type="button" class="nav-link dropdown-toggle public-menu-toggle" aria-haspopup="menu" aria-expanded="@OpenState(open)" aria-controls="@menuId" aria-label="@T[InfernoCmsLocalizableStrings.Menus.ShowSubmenu, item.Text]" @onclick="() => Bar.Toggle(item)" @onclick:preventDefault></button>
+                </div>
+                <ul id="@menuId" class="dropdown-menu @(open ? "show" : null)">
                     @foreach (var child in children)
                     {
                         <li><a class="dropdown-item" href="@child.Url" target="@NewTab(child)" rel="@NoOpener(child)" data-enhance-nav="@FullLoad(child)" @onclick="Bar.Close">@child.Text</a></li>
@@ -99,6 +105,8 @@
 
     // A separate document is not a route in this circuit. Null omits the attribute.
     private static string FullLoad(MenuItem item) => item.IsExternalUrl || item.OpenInNewTab ? "false" : null;
+
+    private static string OpenState(bool open) => open ? "true" : "false";
 
     private static string NewTab(MenuItem item) => item.OpenInNewTab ? "_blank" : null;
 

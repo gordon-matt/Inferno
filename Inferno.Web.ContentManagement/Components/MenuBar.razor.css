@@ -8,3 +8,23 @@
     position: relative;
     z-index: 1030;
 }
+
+.public-menu-parent {
+    display: flex;
+    align-items: center;
+}
+
+.public-menu-toggle {
+    flex: 0 0 auto;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    line-height: inherit;
+    cursor: pointer;
+}
+
+.public-menu-toggle.dropdown-toggle::after {
+    margin-left: 0;
+    vertical-align: 0.15em;
+}

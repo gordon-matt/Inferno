@@ -192,6 +192,7 @@ public class LanguagePackInvariant : ILanguagePack
         { InfernoCmsLocalizableStrings.Menus.NewMenu, "New menu" },
         { InfernoCmsLocalizableStrings.Menus.NoParent, "(Top level)" },
         { InfernoCmsLocalizableStrings.Menus.ParentItem, "Parent item" },
+        { InfernoCmsLocalizableStrings.Menus.ShowSubmenu, "Show pages under {0}" },
         { InfernoCmsLocalizableStrings.Menus.UrlFilterHint, "Optional. Only use this menu on pages whose URL contains this text." },
         { InfernoCmsLocalizableStrings.Menus.ManageMenuItems, "Manage Menu Items" },
         { InfernoCmsLocalizableStrings.Menus.ManageMenus, "Manage Menus" },

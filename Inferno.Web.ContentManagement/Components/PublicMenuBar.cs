@@ -1,9 +1,9 @@
 namespace Inferno.Web.ContentManagement.Components;
 
 /// <summary>
-/// Open dropdown for the public menu. A click arms the bar. Hover can then switch menus, including
+/// Open dropdown for the public menu. The caret click arms the bar. Hover can then switch menus, including
 /// after the pointer passes a top-level item that has no dropdown. Clicking outside, pressing Escape,
-/// or clicking the open item disarms it.
+/// or clicking the open caret disarms it. The parent label stays a link to that item's page.
 /// </summary>
 public sealed class PublicMenuBar
 {

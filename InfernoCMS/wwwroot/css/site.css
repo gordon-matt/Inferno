@@ -78,6 +78,21 @@ a, .btn-link {
     z-index: 1030;
 }
 
+/* Theme stylesheets load later and pad every .nav-link. These selectors stay more specific so the caret sits against its label. */
+.inferno-public .navbar .public-menu-parent > a.nav-link {
+    padding-right: 0.15rem;
+}
+
+.inferno-public .navbar button.nav-link.public-menu-toggle,
+.inferno-public .navbar button.nav-link.public-menu-toggle:hover,
+.inferno-public .navbar button.nav-link.public-menu-toggle:focus {
+    padding-left: 0.35rem;
+    padding-right: 0.7rem;
+    border: 0;
+    border-left-color: transparent;
+    background: transparent;
+}
+
 .inferno-public .public-language {
     display: flex;
     align-items: center;

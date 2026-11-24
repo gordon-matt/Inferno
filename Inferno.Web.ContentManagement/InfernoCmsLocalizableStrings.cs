@@ -277,6 +277,7 @@ public static class InfernoCmsLocalizableStrings
         public const string NewMenu = "Inferno.Web.ContentManagement/Menus.NewMenu";
         public const string NoParent = "Inferno.Web.ContentManagement/Menus.NoParent";
         public const string ParentItem = "Inferno.Web.ContentManagement/Menus.ParentItem";
+        public const string ShowSubmenu = "Inferno.Web.ContentManagement/Menus.ShowSubmenu";
         public const string UrlFilterHint = "Inferno.Web.ContentManagement/Menus.UrlFilterHint";
         public const string ManageMenuItems = "Inferno.Web.ContentManagement/Menus.ManageMenuItems";
         public const string ManageMenus = "Inferno.Web.ContentManagement/Menus.ManageMenus";
