@@ -18,7 +18,9 @@ using Inferno.Tasks.Scheduling;
 using Inferno.Tenants;
 using Inferno.Tenants.Entities;
 using Inferno.Web.Areas.Admin;
+using Inferno.Web.Areas.Admin.Home.Shared;
 using Inferno.Web.Components;
+using Inferno.Web.ContentManagement.Areas.Admin.Newsletters;
 using Inferno.Web.ContentManagement.Areas.Admin.Pages;
 using Inferno.Web.ContentManagement.Components;
 using Inferno.Web.ContentManagement.Security;
@@ -29,14 +31,21 @@ using Inferno.Web.Scheduling;
 using Inferno.Web.Security;
 using Inferno.Web.Tenants;
 using InfernoCMS.Areas.Identity;
+using InfernoCMS.Data.Entities;
 using InfernoCMS.Identity.Infrastructure;
 using InfernoCMS.Identity.Permissions;
 using InfernoCMS.Infrastructure;
+using InfernoCMS.Infrastructure.Kourier;
 using InfernoCMS.Shared;
 using Kameleon;
 using Kameleon.Components;
 using Kameleon.Data.Sql;
 using Kameleon.Tenancy;
+using Kourier;
+using Kourier.Core;
+using Kourier.Data.Sql;
+using Kourier.Identity;
+using Kourier.PageKrafter;
 using Localize.Components;
 using Localize.Components.Pages;
 using LogVue;
@@ -77,8 +86,11 @@ DependoCatalog.SkipAssembliesStartingWith(
     "Hangfire",
     "HtmlSanitizer",
     "Humanizer",
+    "Kourier",
     "LinqKit",
+    "MailKit",
     "Markdig",
+    "MimeKit",
     "Mono.TextTemplating",
     "NuGet",
     "Parlot",
@@ -165,6 +177,7 @@ services.Configure<AuthorizationOptions>(options =>
 {
     options.AddInfernoWebPolicies();
     options.AddInfernoCmsPolicies();
+    options.AddInfernoKourierPolicies();
 });
 
 #endregion Account / Identity
@@ -298,6 +311,46 @@ services.AddPageKrafter();
 services.AddPageKrafterBlock<PageContentZoneBlock>();
 services.AddPageKrafterFilePicker<PickstackFilePicker>();
 
+// Email needs the installed connection. Until then there is no store and no public endpoints.
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    // Adapters first so AddKourier's TryAdd registrations do not win.
+    services.AddScoped<IKourierTenantScope, InfernoKourierTenantScope>();
+    services.AddScoped<IKourierSiteInfo, InfernoKourierSiteInfo>();
+    services.AddKourier(options =>
+    {
+        options.BasePath = "/admin/email";
+        options.PublicPath = "/email";
+        options.Title = "Email";
+        options.Area = "Admin";
+        options.MenuName = AdminMenuCatalog.MenuName;
+        options.HomePath = "/admin";
+    });
+    services.AddKourierSqlServer(connectionString);
+    services.AddKourierPageKrafter(addPageKrafter: false);
+    services.AddKourierIdentity<ApplicationUser>();
+    services.Replace(ServiceDescriptor.Scoped<IKourierUserDirectory, InfernoKourierUserDirectory>());
+    services.AddKourierTemplate<NewsletterEmailModel>(NewsletterEmailConsumer.SubscribedTemplate, definition =>
+    {
+        definition.DisplayName = "Newsletter subscribed";
+        definition.Category = "Newsletters";
+        definition.Description = "Sent when someone joins the newsletter.";
+        definition.DefaultSubject = "Thank you for subscribing";
+        definition.DefaultBody = "<p>Thank you, {{ user_name }}. You are signed up at {{ email }}.</p>";
+        definition.IsSystem = true;
+    });
+    services.AddKourierTemplate<NewsletterEmailModel>(NewsletterEmailConsumer.UnsubscribedTemplate, definition =>
+    {
+        definition.DisplayName = "Newsletter unsubscribed";
+        definition.Category = "Newsletters";
+        definition.Description = "Sent when someone leaves the newsletter.";
+        definition.DefaultSubject = "You have unsubscribed";
+        definition.DefaultBody = "<p>{{ user_name }}, you have been removed from the mailing list.</p>";
+        definition.IsSystem = true;
+    });
+    services.AddHostedService<KourierMessagingImporter>();
+}
+
 // The blog is its own database. Until installation has saved a connection there is nothing to migrate.
 if (!string.IsNullOrWhiteSpace(connectionString))
 {
@@ -307,7 +360,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
     {
         blog.Title = "Blog";
         blog.PublicLayout = typeof(InfernoCMS.Shared.InfernoPublicLayout);
-        blog.AdminLayout = typeof(Inferno.Web.Areas.Admin.Home.Shared.AdminLayout);
+        blog.AdminLayout = typeof(AdminLayout);
     });
     services.AddBlogKrafterSqlServer(connectionString);
 }
@@ -460,6 +513,11 @@ app.MapGet("/admin/plugins/index", () => Results.Redirect("/pluginz"));
 app.MapAreaControllerRoute("admin_route", "Admin", "Admin/{controller}/{action}/{id?}");
 app.MapRazorPages();
 app.UsePickstack();
+if (databaseInstalled)
+{
+    // Kourier's own document at /admin/email, plus the public unsubscribe and webhook endpoints.
+    app.MapKourier();
+}
 // Endpoint routing only serves Blazor pages from assemblies it is told about.
 // The interactive router discovers the same marker assemblies while navigating.
 var routerAssemblies = DependoResolver.Instance

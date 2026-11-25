@@ -23,11 +23,8 @@ public class CmsNavigationProvider : INavigationProvider
 
     /// <summary>Adds the CMS group and the messaging group.</summary>
     /// <param name="builder">The admin menu being built.</param>
-    public void GetNavigation(NavigationBuilder builder)
-    {
+    public void GetNavigation(NavigationBuilder builder) =>
         builder.Add(T[InfernoCmsLocalizableStrings.Navigation.CMS].Value, "2", BuildCmsMenu);
-        builder.Add(T[InfernoCmsLocalizableStrings.Messaging.Title].Value, "2", BuildMessagingMenu);
-    }
 
     #endregion INavigationProvider Members
 
@@ -93,18 +90,4 @@ public class CmsNavigationProvider : INavigationProvider
             .Permission(CmsConstants.Policies.SitemapRead));
     }
 
-    private void BuildMessagingMenu(NavigationItemBuilder builder)
-    {
-        builder.Icon("fas fa-envelope");
-
-        builder.Add(T[InfernoCmsLocalizableStrings.Messaging.MessageTemplates].Value, "5", item => item
-            .Url("/admin/messaging/templates")
-            .Icon("fas fa-envelope")
-            .Permission(CmsConstants.Policies.MessagingRead));
-
-        builder.Add(T[InfernoCmsLocalizableStrings.Messaging.QueuedEmails].Value, "5", item => item
-            .Url("/admin/messaging/queued-emails")
-            .Icon("fas fa-inbox")
-            .Permission(CmsConstants.Policies.MessagingRead));
-    }
 }

@@ -40,13 +40,10 @@ public class DependencyRegistrar : IDependencyRegistrar, IAutofacDependencyRegis
 
         builder.Register<Events.IEventPublisher, Events.EventPublisher>(ServiceLifetime.Scoped);
         builder.Register<Events.ISubscriptionService, Events.SubscriptionService>(ServiceLifetime.Scoped);
-        builder.Register<Messaging.Services.IEmailSender, Messaging.Services.DefaultEmailSender>(ServiceLifetime.Scoped);
+        // IEmailSender and IMessageService are registered by the host as Kourier shims.
         builder.Register<Messaging.ITokenizer, Messaging.Tokenizer>(ServiceLifetime.Singleton);
         builder.Register<Messaging.Services.IMessageTemplateService, Messaging.Services.MessageTemplateService>(ServiceLifetime.Transient);
         builder.Register<Messaging.Services.IMessageTemplateVersionService, Messaging.Services.MessageTemplateVersionService>(ServiceLifetime.Transient);
-        builder.Register<Messaging.Services.IMessageService, Messaging.Services.MessageService>(ServiceLifetime.Transient);
-        builder.Register<Messaging.IQueuedMessageProvider, Messaging.Services.MessageService>(ServiceLifetime.Transient);
-        builder.Register<Tasks.ITask, Messaging.ProcessQueuedMailTask>(ServiceLifetime.Singleton);
 
         // Navigation
         builder.Register<INavigationManager, NavigationManager>(ServiceLifetime.Transient);

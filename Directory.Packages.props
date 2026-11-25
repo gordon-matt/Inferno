@@ -9,11 +9,14 @@
     <PackageVersion Include="BlogKrafter.Services" Version="1.0.6" />
     <PackageVersion Include="Dependo.Autofac" Version="1.3.0" />
     <PackageVersion Include="EPPlus" Version="8.7.2" />
+    <PackageVersion Include="AngleSharp" Version="1.11.0" />
+    <PackageVersion Include="Ardalis.Result" Version="10.1.0" />
     <PackageVersion Include="Extenso.AspNetCore.Mvc" Version="10.2.2" />
     <PackageVersion Include="Extenso.Core" Version="10.2.2" />
     <PackageVersion Include="Extenso.Data.Entity" Version="10.2.2" />
     <PackageVersion Include="Flatmate" Version="1.0.2" />
     <PackageVersion Include="Fluid.Core" Version="2.41.1" />
+    <PackageVersion Include="MailKit" Version="4.18.2" />
     <PackageVersion Include="Forumz" Version="1.0.0" />
     <PackageVersion Include="Forumz.Data.Sql" Version="1.0.0" />
     <PackageVersion Include="GridKrafter.Components" Version="1.0.2" />
@@ -46,6 +49,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.3" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="PageKrafter.Components" Version="1.0.7" />
+    <PackageVersion Include="PageKrafter.Core" Version="1.0.7" />
     <PackageVersion Include="Pickstack" Version="1.0.10" />
     <PackageVersion Include="Pickstack.FileManager.WebFilez" Version="1.0.10" />
     <PackageVersion Include="Pickstack.RichTextEditor.TinyMce8" Version="1.0.10" />

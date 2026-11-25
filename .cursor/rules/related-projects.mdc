@@ -24,6 +24,7 @@ Shared coding conventions live in Blueprint/.cursor/rules/conventions.mdc (absol
 | Kameleon | ProjectReference (not published to NuGet yet) | n/a | `D:\Source\GitHub\Libraries\Kameleon` (`..\..\Libraries\Kameleon`) |
 | PageKrafter | ProjectReference (local source, package version 1.0.2 not published yet) | n/a | `D:\Source\GitHub\Libraries\PageKrafter` (`..\..\Libraries\PageKrafter`) |
 | Kameleon.Data.Sql | ProjectReference (not published to NuGet yet) | n/a | `D:\Source\GitHub\Libraries\Kameleon` (`..\..\Libraries\Kameleon`) |
+| Kourier | ProjectReference (Kourier, Kourier.Data.Sql, Kourier.Identity, Kourier.PageKrafter; Kourier.Core also from ContentManagement) | n/a | `D:\Source\GitHub\Libraries\Kourier` (`..\..\..\Libraries\Kourier`) |
 | Pickstack | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
 | Pickstack.FileManager.WebFilez | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |
 | Pickstack.RichTextEditor.TinyMce7 | ProjectReference | n/a | `D:\Source\GitHub\Libraries\Pickstack` (`..\..\Libraries\Pickstack`) |

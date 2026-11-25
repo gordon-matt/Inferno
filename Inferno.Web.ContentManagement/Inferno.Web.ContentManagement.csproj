@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Inferno.Tasks\Inferno.Tasks.csproj" />
     <ProjectReference Include="..\Inferno.Web\Inferno.Web.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Kourier\Kourier.Core\Kourier.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Inferno.Tests" />
