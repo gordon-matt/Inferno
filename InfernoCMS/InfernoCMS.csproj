@@ -17,7 +17,6 @@
     <PackageReference Include="BlogKrafter.Data.Sql" />
     <PackageReference Include="Dependo.Autofac" />
     <PackageReference Include="IdentityNexus" />
-    <PackageReference Include="PageKrafter.Components" />
     <PackageReference Include="EPPlus" />
     <PackageReference Include="Extenso.AspNetCore.Mvc" />
     <PackageReference Include="Flatmate" />
@@ -28,7 +27,6 @@
     <PackageReference Include="LogVue.Data.Sql" />
     <PackageReference Include="LogVue.Providers.Serilog" />
     <PackageReference Include="Pickstack.FileManager.WebFilez" />
-    <PackageReference Include="Pickstack.RichTextEditor.TinyMce8" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
@@ -68,6 +66,8 @@
     <ProjectReference Include="..\..\..\Libraries\Kourier\Kourier\Kourier.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Kourier\Kourier.Data.Sql\Kourier.Data.Sql.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Kourier\Kourier.Identity\Kourier.Identity.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\PageKrafter\PageKrafter.Components\PageKrafter.Components.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Pickstack\Pickstack.RichTextEditor.TinyMce8\Pickstack.RichTextEditor.TinyMce8.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Kourier\Kourier.PageKrafter\Kourier.PageKrafter.csproj" />
     <ProjectReference Include="..\Plugins\Inferno.Plugins.GoogleAnalytics\Inferno.Plugins.GoogleAnalytics.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

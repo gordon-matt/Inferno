@@ -322,7 +322,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
         options.BasePath = "/admin/email";
         options.PublicPath = "/email";
         options.Title = "Email";
-        options.Area = "Admin";
+        // Leave Area unset. Inferno stores one scheme for the whole site, and a pinned area would read a different key.
         options.MenuName = AdminMenuCatalog.MenuName;
         options.HomePath = "/admin";
     });
